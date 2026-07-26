@@ -3,6 +3,7 @@ import pandas as pd
 import lxml
 import requests
 import io
+import numpy as np
 
 
 def priceHistory(
@@ -76,3 +77,149 @@ def sp500Tickers():
     companies_yfinance = companies.str.replace('.', '-', regex = False)
     
     return companies_yfinance
+
+
+# the next family of functions are all designed to take inputs from a data frame
+# output from priceHistoryBatch
+sp = sp500Tickers()
+
+history = priceHistoryBatch(tickers = sp.tolist(), 
+                       start_date = '2017-01-01',
+                       end_date = '2019-12-31'
+                      )
+history_nona = history.loc[:,['Open','High','Low','Close','Volume', 'Ticker']].dropna()
+# in the future the sp list should be appended to get the 500 stocks from those
+#dates oh well 
+
+Ticker = 'MMM'
+
+def calculateReturnSinceInception(Ticker,
+                                  data = history_nona):
+    """
+    SUMMARY.
+
+    Parameters
+    ----------
+    Ticker : TYPE
+        Stock Ticker.
+    data : TYPE, optional
+        Dataframe output from priceHistory or priceHistoryBatch including the ticker
+        as well as open, close, and date columns
+        . The default is history_nona.
+
+    Returns
+    -------
+    64 bit float
+        proportion of return since inception indexed to date.
+    """
+    history_subset = history_nona[history_nona['Ticker']==Ticker].reset_index()
+    
+    open_first =  history_subset['Open'][history_subset['Date'] == np.min(history_subset['Date'])][0] 
+    
+    returns= history_subset['Close']/open_first
+    
+    return returns
+
+def calculateDailyReturn(Ticker,
+                          data=history_nona):
+    """
+    Daily percent return for a single ticker.
+
+    Parameters
+    ----------
+    Ticker : str
+        Stock ticker.
+    data : pd.DataFrame, optional
+        Dataframe output from priceHistory or priceHistoryBatch including the
+        ticker as well as open, close, and date columns. The default is
+        history_nona.
+
+    Returns
+    -------
+    pd.Series
+        Daily return (Close_t - Close_t-1) / Close_t-1, indexed by date.
+    """
+    history_subset = data[data['Ticker'] == Ticker].reset_index()
+    history_subset = history_subset.sort_values('Date').reset_index(drop=True)
+    daily_return = history_subset['Close'].pct_change()
+    return daily_return
+
+
+def calculateVolatility(Ticker, window_size=20, data=history_nona):
+    history_subset = data[data['Ticker'] == Ticker].reset_index()
+    history_subset = history_subset.sort_values('Date').reset_index(drop=True)
+    
+    history_subset['Daily Return'] = calculateDailyReturn(Ticker, data=data)
+    
+    volatility = history_subset['Daily Return'].rolling(window=window_size).std()
+    volatility.index = history_subset['Date']
+    
+    return volatility
+
+
+
+def calculateMomentum(Ticker, 
+                      window_size=20, 
+                      data = history):
+    
+    history_subset = data[data['Ticker'] == Ticker].reset_index()
+    history_subset = history_subset.sort_values('Date').reset_index(drop=True)
+
+    momentum = history_subset['Close'].pct_change(periods=window_size)
+    momentum.index = history_subset['Date']
+    return momentum
+    
+
+#def calculateAverageTrueRange
+    
+    
+def calculateVolumeRatio(Ticker,window_size = 20,data =history_nona):
+    history_subset = data[data['Ticker'] == Ticker].reset_index()
+    history_subset = history_subset.sort_values('Date').reset_index(drop=True)
+
+    volume_avg = history_subset['Volume'].rolling(window=window_size).mean()
+    volume_avg.index = history_subset['Date']
+    return volume_avg
+    
+    
+spy_returns = priceHistory(['SPY'],
+                           start_date = '2017-01-01',
+                           end_date = '2019-12-31'
+                           )
+
+def calculateRelativeStrength(Ticker,
+                     window_size=20, 
+                     data = history_nona,
+                     spy_returns = spy_returns):
+    ticker_momentum = calculateMomentum(Ticker, 
+                                        window_size=window_size,
+                                        data= history_nona)
+    spy_momentum = calculateMomentum('SPY', 
+                                        window_size=window_size,
+                                        data =spy_returns)
+    
+    rel_strength = ticker_momentum - spy_momentum
+    return rel_strength
+    
+    
+def priceLevelContext(Ticker, window_size=252, data=history_nona):
+    history_subset = data[data['Ticker'] == Ticker].reset_index()
+    history_subset = history_subset.sort_values('Date').reset_index(drop=True)
+    
+    rolling_high = history_subset['Close'].rolling(window=window_size).max()
+    rolling_low = history_subset['Close'].rolling(window=window_size).min()
+    
+    pct_from_high = (history_subset['Close'] - rolling_high) / rolling_high
+    pct_from_low = (history_subset['Close'] - rolling_low) / rolling_low
+    
+    result = pd.DataFrame({
+        'pct_from_high': pct_from_high,
+        'pct_from_low': pct_from_low
+    })
+    result.index = history_subset['Date']
+    
+    return result
+    
+
+
+
