@@ -4,7 +4,9 @@ import lxml
 import requests
 import io
 import numpy as np
-
+from datetime import datetime
+from itertools import chain
+from collections import namedtuple
 
 def priceHistory(
     tickers: list[str], 
@@ -93,30 +95,29 @@ history_nona = history.loc[:,['Open','High','Low','Close','Volume', 'Ticker']].d
 
 Ticker = 'MMM'
 
-def calculateReturnSinceInception(Ticker,
-                                  data = history_nona):
+def calculateReturnSinceInception(Ticker, data=history_nona):
     """
-    SUMMARY.
+    Cumulative return relative to the ticker's first available Open price.
 
     Parameters
     ----------
-    Ticker : TYPE
-        Stock Ticker.
-    data : TYPE, optional
-        Dataframe output from priceHistory or priceHistoryBatch including the ticker
-        as well as open, close, and date columns
-        . The default is history_nona.
+    Ticker : str
+        Stock ticker.
+    data : pd.DataFrame, optional
+        Dataframe output from priceHistory or priceHistoryBatch including the
+        ticker as well as open, close, and date columns. The default is
+        history_nona.
 
     Returns
     -------
-    64 bit float
-        proportion of return since inception indexed to date.
+    pd.Series
+        Close / first Open, indexed by row position (0..n-1, sorted by Date).
     """
-    history_subset = history_nona[history_nona['Ticker']==Ticker].reset_index()
+    history_subset = data[data['Ticker'] == Ticker].sort_values('Date').reset_index(drop=True)
     
-    open_first =  history_subset['Open'][history_subset['Date'] == np.min(history_subset['Date'])][0] 
+    open_first = history_subset['Open'].iloc[0]
     
-    returns= history_subset['Close']/open_first
+    returns = history_subset['Close'] / open_first
     
     return returns
 
@@ -189,18 +190,17 @@ spy_returns = priceHistory(['SPY'],
 
 def calculateRelativeStrength(Ticker,
                      window_size=20, 
-                     data = history_nona,
-                     spy_returns = spy_returns):
+                     data=history_nona,
+                     spy_returns=spy_returns):
     ticker_momentum = calculateMomentum(Ticker, 
                                         window_size=window_size,
-                                        data= history_nona)
+                                        data=data)
     spy_momentum = calculateMomentum('SPY', 
                                         window_size=window_size,
-                                        data =spy_returns)
+                                        data=spy_returns)
     
     rel_strength = ticker_momentum - spy_momentum
-    return rel_strength
-    
+    return rel_strength    
     
 def priceLevelContext(Ticker, window_size=252, data=history_nona):
     history_subset = data[data['Ticker'] == Ticker].reset_index()
@@ -220,6 +220,85 @@ def priceLevelContext(Ticker, window_size=252, data=history_nona):
     
     return result
     
+    
+def buildTrainingTable(Tickers: list[str],
+                   start_date: str,
+                   end_date: str,
+                   momentum_windows=[5, 20, 60, 120],
+                   vol_windows=[20, 60],
+                   volume_windows=[20],
+                   relative_strength_window=[20],
+                   price_level_window=[252],
+                   forward_window=20):
+    
+    lag = max(chain(momentum_windows,
+                   vol_windows,
+                   volume_windows, 
+                   price_level_window))
+
+    start_ts = pd.Timestamp(start_date)
+    lag_date = start_ts - pd.Timedelta(days=lag)
+    
+    training_data = priceHistoryBatch(tickers=Tickers,
+                                     start_date=lag_date,
+                                     end_date=end_date)
+        
+    spy_returns_local = priceHistory(['SPY'],
+                           start_date=lag_date,
+                           end_date=end_date
+                           )
+    
+    training_data = training_data.dropna()
+    
+    end_ts = pd.Timestamp(end_date)
+    test_date = end_ts + pd.Timedelta(days=forward_window)
+    test_date_3 = end_ts + pd.Timedelta(days=forward_window) + pd.Timedelta(days=3)    
+    test_data_raw = priceHistoryBatch(tickers=Tickers,
+                                     start_date=test_date,
+                                     end_date=test_date_3).dropna()
+    
+    ### create training and test dataset ###
+    full_data = pd.DataFrame()
+    test_data = pd.DataFrame()
+
+    for stock in Tickers:
+        training_data_ticker = training_data[training_data['Ticker'] == stock].reset_index().sort_values('Date').reset_index(drop=True)        
+        
+        training_data_ticker['Cumulative Return'] = calculateReturnSinceInception(stock, training_data_ticker)
+        training_data_ticker['Daily Return'] = calculateDailyReturn(stock, training_data_ticker)
+        
+        for moment in momentum_windows:
+            training_data_ticker[f"Momentum_,{moment}"] = calculateMomentum(stock, moment, training_data_ticker).values
+        
+        for vol in volume_windows:
+            training_data_ticker[f"Volume,{vol}"] = calculateVolatility(stock, vol, training_data_ticker).values
+        
+        for p_l_w in price_level_window:
+            plc = priceLevelContext(stock, p_l_w, training_data_ticker)
+            training_data_ticker[f'Price_Level_High_{p_l_w}'] = plc['pct_from_high'].values
+            training_data_ticker[f'Price_Level_Low_{p_l_w}'] = plc['pct_from_low'].values
+        
+        for r_s_w in relative_strength_window:
+            training_data_ticker[f'Relative Strength,{r_s_w}'] = calculateRelativeStrength(stock, r_s_w, training_data_ticker, spy_returns_local).values
+        
+        last_close = training_data_ticker['Close'].iloc[-1]
+        
+        test_data_raw_subset = test_data_raw[test_data_raw['Ticker'] == stock]
+        test_data_raw_oneday = test_data_raw_subset.iloc[-1]
+        test_data_raw_oneday['Forward Return'] = test_data_raw_oneday['Close'] / last_close
+        
+        ### this needs to be corrected to produce many data points, not just 1###
+        ### will discuss another day ####
+        test_data = pd.concat([pd.DataFrame(test_data_raw_oneday).T, test_data])
+        
+        full_data = pd.concat([training_data_ticker, full_data], ignore_index=False)
+    
+    TrainingResult = namedtuple('TrainingResult', ['train', 'test'])
+    return TrainingResult(train=full_data, test=test_data)
+    
+train, test = buildTrainingTable(['AAPL','MMM'],
+                   '2020-01-01',
+                   '2021-01-01')
 
 
 
