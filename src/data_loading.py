@@ -86,14 +86,14 @@ def sp500Tickers():
 sp = sp500Tickers()
 
 history = priceHistoryBatch(tickers = sp.tolist(), 
-                       start_date = '2017-01-01',
+                      start_date = '2017-01-01',
                        end_date = '2019-12-31'
                       )
 history_nona = history.loc[:,['Open','High','Low','Close','Volume', 'Ticker']].dropna()
 # in the future the sp list should be appended to get the 500 stocks from those
 #dates oh well 
 
-Ticker = 'MMM'
+#Ticker = 'MMM'
 
 def calculateReturnSinceInception(Ticker, data=history_nona):
     """
@@ -219,6 +219,14 @@ def priceLevelContext(Ticker, window_size=252, data=history_nona):
     result.index = history_subset['Date']
     
     return result
+
+def calculateForwardReturn(Ticker, window_size =20, data = history_nona):
+    history_subset = data[data['Ticker'] == Ticker].reset_index()
+    history_subset = history_subset.sort_values('Date').reset_index(drop=True)
+
+    forward_return= history_subset['Close'].pct_change(periods=-window_size)
+    forward_return.index = history_subset['Date']
+    return forward_return
     
     
 def buildTrainingTable(Tickers: list[str],
@@ -243,61 +251,85 @@ def buildTrainingTable(Tickers: list[str],
                                      start_date=lag_date,
                                      end_date=end_date)
         
-    spy_returns_local = priceHistory(['SPY'],
-                           start_date=lag_date,
-                           end_date=end_date
-                           )
+
     
     training_data = training_data.dropna()
     
     end_ts = pd.Timestamp(end_date)
     test_date = end_ts + pd.Timedelta(days=forward_window)
-    test_date_3 = end_ts + pd.Timedelta(days=forward_window) + pd.Timedelta(days=3)    
+    test_lag_date = pd.Timestamp(test_date) - pd.Timedelta(days=lag)  # same `lag` you already computed above
+    test_date_year = end_ts + pd.Timedelta(days=forward_window) + pd.Timedelta(days=365)
+    
     test_data_raw = priceHistoryBatch(tickers=Tickers,
-                                     start_date=test_date,
-                                     end_date=test_date_3).dropna()
+                                     start_date=test_lag_date,
+                                     end_date=test_date_year).dropna()    
+    spy_returns_local_train = priceHistory(['SPY'],
+                           start_date=lag_date,
+                           end_date=end_date
+                           )
+    
+    spy_returns_local_test = priceHistory(['SPY'],
+                            start_date=test_lag_date,
+                            end_date=test_date_year
+                           )
     
     ### create training and test dataset ###
     full_data = pd.DataFrame()
     test_data = pd.DataFrame()
 
     for stock in Tickers:
-        training_data_ticker = training_data[training_data['Ticker'] == stock].reset_index().sort_values('Date').reset_index(drop=True)        
+        training_data_ticker = training_data[training_data['Ticker'] == stock].reset_index().sort_values('Date').reset_index(drop=True).copy()        
+        test_data_ticker = test_data_raw[test_data_raw['Ticker'] == stock].reset_index().sort_values('Date').reset_index(drop=True).copy()
         
-        training_data_ticker['Cumulative Return'] = calculateReturnSinceInception(stock, training_data_ticker)
-        training_data_ticker['Daily Return'] = calculateDailyReturn(stock, training_data_ticker)
+        # skip this ticker cleanly if there's no usable data, e.g. it didn't
+        # exist yet during this date range (IPO'd later, delisted, etc.)
+        if training_data_ticker.empty or test_data_ticker.empty:
+            print(f"  Skipping {stock}: no data in this date range (train rows={len(training_data_ticker)}, test rows={len(test_data_ticker)})")
+            continue
         
-        for moment in momentum_windows:
-            training_data_ticker[f"Momentum_,{moment}"] = calculateMomentum(stock, moment, training_data_ticker).values
+        try:
+            training_data_ticker['Cumulative Return'] = calculateReturnSinceInception(stock, training_data_ticker)
+            test_data_ticker['Cumulative Return'] = calculateReturnSinceInception(stock, test_data_ticker)
+    
+            training_data_ticker['Daily Return'] = calculateDailyReturn(stock, training_data_ticker)
+            test_data_ticker['Daily Return'] = calculateDailyReturn(stock, test_data_ticker)
+            
+            training_data_ticker[f"Forward Return_,{forward_window}"] = calculateForwardReturn(stock, forward_window, training_data_ticker).values
+            test_data_ticker[f"Forward Return_,{forward_window}"] = calculateForwardReturn(stock, forward_window, test_data_ticker).values
+    
+            for moment in momentum_windows:
+                training_data_ticker[f"Momentum_,{moment}"] = calculateMomentum(stock, moment, training_data_ticker).values
+                test_data_ticker[f"Momentum_,{moment}"] = calculateMomentum(stock, moment, test_data_ticker).values
+    
+            for vol in volume_windows:
+                training_data_ticker[f"Volume,{vol}"] = calculateVolatility(stock, vol, training_data_ticker).values
+                test_data_ticker[f"Volume,{vol}"] = calculateVolatility(stock, vol, test_data_ticker).values
+    
+            for p_l_w in price_level_window:
+                plc_train = priceLevelContext(stock, p_l_w, training_data_ticker)
+                training_data_ticker[f'Price_Level_High_{p_l_w}'] = plc_train['pct_from_high'].values
+                training_data_ticker[f'Price_Level_Low_{p_l_w}'] = plc_train['pct_from_low'].values
+                
+                plc_test = priceLevelContext(stock, p_l_w, test_data_ticker)
+                test_data_ticker[f'Price_Level_High_{p_l_w}'] = plc_test['pct_from_high'].values
+                test_data_ticker[f'Price_Level_Low_{p_l_w}'] = plc_test['pct_from_low'].values
+            
+            for r_s_w in relative_strength_window:
+                training_data_ticker[f'Relative Strength,{r_s_w}'] = calculateRelativeStrength(stock, r_s_w, training_data_ticker, spy_returns_local_train).values
+                test_data_ticker[f'Relative Strength,{r_s_w}'] = calculateRelativeStrength(stock, r_s_w, test_data_ticker, spy_returns_local_test).values
+    
+        except Exception as e:
+            print(f"  Skipping {stock}: error while computing features ({e})")
+            continue
         
-        for vol in volume_windows:
-            training_data_ticker[f"Volume,{vol}"] = calculateVolatility(stock, vol, training_data_ticker).values
-        
-        for p_l_w in price_level_window:
-            plc = priceLevelContext(stock, p_l_w, training_data_ticker)
-            training_data_ticker[f'Price_Level_High_{p_l_w}'] = plc['pct_from_high'].values
-            training_data_ticker[f'Price_Level_Low_{p_l_w}'] = plc['pct_from_low'].values
-        
-        for r_s_w in relative_strength_window:
-            training_data_ticker[f'Relative Strength,{r_s_w}'] = calculateRelativeStrength(stock, r_s_w, training_data_ticker, spy_returns_local).values
-        
-        last_close = training_data_ticker['Close'].iloc[-1]
-        
-        test_data_raw_subset = test_data_raw[test_data_raw['Ticker'] == stock]
-        test_data_raw_oneday = test_data_raw_subset.iloc[-1]
-        test_data_raw_oneday['Forward Return'] = test_data_raw_oneday['Close'] / last_close
-        
-        ### this needs to be corrected to produce many data points, not just 1###
-        ### will discuss another day ####
-        test_data = pd.concat([pd.DataFrame(test_data_raw_oneday).T, test_data])
-        
+        test_data = pd.concat([pd.DataFrame(test_data_ticker), test_data])
         full_data = pd.concat([training_data_ticker, full_data], ignore_index=False)
     
     TrainingResult = namedtuple('TrainingResult', ['train', 'test'])
     return TrainingResult(train=full_data, test=test_data)
     
 train, test = buildTrainingTable(['AAPL','MMM'],
-                   '2020-01-01',
+                   '2017-01-01',
                    '2021-01-01')
 
 
