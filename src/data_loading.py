@@ -252,9 +252,7 @@ def buildTrainingTable(Tickers: list[str],
                                      end_date=end_date)
         
 
-    
-    training_data = training_data.dropna()
-    
+    training_data = training_data.loc[:, ['Open', 'High', 'Low', 'Close', 'Volume', 'Ticker']].dropna()    
     end_ts = pd.Timestamp(end_date)
     test_date = end_ts + pd.Timedelta(days=forward_window)
     test_lag_date = pd.Timestamp(test_date) - pd.Timedelta(days=lag)  # same `lag` you already computed above
@@ -262,7 +260,10 @@ def buildTrainingTable(Tickers: list[str],
     
     test_data_raw = priceHistoryBatch(tickers=Tickers,
                                      start_date=test_lag_date,
-                                     end_date=test_date_year).dropna()    
+                                     end_date=test_date_year)
+    
+    test_data_raw = test_data_raw.loc[:, ['Open', 'High', 'Low', 'Close', 'Volume', 'Ticker']].dropna()
+
     spy_returns_local_train = priceHistory(['SPY'],
                            start_date=lag_date,
                            end_date=end_date
@@ -328,9 +329,192 @@ def buildTrainingTable(Tickers: list[str],
     TrainingResult = namedtuple('TrainingResult', ['train', 'test'])
     return TrainingResult(train=full_data, test=test_data)
     
-train, test = buildTrainingTable(['AAPL','MMM'],
-                   '2017-01-01',
-                   '2021-01-01')
+#train, test = buildTrainingTable(['AAPL','MMM'],
+ #                  '2017-01-01',
+  #                 '2021-01-01')
 
 
+def buildFeatureBase(Tickers: list[str],
+                   start_date: str,
+                   end_date: str,
+                   momentum_windows=[5, 20, 60, 120],
+                   vol_windows=[20, 60],
+                   volume_windows=[20],
+                   relative_strength_window=[20],
+                   price_level_window=[252],
+                   max_forward_window=200):
+    """
+    Same as buildTrainingTable, but WITHOUT computing any forward-return
+    label, and pulls test data far enough out to cover the largest horizon
+    you plan to sweep. Everything here (momentum, volatility, price level,
+    relative strength) doesn't depend on forward_window, so this only needs
+    to run once per (Tickers, start_date, end_date) combination, no matter
+    how many horizons you test afterward.
+    """
+    lag = max(chain(momentum_windows, vol_windows, volume_windows, price_level_window))
+
+    start_ts = pd.Timestamp(start_date)
+    lag_date = start_ts - pd.Timedelta(days=lag)
+
+    training_data = priceHistoryBatch(tickers=Tickers, start_date=lag_date, end_date=end_date)
+    training_data = training_data.loc[:, ['Open', 'High', 'Low', 'Close', 'Volume', 'Ticker']].dropna()
+
+    end_ts = pd.Timestamp(end_date)
+    # size the test pull to cover the WIDEST horizon you'll test, plus a year
+    # of runway past that, so every forward_window in the sweep has enough
+    # future data available without re-pulling
+    test_date = end_ts + pd.Timedelta(days=1)
+    test_lag_date = pd.Timestamp(test_date) - pd.Timedelta(days=lag)
+    test_date_year = end_ts + pd.Timedelta(days=max_forward_window) + pd.Timedelta(days=365)
+
+    test_data_raw = priceHistoryBatch(tickers=Tickers, start_date=test_lag_date, end_date=test_date_year)
+    test_data_raw = test_data_raw.loc[:, ['Open', 'High', 'Low', 'Close', 'Volume', 'Ticker']].dropna()
+
+    spy_returns_local_train = priceHistory(['SPY'], start_date=lag_date, end_date=end_date)
+    spy_returns_local_test = priceHistory(['SPY'], start_date=test_lag_date, end_date=test_date_year)
+
+    full_data = pd.DataFrame()
+    test_data = pd.DataFrame()
+
+    for stock in Tickers:
+        training_data_ticker = training_data[training_data['Ticker'] == stock].reset_index().sort_values('Date').reset_index(drop=True).copy()
+        test_data_ticker = test_data_raw[test_data_raw['Ticker'] == stock].reset_index().sort_values('Date').reset_index(drop=True).copy()
+
+        if training_data_ticker.empty or test_data_ticker.empty:
+            print(f"  Skipping {stock}: no data in this date range (train rows={len(training_data_ticker)}, test rows={len(test_data_ticker)})")
+            continue
+
+        try:
+            training_data_ticker['Cumulative Return'] = calculateReturnSinceInception(stock, training_data_ticker)
+            test_data_ticker['Cumulative Return'] = calculateReturnSinceInception(stock, test_data_ticker)
+
+            training_data_ticker['Daily Return'] = calculateDailyReturn(stock, training_data_ticker)
+            test_data_ticker['Daily Return'] = calculateDailyReturn(stock, test_data_ticker)
+
+            for moment in momentum_windows:
+                training_data_ticker[f"Momentum_,{moment}"] = calculateMomentum(stock, moment, training_data_ticker).values
+                test_data_ticker[f"Momentum_,{moment}"] = calculateMomentum(stock, moment, test_data_ticker).values
+
+            for vol in volume_windows:
+                training_data_ticker[f"Volume,{vol}"] = calculateVolatility(stock, vol, training_data_ticker).values
+                test_data_ticker[f"Volume,{vol}"] = calculateVolatility(stock, vol, test_data_ticker).values
+
+            for p_l_w in price_level_window:
+                plc_train = priceLevelContext(stock, p_l_w, training_data_ticker)
+                training_data_ticker[f'Price_Level_High_{p_l_w}'] = plc_train['pct_from_high'].values
+                training_data_ticker[f'Price_Level_Low_{p_l_w}'] = plc_train['pct_from_low'].values
+
+                plc_test = priceLevelContext(stock, p_l_w, test_data_ticker)
+                test_data_ticker[f'Price_Level_High_{p_l_w}'] = plc_test['pct_from_high'].values
+                test_data_ticker[f'Price_Level_Low_{p_l_w}'] = plc_test['pct_from_low'].values
+
+            for r_s_w in relative_strength_window:
+                training_data_ticker[f'Relative Strength,{r_s_w}'] = calculateRelativeStrength(stock, r_s_w, training_data_ticker, spy_returns_local_train).values
+                test_data_ticker[f'Relative Strength,{r_s_w}'] = calculateRelativeStrength(stock, r_s_w, test_data_ticker, spy_returns_local_test).values
+
+        except Exception as e:
+            print(f"  Skipping {stock}: error while computing features ({e})")
+            continue
+
+        test_data = pd.concat([test_data_ticker, test_data], ignore_index=True)
+        full_data = pd.concat([training_data_ticker, full_data], ignore_index=True)
+
+    FeatureBase = namedtuple('FeatureBase', ['train', 'test'])
+    return FeatureBase(train=full_data, test=test_data)
+
+
+def addForwardReturnLabel(data: pd.DataFrame, forward_window: int):
+    """
+    Takes a dataframe already built by buildFeatureBase (has Date, Close,
+    Ticker, and all the horizon-independent features) and adds a forward
+    return label column for a SPECIFIC forward_window, per ticker.
+    No network calls, this is pure pandas, fast to call repeatedly.
+    """
+    data = data.copy()
+    label_col = f"Forward Return_,{forward_window}"
+    pieces = []
+    for stock in data['Ticker'].unique():
+        subset = data[data['Ticker'] == stock].sort_values('Date').reset_index(drop=True)
+        subset[label_col] = calculateForwardReturn(stock, forward_window, subset).values
+        pieces.append(subset)
+    return pd.concat(pieces, ignore_index=True)   
+
+
+
+""" outline for tensor builder
+"""
+
+def buildTrainTestTensor(
+        Tickers: list[str],
+        start_date: str,
+        end_date: str,
+        test_interval = 5, # how many n matrices should be trained per test matrix
+        matrix_length = 20, # how long each matrix will be 
+        momentum_windows=[5, 20, 60, 120],
+        volatility_windows=[20, 60],
+        volume_windows=[20],
+        relative_strength_window=[20],
+        price_level_window=[252],
+        forward_window=20
+        ):   
+    """
+    The goal of this funciton is the following:
+        Build a tensor such that each matrix is, for a given ticker:
+            Rows are days where earilest day is first and latest day is last
+            of format t-20 ... -> t-1; a countdown
+            Columns are features
+        Matrices will follow oldest -> earliest within ticker and then
+        move on to the next ticker
+            
+    
+    A few considerations
+    1) With any of these lagging metrics, we want to make sure the matrices
+    are properly populated so we will need to make sure we add proper buffer
+    before / after the window of interest OR we exclude any NA matrices and 
+    assume that the matrix count will be enough without buffering
+    
+    2) We need to make sure each matrix is full, so after this buffering or 
+    whatever, I need to make sure matrix length is a multiple of matrix_length,
+    and filter out any overhangs
+    
+    3) For label tracking, I think it needs to be two arrays or perhaps 
+    tuples where one set is ticker and another is date range
+    
+    4) For test data, I will pull out the last 2 matrices for each ticker and 
+    hold them out, the first will be the test and the second will be the ground
+    truth
+    """
+    
+
+    
+    #here, I will first calculate the number of trading days 
+    # between lag start and lag end dates, and floor it to the closest
+    # mutliple of matrix_length
+    
+    #start_use = 
+    #end_use = 
+    
+    #here, I will price history batch based on those dates
+
+
+
+    # here, I will then apply all of the calculations I would do in 
+    # buildTrainingTable
+    
+    # next, instead of rejoining into a common dataframe, I will then divide
+    # into matrices of lenght matrix length and join into a common tensor
+    # stripping out date and ticker
+    #here, I will also recode day to my t- format and preserve only features
+    # I want
+    #before joining into a common tensor, I will first ticker specific tensors
+    # and strip out the last two, one for testing and one for validation
+    
+    #Here, I will then put the rest into a common final tensor and output that 
+    # along with my tracking vectors 
+    
+    return "Filler"
+    
+    
+    
+    
 
