@@ -1,0 +1,6 @@
+{
+  "as_of_date": "2026-08-25",
+  "train_rows": 234326,
+  "label_cutoff_20d_return": 0.0538,
+  "universe_size": 50
+}

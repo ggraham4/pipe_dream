@@ -1,0 +1,74 @@
+[
+  {
+    "timepoint": "2013-01-02",
+    "train_rows": 62891,
+    "train_cutoff_date": "2012-12-03",
+    "label_cutoff_return": 0.0543,
+    "n_scored": 49,
+    "auc": 0.5431,
+    "mcc": null
+  },
+  {
+    "timepoint": "2015-01-02",
+    "train_rows": 87976,
+    "train_cutoff_date": "2014-12-03",
+    "label_cutoff_return": 0.0522,
+    "n_scored": 50,
+    "auc": 0.5449,
+    "mcc": null
+  },
+  {
+    "timepoint": "2017-01-03",
+    "train_rows": 113176,
+    "train_cutoff_date": "2016-12-02",
+    "label_cutoff_return": 0.0505,
+    "n_scored": 50,
+    "auc": 0.8718,
+    "mcc": null
+  },
+  {
+    "timepoint": "2019-01-02",
+    "train_rows": 138276,
+    "train_cutoff_date": "2018-11-30",
+    "label_cutoff_return": 0.0495,
+    "n_scored": 50,
+    "auc": 0.6817,
+    "mcc": 0.1166
+  },
+  {
+    "timepoint": "2021-01-04",
+    "train_rows": 163526,
+    "train_cutoff_date": "2020-12-03",
+    "label_cutoff_return": 0.0516,
+    "n_scored": 50,
+    "auc": 0.5179,
+    "mcc": 0.1
+  },
+  {
+    "timepoint": "2023-01-03",
+    "train_rows": 188676,
+    "train_cutoff_date": "2022-12-02",
+    "label_cutoff_return": 0.0522,
+    "n_scored": 50,
+    "auc": 0.8851,
+    "mcc": 0.1216
+  },
+  {
+    "timepoint": "2025-01-02",
+    "train_rows": 213776,
+    "train_cutoff_date": "2024-12-03",
+    "label_cutoff_return": 0.053,
+    "n_scored": 50,
+    "auc": 0.5806,
+    "mcc": -0.1118
+  },
+  {
+    "timepoint": "2026-06-01",
+    "train_rows": 231376,
+    "train_cutoff_date": "2026-05-01",
+    "label_cutoff_return": 0.0536,
+    "n_scored": 50,
+    "auc": 0.5294,
+    "mcc": null
+  }
+]
