@@ -1,0 +1,314 @@
+{
+  "valid_by_timepoint": {
+    "2013-01-02": [
+      "AIV",
+      "DXC",
+      "FISV",
+      "FMC",
+      "FOSL",
+      "FTI",
+      "GNW",
+      "GT",
+      "LEG",
+      "NBR",
+      "NWL",
+      "OI",
+      "PRGO",
+      "TRIP",
+      "WU",
+      "XRX"
+    ],
+    "2015-01-02": [
+      "AIV",
+      "DXC",
+      "FISV",
+      "FMC",
+      "FOSL",
+      "FTI",
+      "GNW",
+      "GT",
+      "LEG",
+      "NBR",
+      "NWL",
+      "OI",
+      "PRGO",
+      "RIG",
+      "TRIP",
+      "UAA",
+      "WU",
+      "XRX"
+    ],
+    "2017-01-03": [
+      "AIV",
+      "COTY",
+      "CPRI",
+      "FISV",
+      "FMC",
+      "FTI",
+      "GT",
+      "LEG",
+      "NAVI",
+      "NWL",
+      "PRGO",
+      "RIG",
+      "SIG",
+      "TRIP",
+      "UAA",
+      "WU",
+      "XRX"
+    ],
+    "2019-01-02": [
+      "AIV",
+      "COTY",
+      "CPRI",
+      "DXC",
+      "FISV",
+      "FMC",
+      "FTI",
+      "GT",
+      "LEG",
+      "NWL",
+      "PRGO",
+      "TRIP",
+      "UA",
+      "UAA",
+      "WU",
+      "XRX"
+    ],
+    "2021-01-04": [
+      "DXC",
+      "FISV",
+      "FMC",
+      "FTI",
+      "LEG",
+      "LUMN",
+      "NWL",
+      "PRGO",
+      "UA",
+      "UAA",
+      "WU",
+      "XRX"
+    ],
+    "2023-01-03": [
+      "DXC",
+      "FISV",
+      "FMC",
+      "LUMN",
+      "NWL",
+      "PARA",
+      "SEDG"
+    ],
+    "2026-06-01": [
+      "FISV",
+      "MRSH"
+    ],
+    "2025-01-02": [
+      "FMC",
+      "PARA"
+    ]
+  },
+  "quarantined": [
+    {
+      "ticker": "ADT",
+      "earliest_date": "2018-01-19",
+      "failed_timepoints": [
+        "2013-01-02",
+        "2015-01-02"
+      ]
+    },
+    {
+      "ticker": "APC",
+      "earliest_date": "2026-02-12",
+      "failed_timepoints": [
+        "2013-01-02",
+        "2015-01-02",
+        "2017-01-03",
+        "2019-01-02"
+      ]
+    },
+    {
+      "ticker": "AVB",
+      "earliest_date": "2026-07-17",
+      "failed_timepoints": [
+        "2013-01-02",
+        "2015-01-02",
+        "2017-01-03",
+        "2019-01-02",
+        "2021-01-04",
+        "2023-01-03",
+        "2025-01-02",
+        "2026-06-01"
+      ]
+    },
+    {
+      "ticker": "BBBY",
+      "earliest_date": "2026-07-17",
+      "failed_timepoints": [
+        "2013-01-02",
+        "2015-01-02",
+        "2017-01-03"
+      ]
+    },
+    {
+      "ticker": "CA",
+      "earliest_date": "2026-03-30",
+      "failed_timepoints": [
+        "2013-01-02",
+        "2015-01-02",
+        "2017-01-03"
+      ]
+    },
+    {
+      "ticker": "CAM",
+      "earliest_date": "2025-10-06",
+      "failed_timepoints": [
+        "2013-01-02",
+        "2015-01-02"
+      ]
+    },
+    {
+      "ticker": "CSRA",
+      "earliest_date": "2026-08-12",
+      "failed_timepoints": [
+        "2017-01-03"
+      ]
+    },
+    {
+      "ticker": "EA",
+      "earliest_date": "2026-07-17",
+      "failed_timepoints": [
+        "2013-01-02",
+        "2015-01-02",
+        "2017-01-03",
+        "2019-01-02",
+        "2021-01-04",
+        "2023-01-03",
+        "2025-01-02",
+        "2026-06-01"
+      ]
+    },
+    {
+      "ticker": "EMC",
+      "earliest_date": "2023-05-15",
+      "failed_timepoints": [
+        "2013-01-02",
+        "2015-01-02"
+      ]
+    },
+    {
+      "ticker": "EQR",
+      "earliest_date": "2026-07-17",
+      "failed_timepoints": [
+        "2013-01-02",
+        "2015-01-02",
+        "2017-01-03",
+        "2019-01-02",
+        "2021-01-04",
+        "2023-01-03",
+        "2025-01-02",
+        "2026-06-01"
+      ]
+    },
+    {
+      "ticker": "FB",
+      "earliest_date": "2025-06-26",
+      "failed_timepoints": [
+        "2015-01-02",
+        "2017-01-03",
+        "2019-01-02",
+        "2021-01-04"
+      ]
+    },
+    {
+      "ticker": "INFO",
+      "earliest_date": "2024-10-10",
+      "failed_timepoints": [
+        "2019-01-02",
+        "2021-01-04"
+      ]
+    },
+    {
+      "ticker": "NAVI",
+      "earliest_date": "2014-04-17",
+      "failed_timepoints": [
+        "2015-01-02"
+      ]
+    },
+    {
+      "ticker": "NFX",
+      "earliest_date": "2026-07-07",
+      "failed_timepoints": [
+        "2013-01-02",
+        "2015-01-02",
+        "2017-01-03",
+        "2019-01-02"
+      ]
+    },
+    {
+      "ticker": "PCL",
+      "earliest_date": "2025-08-05",
+      "failed_timepoints": [
+        "2013-01-02",
+        "2015-01-02"
+      ]
+    },
+    {
+      "ticker": "POM",
+      "earliest_date": "2025-10-08",
+      "failed_timepoints": [
+        "2013-01-02",
+        "2015-01-02"
+      ]
+    },
+    {
+      "ticker": "SBNY",
+      "earliest_date": "2024-08-15",
+      "failed_timepoints": [
+        "2023-01-03"
+      ]
+    },
+    {
+      "ticker": "SE",
+      "earliest_date": "2017-10-20",
+      "failed_timepoints": [
+        "2013-01-02",
+        "2015-01-02",
+        "2017-01-03"
+      ]
+    },
+    {
+      "ticker": "SPLS",
+      "earliest_date": "2026-01-16",
+      "failed_timepoints": [
+        "2013-01-02",
+        "2015-01-02",
+        "2017-01-03"
+      ]
+    },
+    {
+      "ticker": "STI",
+      "earliest_date": "2022-05-02",
+      "failed_timepoints": [
+        "2013-01-02",
+        "2015-01-02",
+        "2017-01-03",
+        "2019-01-02"
+      ]
+    },
+    {
+      "ticker": "TE",
+      "earliest_date": "2020-01-10",
+      "failed_timepoints": [
+        "2013-01-02",
+        "2015-01-02"
+      ]
+    },
+    {
+      "ticker": "UA",
+      "earliest_date": "2016-03-23",
+      "failed_timepoints": [
+        "2017-01-03"
+      ]
+    }
+  ]
+}

@@ -1,7 +1,8 @@
 {
   "as_of_date": "2026-08-28",
+  "train_sequences": 150000,
   "forward_window_trading_days": 40,
-  "train_rows": 5944219,
   "label_cutoff_fwd_return": 0.0968,
-  "universe_size": 1560
+  "universe_size": 1557,
+  "best_epoch": 12
 }

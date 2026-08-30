@@ -1,0 +1,46 @@
+# pipe_dream .gitignore
+# See AGENTS.md at the repo root for what each entry is and exactly how
+# to regenerate it (all reproducible except the two explicit exceptions
+# noted below).
+
+# --- OS / editor junk ---
+.DS_Store
+Thumbs.db
+
+# --- Python ---
+__pycache__/
+*.pyc
+*.egg-info/
+.ipynb_checkpoints/
+
+# --- Generated data dumps. Every parquet/tar.gz/zip in this repo is a
+# reproducible data export or archive, not source -- see AGENTS.md. ---
+*.parquet
+*.tar.gz
+*.zip
+
+# --- Bulk raw/cached data directories (per-ticker CSVs, SEC fundamentals,
+# options exports) -- all reproducible via the scripts in final/scripts/,
+# see AGENTS.md's reproduction table. ---
+final/data/options_raw/
+final/scripts/td_data_local/
+final/scripts/td_data_delisted/
+final/scripts/fundamentals_raw/
+final/scripts/fundamentals_raw_delisted/
+
+# --- Live/versioned external database clone (DoltHub
+# `post-no-preference/options`) -- reproduce with `dolt clone`, see
+# AGENTS.md. Do not try to store this in git; it's already its own
+# version-controlled database. ---
+options_raw/.dolt/
+
+# --- Trained-model checkpoints that get overwritten on every pipeline run
+# (current_signal.py / lstm_current_signal.py retrain point-in-time every
+# invocation). NOTE: this is intentionally NOT the same as
+# final/models/*.pkl, which is left tracked -- see AGENTS.md's "Known
+# gaps" section for why (no reproduction script currently exists for
+# those two files specifically). ---
+final/out/models/
+
+# --- App runtime logs (regenerates itself) ---
+final/app/logs/

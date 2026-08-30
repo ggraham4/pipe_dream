@@ -5,22 +5,28 @@ Methodology (matches the design rules established in the project's own
 chat history and repo code):
   - XGBoostClassifier(n_estimators=100, max_depth=3, learning_rate=0.1),
     same hyperparameters used throughout the repo's own XGBoost experiments.
-  - Binary label: forward_return_20 > cutoff, where cutoff = 75th
-    percentile of the TRAINING set's forward returns only (matches the
+  - Binary label: forward_return_{FORWARD_WINDOW} > cutoff, where cutoff =
+    75th percentile of the TRAINING set's forward returns only (matches the
     final LSTM run's CUTOFF_PERCENTILE=75, avoiding the 95th-percentile
     "too rare to learn" problem flagged early in the project, and the
     70th used in one XGBoost sweep).
   - Strict walk-forward: for a decision made at time T, the model is
     trained ONLY on rows whose OWN forward-return label resolves at or
-    before T (i.e. row date <= T - 20 trading days). This embargo/purge
-    gap is exactly the fix the project's own chat history identified was
-    missing from the LSTM's interleaved test split ("a training matrix
-    from March 2015 and a test matrix from June 2015 sit right next to
-    each other... not yet a genuine holdout of the future").
+    before T (i.e. row date <= T - FORWARD_WINDOW trading days). This
+    embargo/purge gap is exactly the fix the project's own chat history
+    identified was missing from the LSTM's interleaved test split ("a
+    training matrix from March 2015 and a test matrix from June 2015 sit
+    right next to each other... not yet a genuine holdout of the future").
   - At T, every ticker with a complete (non-NaN) feature row is scored;
     the top N by predicted buy-probability are the "buy" list.
-  - $10,000 equal-weighted across the buy list, held exactly 20 trading
-    days, compared against $10,000 in SPY over the identical window.
+  - $10,000 equal-weighted across the buy list, held exactly FORWARD_WINDOW
+    trading days, compared against $10,000 in SPY over the identical window.
+
+  FORWARD_WINDOW (imported from features.py, currently 40 trading days --
+  changed from 20 on 2026-08-27 per the horizon sweep results) is the
+  single source of truth for both the label horizon and the embargo gap;
+  LABEL_COL is likewise imported rather than hardcoded so this script
+  always matches whatever horizon features.py is currently building.
 """
 import pandas as pd
 import numpy as np
@@ -28,11 +34,10 @@ from xgboost import XGBClassifier
 from sklearn.metrics import roc_auc_score, matthews_corrcoef, precision_score
 import json
 
-from features import FEATURE_COLS, FORWARD_WINDOW
+from features import FEATURE_COLS, FORWARD_WINDOW, LABEL_COL, DATA_DIR, OUT_DIR
 
 TOP_N = 5
 CUTOFF_PERCENTILE = 75
-LABEL_COL = "forward_return_20"
 
 TIMEPOINTS = [
     "2013-01-02", "2015-01-02", "2017-01-03", "2019-01-02",
@@ -47,11 +52,11 @@ def nearest_trading_date(target, available_dates):
 
 
 def run_backtest():
-    feat = pd.read_parquet("/root/pipe_dream_final/out/features.parquet")
+    feat = pd.read_parquet(OUT_DIR / "features.parquet")
     feat = feat.sort_values(["ticker", "date"]).reset_index(drop=True)
 
-    spy = pd.read_csv("/tmp/td_data/SPY.csv", parse_dates=["date"]).sort_values("date").reset_index(drop=True)
-    spy["spy_fwd_return_20"] = spy["close"].shift(-FORWARD_WINDOW) / spy["close"] - 1
+    spy = pd.read_csv(DATA_DIR / "SPY.csv", parse_dates=["date"]).sort_values("date").reset_index(drop=True)
+    spy["spy_fwd_return"] = spy["close"].shift(-FORWARD_WINDOW) / spy["close"] - 1
 
     all_dates = feat["date"].drop_duplicates().sort_values().reset_index(drop=True)
 
@@ -117,9 +122,9 @@ def run_backtest():
 
         top_picks = test_rows.sort_values("buy_proba", ascending=False).head(TOP_N)
 
-        # simulate $10k equal weight, using REALIZED forward_return_20 for
-        # each picked ticker (already computed with strict no-lookahead
-        # construction: close[t+20] / close[t] - 1)
+        # simulate $10k equal weight, using REALIZED LABEL_COL for each picked
+        # ticker (already computed with strict no-lookahead construction:
+        # close[t+FORWARD_WINDOW] / close[t] - 1)
         picks_with_realized = top_picks.dropna(subset=[LABEL_COL])
         n_realized = len(picks_with_realized)
         if n_realized == 0:
@@ -133,11 +138,11 @@ def run_backtest():
         portfolio_return = ending_value / 10000 - 1
 
         spy_row = spy[spy["date"] == tp]
-        if spy_row.empty or spy_row["spy_fwd_return_20"].isna().all():
+        if spy_row.empty or spy_row["spy_fwd_return"].isna().all():
             spy_return = None
             spy_ending = None
         else:
-            spy_return = float(spy_row["spy_fwd_return_20"].iloc[0])
+            spy_return = float(spy_row["spy_fwd_return"].iloc[0])
             spy_ending = 10000 * (1 + spy_return)
 
         # naive "buy everything scored" universe benchmark
@@ -159,7 +164,7 @@ def run_backtest():
 
         for t, p, r in zip(picks_with_realized["ticker"], picks_with_realized["buy_proba"], picks_with_realized[LABEL_COL]):
             picks_log.append({"timepoint": str(tp.date()), "ticker": t, "buy_proba": round(float(p), 3),
-                               "realized_20d_return_pct": round(float(r) * 100, 2)})
+                               "realized_fwd_return_pct": round(float(r) * 100, 2)})
 
     return results, metrics_log, picks_log
 
@@ -167,11 +172,11 @@ def run_backtest():
 if __name__ == "__main__":
     results, metrics_log, picks_log = run_backtest()
 
-    with open("/root/pipe_dream_final/out/backtest_results.json", "w") as f:
+    with open(OUT_DIR / "backtest_results.json", "w") as f:
         json.dump(results, f, indent=2)
-    with open("/root/pipe_dream_final/out/backtest_metrics.json", "w") as f:
+    with open(OUT_DIR / "backtest_metrics.json", "w") as f:
         json.dump(metrics_log, f, indent=2)
-    pd.DataFrame(picks_log).to_csv("/root/pipe_dream_final/out/backtest_picks.csv", index=False)
+    pd.DataFrame(picks_log).to_csv(OUT_DIR / "backtest_picks.csv", index=False)
 
     print(f"\n{'timepoint':<12}{'model %':>10}{'SPY %':>10}{'univ avg %':>12}{'beat SPY':>10}")
     for r in results:

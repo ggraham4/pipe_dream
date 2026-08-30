@@ -1,0 +1,502 @@
+[
+  {
+    "timepoint": "2013-01-02",
+    "pit_snapshot_date": "2013-01-02",
+    "n_candidates_scored": 1048,
+    "n_gap_tickers_eligible": 16,
+    "baseline_picks": [
+      "UI",
+      "TGTX",
+      "CORT",
+      "DECK",
+      "ARCB"
+    ],
+    "baseline_gap_picks": 0,
+    "baseline_return_pct": 13.08,
+    "augmented_picks": [
+      "CORT",
+      "DECK",
+      "AMD",
+      "CVSA",
+      "UI"
+    ],
+    "augmented_gap_picks": 0,
+    "augmented_return_pct": 13.51,
+    "hmm_weight_on_augmented": 0.105,
+    "blend_allocation": [
+      {
+        "ticker": "CORT",
+        "allocation_pct": 20.0
+      },
+      {
+        "ticker": "DECK",
+        "allocation_pct": 20.0
+      },
+      {
+        "ticker": "UI",
+        "allocation_pct": 20.0
+      },
+      {
+        "ticker": "TGTX",
+        "allocation_pct": 17.9
+      },
+      {
+        "ticker": "ARCB",
+        "allocation_pct": 17.9
+      },
+      {
+        "ticker": "AMD",
+        "allocation_pct": 2.1
+      },
+      {
+        "ticker": "CVSA",
+        "allocation_pct": 2.1
+      }
+    ],
+    "blend_return_pct": 13.12,
+    "spy_return_pct": 4.14
+  },
+  {
+    "timepoint": "2015-01-02",
+    "pit_snapshot_date": "2014-12-24",
+    "n_candidates_scored": 1126,
+    "n_gap_tickers_eligible": 18,
+    "baseline_picks": [
+      "LEU",
+      "EXEL",
+      "CLF",
+      "RIG",
+      "CHRD"
+    ],
+    "baseline_gap_picks": 1,
+    "baseline_return_pct": 9.31,
+    "augmented_picks": [
+      "RIG",
+      "NOG",
+      "LEU",
+      "CLF",
+      "CRK"
+    ],
+    "augmented_gap_picks": 1,
+    "augmented_return_pct": -1.23,
+    "hmm_weight_on_augmented": 0.0059,
+    "blend_allocation": [
+      {
+        "ticker": "RIG",
+        "allocation_pct": 20.0
+      },
+      {
+        "ticker": "LEU",
+        "allocation_pct": 20.0
+      },
+      {
+        "ticker": "CLF",
+        "allocation_pct": 20.0
+      },
+      {
+        "ticker": "EXEL",
+        "allocation_pct": 19.88
+      },
+      {
+        "ticker": "CHRD",
+        "allocation_pct": 19.88
+      },
+      {
+        "ticker": "NOG",
+        "allocation_pct": 0.12
+      },
+      {
+        "ticker": "CRK",
+        "allocation_pct": 0.12
+      }
+    ],
+    "blend_return_pct": 9.25,
+    "spy_return_pct": 2.77
+  },
+  {
+    "timepoint": "2017-01-03",
+    "pit_snapshot_date": "2017-01-03",
+    "n_candidates_scored": 1213,
+    "n_gap_tickers_eligible": 17,
+    "baseline_picks": [
+      "SLS",
+      "SRPT",
+      "CDNA",
+      "MGNI",
+      "CDE"
+    ],
+    "baseline_gap_picks": 0,
+    "baseline_return_pct": -10.61,
+    "augmented_picks": [
+      "ANF",
+      "ARWR",
+      "CLDX",
+      "NVDA",
+      "SLS"
+    ],
+    "augmented_gap_picks": 0,
+    "augmented_return_pct": -5.02,
+    "hmm_weight_on_augmented": 0.0068,
+    "blend_allocation": [
+      {
+        "ticker": "SLS",
+        "allocation_pct": 20.0
+      },
+      {
+        "ticker": "SRPT",
+        "allocation_pct": 19.86
+      },
+      {
+        "ticker": "CDNA",
+        "allocation_pct": 19.86
+      },
+      {
+        "ticker": "MGNI",
+        "allocation_pct": 19.86
+      },
+      {
+        "ticker": "CDE",
+        "allocation_pct": 19.86
+      },
+      {
+        "ticker": "ANF",
+        "allocation_pct": 0.14
+      },
+      {
+        "ticker": "ARWR",
+        "allocation_pct": 0.14
+      },
+      {
+        "ticker": "CLDX",
+        "allocation_pct": 0.14
+      },
+      {
+        "ticker": "NVDA",
+        "allocation_pct": 0.14
+      }
+    ],
+    "blend_return_pct": -10.57,
+    "spy_return_pct": 5.78
+  },
+  {
+    "timepoint": "2019-01-02",
+    "pit_snapshot_date": "2019-01-02",
+    "n_candidates_scored": 1280,
+    "n_gap_tickers_eligible": 16,
+    "baseline_picks": [
+      "TGTX",
+      "UNFI",
+      "SPB",
+      "MDGL",
+      "UCTT"
+    ],
+    "baseline_gap_picks": 0,
+    "baseline_return_pct": 36.49,
+    "augmented_picks": [
+      "UNFI",
+      "DAN",
+      "FLEX",
+      "UCTT",
+      "VISN"
+    ],
+    "augmented_gap_picks": 0,
+    "augmented_return_pct": 34.61,
+    "hmm_weight_on_augmented": 0.2559,
+    "blend_allocation": [
+      {
+        "ticker": "UNFI",
+        "allocation_pct": 20.0
+      },
+      {
+        "ticker": "UCTT",
+        "allocation_pct": 20.0
+      },
+      {
+        "ticker": "TGTX",
+        "allocation_pct": 14.88
+      },
+      {
+        "ticker": "SPB",
+        "allocation_pct": 14.88
+      },
+      {
+        "ticker": "MDGL",
+        "allocation_pct": 14.88
+      },
+      {
+        "ticker": "DAN",
+        "allocation_pct": 5.12
+      },
+      {
+        "ticker": "FLEX",
+        "allocation_pct": 5.12
+      },
+      {
+        "ticker": "VISN",
+        "allocation_pct": 5.12
+      }
+    ],
+    "blend_return_pct": 36.01,
+    "spy_return_pct": 12.09
+  },
+  {
+    "timepoint": "2021-01-04",
+    "pit_snapshot_date": "2020-12-21",
+    "n_candidates_scored": 1361,
+    "n_gap_tickers_eligible": 12,
+    "baseline_picks": [
+      "CCL",
+      "ARLP",
+      "NCLH",
+      "GEL",
+      "PR"
+    ],
+    "baseline_gap_picks": 0,
+    "baseline_return_pct": 73.09,
+    "augmented_picks": [
+      "FSLY",
+      "ZM",
+      "PBF",
+      "NMRK",
+      "CCL"
+    ],
+    "augmented_gap_picks": 0,
+    "augmented_return_pct": 39.76,
+    "hmm_weight_on_augmented": 0.0444,
+    "blend_allocation": [
+      {
+        "ticker": "CCL",
+        "allocation_pct": 20.0
+      },
+      {
+        "ticker": "ARLP",
+        "allocation_pct": 19.11
+      },
+      {
+        "ticker": "NCLH",
+        "allocation_pct": 19.11
+      },
+      {
+        "ticker": "GEL",
+        "allocation_pct": 19.11
+      },
+      {
+        "ticker": "PR",
+        "allocation_pct": 19.11
+      },
+      {
+        "ticker": "FSLY",
+        "allocation_pct": 0.89
+      },
+      {
+        "ticker": "ZM",
+        "allocation_pct": 0.89
+      },
+      {
+        "ticker": "PBF",
+        "allocation_pct": 0.89
+      },
+      {
+        "ticker": "NMRK",
+        "allocation_pct": 0.89
+      }
+    ],
+    "blend_return_pct": 71.61,
+    "spy_return_pct": 3.42
+  },
+  {
+    "timepoint": "2023-01-03",
+    "pit_snapshot_date": "2022-12-22",
+    "n_candidates_scored": 1494,
+    "n_gap_tickers_eligible": 7,
+    "baseline_picks": [
+      "IRON",
+      "CVNA",
+      "CIFR",
+      "WGS",
+      "FLNC"
+    ],
+    "baseline_gap_picks": 0,
+    "baseline_return_pct": 73.94,
+    "augmented_picks": [
+      "CVNA",
+      "AVAH",
+      "ACMR",
+      "NFLX",
+      "SMCI"
+    ],
+    "augmented_gap_picks": 0,
+    "augmented_return_pct": 42.06,
+    "hmm_weight_on_augmented": 0.3793,
+    "blend_allocation": [
+      {
+        "ticker": "CVNA",
+        "allocation_pct": 20.0
+      },
+      {
+        "ticker": "IRON",
+        "allocation_pct": 12.41
+      },
+      {
+        "ticker": "CIFR",
+        "allocation_pct": 12.41
+      },
+      {
+        "ticker": "WGS",
+        "allocation_pct": 12.41
+      },
+      {
+        "ticker": "FLNC",
+        "allocation_pct": 12.41
+      },
+      {
+        "ticker": "AVAH",
+        "allocation_pct": 7.59
+      },
+      {
+        "ticker": "ACMR",
+        "allocation_pct": 7.59
+      },
+      {
+        "ticker": "NFLX",
+        "allocation_pct": 7.59
+      },
+      {
+        "ticker": "SMCI",
+        "allocation_pct": 7.59
+      }
+    ],
+    "blend_return_pct": 61.84,
+    "spy_return_pct": 4.46
+  },
+  {
+    "timepoint": "2025-01-02",
+    "pit_snapshot_date": "2024-12-23",
+    "n_candidates_scored": 1529,
+    "n_gap_tickers_eligible": 2,
+    "baseline_picks": [
+      "FSLY",
+      "SMMT",
+      "ZETA",
+      "ASTS",
+      "CE"
+    ],
+    "baseline_gap_picks": 0,
+    "baseline_return_pct": -6.33,
+    "augmented_picks": [
+      "CE",
+      "SMCI",
+      "TRLV",
+      "NVTS",
+      "ACMR"
+    ],
+    "augmented_gap_picks": 0,
+    "augmented_return_pct": 0.45,
+    "hmm_weight_on_augmented": 0.0439,
+    "blend_allocation": [
+      {
+        "ticker": "CE",
+        "allocation_pct": 20.0
+      },
+      {
+        "ticker": "FSLY",
+        "allocation_pct": 19.12
+      },
+      {
+        "ticker": "SMMT",
+        "allocation_pct": 19.12
+      },
+      {
+        "ticker": "ZETA",
+        "allocation_pct": 19.12
+      },
+      {
+        "ticker": "ASTS",
+        "allocation_pct": 19.12
+      },
+      {
+        "ticker": "SMCI",
+        "allocation_pct": 0.88
+      },
+      {
+        "ticker": "TRLV",
+        "allocation_pct": 0.88
+      },
+      {
+        "ticker": "NVTS",
+        "allocation_pct": 0.88
+      },
+      {
+        "ticker": "ACMR",
+        "allocation_pct": 0.88
+      }
+    ],
+    "blend_return_pct": -6.04,
+    "spy_return_pct": -1.33
+  },
+  {
+    "timepoint": "2026-06-01",
+    "pit_snapshot_date": "2026-06-01",
+    "n_candidates_scored": 1571,
+    "n_gap_tickers_eligible": 2,
+    "baseline_picks": [
+      "WGS",
+      "GPCR",
+      "KRMN",
+      "TMDX",
+      "RGTI"
+    ],
+    "baseline_gap_picks": 0,
+    "baseline_return_pct": -0.53,
+    "augmented_picks": [
+      "WGS",
+      "PLNT",
+      "IBP",
+      "SHAK",
+      "ACMR"
+    ],
+    "augmented_gap_picks": 0,
+    "augmented_return_pct": 4.76,
+    "hmm_weight_on_augmented": 0.0073,
+    "blend_allocation": [
+      {
+        "ticker": "WGS",
+        "allocation_pct": 20.0
+      },
+      {
+        "ticker": "GPCR",
+        "allocation_pct": 19.85
+      },
+      {
+        "ticker": "KRMN",
+        "allocation_pct": 19.85
+      },
+      {
+        "ticker": "TMDX",
+        "allocation_pct": 19.85
+      },
+      {
+        "ticker": "RGTI",
+        "allocation_pct": 19.85
+      },
+      {
+        "ticker": "PLNT",
+        "allocation_pct": 0.15
+      },
+      {
+        "ticker": "IBP",
+        "allocation_pct": 0.15
+      },
+      {
+        "ticker": "SHAK",
+        "allocation_pct": 0.15
+      },
+      {
+        "ticker": "ACMR",
+        "allocation_pct": 0.15
+      }
+    ],
+    "blend_return_pct": -0.49,
+    "spy_return_pct": -3.83
+  }
+]

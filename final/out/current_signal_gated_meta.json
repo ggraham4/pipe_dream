@@ -1,0 +1,113 @@
+{
+  "as_of_date": "2026-08-28",
+  "gate": "HMM (2-state Gaussian, SPY daily returns, expanding window, causal)",
+  "hmm_weight_on_augmented": 0.0077,
+  "forward_window_trading_days": 40,
+  "train_rows": 5944219,
+  "label_cutoff_fwd_return": 0.0968,
+  "baseline_picks": [
+    "VISN",
+    "AXTI",
+    "VSH",
+    "AAOI",
+    "MNST"
+  ],
+  "augmented_picks": [
+    "VISN",
+    "IESC",
+    "FLNC",
+    "STRL",
+    "VSH"
+  ],
+  "allocation": [
+    {
+      "ticker": "VISN",
+      "allocation_pct": 20.0,
+      "source": "augmented+baseline",
+      "close": 6.46,
+      "momentum_20": -0.4497,
+      "momentum_60": -0.4708,
+      "relative_strength_20": -0.4836,
+      "pct_from_high_252": -0.6856,
+      "volatility_20": 0.1122
+    },
+    {
+      "ticker": "VSH",
+      "allocation_pct": 20.0,
+      "source": "augmented+baseline",
+      "close": 31.45,
+      "momentum_20": -0.0808,
+      "momentum_60": -0.5083,
+      "relative_strength_20": -0.1148,
+      "pct_from_high_252": -0.5153,
+      "volatility_20": 0.0539
+    },
+    {
+      "ticker": "AXTI",
+      "allocation_pct": 19.85,
+      "source": "baseline",
+      "close": 64.56,
+      "momentum_20": 0.0683,
+      "momentum_60": -0.3949,
+      "relative_strength_20": 0.0344,
+      "pct_from_high_252": -0.5416,
+      "volatility_20": 0.0951
+    },
+    {
+      "ticker": "AAOI",
+      "allocation_pct": 19.85,
+      "source": "baseline",
+      "close": 109.79,
+      "momentum_20": 0.164,
+      "momentum_60": -0.4035,
+      "relative_strength_20": 0.13,
+      "pct_from_high_252": -0.5079,
+      "volatility_20": 0.0912
+    },
+    {
+      "ticker": "MNST",
+      "allocation_pct": 19.85,
+      "source": "baseline",
+      "close": 46.47,
+      "momentum_20": -0.5242,
+      "momentum_60": -0.4734,
+      "relative_strength_20": -0.5581,
+      "pct_from_high_252": -0.5351,
+      "volatility_20": 0.3614
+    },
+    {
+      "ticker": "IESC",
+      "allocation_pct": 0.15,
+      "source": "augmented",
+      "close": 325.38,
+      "momentum_20": -0.4307,
+      "momentum_60": -0.5384,
+      "relative_strength_20": -0.4647,
+      "pct_from_high_252": -0.5902,
+      "volatility_20": 0.1459
+    },
+    {
+      "ticker": "FLNC",
+      "allocation_pct": 0.15,
+      "source": "augmented",
+      "close": 11.08,
+      "momentum_20": -0.2046,
+      "momentum_60": -0.5541,
+      "relative_strength_20": -0.2386,
+      "pct_from_high_252": -0.6562,
+      "volatility_20": 0.0446
+    },
+    {
+      "ticker": "STRL",
+      "allocation_pct": 0.15,
+      "source": "augmented",
+      "close": 494.76,
+      "momentum_20": -0.1709,
+      "momentum_60": -0.483,
+      "relative_strength_20": -0.2049,
+      "pct_from_high_252": -0.5021,
+      "volatility_20": 0.0404
+    }
+  ],
+  "beta_caveat": "Uses the fundamentals-beta feature set and a regime gate validated on exactly one real bear episode (2022) -- see models/fundamentals-beta-results.md, validation #6, for the full caveat. Pushed to live use at Gabe's explicit request."
+}

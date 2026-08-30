@@ -1,74 +1,74 @@
 [
   {
     "timepoint": "2013-01-02",
-    "train_rows": 62891,
-    "train_cutoff_date": "2012-12-03",
-    "label_cutoff_return": 0.0543,
-    "n_scored": 49,
-    "auc": 0.5431,
-    "mcc": null
+    "train_rows": 1405041,
+    "train_cutoff_date": "2012-11-02",
+    "label_cutoff_return": 0.0956,
+    "n_scored": 1009,
+    "auc": 0.5535,
+    "mcc": 0.0265
   },
   {
     "timepoint": "2015-01-02",
-    "train_rows": 87976,
-    "train_cutoff_date": "2014-12-03",
-    "label_cutoff_return": 0.0522,
-    "n_scored": 50,
-    "auc": 0.5449,
-    "mcc": null
+    "train_rows": 1927899,
+    "train_cutoff_date": "2014-11-04",
+    "label_cutoff_return": 0.0946,
+    "n_scored": 1082,
+    "auc": 0.6432,
+    "mcc": 0.0105
   },
   {
     "timepoint": "2017-01-03",
-    "train_rows": 113176,
-    "train_cutoff_date": "2016-12-02",
-    "label_cutoff_return": 0.0505,
-    "n_scored": 50,
-    "auc": 0.8718,
-    "mcc": null
+    "train_rows": 2493414,
+    "train_cutoff_date": "2016-11-03",
+    "label_cutoff_return": 0.0919,
+    "n_scored": 1170,
+    "auc": 0.5674,
+    "mcc": -0.0181
   },
   {
     "timepoint": "2019-01-02",
-    "train_rows": 138276,
-    "train_cutoff_date": "2018-11-30",
-    "label_cutoff_return": 0.0495,
-    "n_scored": 50,
-    "auc": 0.6817,
-    "mcc": 0.1166
+    "train_rows": 3094455,
+    "train_cutoff_date": "2018-11-01",
+    "label_cutoff_return": 0.0887,
+    "n_scored": 1238,
+    "auc": 0.5771,
+    "mcc": 0.025
   },
   {
     "timepoint": "2021-01-04",
-    "train_rows": 163526,
-    "train_cutoff_date": "2020-12-03",
-    "label_cutoff_return": 0.0516,
-    "n_scored": 50,
-    "auc": 0.5179,
-    "mcc": 0.1
+    "train_rows": 3738722,
+    "train_cutoff_date": "2020-11-04",
+    "label_cutoff_return": 0.0933,
+    "n_scored": 1322,
+    "auc": 0.7308,
+    "mcc": 0.0525
   },
   {
     "timepoint": "2023-01-03",
-    "train_rows": 188676,
-    "train_cutoff_date": "2022-12-02",
-    "label_cutoff_return": 0.0522,
-    "n_scored": 50,
-    "auc": 0.8851,
-    "mcc": 0.1216
+    "train_rows": 4430917,
+    "train_cutoff_date": "2022-11-03",
+    "label_cutoff_return": 0.094,
+    "n_scored": 1460,
+    "auc": 0.6911,
+    "mcc": 0.0468
   },
   {
     "timepoint": "2025-01-02",
-    "train_rows": 213776,
-    "train_cutoff_date": "2024-12-03",
-    "label_cutoff_return": 0.053,
-    "n_scored": 50,
-    "auc": 0.5806,
-    "mcc": -0.1118
+    "train_rows": 5171460,
+    "train_cutoff_date": "2024-11-04",
+    "label_cutoff_return": 0.0961,
+    "n_scored": 1500,
+    "auc": 0.4538,
+    "mcc": -0.0149
   },
   {
     "timepoint": "2026-06-01",
-    "train_rows": 231376,
-    "train_cutoff_date": "2026-05-01",
-    "label_cutoff_return": 0.0536,
-    "n_scored": 50,
-    "auc": 0.5294,
+    "train_rows": 5706252,
+    "train_cutoff_date": "2026-04-02",
+    "label_cutoff_return": 0.0967,
+    "n_scored": 1542,
+    "auc": 0.4155,
     "mcc": null
   }
 ]

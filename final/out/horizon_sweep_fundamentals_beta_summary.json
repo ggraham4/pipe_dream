@@ -1,0 +1,900 @@
+{
+  "horizons": {
+    "10": {
+      "baseline": {
+        "win_rate": "6/8",
+        "avg_return_pct": 5.33,
+        "avg_spy_pct": 1.38,
+        "results": [
+          {
+            "timepoint": "2013-01-02",
+            "picks": [
+              "GRBK",
+              "CORT",
+              "AMD",
+              "ORKA",
+              "BXMT"
+            ],
+            "model_return_pct": 3.86,
+            "spy_return_pct": 0.68,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2015-01-02",
+            "picks": [
+              "ARWR",
+              "CHRD",
+              "AAOI",
+              "DRS",
+              "CRK"
+            ],
+            "model_return_pct": -16.13,
+            "spy_return_pct": -1.85,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2017-01-03",
+            "picks": [
+              "SRPT",
+              "OPCH",
+              "ARWR",
+              "TGTX",
+              "PTCT"
+            ],
+            "model_return_pct": 15.53,
+            "spy_return_pct": 0.67,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2019-01-02",
+            "picks": [
+              "CLSK",
+              "ALGN",
+              "VISN",
+              "SKY",
+              "ROKU"
+            ],
+            "model_return_pct": 7.72,
+            "spy_return_pct": 4.32,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2021-01-04",
+            "picks": [
+              "CYTK",
+              "FSLY",
+              "W",
+              "ZM",
+              "NGL"
+            ],
+            "model_return_pct": 13.43,
+            "spy_return_pct": 2.67,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2023-01-03",
+            "picks": [
+              "IRON",
+              "FLNC",
+              "S",
+              "CVNA",
+              "OSCR"
+            ],
+            "model_return_pct": 22.14,
+            "spy_return_pct": 2.8,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2025-01-02",
+            "picks": [
+              "TRLV",
+              "TMDX",
+              "ASTS",
+              "SMMT",
+              "AAOI"
+            ],
+            "model_return_pct": -8.83,
+            "spy_return_pct": 2.21,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2026-06-01",
+            "picks": [
+              "KRMN",
+              "VRDN",
+              "IBP",
+              "GPGI",
+              "ALMS"
+            ],
+            "model_return_pct": 4.94,
+            "spy_return_pct": -0.49,
+            "beat_spy": true
+          }
+        ]
+      },
+      "augmented": {
+        "win_rate": "5/8",
+        "avg_return_pct": 5.62,
+        "avg_spy_pct": 1.38,
+        "results": [
+          {
+            "timepoint": "2013-01-02",
+            "picks": [
+              "LEU",
+              "PRDO",
+              "SGI",
+              "GSAT",
+              "BXMT"
+            ],
+            "model_return_pct": 3.89,
+            "spy_return_pct": 0.68,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2015-01-02",
+            "picks": [
+              "SM",
+              "DXPE",
+              "EXEL",
+              "NOG",
+              "MTZ"
+            ],
+            "model_return_pct": -6.06,
+            "spy_return_pct": -1.85,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2017-01-03",
+            "picks": [
+              "SRPT",
+              "OPCH",
+              "TGTX",
+              "ARWR",
+              "CNX"
+            ],
+            "model_return_pct": 10.94,
+            "spy_return_pct": 0.67,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2019-01-02",
+            "picks": [
+              "VISN",
+              "PCG",
+              "MDGL",
+              "EXTR",
+              "FLEX"
+            ],
+            "model_return_pct": -11.18,
+            "spy_return_pct": 4.32,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2021-01-04",
+            "picks": [
+              "FSLY",
+              "ZM",
+              "NGL",
+              "CYTK",
+              "W"
+            ],
+            "model_return_pct": 13.43,
+            "spy_return_pct": 2.67,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2023-01-03",
+            "picks": [
+              "AFRM",
+              "ROG",
+              "AVAH",
+              "CVNA",
+              "WMS"
+            ],
+            "model_return_pct": 35.82,
+            "spy_return_pct": 2.8,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2025-01-02",
+            "picks": [
+              "TRLV",
+              "CE",
+              "TMDX",
+              "SMCI",
+              "ZETA"
+            ],
+            "model_return_pct": -4.64,
+            "spy_return_pct": 2.21,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2026-06-01",
+            "picks": [
+              "SHAK",
+              "KRMN",
+              "TMDX",
+              "GPGI",
+              "VRDN"
+            ],
+            "model_return_pct": 2.77,
+            "spy_return_pct": -0.49,
+            "beat_spy": true
+          }
+        ]
+      }
+    },
+    "20": {
+      "baseline": {
+        "win_rate": "5/8",
+        "avg_return_pct": 17.55,
+        "avg_spy_pct": 2.72,
+        "results": [
+          {
+            "timepoint": "2013-01-02",
+            "picks": [
+              "TGTX",
+              "CORT",
+              "UI",
+              "GRBK",
+              "PRDO"
+            ],
+            "model_return_pct": 8.6,
+            "spy_return_pct": 2.49,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2015-01-02",
+            "picks": [
+              "EXEL",
+              "LEU",
+              "AAOI",
+              "SLS",
+              "CHRD"
+            ],
+            "model_return_pct": -3.94,
+            "spy_return_pct": -1.71,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2017-01-03",
+            "picks": [
+              "ARWR",
+              "SLS",
+              "SRPT",
+              "CDNA",
+              "PTCT"
+            ],
+            "model_return_pct": -1.66,
+            "spy_return_pct": 1.06,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2019-01-02",
+            "picks": [
+              "SPB",
+              "WDC",
+              "MHK",
+              "VISN",
+              "CLDX"
+            ],
+            "model_return_pct": 36.27,
+            "spy_return_pct": 7.89,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2021-01-04",
+            "picks": [
+              "NGL",
+              "W",
+              "FSLY",
+              "ZM",
+              "TRVI"
+            ],
+            "model_return_pct": 16.99,
+            "spy_return_pct": 3.46,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2023-01-03",
+            "picks": [
+              "IRON",
+              "MARA",
+              "CVNA",
+              "RIVN",
+              "WGS"
+            ],
+            "model_return_pct": 76.09,
+            "spy_return_pct": 7.87,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2025-01-02",
+            "picks": [
+              "TMDX",
+              "TRLV",
+              "CE",
+              "CHRN",
+              "SMMT"
+            ],
+            "model_return_pct": -4.63,
+            "spy_return_pct": 2.25,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2026-06-01",
+            "picks": [
+              "KRMN",
+              "GPCR",
+              "TMDX",
+              "GPGI",
+              "CHTR"
+            ],
+            "model_return_pct": 12.64,
+            "spy_return_pct": -1.55,
+            "beat_spy": true
+          }
+        ]
+      },
+      "augmented": {
+        "win_rate": "5/8",
+        "avg_return_pct": 15.08,
+        "avg_spy_pct": 2.72,
+        "results": [
+          {
+            "timepoint": "2013-01-02",
+            "picks": [
+              "PRDO",
+              "LEU",
+              "AXTI",
+              "CORT",
+              "GSAT"
+            ],
+            "model_return_pct": 22.73,
+            "spy_return_pct": 2.49,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2015-01-02",
+            "picks": [
+              "CLF",
+              "KTOS",
+              "NOG",
+              "EXEL",
+              "SM"
+            ],
+            "model_return_pct": 7.31,
+            "spy_return_pct": -1.71,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2017-01-03",
+            "picks": [
+              "TDW",
+              "CNX",
+              "SRPT",
+              "TGTX",
+              "ANF"
+            ],
+            "model_return_pct": -7.87,
+            "spy_return_pct": 1.06,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2019-01-02",
+            "picks": [
+              "CLSK",
+              "DAN",
+              "PCG",
+              "MHK",
+              "FLEX"
+            ],
+            "model_return_pct": 1.95,
+            "spy_return_pct": 7.89,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2021-01-04",
+            "picks": [
+              "ZM",
+              "FSLY",
+              "W",
+              "NGL",
+              "APPN"
+            ],
+            "model_return_pct": 20.48,
+            "spy_return_pct": 3.46,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2023-01-03",
+            "picks": [
+              "ROG",
+              "AFRM",
+              "AVAH",
+              "RIOT",
+              "MARA"
+            ],
+            "model_return_pct": 81.35,
+            "spy_return_pct": 7.87,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2025-01-02",
+            "picks": [
+              "TRLV",
+              "CE",
+              "SMCI",
+              "TMDX",
+              "VISN"
+            ],
+            "model_return_pct": -6.01,
+            "spy_return_pct": 2.25,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2026-06-01",
+            "picks": [
+              "TMDX",
+              "KRMN",
+              "VISN",
+              "CHTR",
+              "VRDN"
+            ],
+            "model_return_pct": 0.72,
+            "spy_return_pct": -1.55,
+            "beat_spy": true
+          }
+        ]
+      }
+    },
+    "40": {
+      "baseline": {
+        "win_rate": "6/8",
+        "avg_return_pct": 22.28,
+        "avg_spy_pct": 3.44,
+        "results": [
+          {
+            "timepoint": "2013-01-02",
+            "picks": [
+              "CORT",
+              "UI",
+              "TGTX",
+              "DECK",
+              "ARCB"
+            ],
+            "model_return_pct": 13.08,
+            "spy_return_pct": 4.14,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2015-01-02",
+            "picks": [
+              "EXEL",
+              "LEU",
+              "CLF",
+              "CRK",
+              "SLS"
+            ],
+            "model_return_pct": 13.67,
+            "spy_return_pct": 2.77,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2017-01-03",
+            "picks": [
+              "SLS",
+              "SRPT",
+              "CDNA",
+              "MGNI",
+              "CNX"
+            ],
+            "model_return_pct": -9.26,
+            "spy_return_pct": 5.78,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2019-01-02",
+            "picks": [
+              "TGTX",
+              "SPB",
+              "UNFI",
+              "VISN",
+              "WDC"
+            ],
+            "model_return_pct": 41.16,
+            "spy_return_pct": 12.09,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2021-01-04",
+            "picks": [
+              "ARLP",
+              "CCL",
+              "VNOM",
+              "PAA",
+              "EPR"
+            ],
+            "model_return_pct": 33.12,
+            "spy_return_pct": 3.42,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2023-01-03",
+            "picks": [
+              "IRON",
+              "CIFR",
+              "CVNA",
+              "WGS",
+              "TSLA"
+            ],
+            "model_return_pct": 85.57,
+            "spy_return_pct": 4.46,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2025-01-02",
+            "picks": [
+              "ZETA",
+              "CE",
+              "SMMT",
+              "TMDX",
+              "AMLX"
+            ],
+            "model_return_pct": -10.93,
+            "spy_return_pct": -1.33,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2026-06-01",
+            "picks": [
+              "KRMN",
+              "GPCR",
+              "WGS",
+              "GPGI",
+              "VRDN"
+            ],
+            "model_return_pct": 11.86,
+            "spy_return_pct": -3.83,
+            "beat_spy": true
+          }
+        ]
+      },
+      "augmented": {
+        "win_rate": "5/8",
+        "avg_return_pct": 16.18,
+        "avg_spy_pct": 3.44,
+        "results": [
+          {
+            "timepoint": "2013-01-02",
+            "picks": [
+              "PRDO",
+              "HALO",
+              "MTG",
+              "CYTK",
+              "ATRC"
+            ],
+            "model_return_pct": 11.65,
+            "spy_return_pct": 4.14,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2015-01-02",
+            "picks": [
+              "LEU",
+              "CLF",
+              "CRK",
+              "DXPE",
+              "NOG"
+            ],
+            "model_return_pct": -0.61,
+            "spy_return_pct": 2.77,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2017-01-03",
+            "picks": [
+              "NVDA",
+              "CNX",
+              "ANF",
+              "CDNA",
+              "LEU"
+            ],
+            "model_return_pct": -6.17,
+            "spy_return_pct": 5.78,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2019-01-02",
+            "picks": [
+              "WTTR",
+              "UCTT",
+              "UNFI",
+              "OII",
+              "FLEX"
+            ],
+            "model_return_pct": 32.88,
+            "spy_return_pct": 12.09,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2021-01-04",
+            "picks": [
+              "ATRO",
+              "ZM",
+              "PBF",
+              "FSLY",
+              "CVNA"
+            ],
+            "model_return_pct": 33.34,
+            "spy_return_pct": 3.42,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2023-01-03",
+            "picks": [
+              "CVNA",
+              "AVAH",
+              "NFLX",
+              "CIFR",
+              "TRLV"
+            ],
+            "model_return_pct": 64.21,
+            "spy_return_pct": 4.46,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2025-01-02",
+            "picks": [
+              "CE",
+              "SMCI",
+              "TRLV",
+              "AMLX",
+              "ZETA"
+            ],
+            "model_return_pct": -12.95,
+            "spy_return_pct": -1.33,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2026-06-01",
+            "picks": [
+              "SHAK",
+              "TMDX",
+              "WGS",
+              "PLNT",
+              "FIGS"
+            ],
+            "model_return_pct": 7.1,
+            "spy_return_pct": -3.83,
+            "beat_spy": true
+          }
+        ]
+      }
+    },
+    "60": {
+      "baseline": {
+        "win_rate": "5/8",
+        "avg_return_pct": 16.68,
+        "avg_spy_pct": 4.94,
+        "results": [
+          {
+            "timepoint": "2013-01-02",
+            "picks": [
+              "TGTX",
+              "UI",
+              "CORT",
+              "AMD",
+              "PRDO"
+            ],
+            "model_return_pct": 10.07,
+            "spy_return_pct": 6.84,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2015-01-02",
+            "picks": [
+              "LEU",
+              "EXEL",
+              "CLF",
+              "GSAT",
+              "CLDX"
+            ],
+            "model_return_pct": 23.14,
+            "spy_return_pct": 0.49,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2017-01-03",
+            "picks": [
+              "TDW",
+              "OCUL",
+              "MGNI",
+              "SRPT",
+              "CDNA"
+            ],
+            "model_return_pct": -22.79,
+            "spy_return_pct": 4.91,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2019-01-02",
+            "picks": [
+              "TGTX",
+              "SLS",
+              "AAOI",
+              "WDC",
+              "MHK"
+            ],
+            "model_return_pct": 13.54,
+            "spy_return_pct": 12.91,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2021-01-04",
+            "picks": [
+              "PR",
+              "ARLP",
+              "CCL",
+              "NCLH",
+              "BKD"
+            ],
+            "model_return_pct": 59.74,
+            "spy_return_pct": 7.47,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2023-01-03",
+            "picks": [
+              "IRON",
+              "FLNC",
+              "TSLA",
+              "RIVN",
+              "MARA"
+            ],
+            "model_return_pct": 46.37,
+            "spy_return_pct": 6.01,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2025-01-02",
+            "picks": [
+              "ASTS",
+              "SMMT",
+              "AMLX",
+              "FSLY",
+              "ZETA"
+            ],
+            "model_return_pct": -13.32,
+            "spy_return_pct": -4.05,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2026-06-01",
+            "picks": [
+              "GPCR",
+              "ZBIO",
+              "HYMC",
+              "RGTI",
+              "ERAS"
+            ],
+            "model_return_pct": 17.63,
+            "spy_return_pct": null,
+            "beat_spy": false
+          }
+        ]
+      },
+      "augmented": {
+        "win_rate": "4/8",
+        "avg_return_pct": 11.98,
+        "avg_spy_pct": 4.94,
+        "results": [
+          {
+            "timepoint": "2013-01-02",
+            "picks": [
+              "PRDO",
+              "CORT",
+              "DECK",
+              "AMD",
+              "TGTX"
+            ],
+            "model_return_pct": 16.85,
+            "spy_return_pct": 6.84,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2015-01-02",
+            "picks": [
+              "CLF",
+              "LEU",
+              "CYTK",
+              "DXPE",
+              "MTZ"
+            ],
+            "model_return_pct": -9.39,
+            "spy_return_pct": 0.49,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2017-01-03",
+            "picks": [
+              "LEU",
+              "CRK",
+              "CNX",
+              "TDW",
+              "CDNA"
+            ],
+            "model_return_pct": -28.68,
+            "spy_return_pct": 4.91,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2019-01-02",
+            "picks": [
+              "VECO",
+              "UCTT",
+              "ACMR",
+              "WTTR",
+              "CENX"
+            ],
+            "model_return_pct": 39.02,
+            "spy_return_pct": 12.91,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2021-01-04",
+            "picks": [
+              "ZM",
+              "ATRO",
+              "NGL",
+              "NMRK",
+              "BBT"
+            ],
+            "model_return_pct": 19.96,
+            "spy_return_pct": 7.47,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2023-01-03",
+            "picks": [
+              "NFLX",
+              "MARA",
+              "AVAH",
+              "TRLV",
+              "CVNA"
+            ],
+            "model_return_pct": 52.14,
+            "spy_return_pct": 6.01,
+            "beat_spy": true
+          },
+          {
+            "timepoint": "2025-01-02",
+            "picks": [
+              "SMCI",
+              "AMLX",
+              "POWL",
+              "VSAT",
+              "LEU"
+            ],
+            "model_return_pct": -6.03,
+            "spy_return_pct": -4.05,
+            "beat_spy": false
+          },
+          {
+            "timepoint": "2026-06-01",
+            "picks": [
+              "TMDX",
+              "KSS",
+              "WGS",
+              "FIGS",
+              "UI"
+            ],
+            "model_return_pct": 32.79,
+            "spy_return_pct": null,
+            "beat_spy": false
+          }
+        ]
+      }
+    }
+  }
+}

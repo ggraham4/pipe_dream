@@ -1,0 +1,27 @@
+# Dashboard app dependencies. Install into the SAME Python environment
+# you already use to run the model scripts in final/src/ and final/models/
+# (per the project's own notes, that's Gabe's local "pipe_dream" conda env).
+#
+#   conda activate pipe_dream
+#   pip install -r requirements.txt
+#
+# xgboost, torch, scikit-learn, pandas, numpy, pyarrow should already be
+# installed there (the existing scripts depend on them) -- pip will just
+# confirm/skip those. streamlit and pyyaml (a streamlit dependency) are
+# the only genuinely new packages this app needs.
+
+streamlit>=1.38
+pandas>=2.0
+numpy>=1.24
+pyarrow>=14.0
+xgboost>=2.0
+torch>=2.0
+scikit-learn>=1.3
+
+# needed for the Stock Buy/No-Buy -> Regime Gated (beta) tab, which fits a
+# 2-state Gaussian HMM on SPY returns to compute the live gate weight
+# (final/src/regime_signals_beta.py, final/src/current_signal_gated.py):
+hmmlearn>=0.3
+
+# only needed if you use the two optional data-refresh scripts:
+yfinance>=0.2.40

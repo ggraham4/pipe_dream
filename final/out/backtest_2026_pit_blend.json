@@ -1,0 +1,254 @@
+[
+  {
+    "pick_date": "2026-01-02",
+    "exit_date": "2026-03-03",
+    "resolved": true,
+    "hmm_weight_on_augmented": 0.0093,
+    "blend_allocation": [
+      {
+        "ticker": "CORT",
+        "allocation_pct": 20.0
+      },
+      {
+        "ticker": "USAR",
+        "allocation_pct": 19.81
+      },
+      {
+        "ticker": "RGTI",
+        "allocation_pct": 19.81
+      },
+      {
+        "ticker": "OKLO",
+        "allocation_pct": 19.81
+      },
+      {
+        "ticker": "IONQ",
+        "allocation_pct": 19.81
+      },
+      {
+        "ticker": "CLSK",
+        "allocation_pct": 0.19
+      },
+      {
+        "ticker": "LEU",
+        "allocation_pct": 0.19
+      },
+      {
+        "ticker": "RIOT",
+        "allocation_pct": 0.19
+      },
+      {
+        "ticker": "LRN",
+        "allocation_pct": 0.19
+      }
+    ],
+    "blend_return_pct": -7.53,
+    "spy_return_pct": -0.42,
+    "n_pit_gap_picks_baseline": 0,
+    "n_pit_gap_picks_augmented": 0
+  },
+  {
+    "pick_date": "2026-03-03",
+    "exit_date": "2026-04-29",
+    "resolved": true,
+    "hmm_weight_on_augmented": 0.0177,
+    "blend_allocation": [
+      {
+        "ticker": "CORT",
+        "allocation_pct": 20.0
+      },
+      {
+        "ticker": "GRAL",
+        "allocation_pct": 19.65
+      },
+      {
+        "ticker": "HOOD",
+        "allocation_pct": 19.65
+      },
+      {
+        "ticker": "U",
+        "allocation_pct": 19.65
+      },
+      {
+        "ticker": "NVTS",
+        "allocation_pct": 19.65
+      },
+      {
+        "ticker": "CLSK",
+        "allocation_pct": 0.35
+      },
+      {
+        "ticker": "HL",
+        "allocation_pct": 0.35
+      },
+      {
+        "ticker": "LIF",
+        "allocation_pct": 0.35
+      },
+      {
+        "ticker": "P",
+        "allocation_pct": 0.35
+      }
+    ],
+    "blend_return_pct": 24.54,
+    "spy_return_pct": 4.59,
+    "n_pit_gap_picks_baseline": 0,
+    "n_pit_gap_picks_augmented": 0
+  },
+  {
+    "pick_date": "2026-04-29",
+    "exit_date": "2026-06-25",
+    "resolved": true,
+    "hmm_weight_on_augmented": 0.0083,
+    "blend_allocation": [
+      {
+        "ticker": "GPCR",
+        "allocation_pct": 19.83
+      },
+      {
+        "ticker": "VISN",
+        "allocation_pct": 19.83
+      },
+      {
+        "ticker": "FLNC",
+        "allocation_pct": 19.83
+      },
+      {
+        "ticker": "GRAL",
+        "allocation_pct": 19.83
+      },
+      {
+        "ticker": "KTOS",
+        "allocation_pct": 19.83
+      },
+      {
+        "ticker": "VERX",
+        "allocation_pct": 0.17
+      },
+      {
+        "ticker": "LEU",
+        "allocation_pct": 0.17
+      },
+      {
+        "ticker": "LITE",
+        "allocation_pct": 0.17
+      },
+      {
+        "ticker": "VIAV",
+        "allocation_pct": 0.17
+      },
+      {
+        "ticker": "CIEN",
+        "allocation_pct": 0.17
+      }
+    ],
+    "blend_return_pct": 22.8,
+    "spy_return_pct": 2.45,
+    "n_pit_gap_picks_baseline": 0,
+    "n_pit_gap_picks_augmented": 0
+  },
+  {
+    "pick_date": "2026-06-25",
+    "exit_date": "2026-08-21",
+    "resolved": true,
+    "hmm_weight_on_augmented": 0.0962,
+    "blend_allocation": [
+      {
+        "ticker": "LUNR",
+        "allocation_pct": 18.08
+      },
+      {
+        "ticker": "FSLY",
+        "allocation_pct": 18.08
+      },
+      {
+        "ticker": "CHTR",
+        "allocation_pct": 18.08
+      },
+      {
+        "ticker": "RDW",
+        "allocation_pct": 18.08
+      },
+      {
+        "ticker": "HYMC",
+        "allocation_pct": 18.08
+      },
+      {
+        "ticker": "PENG",
+        "allocation_pct": 1.92
+      },
+      {
+        "ticker": "HL",
+        "allocation_pct": 1.92
+      },
+      {
+        "ticker": "VIAV",
+        "allocation_pct": 1.92
+      },
+      {
+        "ticker": "CIEN",
+        "allocation_pct": 1.92
+      },
+      {
+        "ticker": "ORCL",
+        "allocation_pct": 1.92
+      }
+    ],
+    "blend_return_pct": 17.98,
+    "spy_return_pct": 4.28,
+    "n_pit_gap_picks_baseline": 0,
+    "n_pit_gap_picks_augmented": 0
+  },
+  {
+    "pick_date": "2026-08-21",
+    "exit_date": null,
+    "resolved": false,
+    "hmm_weight_on_augmented": 0.0108,
+    "blend_allocation": [
+      {
+        "ticker": "NVTS",
+        "allocation_pct": 19.78
+      },
+      {
+        "ticker": "PL",
+        "allocation_pct": 19.78
+      },
+      {
+        "ticker": "RDW",
+        "allocation_pct": 19.78
+      },
+      {
+        "ticker": "LUNR",
+        "allocation_pct": 19.78
+      },
+      {
+        "ticker": "MNST",
+        "allocation_pct": 19.78
+      },
+      {
+        "ticker": "CLSK",
+        "allocation_pct": 0.22
+      },
+      {
+        "ticker": "AMKR",
+        "allocation_pct": 0.22
+      },
+      {
+        "ticker": "VECO",
+        "allocation_pct": 0.22
+      },
+      {
+        "ticker": "CIEN",
+        "allocation_pct": 0.22
+      },
+      {
+        "ticker": "PENG",
+        "allocation_pct": 0.22
+      }
+    ],
+    "blend_return_pct": null,
+    "spy_return_pct": null,
+    "n_pit_gap_picks_baseline": 0,
+    "n_pit_gap_picks_augmented": 0
+  }
+]

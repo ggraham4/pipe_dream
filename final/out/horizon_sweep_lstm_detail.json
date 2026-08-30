@@ -1,0 +1,354 @@
+{
+  "20": [
+    {
+      "timepoint": "2013-01-02",
+      "exit_date_approx_trading_days": 20,
+      "picks": [
+        "PATK",
+        "AAL",
+        "MTG",
+        "TGTX",
+        "SGI"
+      ],
+      "pick_probs": [
+        0.714,
+        0.569,
+        0.523,
+        0.469,
+        0.442
+      ],
+      "starting_value": 10000,
+      "ending_value_model": 10238.74,
+      "model_return_pct": 2.39,
+      "ending_value_spy": 10249.21,
+      "spy_return_pct": 2.49,
+      "universe_avg_return_pct": 4.04,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2015-01-02",
+      "exit_date_approx_trading_days": 20,
+      "picks": [
+        "LEU",
+        "VCYT",
+        "SKY",
+        "PTCT",
+        "VCEL"
+      ],
+      "pick_probs": [
+        0.662,
+        0.574,
+        0.568,
+        0.515,
+        0.511
+      ],
+      "starting_value": 10000,
+      "ending_value_model": 9513.43,
+      "model_return_pct": -4.87,
+      "ending_value_spy": 9829.14,
+      "spy_return_pct": -1.71,
+      "universe_avg_return_pct": -1.5,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2017-01-03",
+      "exit_date_approx_trading_days": 20,
+      "picks": [
+        "ARWR",
+        "SLS",
+        "SRPT",
+        "CDE",
+        "CNX"
+      ],
+      "pick_probs": [
+        0.698,
+        0.661,
+        0.657,
+        0.616,
+        0.566
+      ],
+      "starting_value": 10000,
+      "ending_value_model": 9761.06,
+      "model_return_pct": -2.39,
+      "ending_value_spy": 10105.66,
+      "spy_return_pct": 1.06,
+      "universe_avg_return_pct": 1.46,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2019-01-02",
+      "exit_date_approx_trading_days": 20,
+      "picks": [
+        "KDP",
+        "CLSK",
+        "ENPH",
+        "ARWR",
+        "SLS"
+      ],
+      "pick_probs": [
+        0.503,
+        0.472,
+        0.465,
+        0.463,
+        0.461
+      ],
+      "starting_value": 10000,
+      "ending_value_model": 11263.23,
+      "model_return_pct": 12.63,
+      "ending_value_spy": 10789.43,
+      "spy_return_pct": 7.89,
+      "universe_avg_return_pct": 10.81,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2021-01-04",
+      "exit_date_approx_trading_days": 20,
+      "picks": [
+        "W",
+        "FSLY",
+        "PENN",
+        "CVNA",
+        "CZR"
+      ],
+      "pick_probs": [
+        0.666,
+        0.639,
+        0.621,
+        0.619,
+        0.616
+      ],
+      "starting_value": 10000,
+      "ending_value_model": 12110.34,
+      "model_return_pct": 21.1,
+      "ending_value_spy": 10346.0,
+      "spy_return_pct": 3.46,
+      "universe_avg_return_pct": 7.2,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2023-01-03",
+      "exit_date_approx_trading_days": 20,
+      "picks": [
+        "DNTH",
+        "QBTS",
+        "MARA",
+        "RGTI",
+        "TRLV"
+      ],
+      "pick_probs": [
+        0.557,
+        0.543,
+        0.541,
+        0.533,
+        0.52
+      ],
+      "starting_value": 10000,
+      "ending_value_model": 12949.56,
+      "model_return_pct": 29.5,
+      "ending_value_spy": 10787.25,
+      "spy_return_pct": 7.87,
+      "universe_avg_return_pct": 13.07,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2025-01-02",
+      "exit_date_approx_trading_days": 20,
+      "picks": [
+        "WGS",
+        "ASTS",
+        "SMMT",
+        "TRLV",
+        "DYN"
+      ],
+      "pick_probs": [
+        0.584,
+        0.58,
+        0.545,
+        0.535,
+        0.529
+      ],
+      "starting_value": 10000,
+      "ending_value_model": 8604.85,
+      "model_return_pct": -13.95,
+      "ending_value_spy": 10224.58,
+      "spy_return_pct": 2.25,
+      "universe_avg_return_pct": 2.69,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2026-06-01",
+      "exit_date_approx_trading_days": 20,
+      "picks": [
+        "RDW",
+        "VSH",
+        "MXL",
+        "PENG",
+        "CELC"
+      ],
+      "pick_probs": [
+        0.541,
+        0.541,
+        0.513,
+        0.509,
+        0.507
+      ],
+      "starting_value": 10000,
+      "ending_value_model": 10321.01,
+      "model_return_pct": 3.21,
+      "ending_value_spy": 9844.83,
+      "spy_return_pct": -1.55,
+      "universe_avg_return_pct": 4.79,
+      "beat_spy": true
+    }
+  ],
+  "10": [
+    {
+      "timepoint": "2013-01-02",
+      "model_return_pct": 3.43,
+      "spy_return_pct": 0.68,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2015-01-02",
+      "model_return_pct": -10.71,
+      "spy_return_pct": -1.85,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2017-01-03",
+      "model_return_pct": 14.18,
+      "spy_return_pct": 0.67,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2019-01-02",
+      "model_return_pct": 14.2,
+      "spy_return_pct": 4.32,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2021-01-04",
+      "model_return_pct": 7.72,
+      "spy_return_pct": 2.67,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2023-01-03",
+      "model_return_pct": 29.79,
+      "spy_return_pct": 2.8,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2025-01-02",
+      "model_return_pct": 9.08,
+      "spy_return_pct": 2.21,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2026-06-01",
+      "model_return_pct": -10.01,
+      "spy_return_pct": -0.49,
+      "beat_spy": false
+    }
+  ],
+  "40": [
+    {
+      "timepoint": "2013-01-02",
+      "model_return_pct": -1.73,
+      "spy_return_pct": 4.14,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2015-01-02",
+      "model_return_pct": -4.73,
+      "spy_return_pct": 2.77,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2017-01-03",
+      "model_return_pct": -8.12,
+      "spy_return_pct": 5.78,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2019-01-02",
+      "model_return_pct": 27.59,
+      "spy_return_pct": 12.09,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2021-01-04",
+      "model_return_pct": 27.98,
+      "spy_return_pct": 3.42,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2023-01-03",
+      "model_return_pct": 18.31,
+      "spy_return_pct": 4.46,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2025-01-02",
+      "model_return_pct": -14.61,
+      "spy_return_pct": -1.33,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2026-06-01",
+      "model_return_pct": -7.05,
+      "spy_return_pct": -3.83,
+      "beat_spy": false
+    }
+  ],
+  "60": [
+    {
+      "timepoint": "2013-01-02",
+      "model_return_pct": 10.65,
+      "spy_return_pct": 6.84,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2015-01-02",
+      "model_return_pct": -2.55,
+      "spy_return_pct": 0.49,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2017-01-03",
+      "model_return_pct": -5.23,
+      "spy_return_pct": 4.91,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2019-01-02",
+      "model_return_pct": 23.96,
+      "spy_return_pct": 12.91,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2021-01-04",
+      "model_return_pct": 63.83,
+      "spy_return_pct": 7.47,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2023-01-03",
+      "model_return_pct": 33.69,
+      "spy_return_pct": 6.01,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2025-01-02",
+      "model_return_pct": -5.0,
+      "spy_return_pct": -4.05,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2026-06-01",
+      "model_return_pct": -12.69,
+      "spy_return_pct": null,
+      "beat_spy": false
+    }
+  ]
+}

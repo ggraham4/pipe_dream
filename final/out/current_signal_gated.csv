@@ -1,0 +1,9 @@
+ticker,allocation_pct,source,close,momentum_20,momentum_60,relative_strength_20,pct_from_high_252,volatility_20
+VISN,20.0,augmented+baseline,6.46,-0.4497,-0.4708,-0.4836,-0.6856,0.1122
+VSH,20.0,augmented+baseline,31.45,-0.0808,-0.5083,-0.1148,-0.5153,0.0539
+AXTI,19.85,baseline,64.56,0.0683,-0.3949,0.0344,-0.5416,0.0951
+AAOI,19.85,baseline,109.79,0.164,-0.4035,0.13,-0.5079,0.0912
+MNST,19.85,baseline,46.47,-0.5242,-0.4734,-0.5581,-0.5351,0.3614
+IESC,0.15,augmented,325.38,-0.4307,-0.5384,-0.4647,-0.5902,0.1459
+FLNC,0.15,augmented,11.08,-0.2046,-0.5541,-0.2386,-0.6562,0.0446
+STRL,0.15,augmented,494.76,-0.1709,-0.483,-0.2049,-0.5021,0.0404
