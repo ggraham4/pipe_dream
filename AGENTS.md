@@ -255,6 +255,28 @@ ticker/CIK-mapped data, re-run the corrected backtest with much fuller
 coverage. See `backtest/survivorship-bias-correction-results.md` for the
 exact next steps already laid out there.
 
+**Independent of the HMM joint model — can be piloted anytime (added
+2026-08-30):**
+
+- **Stop-limit exits within the 40-day hold.** The backtest currently uses
+  a fixed 40-trading-day hold with no dynamic exit — already flagged as a
+  known limitation since `models/final-buy-no-buy-model.md`'s v3 ("Fixed
+  40-trading-day hold in the backtest — not a dynamic exit"). Idea: exit a
+  pick early if its price falls too far below entry at any point during
+  the 40-day window, instead of always riding to the fixed exit date.
+  Needs (a) a concrete stop rule — a flat % drawdown, or something
+  volatility-scaled off the existing `volatility_20`/`volatility_60`
+  features so the stop is wider for names that are normally choppier; (b)
+  a walk-forward-safe way to evaluate it — has to check price day-by-day
+  within the hold using only information available up to that day, not
+  just the eventual `forward_return_40` value the backtest computes today,
+  which only knows the day-40 close; and (c) a decision on what happens to
+  the freed-up capital after a stop-out — sit in cash for the rest of that
+  window, or roll into the next-best-ranked pick. This is a direct
+  extension of the existing walk-forward backtest infrastructure
+  (`final/src/backtest.py` / `backtest_pit.py`) — no new data source or
+  model needed, so it doesn't have to wait on anything else in this list.
+
 **Gated behind finishing the HMM joint model (workstream 2) — do not
 start these until that's done, per Gabe's explicit framing (2026-08-30):**
 
