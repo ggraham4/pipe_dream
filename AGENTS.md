@@ -8,7 +8,7 @@ the narrative history — see "Where the fuller history lives" at the bottom
 for the documents that record *why* decisions were made, not just *what*
 the current state is.
 
-**This file will go stale.** It reflects the repo as of 2026-08-30. If
+**This file will go stale.** It reflects the repo as of 2026-09-02. If
 something here contradicts what you actually find on disk (a file that's
 supposed to exist doesn't, a script behaves differently than described),
 trust the repo over this file, and please update this file to match once
@@ -52,6 +52,15 @@ recording *his* decisions, not a spec to freely deviate from.
    (feature set, horizon, universe) are the only reasonable ones — they're
    this project's choices, arrived at empirically and documented as such
    throughout, not a claim that they're optimal in general.
+5. **Never run `git add`/`git commit`/`git push` yourself.** Deliver
+   changed files to Gabe (via whatever file-transfer mechanism your
+   session has) and give him the commands to run himself — this has held
+   throughout the project and combines with constraint #1: nothing reaches
+   the live app without Gabe personally reviewing and running it.
+6. **Never store live API keys/secrets in any file that lives inside this
+   git repo** (`SHARADAR_API_KEY` included) — those belong only in
+   whatever out-of-repo secrets store this project's owner uses (e.g. the
+   Claude Project's own docs, kept separate from git), never committed.
 
 ## Repo map
 
@@ -87,13 +96,37 @@ pipe_dream/
 final/
 ├── app/              <- the live Streamlit dashboard.
 │   ├── app.py            <- entry point (`streamlit run app.py`)
-│   ├── lib/               <- app-specific modules (stock_model.py,
-│   │                         options_model.py, regime_gate_model.py,
-│   │                         options_common.py, data_refresh.py, paths.py)
+│   ├── lib/               <- app-specific modules: stock_model.py (secondary
+│   │                         price-only XGBoost/LSTM), pit_model.py
+│   │                         (**primary** as of 2026-09-02 — the PIT
+│   │                         augmented+stop-loss model), options_model.py,
+│   │                         options_common.py, data_refresh.py, paths.py.
+│   │                         regime_gate_model.py (the HMM gate) still
+│   │                         exists on disk but app.py no longer imports
+│   │                         it — see workstream 2 below.
 │   ├── logs/              <- runtime logs from scheduled refresh jobs
 │   │                         (gitignored — regenerates itself)
 │   └── requirements.txt
-├── src/              <- the model pipeline (all core scripts)
+├── src/              <- the model pipeline (all core scripts). Two parallel
+│                         tracks live here: the original non-PIT scripts
+│                         (features.py, current_signal.py,
+│                         lstm_current_signal.py, current_signal_gated.py,
+│                         fundamentals_features_beta.py,
+│                         regime_signals_beta.py — still run by the
+│                         Secondary Models tab, no longer the primary
+│                         signal) and the PIT (point-in-time,
+│                         survivorship-bias-corrected) track that now
+│                         drives the app's primary "Today's Picks":
+│                         features_pit.py, fundamentals_features_pit.py,
+│                         price_discontinuity.py, pit_universe_continuous.py
+│                         (+ the older, 8-fixed-timepoint pit_universe.py),
+│                         continuous_walkforward_pit.py (the PIT backtest —
+│                         also where MIN_MARKET_CAP/MIN_PRICE, the
+│                         point-in-time mid-cap+ eligibility floor, and
+│                         STOP_LOSS_PCT live), and current_signal_pit.py
+│                         (the live signal generator app/lib/pit_model.py
+│                         wraps — trains fresh, no cached-checkpoint-only
+│                         path exists for this one yet).
 ├── scripts/          <- data-acquisition scripts, meant to be run
 │                         directly by Gabe (not through an AI assistant's
 │                         sandboxed tools — see individual script
@@ -114,105 +147,134 @@ final/
        history lives" at the bottom.
 ```
 
-## Current state of the project (as of 2026-08-30)
+## Current state of the project (as of 2026-09-02)
 
-Four related, overlapping workstreams. None of this is speculative —
-everything below has been built, run, and produced real (if sometimes
-weak or negative) results.
+**The headline change since this file was last accurate:** the
+survivorship-bias-correction workstream (was "#4, in progress") is now
+essentially complete, has taken over as the **primary live signal in the
+app**, and the HMM-gated blend that used to be primary (was "#2") has
+been retired from the app entirely. If you only read one thing below,
+read workstream 4.
 
-**1. Core buy/no-buy stock classifier (v4, "permanent" as of 2026-08-27).**
-Two models — XGBoost and an LSTM — same 11 price/volume features
-(momentum at 4 windows, volatility at 2 windows, volume ratio, relative
-strength vs. SPY, position within 52-week range), same 1,619-ticker
-universe (expanded from S&P 500 to market-cap>$2B + US-incorporated +
-price>$10, see `universe/2026-08-27-expanded-universe-methodology.md` in
-the Claude Project), predicting/holding over a 40-trading-day horizon
-(changed from 20 after a horizon sweep showed a better XGBoost edge).
-Walk-forward backtest, 8 timepoints, embargo discipline (training never
-sees a label that hadn't resolved as of the decision date). Current
-result: XGBoost 6/8 beat SPY, +21.54%/trial avg; LSTM 6/8, +8.96%/trial
-avg (after raising its training-sample cap from 40,000 to 150,000, a real
-fix for a real bug — the LSTM was training on <1% of the available data
-pool at later timepoints). Full detail: `models/final-buy-no-buy-model.md`,
+**1. Core buy/no-buy stock classifier (v4, "permanent" as of 2026-08-27) —
+now "Secondary Models" in the app.** Two models — XGBoost and an LSTM —
+same 11 price/volume features (momentum at 4 windows, volatility at 2
+windows, volume ratio, relative strength vs. SPY, position within 52-week
+range), same ~1,620-ticker current-universe screen (market-cap>$2B + US-
+incorporated + price>$10, see
+`universe/2026-08-27-expanded-universe-methodology.md` in the Claude
+Project), predicting/holding over a 40-trading-day horizon. Walk-forward
+backtest, 8 timepoints, embargo discipline. Result: XGBoost 6/8 beat SPY,
++21.54%/trial avg; LSTM 6/8, +8.96%/trial avg. **Not survivorship-bias-
+corrected** (no point-in-time gap-ticker coverage, no point-in-time
+mid-cap+ floor) — kept in the app for transparency/comparison, not as the
+recommendation. Full detail: `models/final-buy-no-buy-model.md`,
 `backtest/dollar-simulation-results.md`.
 
-**2. Fundamentals-augmented ("beta") model and HMM regime gate.** A
-second model that adds fundamentals data on top of the price/volume
-features, plus a 2-state Gaussian HMM fit on SPY returns
-(`final/src/regime_signals_beta.py`) used to gate/blend which model's
-signal to trust depending on the inferred market regime. Full detail:
-`models/fundamentals-beta-results.md`, `backtest/2026-ytd-hmm-gated-
-sequential-results.md`, `backtest/2026-ytd-pit-blend-and-last-80-days-
-results.md`. **This is the "HMM joint model" Gabe refers to as not yet
-complete** — see "Future plans" below for what's gated behind finishing it.
+**2. Fundamentals-augmented ("beta") model and HMM regime gate —
+RETIRED from the live app (2026-09-02), per Gabe's explicit instruction
+("we are no longer using the HMM").** This used to be the app's primary
+signal (a 2-state Gaussian HMM fit on SPY returns,
+`final/src/regime_signals_beta.py`, blending a price-only and a
+fundamentals-augmented model's picks). `app.py` no longer imports
+`regime_gate_model.py` or calls `current_signal_gated.py`; the "Today's
+Picks" tab is workstream 4's model now (below). The source files, the
+HMM-gate logic, and the historical backtest docs (`models/fundamentals-
+beta-results.md`, `backtest/2026-ytd-hmm-gated-sequential-results.md`,
+`backtest/2026-ytd-pit-blend-and-last-80-days-results.md`) are all still
+on disk/in the Project for history — nothing was deleted, just
+disconnected from the app. **This also means the "gated behind finishing
+the HMM joint model" section of Future Plans (below) is stale** — Gabe
+concluded this workstream by moving on from it rather than by finishing
+it in the way that section anticipated; treat those ideas as unblocked
+but re-confirm priority with Gabe rather than assuming the old gate still
+applies.
 
 **3. Options premium model (in active development, design doc 2026-08-26
-onward, NOT the same thing as the stock model).** Predicts a distribution
-over the underlying's price at expiration, prices calls/puts off that
-distribution against real market premiums (sourced free from DoltHub's
-`post-no-preference/options`, ~91M rows, 2019-02 to present, S&P 500 +
-expanded-universe coverage), and sizes positions via a calibrated-decile
-Kelly optimizer. **Calls show a real, if noisy, edge** — a Tweedie GLM
-beats a "market is fairly priced" benchmark on held-out data, and the
-decile-calibrated Kelly sizing cut a would-be −50% trial down to −11% by
-correctly sizing down when its own signal was weak. **Puts do not have a
-working model** — every candidate underperformed the benchmark, and it's
-an open, unsolved problem (not just under-tuned). Full detail, including
-all the model-comparison and hyperparameter-search results:
+onward, NOT the same thing as the stock model, and NOT yet integrated
+with any of the PIT/survivorship-correction work below — explicitly
+flagged by Gabe as a longer-term goal, out of scope for now as of
+2026-09-02).** Predicts a distribution over the underlying's price at
+expiration, prices calls/puts off that distribution against real market
+premiums (sourced free from DoltHub's `post-no-preference/options`, ~91M
+rows, 2019-02 to present, S&P 500 + expanded-universe coverage), and
+sizes positions via a calibrated-decile Kelly optimizer. **Calls show a
+real, if noisy, edge** — a Tweedie GLM beats a "market is fairly priced"
+benchmark on held-out data, and the decile-calibrated Kelly sizing cut a
+would-be −50% trial down to −11% by correctly sizing down when its own
+signal was weak. **Puts do not have a working model** — every candidate
+underperformed the benchmark, an open, unsolved problem. Full detail:
 `models/options-premium-model-design.md`.
 
-**4. Survivorship-bias correction for the backtest (started 2026-08-28,
-Sharadar data live as of 2026-09-01).** The production universe (today's
-~1,650 tickers) was being applied retroactively across the whole
-2013-2026 backtest window, silently excluding every company that later
-went bankrupt, got delisted, or was acquired. Gabe purchased a Sharadar
-subscription and ran the full pipeline (price pull, fundamentals pull,
-`features_pit.py`, `fundamentals_features_pit.py`, `backtest_pit.py`)
-successfully against real data — results in `backtest/survivorship-bias-
-correction-results.md`. **Status (updated 2026-09-01, this round):**
-- `GAP_TICKERS` in `final/scripts/sharadar_data_pull.py` extended from 211
-  to 339 tickers (`GAP_TICKERS_CORE` + `GAP_TICKERS_2007_EXTENSION`), to
-  reach back toward 2007-2008 (real crisis casualties: LEHMQ, WAMUQ, BSC,
-  FNMA, FMCC, MER, CFC, NCC, SOV, MBI, SGP, WYE, GENZ, XTO, BUD, and
-  others). **Some of the "Q"-suffixed new tickers (ABKFQ, ANRZQ, CITGQ,
-  LEHMQ, RSHCQ, SUNEQ, WAMUQ, CCTYQ, EKDKQ, MTLQQ) may not be the symbol
-  the company actually traded under pre-bankruptcy** (e.g. Lehman traded
-  as "LEH", not "LEHMQ") — shipped as-is deliberately rather than
-  hand-guessed; check `sharadar_data_pull.py`'s output for misses among
-  well-known names and cross-reference Sharadar's own `tickers` table
-  before adding manual overrides. **Not yet re-pulled** — the new 128
-  tickers need `sharadar_data_pull.py` run again before they show up in
-  `td_data_delisted/`.
-- `final/src/features_pit.py`'s delisting exit-floor fix now applies to
-  EVERY gap ticker actually found in `td_data_delisted/` (derived from
-  disk at load time), not just the original hardcoded 211 from
-  `pit_universe.py` — this was a real bug: a 2008-crisis bankruptcy among
-  the new 128 tickers would previously have been silently dropped from
-  the $ simulation (NaN label) instead of counting as a realized loss,
-  exactly the failure mode the exit-floor fix exists to prevent. Also now
-  writes `out/gap_tickers_used.json` (the actual gap-ticker set used that
-  run) as a sidecar for other scripts to read.
-- New `final/src/pit_universe_continuous.py`: point-in-time S&P 500 gap-
-  ticker lookup for ANY date (not just the 8 fixed timepoints
-  `pit_universe.py`/`pit_universe_membership.json` cover), backed by the
-  new `final/scripts/pit_universe/sp500_updated.csv` (daily snapshots,
-  1996-01-02 to 2026-06-30).
-- New `final/src/continuous_walkforward_pit.py`: the PIT-correct version
-  of `continuous_walkforward_beta.py` — non-overlapping 40-day rolling
-  windows (default starting 2007-01-02, actual coverage depends on real
-  trailing-history availability), PIT-correct candidate pool at EVERY
-  step (not just 8 points), plus two new modes (`baseline_stoploss`/
-  `augmented_stoploss`) that re-simulate a prior run's picks under a
-  30%-stop-loss-then-hold-cash rule using daily lows, and per-step
-  `XGBClassifier.feature_importances_` aggregated in `--mode combine`.
-  See the script's own docstring for the full run sequence and the
-  stop-loss LOW-vs-CLOSE trigger assumption. **Not yet run against real
-  data** — needs the 128-ticker re-pull above first, then `features_pit.py`
-  → `fundamentals_features_pit.py` → this script's 5 modes in order.
-
-Full detail on the original correction (specific bugs found/fixed, the
-paid-vendor cost/coverage comparison, confirmed API mechanics):
-`backtest/survivorship-bias-correction-results.md`.
+**4. Survivorship-bias correction / PIT (point-in-time) pipeline —
+COMPLETE enough to be the primary live model, actively being extended
+(Rounds 1–8, 2026-08-28 through 2026-09-02).** Started from Gabe's
+observation that the production universe (today's ~1,650 tickers) was
+being applied retroactively across the whole backtest window, silently
+excluding every company that later went bankrupt, got delisted, or was
+acquired. What exists now, in order:
+  - **Point-in-time gap-ticker recovery**: 264 gap tickers (companies real
+    S&P 500 constituents at some point since ~2007 but absent from
+    today's universe) with price history via a paid Sharadar subscription
+    (`final/scripts/sharadar_data_pull.py`, `SHARADAR_API_KEY` env var
+    required) — 158/211 of the original set plus a 2007-2008-extension
+    batch landed usable data; fundamentals for the current universe still
+    come from SEC EDGAR (`scripts/fundamentals_raw/`), gap-ticker
+    fundamentals from Sharadar (`scripts/fundamentals_raw_delisted/`).
+  - **`price_discontinuity.py`**: catches and segments fabricated
+    single-day "returns" from unadjusted corporate-action price seams
+    (root case: CHRD/Chord-Energy's bankruptcy-reorg, a +6,254% fake
+    return that inflated an early full-universe backtest run to $10k ->
+    $797M before this was caught and fixed).
+  - **Point-in-time mid-cap+ eligibility floor** (`continuous_walkforward_
+    pit.py`'s `MIN_MARKET_CAP`/`MIN_PRICE`, Round 7): reapplies the
+    production mkt-cap>$2B/price>$10 screen AT EVERY HISTORICAL STEP,
+    not just once against today's values — closed a real look-ahead-bias
+    hole (confirmed for MARA: pickable as a nano-cap in 2013/2017 windows
+    purely because it's a multi-billion-dollar company TODAY). This is
+    what took the "expanded universe" backtest from implausible
+    (single-digit-million-dollar totals from $10k) down to believable.
+  - **Empirically-optimized stop-loss** (Round 8, `--stop-pct` /
+    `_stoploss_sweep` modes on `continuous_walkforward_pit.py`): swept
+    5%-50% stop percentages against the same backtested picks (re-
+    simulation only, no retraining, so a full sweep is cheap) and found a
+    well-supported 12-17% plateau; **15% is the adopted operating value**
+    (`OPTIMAL_STOP_PCT` in `current_signal_pit.py`), roughly doubling the
+    already-improved Round-7 total.
+  - **Current backtest headline** (expanded universe, mid-cap+ floor,
+    123 non-overlapping 40-day windows, 2007-03-02 to 2026-07-27):
+    `augmented_stoploss` (15% stop) $10k -> **$214,606** vs. SPY's
+    $53,306. See `backtest/survivorship-bias-correction-results.md`,
+    Round 7 and Round 8, for the full sweep tables, robustness checks
+    (an sp500-only-universe cross-check), and caveats (small-sample,
+    no transaction-cost modeling, stop-loss level chosen from a backtest
+    sweep with no guarantee it holds going forward).
+  - **Promoted to the live app (2026-09-02, this same round)**: a new
+    live-signal script, `final/src/current_signal_pit.py`, trains the
+    augmented model fresh on all history, applies the same point-in-time
+    mid-cap+ floor to today's candidates, and outputs today's top-5 picks
+    with the 15% stop-loss as guidance — wired into the app as the
+    **primary "Today's Picks" tab** via `app/lib/pit_model.py`. **Known,
+    fixed gotcha for future sessions**: `features.latest_complete_date()`
+    (borrowed from the non-PIT pipeline) requires 90% of ALL tickers in a
+    panel to have a row on some date — fine for `features.parquet` (every
+    ticker there is actively tracked) but silently returns NaT on any PIT
+    panel, since ~260+ permanently-delisted gap tickers never have a
+    recent row and drag the combined-universe coverage below 90% forever.
+    `current_signal_pit.py`'s own `latest_complete_date_pit()` fixes this
+    by checking coverage against current-universe tickers only — if you
+    write a NEW script against a PIT panel, use that pattern (or
+    `continuous_walkforward_pit.py`'s `current_universe_tickers = set(...)
+    - gap_tickers` split), not the plain `features.py` helper.
+  - **Sandbox note for AI assistants**: the PIT parquet files
+    (`features_pit.parquet`, `features_with_fundamentals_pit.parquet`)
+    are ~800-900MB and reliably OOM a device-bridge shell with ~3.8GB RAM
+    — `features_pit.py`, `fundamentals_features_pit.py`, and
+    `current_signal_pit.py` (anything that loads the full panel) must run
+    on Gabe's own machine. The lean stop-loss-sweep modes on
+    `continuous_walkforward_pit.py` (load only `[ticker, date, low,
+    close]`) are the exception — those have run successfully via the
+    device bridge.
 
 ## Known gaps — read before assuming something "just works"
 
@@ -239,9 +301,28 @@ paid-vendor cost/coverage comparison, confirmed API mechanics):
 - **Puts (options model) has no working model.** Don't build on top of a
   puts signal assuming it's just unoptimized — it was tested and
   genuinely underperforms the "market is fairly priced" benchmark.
-- **Survivorship-bias correction is real but incomplete** until the
-  Sharadar data lands — treat every backtest number in this repo (not
-  just the explicitly-flagged ones) as carrying this caveat until then.
+- **The options premium model is NOT survivorship-bias-corrected and NOT
+  integrated with any of the PIT work in workstream 4.** It still scores
+  off the plain current-universe screen. Gabe has explicitly flagged
+  integrating the two as a longer-term goal, not something to start
+  without being asked (as of 2026-09-02).
+- **Survivorship-bias correction (workstream 4) is real and now the
+  primary signal, but still has known, documented incompleteness** — not
+  every gap ticker has usable Sharadar coverage (of the current 264-file
+  set, some have no fundamentals data at all), some ticker-symbol
+  quarantine calls trade off completeness for safety by design (see
+  `validate_gap_coverage()`), and the stop-loss percentage (15%) was
+  chosen from a single backtested sweep, not cross-validated across
+  independent time periods. Treat every backtest number in this repo,
+  PIT or not, as carrying transaction-cost/slippage-free and small-sample
+  caveats — see `backtest/survivorship-bias-correction-results.md` for
+  the full, current list.
+- **The "Retrain ALL models" and per-tab "Retrain" buttons in the app do
+  NOT refresh `scripts/fundamentals_raw/` (SEC EDGAR) or
+  `scripts/fundamentals_raw_delisted/` (Sharadar)** — those are separate,
+  much-less-frequent pulls Gabe runs directly (see the reproduction table
+  below). A "retrain" only rebuilds feature panels and retrains models
+  off whatever raw fundamentals are already on disk.
 - Several `.DS_Store` files are currently **tracked** in git (visible as
   "modified" in `git status`). Untracking them (`git rm --cached
   '**/.DS_Store'`) is a one-time cleanup Gabe should run himself — not
@@ -251,7 +332,13 @@ paid-vendor cost/coverage comparison, confirmed API mechanics):
   `final/src/features.py`, and several `final/out/*` result files —
   pre-existing local changes, not something to assume is "the last
   committed state." Run `git diff` before trusting `git log`'s picture of
-  the current pipeline.
+  the current pipeline. This is now ALSO true of the whole PIT track
+  (`features_pit.py`, `fundamentals_features_pit.py`,
+  `continuous_walkforward_pit.py`, `price_discontinuity.py`,
+  `pit_universe_continuous.py`, `current_signal_pit.py`) and the app
+  changes (`app.py`, `app/lib/pit_model.py`) delivered 2026-09-02 —
+  written to Gabe's files but, per standing constraint #5, not committed
+  by any AI assistant. Don't assume these are in git history yet.
 
 ## Reproducing every gitignored path
 
@@ -269,68 +356,55 @@ specific confirmed-blocked details.
 | Gitignored path | Size | How to regenerate |
 |---|---|---|
 | `final/scripts/td_data_local/`, `td_data_local*.tar.gz` | ~700MB | `python3 final/scripts/local_data_pull.py` (yfinance, current 1,619-ticker universe) |
-| `final/scripts/pit_universe/sp500_updated.csv` | 5.3MB | Already shipped (not gitignored-and-regenerate -- this is source data, checked in). Daily point-in-time S&P 500 constituent snapshots, 1996-01-02 to 2026-06-30, used by `pit_universe_continuous.py` for the continuous/any-date PIT backtest (as opposed to `pit_universe_membership.json`'s fixed 8 timepoints). |
-| `final/scripts/td_data_delisted/` | 12MB | **Primary path (as of 2026-09-01):** `python3 final/scripts/sharadar_data_pull.py` (requires `SHARADAR_API_KEY` env var and an active Sharadar subscription — see the script's docstring). Old path, kept for history / as a fallback if a ticker has no Sharadar coverage: `local_data_pull_delisted.py` then `local_data_pull_delisted_v2.py` (yfinance + free Kaggle "Huge Stock Market Dataset" — **partial coverage only**) |
+| `final/scripts/td_data_delisted/`, `fundamentals_raw_delisted/` (Sharadar-sourced) | 12MB / part of 41MB | `python3 final/scripts/sharadar_data_pull.py` (requires `SHARADAR_API_KEY` env var and an active Sharadar subscription — see the script's docstring). As of 2026-09-02: 264 gap-ticker files landed (158/211 of the original set + a 2007-2008-extension batch). Old path, kept for history / as a fallback if a ticker has no Sharadar coverage: `local_data_pull_delisted.py` then `local_data_pull_delisted_v2.py` (yfinance + free Kaggle "Huge Stock Market Dataset" — **partial coverage only**) |
 | `final/scripts/fundamentals_raw/`, `fundamentals_raw.zip` | ~370MB | `python3 final/scripts/local_fundamentals_pull.py` (SEC EDGAR, current universe) |
 | `final/scripts/fundamentals_raw_delisted/` | 41MB | `python3 final/scripts/local_cik_lookup_delisted_v3.py` **(v3 only — v1 and v2 each have documented, real bugs; do not run them; see `backtest/survivorship-bias-correction-results.md` Round 2b/2c)**, then `local_fundamentals_pull_delisted_v2.py` |
 | `final/data/options_raw/*.parquet`, `option_chain.csv`, `volatility_history.csv` | 26GB | Requires the `options_raw/.dolt` clone below first. Then: `dolt table export -f csv` the `option_chain` and `volatility_history` tables, filter to the target ticker universe, convert to Parquet. This was done via an ad-hoc `dd`-byte-range-slicing + DuckDB pipeline (device-bridge shell's 45-second-per-call limit forced chunking) — **no single checked-in script does this end to end**; see `models/options-premium-model-design.md`'s "Access mechanics" and "Dataset built and validated" sections for the exact commands used, and `final/scripts/update_options_history.py` for the *incremental* update path (this one IS a real, run-directly script, for pulling new rows since the last export). |
 | `options_raw/.dolt/` | 8GB | `cd pipe_dream && dolt clone post-no-preference/options options_raw` (requires the `dolt` CLI: https://docs.dolthub.com/introduction/installation, and network access to dolthub.com run directly, not through an AI assistant's tools) |
 | `final/data/training/options_calls_training.parquet`, `options_puts_training.parquet` | 44MB | Built from the DoltHub export above via entry/exit-mechanics + feature-join logic described in detail in `models/options-premium-model-design.md`'s "Training dataset built" section — **no single checked-in script name was confirmed for the non-expanded version**; `build_training_data_expanded.py` exists for the expanded-universe version (see "Known gaps" above re: whether it actually landed in this repo). |
 | `final/data/garch_volatility.parquet` | 1.9MB | Walk-forward GARCH(1,1) via the `arch` package (`pip install arch`) on `final/scripts/td_data_local/*.csv` — expanding-window refit every 21 trading days per ticker. Exact algorithm in `models/options-premium-model-design.md`'s "GARCH volatility" section. ~28.5 min wall-clock for the full universe as last measured. No single checked-in script name confirmed — same caveat as above. |
-| `final/out/features.parquet`, `features_pit.parquet`, `features_with_fundamentals_beta.parquet`, `features_with_fundamentals_pit.parquet` | ~700-800MB each | `python3 final/src/features.py` / `features_pit.py`, then `fundamentals_features_beta.py` / `fundamentals_features_pit.py` — run from `final/src/`, not `final/scripts/`. Requires the price/fundamentals data above to already exist. |
-| `final/out/models/` (xgb/lstm checkpoints + norm stats) | 532KB, regenerates every run | Rebuilt automatically by `final/src/current_signal.py`, `current_signal_gated.py`, `lstm_current_signal.py` — these retrain point-in-time on every invocation, so this directory is expected to churn and isn't meant to be a stable checkpoint across commits. |
+| `final/out/features.parquet`, `features_pit.parquet`, `features_with_fundamentals_beta.parquet`, `features_with_fundamentals_pit.parquet` | ~700-900MB each | `python3 final/src/features.py` / `features_pit.py`, then `fundamentals_features_beta.py` / `fundamentals_features_pit.py` — run from `final/src/`, not `final/scripts/`. Requires the price/fundamentals data above to already exist. `features_pit.py` also writes `out/gap_tickers_used.json` (the exact gap-ticker set found on disk that run) and prints its `price_discontinuity.py` break-detection results — read the console output, don't assume zero breaks. **Must run on Gabe's own machine** — these panels are large enough to OOM a device-bridge shell (see workstream 4 above). |
+| `final/out/models/` (xgb/lstm checkpoints + norm stats), `current_signal_pit.csv`/`current_signal_pit_meta.json` | 532KB+, regenerates every run | Rebuilt automatically by `final/src/current_signal.py`, `current_signal_gated.py`, `lstm_current_signal.py` (secondary/legacy), and `current_signal_pit.py` (**primary**, as of 2026-09-02 — writes `out/models/xgb_pit_augmented_model.json` plus `out/current_signal_pit.csv`/`.._meta.json`) — these all retrain point-in-time on every invocation, so this directory is expected to churn and isn't meant to be a stable checkpoint across commits. |
 | `pipe_dream.egg-info/` | 16KB | `pip install -e .` from the repo root |
 | `__pycache__/`, `*.pyc` | — | Regenerates automatically the next time Python imports anything; no action needed |
 
 ## Future plans
 
-**Immediate:** finish the Sharadar integration now that
-`final/scripts/sharadar_data_pull.py` exists and, as of 2026-09-01, pulls
-BOTH prices and fundamentals (confirmed API mechanics:
-`https://api.sharadar.com/v1.0/data/{table}?api_key={key}&{params}
-&format=csv`, `stocks` table for prices, `fundamentals` for fundamentals
-— see the script's own docstring for full detail, including the exact
-dimension/date-column/concept-mapping decisions verified against real
-AAPL/RHT row data before shipping).
-**Pricing correction (2026-09-01): the earlier "~$49/mo gets full history"
-figure was wrong** — Sharadar's Bundle plan is tiered by history depth:
-5yr $29/mo, 10yr $49/mo, Full History $69/mo ($499/yr). Given the
-backtest's earliest timepoints (2013-01-02, 2015-01-02) and the pipeline's
-own `MIN_TRAILING_DAYS = 380` requirement, a 10-year (rolling-window)
-subscription would leave the earliest ~3 of 8 backtest timepoints without
-usable coverage — **Full History is the tier that actually delivers on
-the survivorship-bias-correction goal**, not the 10-year tier.
+**The Sharadar/PIT integration described in earlier versions of this
+section is DONE** — see workstream 4 above for current status. What's
+actually open now:
 
-**Status as of 2026-09-01 (Gabe's first real run):** price pull: 147/211
-gap tickers landed usable data (up from round-1's 13% coverage under the
-free/DIY pipeline) — 64 had no Sharadar coverage at all
-(`AABA, ABC, ADS, ANTM, BBBY, ...` — full list printed by the script), not
-a bug, just gaps in Sharadar's own delisted coverage; not worth chasing
-individually, `validate_gap_coverage()` will quarantine any that don't
-clear `MIN_TRAILING_DAYS` anyway. Fundamentals pull has NOT been run yet
-against the real 211 — only the 3-ticker schema probe has (AAPL, RHT
-succeeded; BBBY returned no fundamentals rows at all, consistent with it
-also being one of the price-pull misses and previously not appearing in
-Alpha Vantage's delisted registry either — BBBY specifically seems to be a
-thin case across multiple vendors). Also hit: a broken local numpy/
-pandas/pyarrow environment (`pandas._libs.pandas_parser` not found) is
-blocking `features_pit.py` from running at all — unrelated to this
-integration, a pre-existing local environment issue, fix is
-`pip install --upgrade --force-reinstall numpy pandas pyarrow` (or
-`pip install "numpy<2" --force-reinstall` as a fallback) on Gabe's
-machine before re-running the pipeline.
-
-Remaining steps: (1) run `sharadar_data_pull.py --skip-prices` to do the
-real fundamentals pull for all 211 (prices already landed); (2) resolve
-the adjusted-vs-unadjusted-close question flagged in the script's
-docstring — it defaults to Sharadar's `closeadj` (split/dividend-adjusted)
-for momentum/volatility consistency, but the original Yahoo pull used
-unadjusted close, so check `final/src/features.py` doesn't implicitly
-assume one or the other before mixing old and new data; (3) once the local
-environment is fixed, re-run `features_pit.py` → `fundamentals_features_
-pit.py` → `backtest_pit.py` (from `final/src/`) with the fuller coverage.
-See `backtest/survivorship-bias-correction-results.md` for the fuller
-history.
+- **Integrate the PIT/survivorship-corrected data into the options
+  premium model (workstream 3).** Gabe's own words (2026-09-02): "A
+  longer term goal is to update the options model to integrate this new
+  data, though that is beyond the scope of what I want to do right now."
+  Explicitly not started, not to be started without being asked.
+- **Adjusted-vs-unadjusted-close question, still open**:
+  `sharadar_data_pull.py` defaults to Sharadar's `closeadj` (split/
+  dividend-adjusted close) for momentum/volatility feature consistency,
+  but the original Yahoo delisted-ticker pull used unadjusted close —
+  worth a second look at whether `features.py`/`features_pit.py`
+  implicitly assume one or the other before trusting momentum/volatility
+  features that mix old (Yahoo-sourced) and new (Sharadar-sourced) closes
+  across the combined universe. Flagged, not yet resolved.
+- **Not every gap ticker has Sharadar coverage.** Of the 264 files
+  currently on disk, some have price but no fundamentals (or vice versa);
+  `validate_gap_coverage()`'s trailing-history check quarantines anything
+  that doesn't clear `MIN_TRAILING_DAYS`, but chasing the remaining gaps
+  ticker-by-ticker (the way `KNOWN_DELISTING_DATES` was hand-built
+  earlier in this project) hasn't been revisited since Sharadar landed.
+- **Stop-loss percentage cross-validation.** Round 8's 15% figure comes
+  from ONE backtested sweep over ONE universe/time range (2007-2026,
+  expanded universe). A robustness check against the sp500-only universe
+  found a different nominal optimum (10%, on a much smaller/worse-
+  performing universe overall) — worth understanding whether that's
+  genuine universe-dependence or just sampling noise before treating 15%
+  as settled for good, if this becomes a priority again.
+- **`baseline_stoploss`'s own optimal stop percentage** was never swept
+  (Round 8 only swept `augmented_stoploss`, since that's the model
+  actually promoted to primary) — a natural, cheap follow-up if wanted
+  for comparison (`--mode baseline_stoploss_sweep`, same lean re-
+  simulation, no retraining needed).
 
 **Independent of the HMM joint model — can be piloted anytime (added
 2026-08-30):**
@@ -379,8 +453,13 @@ history.
   against the existing Tweedie GLM rather than assuming it's better by
   default.
 
-**Gated behind finishing the HMM joint model (workstream 2) — do not
-start these until that's done, per Gabe's explicit framing (2026-08-30):**
+**Originally gated behind finishing the HMM joint model (workstream 2),
+per Gabe's framing as of 2026-08-30 — that gate is STALE as of 2026-09-02.**
+Workstream 2 concluded by being retired from the app rather than
+"finished" in the sense this section originally meant, so these ideas are
+probably unblocked now, but that's an inference, not a decision Gabe has
+made explicitly — confirm priority with him before starting any of these
+rather than assuming the list below is still accurate:
 
 - **Gabe's own retrospective on the LSTM:** the original hope was that an
   LSTM, given raw trailing sequences, would learn something like implicit
