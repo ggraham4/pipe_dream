@@ -162,22 +162,57 @@ all the model-comparison and hyperparameter-search results:
 `models/options-premium-model-design.md`.
 
 **4. Survivorship-bias correction for the backtest (started 2026-08-28,
-in progress).** The production universe (today's ~1,650 tickers) was
-being applied retroactively across the whole 2013–2026 backtest window,
-silently excluding every company that later went bankrupt, got delisted,
-or was acquired. Point-in-time universe reconstruction identified 211
-"gap tickers" needing recovery. **Status: partial free/DIY data recovery
-completed (SEC EDGAR CIK matching for fundamentals, went through two
-rounds of real bugs before landing on a correct name-history-based
-validator; Yahoo/stooq/Kaggle for price history, stooq confirmed to be a
-dead end via a Cloudflare bot-check, not fixable without automation this
-project has declined to build). Gabe has decided to purchase a Sharadar
-subscription (~$49/month) to close the remaining gap properly** — this
-supersedes the free/DIY approach as the primary path forward but hasn't
-been executed yet (pending Gabe's own token-budget reset as of
-2026-08-30). Full detail, including the specific bugs found and fixed,
-and the full paid-vendor cost/coverage comparison that led to the Sharadar
-decision: `backtest/survivorship-bias-correction-results.md`.
+Sharadar data live as of 2026-09-01).** The production universe (today's
+~1,650 tickers) was being applied retroactively across the whole
+2013-2026 backtest window, silently excluding every company that later
+went bankrupt, got delisted, or was acquired. Gabe purchased a Sharadar
+subscription and ran the full pipeline (price pull, fundamentals pull,
+`features_pit.py`, `fundamentals_features_pit.py`, `backtest_pit.py`)
+successfully against real data — results in `backtest/survivorship-bias-
+correction-results.md`. **Status (updated 2026-09-01, this round):**
+- `GAP_TICKERS` in `final/scripts/sharadar_data_pull.py` extended from 211
+  to 339 tickers (`GAP_TICKERS_CORE` + `GAP_TICKERS_2007_EXTENSION`), to
+  reach back toward 2007-2008 (real crisis casualties: LEHMQ, WAMUQ, BSC,
+  FNMA, FMCC, MER, CFC, NCC, SOV, MBI, SGP, WYE, GENZ, XTO, BUD, and
+  others). **Some of the "Q"-suffixed new tickers (ABKFQ, ANRZQ, CITGQ,
+  LEHMQ, RSHCQ, SUNEQ, WAMUQ, CCTYQ, EKDKQ, MTLQQ) may not be the symbol
+  the company actually traded under pre-bankruptcy** (e.g. Lehman traded
+  as "LEH", not "LEHMQ") — shipped as-is deliberately rather than
+  hand-guessed; check `sharadar_data_pull.py`'s output for misses among
+  well-known names and cross-reference Sharadar's own `tickers` table
+  before adding manual overrides. **Not yet re-pulled** — the new 128
+  tickers need `sharadar_data_pull.py` run again before they show up in
+  `td_data_delisted/`.
+- `final/src/features_pit.py`'s delisting exit-floor fix now applies to
+  EVERY gap ticker actually found in `td_data_delisted/` (derived from
+  disk at load time), not just the original hardcoded 211 from
+  `pit_universe.py` — this was a real bug: a 2008-crisis bankruptcy among
+  the new 128 tickers would previously have been silently dropped from
+  the $ simulation (NaN label) instead of counting as a realized loss,
+  exactly the failure mode the exit-floor fix exists to prevent. Also now
+  writes `out/gap_tickers_used.json` (the actual gap-ticker set used that
+  run) as a sidecar for other scripts to read.
+- New `final/src/pit_universe_continuous.py`: point-in-time S&P 500 gap-
+  ticker lookup for ANY date (not just the 8 fixed timepoints
+  `pit_universe.py`/`pit_universe_membership.json` cover), backed by the
+  new `final/scripts/pit_universe/sp500_updated.csv` (daily snapshots,
+  1996-01-02 to 2026-06-30).
+- New `final/src/continuous_walkforward_pit.py`: the PIT-correct version
+  of `continuous_walkforward_beta.py` — non-overlapping 40-day rolling
+  windows (default starting 2007-01-02, actual coverage depends on real
+  trailing-history availability), PIT-correct candidate pool at EVERY
+  step (not just 8 points), plus two new modes (`baseline_stoploss`/
+  `augmented_stoploss`) that re-simulate a prior run's picks under a
+  30%-stop-loss-then-hold-cash rule using daily lows, and per-step
+  `XGBClassifier.feature_importances_` aggregated in `--mode combine`.
+  See the script's own docstring for the full run sequence and the
+  stop-loss LOW-vs-CLOSE trigger assumption. **Not yet run against real
+  data** — needs the 128-ticker re-pull above first, then `features_pit.py`
+  → `fundamentals_features_pit.py` → this script's 5 modes in order.
+
+Full detail on the original correction (specific bugs found/fixed, the
+paid-vendor cost/coverage comparison, confirmed API mechanics):
+`backtest/survivorship-bias-correction-results.md`.
 
 ## Known gaps — read before assuming something "just works"
 
@@ -234,7 +269,8 @@ specific confirmed-blocked details.
 | Gitignored path | Size | How to regenerate |
 |---|---|---|
 | `final/scripts/td_data_local/`, `td_data_local*.tar.gz` | ~700MB | `python3 final/scripts/local_data_pull.py` (yfinance, current 1,619-ticker universe) |
-| `final/scripts/td_data_delisted/` | 12MB | `python3 final/scripts/local_data_pull_delisted.py` then `local_data_pull_delisted_v2.py` (yfinance + free Kaggle "Huge Stock Market Dataset" for gap tickers — **partial coverage only**, superseded by the pending Sharadar subscription, see workstream 4 above) |
+| `final/scripts/pit_universe/sp500_updated.csv` | 5.3MB | Already shipped (not gitignored-and-regenerate -- this is source data, checked in). Daily point-in-time S&P 500 constituent snapshots, 1996-01-02 to 2026-06-30, used by `pit_universe_continuous.py` for the continuous/any-date PIT backtest (as opposed to `pit_universe_membership.json`'s fixed 8 timepoints). |
+| `final/scripts/td_data_delisted/` | 12MB | **Primary path (as of 2026-09-01):** `python3 final/scripts/sharadar_data_pull.py` (requires `SHARADAR_API_KEY` env var and an active Sharadar subscription — see the script's docstring). Old path, kept for history / as a fallback if a ticker has no Sharadar coverage: `local_data_pull_delisted.py` then `local_data_pull_delisted_v2.py` (yfinance + free Kaggle "Huge Stock Market Dataset" — **partial coverage only**) |
 | `final/scripts/fundamentals_raw/`, `fundamentals_raw.zip` | ~370MB | `python3 final/scripts/local_fundamentals_pull.py` (SEC EDGAR, current universe) |
 | `final/scripts/fundamentals_raw_delisted/` | 41MB | `python3 final/scripts/local_cik_lookup_delisted_v3.py` **(v3 only — v1 and v2 each have documented, real bugs; do not run them; see `backtest/survivorship-bias-correction-results.md` Round 2b/2c)**, then `local_fundamentals_pull_delisted_v2.py` |
 | `final/data/options_raw/*.parquet`, `option_chain.csv`, `volatility_history.csv` | 26GB | Requires the `options_raw/.dolt` clone below first. Then: `dolt table export -f csv` the `option_chain` and `volatility_history` tables, filter to the target ticker universe, convert to Parquet. This was done via an ad-hoc `dd`-byte-range-slicing + DuckDB pipeline (device-bridge shell's 45-second-per-call limit forced chunking) — **no single checked-in script does this end to end**; see `models/options-premium-model-design.md`'s "Access mechanics" and "Dataset built and validated" sections for the exact commands used, and `final/scripts/update_options_history.py` for the *incremental* update path (this one IS a real, run-directly script, for pulling new rows since the last export). |
@@ -248,12 +284,53 @@ specific confirmed-blocked details.
 
 ## Future plans
 
-**Immediate:** finish the Sharadar integration once Gabe's subscription is
-active (workstream 4) — write a proper `scripts/sharadar_data_pull.py`,
-retire the fragile CIK-guessing pipeline in favor of Sharadar's natively
-ticker/CIK-mapped data, re-run the corrected backtest with much fuller
-coverage. See `backtest/survivorship-bias-correction-results.md` for the
-exact next steps already laid out there.
+**Immediate:** finish the Sharadar integration now that
+`final/scripts/sharadar_data_pull.py` exists and, as of 2026-09-01, pulls
+BOTH prices and fundamentals (confirmed API mechanics:
+`https://api.sharadar.com/v1.0/data/{table}?api_key={key}&{params}
+&format=csv`, `stocks` table for prices, `fundamentals` for fundamentals
+— see the script's own docstring for full detail, including the exact
+dimension/date-column/concept-mapping decisions verified against real
+AAPL/RHT row data before shipping).
+**Pricing correction (2026-09-01): the earlier "~$49/mo gets full history"
+figure was wrong** — Sharadar's Bundle plan is tiered by history depth:
+5yr $29/mo, 10yr $49/mo, Full History $69/mo ($499/yr). Given the
+backtest's earliest timepoints (2013-01-02, 2015-01-02) and the pipeline's
+own `MIN_TRAILING_DAYS = 380` requirement, a 10-year (rolling-window)
+subscription would leave the earliest ~3 of 8 backtest timepoints without
+usable coverage — **Full History is the tier that actually delivers on
+the survivorship-bias-correction goal**, not the 10-year tier.
+
+**Status as of 2026-09-01 (Gabe's first real run):** price pull: 147/211
+gap tickers landed usable data (up from round-1's 13% coverage under the
+free/DIY pipeline) — 64 had no Sharadar coverage at all
+(`AABA, ABC, ADS, ANTM, BBBY, ...` — full list printed by the script), not
+a bug, just gaps in Sharadar's own delisted coverage; not worth chasing
+individually, `validate_gap_coverage()` will quarantine any that don't
+clear `MIN_TRAILING_DAYS` anyway. Fundamentals pull has NOT been run yet
+against the real 211 — only the 3-ticker schema probe has (AAPL, RHT
+succeeded; BBBY returned no fundamentals rows at all, consistent with it
+also being one of the price-pull misses and previously not appearing in
+Alpha Vantage's delisted registry either — BBBY specifically seems to be a
+thin case across multiple vendors). Also hit: a broken local numpy/
+pandas/pyarrow environment (`pandas._libs.pandas_parser` not found) is
+blocking `features_pit.py` from running at all — unrelated to this
+integration, a pre-existing local environment issue, fix is
+`pip install --upgrade --force-reinstall numpy pandas pyarrow` (or
+`pip install "numpy<2" --force-reinstall` as a fallback) on Gabe's
+machine before re-running the pipeline.
+
+Remaining steps: (1) run `sharadar_data_pull.py --skip-prices` to do the
+real fundamentals pull for all 211 (prices already landed); (2) resolve
+the adjusted-vs-unadjusted-close question flagged in the script's
+docstring — it defaults to Sharadar's `closeadj` (split/dividend-adjusted)
+for momentum/volatility consistency, but the original Yahoo pull used
+unadjusted close, so check `final/src/features.py` doesn't implicitly
+assume one or the other before mixing old and new data; (3) once the local
+environment is fixed, re-run `features_pit.py` → `fundamentals_features_
+pit.py` → `backtest_pit.py` (from `final/src/`) with the fuller coverage.
+See `backtest/survivorship-bias-correction-results.md` for the fuller
+history.
 
 **Independent of the HMM joint model — can be piloted anytime (added
 2026-08-30):**
@@ -276,6 +353,31 @@ exact next steps already laid out there.
   extension of the existing walk-forward backtest infrastructure
   (`final/src/backtest.py` / `backtest_pit.py`) — no new data source or
   model needed, so it doesn't have to wait on anything else in this list.
+- **Time-series foundation models (TSFMs) — idea from Gabe, 2026-09-01.**
+  Pretrained sequence models like Chronos-2, TimesFM 2.5, and MOIRAI-2.0,
+  and the finance-specific Kronos. Researched, not yet built. Bottom line:
+  generic TSFMs pretrained on non-financial data (weather, web traffic,
+  retail) are a weak fit zero-shot for daily equity returns — a 2026 study
+  found their gains over a random-walk benchmark were statistically
+  significant in only 2 of 10 tested equity/model pairs, and a supervised,
+  asset-specific baseline (iTransformer) beat every pretrained TSFM on
+  META specifically. A domain-specific model (Kronos, pretrained on 12B+
+  real K-line records) beats generic TSFMs by a wide margin on financial
+  benchmarks, meaning finance-specific pretraining data matters more than
+  model architecture. There's also a documented risk of inflated benchmark
+  results from train/test overlap between TSFM pretraining corpora and
+  common evaluation datasets — a reason to be skeptical of any TSFM's
+  self-reported numbers without checking for this. **Where this could
+  actually fit this project:** not the core buy/no-buy classifier, which
+  is a classification task on 11 hand-engineered features, not a raw
+  sequence-forecasting task a TSFM is built for. The better fit is the
+  options premium model (workstream 3), which already needs a *predicted
+  distribution* over the underlying's future price — exactly the shape of
+  output a TSFM like Chronos-2 produces natively (probabilistic, not point
+  forecasts). If piloted, do it there, fine-tuned or few-shot-adapted on
+  this project's own tickers rather than used zero-shot, and benchmark
+  against the existing Tweedie GLM rather than assuming it's better by
+  default.
 
 **Gated behind finishing the HMM joint model (workstream 2) — do not
 start these until that's done, per Gabe's explicit framing (2026-08-30):**

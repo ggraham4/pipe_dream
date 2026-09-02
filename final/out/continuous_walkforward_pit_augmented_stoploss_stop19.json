@@ -1,0 +1,3014 @@
+{
+  "mode": "augmented_stoploss",
+  "universe": "expanded",
+  "base_run": "augmented",
+  "stop_pct": 0.19,
+  "results": [
+    {
+      "timepoint": "2007-03-02",
+      "picks": [
+        "TIN",
+        "XTO",
+        "CBSS",
+        "CTXS",
+        "BNI"
+      ],
+      "per_ticker_returns_pct": {
+        "TIN": 0.73,
+        "XTO": 8.17,
+        "CBSS": 2.14,
+        "CTXS": 4.29,
+        "BNI": 13.27
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 5.72,
+      "spy_return_pct": 6.94,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2007-04-30",
+      "picks": [
+        "ACS",
+        "GT",
+        "ESRX",
+        "UIS",
+        "X"
+      ],
+      "per_ticker_returns_pct": {
+        "ACS": -5.21,
+        "GT": 1.02,
+        "ESRX": 3.32,
+        "UIS": 11.99,
+        "X": 6.62
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 3.55,
+      "spy_return_pct": 0.0,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2007-06-26",
+      "picks": [
+        "ESRX",
+        "AGN",
+        "JNPR",
+        "X",
+        "CCU"
+      ],
+      "per_ticker_returns_pct": {
+        "ESRX": 9.68,
+        "AGN": -5.07,
+        "JNPR": 30.69,
+        "X": -19.0,
+        "CCU": -2.33
+      },
+      "stop_triggered_on": {
+        "X": "2007-08-16"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 2.8,
+      "spy_return_pct": -1.11,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2007-08-22",
+      "picks": [
+        "AGN",
+        "MRO",
+        "CCU",
+        "GT",
+        "JNS"
+      ],
+      "per_ticker_returns_pct": {
+        "AGN": 1.41,
+        "MRO": 14.44,
+        "CCU": 16.22,
+        "GT": 1.25,
+        "JNS": 12.72
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 9.21,
+      "spy_return_pct": 4.8,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2007-10-18",
+      "picks": [
+        "JNPR",
+        "TRB",
+        "ESRX",
+        "AVP",
+        "ANDV"
+      ],
+      "per_ticker_returns_pct": {
+        "JNPR": -10.32,
+        "TRB": 16.65,
+        "ESRX": 18.28,
+        "AVP": 5.31,
+        "ANDV": -9.56
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 4.07,
+      "spy_return_pct": -4.24,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2007-12-14",
+      "picks": [
+        "ESRX",
+        "JNPR",
+        "PCP",
+        "AGN",
+        "CELG"
+      ],
+      "per_ticker_returns_pct": {
+        "ESRX": -8.28,
+        "JNPR": -17.0,
+        "PCP": -19.0,
+        "AGN": -4.15,
+        "CELG": 13.79
+      },
+      "stop_triggered_on": {
+        "PCP": "2008-01-09"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": -6.93,
+      "spy_return_pct": -7.34,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2008-02-13",
+      "picks": [
+        "ESRX",
+        "MTW",
+        "QLGC",
+        "MHS",
+        "NBL"
+      ],
+      "per_ticker_returns_pct": {
+        "ESRX": -1.31,
+        "MTW": 0.49,
+        "QLGC": -0.52,
+        "MHS": -19.0,
+        "NBL": 7.85
+      },
+      "stop_triggered_on": {
+        "MHS": "2008-03-12"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": -2.5,
+      "spy_return_pct": -2.19,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2008-04-11",
+      "picks": [
+        "ESRX",
+        "QLGC",
+        "WU",
+        "CELG",
+        "MHS"
+      ],
+      "per_ticker_returns_pct": {
+        "ESRX": 7.65,
+        "QLGC": -1.96,
+        "WU": 14.05,
+        "CELG": -1.9,
+        "MHS": 10.27
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 5.62,
+      "spy_return_pct": 2.43,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2008-06-09",
+      "picks": [
+        "ESRX",
+        "SWN",
+        "BTUUQ",
+        "RIG",
+        "NBL"
+      ],
+      "per_ticker_returns_pct": {
+        "ESRX": 3.65,
+        "SWN": -19.0,
+        "BTUUQ": -19.0,
+        "RIG": -10.07,
+        "NBL": -19.0
+      },
+      "stop_triggered_on": {
+        "SWN": "2008-07-08",
+        "BTUUQ": "2008-07-24",
+        "NBL": "2008-07-30"
+      },
+      "n_stopped_out": 3,
+      "model_return_pct": -12.69,
+      "spy_return_pct": -6.05,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2008-08-05",
+      "picks": [
+        "SWN",
+        "MEE",
+        "NBL",
+        "XTO",
+        "BTUUQ"
+      ],
+      "per_ticker_returns_pct": {
+        "SWN": -19.0,
+        "MEE": -19.0,
+        "NBL": -23.23,
+        "XTO": 4.5,
+        "BTUUQ": -19.0
+      },
+      "stop_triggered_on": {
+        "SWN": "2008-09-29",
+        "MEE": "2008-09-04",
+        "BTUUQ": "2008-09-29"
+      },
+      "n_stopped_out": 3,
+      "model_return_pct": -15.15,
+      "spy_return_pct": -9.58,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2008-10-01",
+      "picks": [
+        "MEE",
+        "SWN",
+        "WU",
+        "JNY",
+        "PXD"
+      ],
+      "per_ticker_returns_pct": {
+        "MEE": -19.0,
+        "SWN": -19.0,
+        "WU": -42.79,
+        "JNY": -19.0,
+        "PXD": -19.0
+      },
+      "stop_triggered_on": {
+        "MEE": "2008-10-03",
+        "SWN": "2008-10-06",
+        "JNY": "2008-10-09",
+        "PXD": "2008-10-10"
+      },
+      "n_stopped_out": 4,
+      "model_return_pct": -23.76,
+      "spy_return_pct": -23.34,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2008-11-26",
+      "picks": [
+        "QLGC",
+        "ESRX",
+        "BRCM",
+        "XLNX",
+        "HNZ"
+      ],
+      "per_ticker_returns_pct": {
+        "QLGC": 12.87,
+        "ESRX": -3.96,
+        "BRCM": 10.18,
+        "XLNX": 2.58,
+        "HNZ": -2.57
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 3.82,
+      "spy_return_pct": -4.99,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2009-01-27",
+      "picks": [
+        "AKS",
+        "JNY",
+        "AVP",
+        "ESRX",
+        "QLGC"
+      ],
+      "per_ticker_returns_pct": {
+        "AKS": -19.0,
+        "JNY": -19.0,
+        "AVP": -4.03,
+        "ESRX": -19.0,
+        "QLGC": -19.0
+      },
+      "stop_triggered_on": {
+        "AKS": "2009-02-20",
+        "JNY": "2009-02-20",
+        "ESRX": "2009-03-05",
+        "QLGC": "2009-02-20"
+      },
+      "n_stopped_out": 4,
+      "model_return_pct": -16.01,
+      "spy_return_pct": -3.64,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2009-03-25",
+      "picks": [
+        "ESRX",
+        "AVP",
+        "PTV",
+        "BMC",
+        "QLGC"
+      ],
+      "per_ticker_returns_pct": {
+        "ESRX": 28.93,
+        "AVP": 26.56,
+        "PTV": 57.02,
+        "BMC": 0.36,
+        "QLGC": 19.52
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 26.48,
+      "spy_return_pct": 9.53,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2009-05-21",
+      "picks": [
+        "TGNA",
+        "EKDKQ",
+        "SWN",
+        "ESRX",
+        "ODP"
+      ],
+      "per_ticker_returns_pct": {
+        "TGNA": 13.82,
+        "EKDKQ": 16.19,
+        "SWN": 3.3,
+        "ESRX": 9.69,
+        "ODP": 25.27
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 13.65,
+      "spy_return_pct": 6.64,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2009-07-20",
+      "picks": [
+        "TGNA",
+        "AKS",
+        "MTW",
+        "MEE",
+        "ESRX"
+      ],
+      "per_ticker_returns_pct": {
+        "TGNA": 80.18,
+        "AKS": 14.12,
+        "MTW": 75.94,
+        "MEE": 43.27,
+        "ESRX": 17.22
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 46.15,
+      "spy_return_pct": 11.13,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2009-09-15",
+      "picks": [
+        "TGNA",
+        "X",
+        "JNS",
+        "BAC",
+        "MEE"
+      ],
+      "per_ticker_returns_pct": {
+        "TGNA": 22.72,
+        "X": -19.0,
+        "JNS": 0.15,
+        "BAC": -4.53,
+        "MEE": -19.0
+      },
+      "stop_triggered_on": {
+        "X": "2009-10-28",
+        "MEE": "2009-10-02"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": -3.93,
+      "spy_return_pct": 3.66,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2009-11-10",
+      "picks": [
+        "ETFC",
+        "TGNA",
+        "MEE",
+        "C",
+        "EKDKQ"
+      ],
+      "per_ticker_returns_pct": {
+        "ETFC": 18.42,
+        "TGNA": 51.15,
+        "MEE": 40.47,
+        "C": -19.0,
+        "EKDKQ": 11.19
+      },
+      "stop_triggered_on": {
+        "C": "2009-12-17"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 20.44,
+      "spy_return_pct": 4.54,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2010-01-08",
+      "picks": [
+        "AIG",
+        "MEE",
+        "AVP",
+        "AKS",
+        "BDK"
+      ],
+      "per_ticker_returns_pct": {
+        "AIG": -19.0,
+        "MEE": -19.0,
+        "AVP": 0.22,
+        "AKS": -19.0,
+        "BDK": 4.48
+      },
+      "stop_triggered_on": {
+        "AIG": "2010-01-27",
+        "MEE": "2010-01-29",
+        "AKS": "2010-02-04"
+      },
+      "n_stopped_out": 3,
+      "model_return_pct": -10.46,
+      "spy_return_pct": -0.1,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2010-03-09",
+      "picks": [
+        "GT",
+        "MEE",
+        "TEX",
+        "CE",
+        "CVH"
+      ],
+      "per_ticker_returns_pct": {
+        "GT": -3.16,
+        "MEE": -19.0,
+        "TEX": 16.66,
+        "CE": -9.59,
+        "CVH": -7.07
+      },
+      "stop_triggered_on": {
+        "MEE": "2010-04-30"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": -4.43,
+      "spy_return_pct": 2.06,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2010-05-05",
+      "picks": [
+        "HIG",
+        "MEE",
+        "ODP",
+        "TGNA",
+        "HAR"
+      ],
+      "per_ticker_returns_pct": {
+        "HIG": -19.0,
+        "MEE": -19.0,
+        "ODP": -19.0,
+        "TGNA": -17.8,
+        "HAR": -19.0
+      },
+      "stop_triggered_on": {
+        "HIG": "2010-06-08",
+        "MEE": "2010-06-29",
+        "ODP": "2010-06-25",
+        "HAR": "2010-05-20"
+      },
+      "n_stopped_out": 4,
+      "model_return_pct": -18.76,
+      "spy_return_pct": -12.04,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2010-07-01",
+      "picks": [
+        "TGNA",
+        "AIV",
+        "CRM",
+        "BBWI",
+        "AIG"
+      ],
+      "per_ticker_returns_pct": {
+        "TGNA": -6.37,
+        "AIV": 4.55,
+        "CRM": 28.03,
+        "BBWI": 9.91,
+        "AIG": 3.9
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 8.0,
+      "spy_return_pct": 3.99,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2010-08-27",
+      "picks": [
+        "UAL",
+        "ZION",
+        "BPOP",
+        "AIV",
+        "DAL"
+      ],
+      "per_ticker_returns_pct": {
+        "UAL": 35.5,
+        "ZION": 14.22,
+        "BPOP": 12.02,
+        "AIV": 18.73,
+        "DAL": 28.78
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 21.85,
+      "spy_return_pct": 11.08,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2010-10-25",
+      "picks": [
+        "WY",
+        "ODP",
+        "TIE",
+        "ZION",
+        "CRM"
+      ],
+      "per_ticker_returns_pct": {
+        "WY": 15.13,
+        "ODP": 1.04,
+        "TIE": -9.83,
+        "ZION": 7.72,
+        "CRM": 23.53
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 7.52,
+      "spy_return_pct": 5.64,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2010-12-21",
+      "picks": [
+        "UAL",
+        "WY",
+        "AAL",
+        "ZION",
+        "CRK"
+      ],
+      "per_ticker_returns_pct": {
+        "UAL": 12.92,
+        "WY": 36.66,
+        "AAL": -5.7,
+        "ZION": 6.6,
+        "CRK": 6.14
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 11.33,
+      "spy_return_pct": 7.07,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2011-02-17",
+      "picks": [
+        "HL",
+        "JOE",
+        "VIAV",
+        "LULU",
+        "ANDV"
+      ],
+      "per_ticker_returns_pct": {
+        "HL": -19.0,
+        "JOE": -11.05,
+        "VIAV": -19.0,
+        "LULU": 13.15,
+        "ANDV": 2.75
+      },
+      "stop_triggered_on": {
+        "HL": "2011-03-15",
+        "VIAV": "2011-03-09"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": -6.63,
+      "spy_return_pct": -1.65,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2011-04-15",
+      "picks": [
+        "WY",
+        "VIAV",
+        "FFIV",
+        "SWKS",
+        "VSH"
+      ],
+      "per_ticker_returns_pct": {
+        "WY": -9.21,
+        "VIAV": -7.03,
+        "FFIV": 12.62,
+        "SWKS": -5.36,
+        "VSH": -19.0
+      },
+      "stop_triggered_on": {
+        "VSH": "2011-06-10"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": -5.6,
+      "spy_return_pct": -2.06,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2011-06-14",
+      "picks": [
+        "VSH",
+        "LULU",
+        "TKR",
+        "CDE",
+        "TER"
+      ],
+      "per_ticker_returns_pct": {
+        "VSH": -19.0,
+        "LULU": 12.2,
+        "TKR": -19.0,
+        "CDE": 1.53,
+        "TER": -19.0
+      },
+      "stop_triggered_on": {
+        "VSH": "2011-08-05",
+        "TKR": "2011-08-05",
+        "TER": "2011-08-05"
+      },
+      "n_stopped_out": 3,
+      "model_return_pct": -8.65,
+      "spy_return_pct": -13.17,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2011-08-10",
+      "picks": [
+        "IPGP",
+        "ULTA",
+        "LULU",
+        "ST",
+        "NKTR"
+      ],
+      "per_ticker_returns_pct": {
+        "IPGP": -19.0,
+        "ULTA": 25.49,
+        "LULU": 1.64,
+        "ST": -19.0,
+        "NKTR": -9.11
+      },
+      "stop_triggered_on": {
+        "IPGP": "2011-09-29",
+        "ST": "2011-10-04"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": -4.0,
+      "spy_return_pct": 3.74,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2011-10-06",
+      "picks": [
+        "NKTR",
+        "IPGP",
+        "ORKA",
+        "SUNEQ",
+        "ULTA"
+      ],
+      "per_ticker_returns_pct": {
+        "NKTR": 2.71,
+        "IPGP": -19.0,
+        "ORKA": 16.24,
+        "SUNEQ": -19.0,
+        "ULTA": 11.38
+      },
+      "stop_triggered_on": {
+        "IPGP": "2011-11-25",
+        "SUNEQ": "2011-11-09"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": -1.53,
+      "spy_return_pct": 7.19,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2011-12-02",
+      "picks": [
+        "SUNEQ",
+        "ILMN",
+        "FSLR",
+        "AKAM",
+        "MAN"
+      ],
+      "per_ticker_returns_pct": {
+        "SUNEQ": 13.08,
+        "ILMN": 87.08,
+        "FSLR": -19.0,
+        "AKAM": 10.38,
+        "MAN": 20.65
+      },
+      "stop_triggered_on": {
+        "FSLR": "2011-12-14"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 22.44,
+      "spy_return_pct": 6.09,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2012-02-01",
+      "picks": [
+        "CRK",
+        "FSLR",
+        "AKAM",
+        "OLED",
+        "TEX"
+      ],
+      "per_ticker_returns_pct": {
+        "CRK": 38.76,
+        "FSLR": -19.0,
+        "AKAM": 15.34,
+        "OLED": -19.0,
+        "TEX": 5.39
+      },
+      "stop_triggered_on": {
+        "FSLR": "2012-02-27",
+        "OLED": "2012-03-06"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": 4.3,
+      "spy_return_pct": 5.86,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2012-03-29",
+      "picks": [
+        "FSLR",
+        "TEX",
+        "CRK",
+        "TMUS",
+        "GNW"
+      ],
+      "per_ticker_returns_pct": {
+        "FSLR": -19.0,
+        "TEX": -19.0,
+        "CRK": -7.01,
+        "TMUS": -19.0,
+        "GNW": -19.0
+      },
+      "stop_triggered_on": {
+        "FSLR": "2012-04-09",
+        "TEX": "2012-05-17",
+        "TMUS": "2012-04-26",
+        "GNW": "2012-04-18"
+      },
+      "n_stopped_out": 4,
+      "model_return_pct": -16.6,
+      "spy_return_pct": -5.8,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2012-05-25",
+      "picks": [
+        "NEU",
+        "ANF",
+        "CRK",
+        "ANRZQ",
+        "CLDX"
+      ],
+      "per_ticker_returns_pct": {
+        "NEU": 7.04,
+        "ANF": -3.51,
+        "CRK": 15.75,
+        "ANRZQ": -19.0,
+        "CLDX": 13.78
+      },
+      "stop_triggered_on": {
+        "ANRZQ": "2012-06-08"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 2.81,
+      "spy_return_pct": 1.39,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2012-07-24",
+      "picks": [
+        "ANRZQ",
+        "LEU",
+        "URI",
+        "LXK",
+        "PTEN"
+      ],
+      "per_ticker_returns_pct": {
+        "ANRZQ": 22.67,
+        "LEU": -19.0,
+        "URI": 33.16,
+        "LXK": 44.3,
+        "PTEN": 13.58
+      },
+      "stop_triggered_on": {
+        "LEU": "2012-08-23"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 18.94,
+      "spy_return_pct": 9.53,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2012-09-19",
+      "picks": [
+        "FSLR",
+        "ANF",
+        "STX",
+        "SLS",
+        "ANRZQ"
+      ],
+      "per_ticker_returns_pct": {
+        "FSLR": 0.26,
+        "ANF": -19.0,
+        "STX": -8.01,
+        "SLS": -19.0,
+        "ANRZQ": -6.95
+      },
+      "stop_triggered_on": {
+        "ANF": "2012-10-22",
+        "SLS": "2012-11-12"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": -10.54,
+      "spy_return_pct": -7.04,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2012-11-16",
+      "picks": [
+        "FSLR",
+        "CLDX",
+        "ORKA",
+        "SM",
+        "INCY"
+      ],
+      "per_ticker_returns_pct": {
+        "FSLR": 30.5,
+        "CLDX": 42.47,
+        "ORKA": 48.0,
+        "SM": 13.57,
+        "INCY": 11.56
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 29.22,
+      "spy_return_pct": 7.83,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2013-01-16",
+      "picks": [
+        "FSLR",
+        "APOL",
+        "ORKA",
+        "CLF",
+        "SLS"
+      ],
+      "per_ticker_returns_pct": {
+        "FSLR": -19.0,
+        "APOL": -19.0,
+        "ORKA": 28.83,
+        "CLF": -19.0,
+        "SLS": 7.87
+      },
+      "stop_triggered_on": {
+        "FSLR": "2013-03-04",
+        "APOL": "2013-03-04",
+        "CLF": "2013-02-13"
+      },
+      "n_stopped_out": 3,
+      "model_return_pct": -4.06,
+      "spy_return_pct": 5.97,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2013-03-15",
+      "picks": [
+        "BMRN",
+        "CLF",
+        "FSLR",
+        "MDGL",
+        "LEU"
+      ],
+      "per_ticker_returns_pct": {
+        "BMRN": 12.41,
+        "CLF": -19.0,
+        "FSLR": 89.59,
+        "MDGL": -19.0,
+        "LEU": 2.94
+      },
+      "stop_triggered_on": {
+        "CLF": "2013-04-15",
+        "MDGL": "2013-05-08"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": 13.39,
+      "spy_return_pct": 4.95,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2013-05-13",
+      "picks": [
+        "IONS",
+        "LNG",
+        "CLF",
+        "RGLD",
+        "NEM"
+      ],
+      "per_ticker_returns_pct": {
+        "IONS": 63.49,
+        "LNG": -1.3,
+        "CLF": -19.0,
+        "RGLD": -19.0,
+        "NEM": -18.42
+      },
+      "stop_triggered_on": {
+        "CLF": "2013-05-29",
+        "RGLD": "2013-06-24"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": 1.15,
+      "spy_return_pct": 1.01,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2013-07-10",
+      "picks": [
+        "MARA",
+        "RGLD",
+        "CLF",
+        "CVI",
+        "LEU"
+      ],
+      "per_ticker_returns_pct": {
+        "MARA": 6.51,
+        "RGLD": 34.77,
+        "CLF": 31.47,
+        "CVI": -4.89,
+        "LEU": 309.64
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 75.5,
+      "spy_return_pct": 0.47,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2013-09-05",
+      "picks": [
+        "IONS",
+        "ORKA",
+        "FSLR",
+        "MDGL",
+        "NEM"
+      ],
+      "per_ticker_returns_pct": {
+        "IONS": 16.86,
+        "ORKA": 1.49,
+        "FSLR": 31.15,
+        "MDGL": -19.0,
+        "NEM": -10.03
+      },
+      "stop_triggered_on": {
+        "MDGL": "2013-10-28"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 4.09,
+      "spy_return_pct": 5.92,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2013-10-31",
+      "picks": [
+        "CLDX",
+        "ACAD",
+        "IONS",
+        "ORKA",
+        "RGLD"
+      ],
+      "per_ticker_returns_pct": {
+        "CLDX": 2.18,
+        "ACAD": 11.66,
+        "IONS": 20.05,
+        "ORKA": 25.0,
+        "RGLD": -6.12
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 10.55,
+      "spy_return_pct": 4.57,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2013-12-30",
+      "picks": [
+        "CLDX",
+        "ACAD",
+        "ORKA",
+        "NEM",
+        "IONS"
+      ],
+      "per_ticker_returns_pct": {
+        "CLDX": 35.0,
+        "ACAD": 18.6,
+        "ORKA": -19.0,
+        "NEM": 2.88,
+        "IONS": 41.14
+      },
+      "stop_triggered_on": {
+        "ORKA": "2014-01-22"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 15.72,
+      "spy_return_pct": 1.09,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2014-02-27",
+      "picks": [
+        "TSLA",
+        "ACAD",
+        "CLDX",
+        "IONS",
+        "CLF"
+      ],
+      "per_ticker_returns_pct": {
+        "TSLA": -19.0,
+        "ACAD": -19.0,
+        "CLDX": -19.0,
+        "IONS": -19.0,
+        "CLF": -11.59
+      },
+      "stop_triggered_on": {
+        "TSLA": "2014-03-27",
+        "ACAD": "2014-03-24",
+        "CLDX": "2014-03-07",
+        "IONS": "2014-03-13"
+      },
+      "n_stopped_out": 4,
+      "model_return_pct": -17.52,
+      "spy_return_pct": 0.25,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2014-04-25",
+      "picks": [
+        "UI",
+        "IONS",
+        "INCY",
+        "ALNY",
+        "MDGL"
+      ],
+      "per_ticker_returns_pct": {
+        "UI": -19.0,
+        "IONS": -19.0,
+        "INCY": 23.61,
+        "ALNY": 35.85,
+        "MDGL": 9.85
+      },
+      "stop_triggered_on": {
+        "UI": "2014-05-09",
+        "IONS": "2014-04-30"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": 6.26,
+      "spy_return_pct": 5.15,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2014-06-23",
+      "picks": [
+        "SLS",
+        "INCY",
+        "ALNY",
+        "CLF",
+        "UI"
+      ],
+      "per_ticker_returns_pct": {
+        "SLS": -19.0,
+        "INCY": -19.0,
+        "ALNY": -19.0,
+        "CLF": 12.34,
+        "UI": -0.87
+      },
+      "stop_triggered_on": {
+        "SLS": "2014-08-15",
+        "INCY": "2014-07-17",
+        "ALNY": "2014-07-15"
+      },
+      "n_stopped_out": 3,
+      "model_return_pct": -9.11,
+      "spy_return_pct": 1.28,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2014-08-19",
+      "picks": [
+        "SLS",
+        "CLDX",
+        "CLF",
+        "IONS",
+        "TSLA"
+      ],
+      "per_ticker_returns_pct": {
+        "SLS": -19.0,
+        "CLDX": -19.0,
+        "CLF": -19.0,
+        "IONS": 9.13,
+        "TSLA": -10.54
+      },
+      "stop_triggered_on": {
+        "SLS": "2014-10-07",
+        "CLDX": "2014-10-01",
+        "CLF": "2014-09-22"
+      },
+      "n_stopped_out": 3,
+      "model_return_pct": -11.68,
+      "spy_return_pct": -6.03,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2014-10-15",
+      "picks": [
+        "IONS",
+        "SLS",
+        "CRK",
+        "CLDX",
+        "LNG"
+      ],
+      "per_ticker_returns_pct": {
+        "IONS": 58.76,
+        "SLS": -2.87,
+        "CRK": -19.0,
+        "CLDX": 22.66,
+        "LNG": -2.87
+      },
+      "stop_triggered_on": {
+        "CRK": "2014-11-04"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 11.34,
+      "spy_return_pct": 9.53,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2014-12-11",
+      "picks": [
+        "SM",
+        "NOG",
+        "SLS",
+        "PTEN",
+        "MDGL"
+      ],
+      "per_ticker_returns_pct": {
+        "SM": 51.54,
+        "NOG": 53.43,
+        "SLS": -2.37,
+        "PTEN": 11.5,
+        "MDGL": -19.0
+      },
+      "stop_triggered_on": {
+        "MDGL": "2015-02-02"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 19.02,
+      "spy_return_pct": 1.28,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2015-02-10",
+      "picks": [
+        "IONS",
+        "UI",
+        "CLDX",
+        "AGIO",
+        "CHRN"
+      ],
+      "per_ticker_returns_pct": {
+        "IONS": 4.52,
+        "UI": 1.17,
+        "CLDX": 38.76,
+        "AGIO": -19.0,
+        "CHRN": 49.62
+      },
+      "stop_triggered_on": {
+        "AGIO": "2015-03-25"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 15.01,
+      "spy_return_pct": 1.01,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2015-04-09",
+      "picks": [
+        "AGIO",
+        "IONS",
+        "CLDX",
+        "NBIX",
+        "SM"
+      ],
+      "per_ticker_returns_pct": {
+        "AGIO": 27.24,
+        "IONS": 3.26,
+        "CLDX": -2.91,
+        "NBIX": -19.0,
+        "SM": -8.76
+      },
+      "stop_triggered_on": {
+        "NBIX": "2015-04-30"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": -0.03,
+      "spy_return_pct": 0.42,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2015-06-05",
+      "picks": [
+        "CHRD",
+        "NOG",
+        "SM",
+        "PAYC",
+        "AGIO"
+      ],
+      "per_ticker_returns_pct": {
+        "CHRD": -19.0,
+        "NOG": -19.0,
+        "SM": -19.0,
+        "PAYC": -11.19,
+        "AGIO": -19.0
+      },
+      "stop_triggered_on": {
+        "CHRD": "2015-07-06",
+        "NOG": "2015-07-06",
+        "SM": "2015-07-16",
+        "AGIO": "2015-06-15"
+      },
+      "n_stopped_out": 4,
+      "model_return_pct": -17.44,
+      "spy_return_pct": 0.01,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2015-08-03",
+      "picks": [
+        "NBIX",
+        "AGIO",
+        "AMBA",
+        "FCX",
+        "HALO"
+      ],
+      "per_ticker_returns_pct": {
+        "NBIX": -19.0,
+        "AGIO": -19.0,
+        "AMBA": -19.0,
+        "FCX": -19.0,
+        "HALO": -19.0
+      },
+      "stop_triggered_on": {
+        "NBIX": "2015-08-24",
+        "AGIO": "2015-08-14",
+        "AMBA": "2015-08-21",
+        "FCX": "2015-08-24",
+        "HALO": "2015-08-19"
+      },
+      "n_stopped_out": 5,
+      "model_return_pct": -19.0,
+      "spy_return_pct": -10.33,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2015-09-29",
+      "picks": [
+        "CLDX",
+        "ESI",
+        "MU",
+        "TRGP",
+        "WYNN"
+      ],
+      "per_ticker_returns_pct": {
+        "CLDX": 71.39,
+        "ESI": -19.0,
+        "MU": 8.69,
+        "TRGP": -19.0,
+        "WYNN": 18.28
+      },
+      "stop_triggered_on": {
+        "ESI": "2015-10-23",
+        "TRGP": "2015-11-23"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": 12.07,
+      "spy_return_pct": 11.29,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2015-11-24",
+      "picks": [
+        "SWN",
+        "RARE",
+        "TRGP",
+        "MDGL",
+        "WYNN"
+      ],
+      "per_ticker_returns_pct": {
+        "SWN": -19.0,
+        "RARE": -19.0,
+        "TRGP": -19.0,
+        "MDGL": -19.0,
+        "WYNN": -19.0
+      },
+      "stop_triggered_on": {
+        "SWN": "2015-12-07",
+        "RARE": "2016-01-13",
+        "TRGP": "2015-12-04",
+        "MDGL": "2015-12-11",
+        "WYNN": "2016-01-14"
+      },
+      "n_stopped_out": 5,
+      "model_return_pct": -19.0,
+      "spy_return_pct": -10.37,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2016-01-25",
+      "picks": [
+        "CLDX",
+        "PVLA",
+        "THC",
+        "OMF",
+        "HRI"
+      ],
+      "per_ticker_returns_pct": {
+        "CLDX": -19.0,
+        "PVLA": 15.34,
+        "THC": 17.9,
+        "OMF": -19.0,
+        "HRI": -19.0
+      },
+      "stop_triggered_on": {
+        "CLDX": "2016-01-28",
+        "OMF": "2016-02-08",
+        "HRI": "2016-02-08"
+      },
+      "n_stopped_out": 3,
+      "model_return_pct": -4.75,
+      "spy_return_pct": 9.02,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2016-03-22",
+      "picks": [
+        "CLDX",
+        "FCX",
+        "RGLD",
+        "PAGP",
+        "TRGP"
+      ],
+      "per_ticker_returns_pct": {
+        "CLDX": 1.03,
+        "FCX": -19.0,
+        "RGLD": 4.84,
+        "PAGP": 13.9,
+        "TRGP": 40.96
+      },
+      "stop_triggered_on": {
+        "FCX": "2016-04-07"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 8.35,
+      "spy_return_pct": 0.17,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2016-05-18",
+      "picks": [
+        "CNX",
+        "HAPN",
+        "ET",
+        "CLDX",
+        "ACAD"
+      ],
+      "per_ticker_returns_pct": {
+        "CNX": 27.33,
+        "HAPN": 12.53,
+        "ET": 28.97,
+        "CLDX": 19.59,
+        "ACAD": 1.51
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 17.99,
+      "spy_return_pct": 5.33,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2016-07-15",
+      "picks": [
+        "CLDX",
+        "TRGP",
+        "CF",
+        "RARE",
+        "WMB"
+      ],
+      "per_ticker_returns_pct": {
+        "CLDX": -19.0,
+        "TRGP": 9.69,
+        "CF": -19.0,
+        "RARE": 34.27,
+        "WMB": 29.78
+      },
+      "stop_triggered_on": {
+        "CLDX": "2016-08-23",
+        "CF": "2016-08-04"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": 7.15,
+      "spy_return_pct": 0.24,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2016-09-12",
+      "picks": [
+        "CLDX",
+        "SLS",
+        "HAPN",
+        "FCX",
+        "CDE"
+      ],
+      "per_ticker_returns_pct": {
+        "CLDX": -19.0,
+        "SLS": -19.0,
+        "HAPN": 5.72,
+        "FCX": 1.9,
+        "CDE": -19.0
+      },
+      "stop_triggered_on": {
+        "CLDX": "2016-11-03",
+        "SLS": "2016-10-11",
+        "CDE": "2016-10-04"
+      },
+      "n_stopped_out": 3,
+      "model_return_pct": -9.88,
+      "spy_return_pct": -1.47,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2016-11-07",
+      "picks": [
+        "SLS",
+        "CLDX",
+        "EXEL",
+        "SM",
+        "HAPN"
+      ],
+      "per_ticker_returns_pct": {
+        "SLS": -19.0,
+        "CLDX": 14.59,
+        "EXEL": 21.28,
+        "SM": 15.42,
+        "HAPN": -4.4
+      },
+      "stop_triggered_on": {
+        "SLS": "2016-11-29"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 5.58,
+      "spy_return_pct": 6.22,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2017-01-05",
+      "picks": [
+        "CLDX",
+        "CC",
+        "SLS",
+        "EXEL",
+        "RGLD"
+      ],
+      "per_ticker_returns_pct": {
+        "CLDX": 1.06,
+        "CC": 53.75,
+        "SLS": -19.0,
+        "EXEL": 51.63,
+        "RGLD": -5.6
+      },
+      "stop_triggered_on": {
+        "SLS": "2017-01-09"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 16.37,
+      "spy_return_pct": 5.0,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2017-03-06",
+      "picks": [
+        "TDW",
+        "SLS",
+        "SM",
+        "NGL",
+        "DVN"
+      ],
+      "per_ticker_returns_pct": {
+        "TDW": -19.0,
+        "SLS": -19.0,
+        "SM": -19.0,
+        "NGL": -19.0,
+        "DVN": -11.58
+      },
+      "stop_triggered_on": {
+        "TDW": "2017-03-09",
+        "SLS": "2017-03-14",
+        "SM": "2017-03-14",
+        "NGL": "2017-04-25"
+      },
+      "n_stopped_out": 4,
+      "model_return_pct": -17.52,
+      "spy_return_pct": 0.45,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2017-05-02",
+      "picks": [
+        "CHRN",
+        "SLS",
+        "VRDN",
+        "AMD",
+        "CHRD"
+      ],
+      "per_ticker_returns_pct": {
+        "CHRN": -19.0,
+        "SLS": 0.0,
+        "VRDN": -19.0,
+        "AMD": 28.2,
+        "CHRD": -19.0
+      },
+      "stop_triggered_on": {
+        "CHRN": "2017-05-10",
+        "VRDN": "2017-05-31",
+        "CHRD": "2017-05-31"
+      },
+      "n_stopped_out": 3,
+      "model_return_pct": -5.76,
+      "spy_return_pct": 1.98,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2017-06-28",
+      "picks": [
+        "CC",
+        "VRDN",
+        "M",
+        "OLED",
+        "CHRN"
+      ],
+      "per_ticker_returns_pct": {
+        "CC": 29.65,
+        "VRDN": -19.0,
+        "M": -10.74,
+        "OLED": -1.96,
+        "CHRN": -19.0
+      },
+      "stop_triggered_on": {
+        "VRDN": "2017-08-14",
+        "CHRN": "2017-07-05"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": -4.21,
+      "spy_return_pct": 0.21,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2017-08-24",
+      "picks": [
+        "VRDN",
+        "CHRN",
+        "SRPT",
+        "PVLA",
+        "DKS"
+      ],
+      "per_ticker_returns_pct": {
+        "VRDN": 14.04,
+        "CHRN": -19.0,
+        "SRPT": 43.01,
+        "PVLA": -4.03,
+        "DKS": 1.68
+      },
+      "stop_triggered_on": {
+        "CHRN": "2017-09-07"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 7.14,
+      "spy_return_pct": 5.38,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2017-10-20",
+      "picks": [
+        "CHRN",
+        "VRDN",
+        "DKS",
+        "PVLA",
+        "SYRE"
+      ],
+      "per_ticker_returns_pct": {
+        "CHRN": 103.54,
+        "VRDN": -19.0,
+        "DKS": 10.99,
+        "PVLA": 12.8,
+        "SYRE": -19.0
+      },
+      "stop_triggered_on": {
+        "VRDN": "2017-10-25",
+        "SYRE": "2017-11-29"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": 17.87,
+      "spy_return_pct": 4.31,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2017-12-18",
+      "picks": [
+        "VRDN",
+        "SLS",
+        "INSM",
+        "MTSI",
+        "SM"
+      ],
+      "per_ticker_returns_pct": {
+        "VRDN": -19.0,
+        "SLS": -19.0,
+        "INSM": -19.0,
+        "MTSI": -19.0,
+        "SM": 6.96
+      },
+      "stop_triggered_on": {
+        "VRDN": "2018-02-08",
+        "SLS": "2018-01-02",
+        "INSM": "2018-02-09",
+        "MTSI": "2018-02-07"
+      },
+      "n_stopped_out": 4,
+      "model_return_pct": -13.81,
+      "spy_return_pct": 1.8,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2018-02-15",
+      "picks": [
+        "SLS",
+        "ALGN",
+        "OLED",
+        "CHRN",
+        "SRPT"
+      ],
+      "per_ticker_returns_pct": {
+        "SLS": -19.0,
+        "ALGN": 5.04,
+        "OLED": -19.0,
+        "CHRN": 7.84,
+        "SRPT": 24.26
+      },
+      "stop_triggered_on": {
+        "SLS": "2018-03-20",
+        "OLED": "2018-02-23"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": -0.17,
+      "spy_return_pct": -2.09,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2018-04-16",
+      "picks": [
+        "NKTR",
+        "DBRG",
+        "PVLA",
+        "SRPT",
+        "CXW"
+      ],
+      "per_ticker_returns_pct": {
+        "NKTR": -19.0,
+        "DBRG": 7.39,
+        "PVLA": -11.82,
+        "SRPT": 25.87,
+        "CXW": 5.57
+      },
+      "stop_triggered_on": {
+        "NKTR": "2018-05-04"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 1.6,
+      "spy_return_pct": 4.34,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2018-06-12",
+      "picks": [
+        "ACAD",
+        "VRDN",
+        "CHRN",
+        "SRPT",
+        "OLED"
+      ],
+      "per_ticker_returns_pct": {
+        "ACAD": -19.0,
+        "VRDN": -19.0,
+        "CHRN": 29.03,
+        "SRPT": 22.54,
+        "OLED": -19.0
+      },
+      "stop_triggered_on": {
+        "ACAD": "2018-08-06",
+        "VRDN": "2018-08-08",
+        "OLED": "2018-06-28"
+      },
+      "n_stopped_out": 3,
+      "model_return_pct": -1.09,
+      "spy_return_pct": 2.34,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2018-08-08",
+      "picks": [
+        "SRPT",
+        "ORKA",
+        "OLED",
+        "QLYS",
+        "ETSY"
+      ],
+      "per_ticker_returns_pct": {
+        "SRPT": 18.03,
+        "ORKA": -19.0,
+        "OLED": 19.76,
+        "QLYS": -5.42,
+        "ETSY": 6.73
+      },
+      "stop_triggered_on": {
+        "ORKA": "2018-09-13"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 4.02,
+      "spy_return_pct": 1.39,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2018-10-04",
+      "picks": [
+        "NKTR",
+        "CHRN",
+        "SRPT",
+        "ETSY",
+        "GKOS"
+      ],
+      "per_ticker_returns_pct": {
+        "NKTR": -19.0,
+        "CHRN": -13.49,
+        "SRPT": -19.0,
+        "ETSY": 17.43,
+        "GKOS": 7.26
+      },
+      "stop_triggered_on": {
+        "NKTR": "2018-10-22",
+        "SRPT": "2018-10-29"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": -5.36,
+      "spy_return_pct": -4.76,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2018-11-30",
+      "picks": [
+        "WDC",
+        "DAN",
+        "VISN",
+        "THO",
+        "CC"
+      ],
+      "per_ticker_returns_pct": {
+        "WDC": -19.0,
+        "DAN": 21.43,
+        "VISN": 15.52,
+        "THO": -19.0,
+        "CC": 25.53
+      },
+      "stop_triggered_on": {
+        "WDC": "2018-12-19",
+        "THO": "2018-12-11"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": 4.9,
+      "spy_return_pct": -2.08,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2019-01-31",
+      "picks": [
+        "PVLA",
+        "PCG",
+        "DXCM",
+        "ACAD",
+        "VISN"
+      ],
+      "per_ticker_returns_pct": {
+        "PVLA": 16.72,
+        "PCG": 36.92,
+        "DXCM": -19.0,
+        "ACAD": 17.87,
+        "VISN": 3.92
+      },
+      "stop_triggered_on": {
+        "DXCM": "2019-03-28"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 11.29,
+      "spy_return_pct": 4.65,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2019-03-29",
+      "picks": [
+        "NKTR",
+        "PCG",
+        "BOX",
+        "XPO",
+        "WDC"
+      ],
+      "per_ticker_returns_pct": {
+        "NKTR": -4.4,
+        "PCG": -0.39,
+        "BOX": 0.73,
+        "XPO": -1.67,
+        "WDC": -17.64
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": -4.68,
+      "spy_return_pct": -0.82,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2019-05-28",
+      "picks": [
+        "PCG",
+        "MD",
+        "GKOS",
+        "BLKB",
+        "MTDR"
+      ],
+      "per_ticker_returns_pct": {
+        "PCG": 6.54,
+        "MD": -6.2,
+        "GKOS": 13.26,
+        "BLKB": 13.26,
+        "MTDR": 2.96
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 5.96,
+      "spy_return_pct": 7.6,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2019-07-24",
+      "picks": [
+        "PCG",
+        "NTNX",
+        "ARWR",
+        "CC",
+        "DNTH"
+      ],
+      "per_ticker_returns_pct": {
+        "PCG": -19.0,
+        "NTNX": -19.0,
+        "ARWR": -0.48,
+        "CC": -19.0,
+        "DNTH": -19.0
+      },
+      "stop_triggered_on": {
+        "PCG": "2019-08-15",
+        "NTNX": "2019-08-05",
+        "CC": "2019-08-02",
+        "DNTH": "2019-08-21"
+      },
+      "n_stopped_out": 4,
+      "model_return_pct": -15.3,
+      "spy_return_pct": -0.12,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2019-09-19",
+      "picks": [
+        "M",
+        "PCG",
+        "ARWR",
+        "CHRN",
+        "VISN"
+      ],
+      "per_ticker_returns_pct": {
+        "M": 3.31,
+        "PCG": -19.0,
+        "ARWR": 66.72,
+        "CHRN": 6.58,
+        "VISN": 21.33
+      },
+      "stop_triggered_on": {
+        "PCG": "2019-09-30"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 15.79,
+      "spy_return_pct": 2.81,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2019-11-14",
+      "picks": [
+        "ENPH",
+        "FLR",
+        "DNTH",
+        "CHRN",
+        "LSCC"
+      ],
+      "per_ticker_returns_pct": {
+        "ENPH": 59.03,
+        "FLR": 12.09,
+        "DNTH": 42.95,
+        "CHRN": -19.0,
+        "LSCC": 11.72
+      },
+      "stop_triggered_on": {
+        "CHRN": "2019-12-19"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 21.36,
+      "spy_return_pct": 5.78,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2020-01-14",
+      "picks": [
+        "CHRN",
+        "ARWR",
+        "ROKU",
+        "NTNX",
+        "ENPH"
+      ],
+      "per_ticker_returns_pct": {
+        "CHRN": -19.0,
+        "ARWR": -19.0,
+        "ROKU": -19.0,
+        "NTNX": -19.0,
+        "ENPH": 9.34
+      },
+      "stop_triggered_on": {
+        "CHRN": "2020-02-27",
+        "ARWR": "2020-01-21",
+        "ROKU": "2020-02-24",
+        "NTNX": "2020-02-27"
+      },
+      "n_stopped_out": 4,
+      "model_return_pct": -13.33,
+      "spy_return_pct": -24.23,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2020-03-12",
+      "picks": [
+        "TDC",
+        "ABMD",
+        "ENPH",
+        "PODD",
+        "XLNX"
+      ],
+      "per_ticker_returns_pct": {
+        "TDC": 24.11,
+        "ABMD": 36.58,
+        "ENPH": -19.0,
+        "PODD": -19.0,
+        "XLNX": 25.92
+      },
+      "stop_triggered_on": {
+        "ENPH": "2020-03-16",
+        "PODD": "2020-03-17"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": 9.72,
+      "spy_return_pct": 17.87,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2020-05-08",
+      "picks": [
+        "UAL",
+        "AAL",
+        "ALK",
+        "ARR",
+        "ARWR"
+      ],
+      "per_ticker_returns_pct": {
+        "UAL": -19.0,
+        "AAL": 17.46,
+        "ALK": -19.0,
+        "ARR": -19.0,
+        "ARWR": 29.58
+      },
+      "stop_triggered_on": {
+        "UAL": "2020-05-13",
+        "ALK": "2020-05-14",
+        "ARR": "2020-05-14"
+      },
+      "n_stopped_out": 3,
+      "model_return_pct": -1.99,
+      "spy_return_pct": 7.3,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2020-07-07",
+      "picks": [
+        "NCLH",
+        "UAL",
+        "CCL",
+        "OKE",
+        "AAL"
+      ],
+      "per_ticker_returns_pct": {
+        "NCLH": 10.94,
+        "UAL": 10.63,
+        "CCL": 13.32,
+        "OKE": -1.56,
+        "AAL": 9.99
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 8.66,
+      "spy_return_pct": 12.37,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2020-09-01",
+      "picks": [
+        "OVV",
+        "OKE",
+        "NTNX",
+        "BMRN",
+        "OXY"
+      ],
+      "per_ticker_returns_pct": {
+        "OVV": -19.0,
+        "OKE": 7.15,
+        "NTNX": -19.0,
+        "BMRN": -2.12,
+        "OXY": -19.0
+      },
+      "stop_triggered_on": {
+        "OVV": "2020-09-10",
+        "NTNX": "2020-09-17",
+        "OXY": "2020-09-11"
+      },
+      "n_stopped_out": 3,
+      "model_return_pct": -10.39,
+      "spy_return_pct": -7.36,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2020-10-28",
+      "picks": [
+        "MRO",
+        "CIEN",
+        "BMRN",
+        "APPN",
+        "CCL"
+      ],
+      "per_ticker_returns_pct": {
+        "MRO": 73.14,
+        "CIEN": 38.53,
+        "BMRN": 19.18,
+        "APPN": 143.65,
+        "CCL": 69.43
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 68.78,
+      "spy_return_pct": 12.96,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2020-12-24",
+      "picks": [
+        "CCL",
+        "RCL",
+        "M",
+        "IRTC",
+        "EOG"
+      ],
+      "per_ticker_returns_pct": {
+        "CCL": 29.61,
+        "RCL": 36.8,
+        "M": 42.33,
+        "IRTC": -19.0,
+        "EOG": 45.91
+      },
+      "stop_triggered_on": {
+        "IRTC": "2021-01-29"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 27.13,
+      "spy_return_pct": 6.17,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2021-02-24",
+      "picks": [
+        "FIZZ",
+        "APPN",
+        "IRTC",
+        "ETSY",
+        "TDC"
+      ],
+      "per_ticker_returns_pct": {
+        "FIZZ": 4.06,
+        "APPN": -19.0,
+        "IRTC": -19.0,
+        "ETSY": 0.56,
+        "TDC": 15.61
+      },
+      "stop_triggered_on": {
+        "APPN": "2021-03-04",
+        "IRTC": "2021-04-12"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": -3.55,
+      "spy_return_pct": 5.23,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2021-04-22",
+      "picks": [
+        "HAE",
+        "IRTC",
+        "WBD",
+        "TCBI",
+        "DISCK"
+      ],
+      "per_ticker_returns_pct": {
+        "HAE": -19.0,
+        "IRTC": -19.0,
+        "WBD": -19.0,
+        "TCBI": -1.61,
+        "DISCK": -16.35
+      },
+      "stop_triggered_on": {
+        "HAE": "2021-05-13",
+        "IRTC": "2021-06-02",
+        "WBD": "2021-05-24"
+      },
+      "n_stopped_out": 3,
+      "model_return_pct": -14.99,
+      "spy_return_pct": 0.64,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2021-06-18",
+      "picks": [
+        "WBD",
+        "DISCK",
+        "CLF",
+        "FLR",
+        "KTB"
+      ],
+      "per_ticker_returns_pct": {
+        "WBD": -2.54,
+        "DISCK": -1.83,
+        "CLF": 25.31,
+        "FLR": -0.71,
+        "KTB": 2.74
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 4.59,
+      "spy_return_pct": 7.72,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2021-08-16",
+      "picks": [
+        "SM",
+        "IRON",
+        "GME",
+        "APPN",
+        "RAMP"
+      ],
+      "per_ticker_returns_pct": {
+        "SM": 74.33,
+        "IRON": 6.76,
+        "GME": 7.25,
+        "APPN": -6.35,
+        "RAMP": 13.84
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 19.17,
+      "spy_return_pct": -2.99,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2021-10-12",
+      "picks": [
+        "GME",
+        "VCEL",
+        "AEO",
+        "LMND",
+        "CLF"
+      ],
+      "per_ticker_returns_pct": {
+        "GME": -1.23,
+        "VCEL": -19.0,
+        "AEO": 13.48,
+        "LMND": -19.0,
+        "CLF": -1.7
+      },
+      "stop_triggered_on": {
+        "VCEL": "2021-11-23",
+        "LMND": "2021-11-22"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": -5.49,
+      "spy_return_pct": 8.28,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2021-12-08",
+      "picks": [
+        "IRTC",
+        "M",
+        "DOCU",
+        "GME",
+        "HQY"
+      ],
+      "per_ticker_returns_pct": {
+        "IRTC": 23.3,
+        "M": -7.32,
+        "DOCU": -19.0,
+        "GME": -19.0,
+        "HQY": 25.33
+      },
+      "stop_triggered_on": {
+        "DOCU": "2022-01-20",
+        "GME": "2021-12-13"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": 0.66,
+      "spy_return_pct": -4.43,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2022-02-04",
+      "picks": [
+        "CAR",
+        "PYPL",
+        "OLLI",
+        "GAP",
+        "RAMP"
+      ],
+      "per_ticker_returns_pct": {
+        "CAR": -19.0,
+        "PYPL": -19.0,
+        "OLLI": -19.0,
+        "GAP": -19.0,
+        "RAMP": -19.0
+      },
+      "stop_triggered_on": {
+        "CAR": "2022-02-24",
+        "PYPL": "2022-02-22",
+        "OLLI": "2022-03-14",
+        "GAP": "2022-02-23",
+        "RAMP": "2022-03-11"
+      },
+      "n_stopped_out": 5,
+      "model_return_pct": -19.0,
+      "spy_return_pct": 1.81,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2022-04-04",
+      "picks": [
+        "NTRA",
+        "GME",
+        "NKTR",
+        "EPAM",
+        "FSLY"
+      ],
+      "per_ticker_returns_pct": {
+        "NTRA": -19.0,
+        "GME": -19.0,
+        "NKTR": -19.0,
+        "EPAM": 9.51,
+        "FSLY": -19.0
+      },
+      "stop_triggered_on": {
+        "NTRA": "2022-04-19",
+        "GME": "2022-04-18",
+        "NKTR": "2022-04-18",
+        "FSLY": "2022-04-28"
+      },
+      "n_stopped_out": 4,
+      "model_return_pct": -13.3,
+      "spy_return_pct": -10.33,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2022-06-01",
+      "picks": [
+        "NFLX",
+        "M",
+        "NCLH",
+        "GME",
+        "NTRA"
+      ],
+      "per_ticker_returns_pct": {
+        "NFLX": 16.58,
+        "M": -19.0,
+        "NCLH": -19.0,
+        "GME": 12.06,
+        "NTRA": 32.54
+      },
+      "stop_triggered_on": {
+        "M": "2022-06-23",
+        "NCLH": "2022-06-13"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": 4.64,
+      "spy_return_pct": 0.59,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2022-07-29",
+      "picks": [
+        "KSS",
+        "CAR",
+        "CVI",
+        "M",
+        "RCL"
+      ],
+      "per_ticker_returns_pct": {
+        "KSS": -12.35,
+        "CAR": -19.0,
+        "CVI": -19.0,
+        "M": -13.82,
+        "RCL": 13.77
+      },
+      "stop_triggered_on": {
+        "CAR": "2022-09-16",
+        "CVI": "2022-09-23"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": -10.08,
+      "spy_return_pct": -11.57,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2022-09-26",
+      "picks": [
+        "KSS",
+        "WBD",
+        "RLAY",
+        "ILMN",
+        "SWK"
+      ],
+      "per_ticker_returns_pct": {
+        "KSS": 21.1,
+        "WBD": -7.45,
+        "RLAY": -19.0,
+        "ILMN": 21.89,
+        "SWK": 2.44
+      },
+      "stop_triggered_on": {
+        "RLAY": "2022-11-17"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 3.8,
+      "spy_return_pct": 8.31,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2022-11-21",
+      "picks": [
+        "CTLT",
+        "NFLX",
+        "ENTG",
+        "CROX",
+        "APP"
+      ],
+      "per_ticker_returns_pct": {
+        "CTLT": 18.05,
+        "NFLX": 20.15,
+        "ENTG": 10.53,
+        "CROX": 32.22,
+        "APP": -19.0
+      },
+      "stop_triggered_on": {
+        "APP": "2022-12-07"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 12.39,
+      "spy_return_pct": 0.33,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2023-01-20",
+      "picks": [
+        "CCL",
+        "NFLX",
+        "PI",
+        "ROG",
+        "TMDX"
+      ],
+      "per_ticker_returns_pct": {
+        "CCL": -19.0,
+        "NFLX": -10.91,
+        "PI": 4.44,
+        "ROG": 14.96,
+        "TMDX": 16.65
+      },
+      "stop_triggered_on": {
+        "CCL": "2023-03-15"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 1.23,
+      "spy_return_pct": -0.54,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2023-03-20",
+      "picks": [
+        "WAL",
+        "NKTR",
+        "ALGN",
+        "WBD",
+        "CLF"
+      ],
+      "per_ticker_returns_pct": {
+        "WAL": -19.0,
+        "NKTR": -19.0,
+        "ALGN": -7.61,
+        "WBD": -14.68,
+        "CLF": -19.0
+      },
+      "stop_triggered_on": {
+        "WAL": "2023-05-04",
+        "NKTR": "2023-03-23",
+        "CLF": "2023-05-04"
+      },
+      "n_stopped_out": 3,
+      "model_return_pct": -15.86,
+      "spy_return_pct": 4.19,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2023-05-16",
+      "picks": [
+        "FHN",
+        "WAL",
+        "ZION",
+        "ABCB",
+        "CTLT"
+      ],
+      "per_ticker_returns_pct": {
+        "FHN": 22.15,
+        "WAL": 23.11,
+        "ZION": 29.21,
+        "ABCB": 24.83,
+        "CTLT": 46.42
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 29.14,
+      "spy_return_pct": 9.51,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2023-07-14",
+      "picks": [
+        "WAL",
+        "SLG",
+        "TGTX",
+        "CVBF",
+        "MGNI"
+      ],
+      "per_ticker_returns_pct": {
+        "WAL": 23.48,
+        "SLG": 27.35,
+        "TGTX": -19.0,
+        "CVBF": 19.17,
+        "MGNI": -19.0
+      },
+      "stop_triggered_on": {
+        "TGTX": "2023-08-01",
+        "MGNI": "2023-08-09"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": 6.4,
+      "spy_return_pct": -0.18,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2023-09-11",
+      "picks": [
+        "VSAT",
+        "WAL",
+        "INTA",
+        "DRVN",
+        "AD"
+      ],
+      "per_ticker_returns_pct": {
+        "VSAT": -19.0,
+        "WAL": -19.0,
+        "INTA": -1.84,
+        "DRVN": -19.0,
+        "AD": 3.89
+      },
+      "stop_triggered_on": {
+        "VSAT": "2023-09-25",
+        "WAL": "2023-10-25",
+        "DRVN": "2023-10-12"
+      },
+      "n_stopped_out": 3,
+      "model_return_pct": -10.99,
+      "spy_return_pct": -2.85,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2023-11-06",
+      "picks": [
+        "SEDG",
+        "PAYC",
+        "VFC",
+        "MTZ",
+        "UPST"
+      ],
+      "per_ticker_returns_pct": {
+        "SEDG": 15.37,
+        "PAYC": 22.13,
+        "VFC": 6.21,
+        "MTZ": 43.77,
+        "UPST": -19.0
+      },
+      "stop_triggered_on": {
+        "UPST": "2023-11-08"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 13.7,
+      "spy_return_pct": 7.25,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2024-01-04",
+      "picks": [
+        "PARA",
+        "CORT",
+        "AFRM",
+        "AD",
+        "FSLY"
+      ],
+      "per_ticker_returns_pct": {
+        "PARA": -19.0,
+        "CORT": -4.7,
+        "AFRM": -11.36,
+        "AD": -19.0,
+        "FSLY": -12.34
+      },
+      "stop_triggered_on": {
+        "PARA": "2024-02-13",
+        "AD": "2024-02-20"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": -13.28,
+      "spy_return_pct": 9.63,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2024-03-04",
+      "picks": [
+        "PARA",
+        "CC",
+        "UPST",
+        "ROKU",
+        "CAR"
+      ],
+      "per_ticker_returns_pct": {
+        "PARA": -19.0,
+        "CC": 32.49,
+        "UPST": -12.98,
+        "ROKU": -8.51,
+        "CAR": -10.33
+      },
+      "stop_triggered_on": {
+        "PARA": "2024-03-25"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": -3.66,
+      "spy_return_pct": -2.01,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2024-04-30",
+      "picks": [
+        "GL",
+        "SMCI",
+        "PENN",
+        "ROKU",
+        "AMR"
+      ],
+      "per_ticker_returns_pct": {
+        "GL": 7.97,
+        "SMCI": 3.67,
+        "PENN": 14.21,
+        "ROKU": 2.58,
+        "AMR": -15.74
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 2.54,
+      "spy_return_pct": 8.84,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2024-06-27",
+      "picks": [
+        "AGIO",
+        "SMCI",
+        "GAP",
+        "DELL",
+        "IESC"
+      ],
+      "per_ticker_returns_pct": {
+        "AGIO": 5.98,
+        "SMCI": -19.0,
+        "GAP": 2.46,
+        "DELL": -19.0,
+        "IESC": 39.96
+      },
+      "stop_triggered_on": {
+        "SMCI": "2024-07-24",
+        "DELL": "2024-07-25"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": 2.08,
+      "spy_return_pct": 2.88,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2024-08-23",
+      "picks": [
+        "SMCI",
+        "INTC",
+        "MRNA",
+        "SMTC",
+        "GME"
+      ],
+      "per_ticker_returns_pct": {
+        "SMCI": -19.0,
+        "INTC": 11.2,
+        "MRNA": -19.0,
+        "SMTC": 19.07,
+        "GME": -6.8
+      },
+      "stop_triggered_on": {
+        "SMCI": "2024-08-28",
+        "MRNA": "2024-09-12"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": -2.91,
+      "spy_return_pct": 3.82,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2024-10-21",
+      "picks": [
+        "SMCI",
+        "MRNA",
+        "AMR",
+        "AAP",
+        "INTC"
+      ],
+      "per_ticker_returns_pct": {
+        "SMCI": -19.0,
+        "MRNA": -19.0,
+        "AMR": 2.64,
+        "AAP": 8.49,
+        "INTC": -10.51
+      },
+      "stop_triggered_on": {
+        "SMCI": "2024-10-30",
+        "MRNA": "2024-11-11"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": -7.48,
+      "spy_return_pct": 3.54,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2024-12-17",
+      "picks": [
+        "AGIO",
+        "CE",
+        "TMDX",
+        "MRNA",
+        "OKLO"
+      ],
+      "per_ticker_returns_pct": {
+        "AGIO": -19.0,
+        "CE": 2.19,
+        "TMDX": 14.18,
+        "MRNA": -19.0,
+        "OKLO": 162.77
+      },
+      "stop_triggered_on": {
+        "AGIO": "2024-12-24",
+        "MRNA": "2025-01-13"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": 28.23,
+      "spy_return_pct": 1.19,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2025-02-18",
+      "picks": [
+        "SMTC",
+        "WST",
+        "SMCI",
+        "CORZ",
+        "SITM"
+      ],
+      "per_ticker_returns_pct": {
+        "SMTC": -19.0,
+        "WST": 0.71,
+        "SMCI": -19.0,
+        "CORZ": -19.0,
+        "SITM": -19.0
+      },
+      "stop_triggered_on": {
+        "SMTC": "2025-03-07",
+        "SMCI": "2025-02-25",
+        "CORZ": "2025-02-24",
+        "SITM": "2025-02-28"
+      },
+      "n_stopped_out": 4,
+      "model_return_pct": -15.06,
+      "spy_return_pct": -12.08,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2025-04-15",
+      "picks": [
+        "RH",
+        "VFC",
+        "ALB",
+        "CE",
+        "ACHC"
+      ],
+      "per_ticker_returns_pct": {
+        "RH": 10.88,
+        "VFC": 16.51,
+        "ALB": 15.68,
+        "CE": 49.93,
+        "ACHC": -10.51
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 16.5,
+      "spy_return_pct": 12.3,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2025-06-12",
+      "picks": [
+        "CE",
+        "RH",
+        "AFRM",
+        "AAP",
+        "ENPH"
+      ],
+      "per_ticker_returns_pct": {
+        "CE": -19.0,
+        "RH": 21.51,
+        "AFRM": 19.52,
+        "AAP": 16.83,
+        "ENPH": -19.0
+      },
+      "stop_triggered_on": {
+        "CE": "2025-08-11",
+        "ENPH": "2025-06-17"
+      },
+      "n_stopped_out": 2,
+      "model_return_pct": 3.97,
+      "spy_return_pct": 5.33,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2025-08-11",
+      "picks": [
+        "CNC",
+        "IT",
+        "MOH",
+        "SEZL",
+        "CROX"
+      ],
+      "per_ticker_returns_pct": {
+        "CNC": 52.16,
+        "IT": 8.54,
+        "MOH": 32.13,
+        "SEZL": -5.28,
+        "CROX": 2.95
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 18.1,
+      "spy_return_pct": 5.22,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2025-10-07",
+      "picks": [
+        "SEZL",
+        "VSXY",
+        "IRDM",
+        "AMR",
+        "PACS"
+      ],
+      "per_ticker_returns_pct": {
+        "SEZL": -19.0,
+        "VSXY": 49.32,
+        "IRDM": -19.0,
+        "AMR": 9.82,
+        "PACS": -19.0
+      },
+      "stop_triggered_on": {
+        "SEZL": "2025-10-30",
+        "IRDM": "2025-11-20",
+        "PACS": "2025-11-13"
+      },
+      "n_stopped_out": 3,
+      "model_return_pct": 0.43,
+      "spy_return_pct": 2.21,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2025-12-03",
+      "picks": [
+        "LRN",
+        "ARE",
+        "KMX",
+        "ELF",
+        "MGNI"
+      ],
+      "per_ticker_returns_pct": {
+        "LRN": 41.41,
+        "ARE": 11.83,
+        "KMX": 14.76,
+        "ELF": 7.19,
+        "MGNI": -2.23
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 14.6,
+      "spy_return_pct": 1.68,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2026-02-02",
+      "picks": [
+        "USAR",
+        "MRNA",
+        "CORT",
+        "MU",
+        "LEU"
+      ],
+      "per_ticker_returns_pct": {
+        "USAR": -19.0,
+        "MRNA": 19.39,
+        "CORT": -19.0,
+        "MU": -19.0,
+        "LEU": -19.0
+      },
+      "stop_triggered_on": {
+        "USAR": "2026-02-19",
+        "CORT": "2026-02-19",
+        "MU": "2026-03-26",
+        "LEU": "2026-02-11"
+      },
+      "n_stopped_out": 4,
+      "model_return_pct": -11.32,
+      "spy_return_pct": -6.48,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2026-03-31",
+      "picks": [
+        "GRAL",
+        "LEU",
+        "INTA",
+        "SEZL",
+        "FLUT"
+      ],
+      "per_ticker_returns_pct": {
+        "GRAL": 43.03,
+        "LEU": 6.84,
+        "INTA": -19.0,
+        "SEZL": 88.02,
+        "FLUT": -6.25
+      },
+      "stop_triggered_on": {
+        "INTA": "2026-04-09"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 22.53,
+      "spy_return_pct": 16.03,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2026-05-28",
+      "picks": [
+        "GPGI",
+        "IPGP",
+        "FSLY",
+        "IBP",
+        "TMDX"
+      ],
+      "per_ticker_returns_pct": {
+        "GPGI": 18.43,
+        "IPGP": -19.0,
+        "FSLY": 18.3,
+        "IBP": 8.94,
+        "TMDX": 9.51
+      },
+      "stop_triggered_on": {
+        "IPGP": "2026-07-07"
+      },
+      "n_stopped_out": 1,
+      "model_return_pct": 7.24,
+      "spy_return_pct": -2.06,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2026-07-27",
+      "picks": [
+        "FISV",
+        "MRSH",
+        "AVB",
+        "EA"
+      ],
+      "per_ticker_returns_pct": {
+        "FISV": 1.91,
+        "MRSH": 3.54,
+        "AVB": -1.87,
+        "EA": 0.3
+      },
+      "stop_triggered_on": {},
+      "n_stopped_out": 0,
+      "model_return_pct": 0.97,
+      "spy_return_pct": null,
+      "beat_spy": false
+    }
+  ]
+}

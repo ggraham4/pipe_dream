@@ -2,9 +2,15 @@
 Point-in-time (survivorship-bias-corrected) price/feature panel. Companion
 to features.py -- reuses its build_features() unchanged, but builds the
 raw panel from BOTH the current universe (scripts/td_data_local/) and the
-211 point-in-time gap tickers (scripts/td_data_delisted/, produced by
-local_data_pull_delisted.py) -- see that script's docstring, and
-pit_universe.py, for the full background on why.
+point-in-time gap tickers (scripts/td_data_delisted/, produced by
+sharadar_data_pull.py -- GAP_TICKERS there, 339 tickers as of 2026-09-01:
+the original 211 plus a 128-ticker extension reaching back toward 2007-
+2008) -- see that script's docstring, and pit_universe.py, for the full
+background on why. Whatever set of ticker files is actually present in
+td_data_delisted/ is what gets used here (load_all_tickers_pit() derives
+the gap-ticker set from disk, not from a hardcoded list) -- so this panel,
+and the delisting exit-floor fix below, automatically pick up however many
+gap tickers have actually been pulled, 211 or 339 or otherwise.
 
 Two things this does differently from features.py's own pipeline:
 
@@ -54,6 +60,7 @@ import pandas as pd
 from features import (DATA_DIR, PROJECT_ROOT, OUT_DIR, FORWARD_WINDOW, LABEL_COL,
                        build_features, atomic_to_parquet)
 from pit_universe import ALL_GAP_TICKERS, membership_summary
+from price_discontinuity import find_and_apply_breaks, print_breaks_report
 
 DELISTED_DATA_DIR = PROJECT_ROOT / "scripts" / "td_data_delisted"
 NON_STOCK_FILES = {"^VIX", "^TNX", "GLD", "HYG", "TLT"}  # regime-gate series, not stocks
@@ -130,12 +137,28 @@ def load_all_tickers_pit():
         frames.append(df)
     n_current = len(frames)
 
+    # Track the actual set of ticker symbols loaded from td_data_delisted/ --
+    # this is now the authoritative "is this a gap ticker" answer (used below
+    # to apply the delisting exit-floor fix), NOT pit_universe.ALL_GAP_TICKERS
+    # (fixed at 211, the original set). Added 2026-09-01 when GAP_TICKERS in
+    # sharadar_data_pull.py grew to 339 tickers (128 new, reaching back toward
+    # 2007-2008) -- without this, the exit-floor fix below would silently skip
+    # every one of those 128 new tickers (LEHMQ, WAMUQ, FNMA, FMCC, MER, CFC,
+    # NCC, SOV, MBI, SGP, WYE, GENZ, XTO, BUD, ...), meaning a picked stock
+    # that actually went bankrupt in 2008 would just get dropped from the $
+    # simulation (NaN label) instead of counting as a realized loss -- exactly
+    # the bug this fix exists to prevent, and exactly the scenario the 2008
+    # extension was built to capture. Deriving the gap set from "which
+    # directory did this file actually come from" instead of a hardcoded list
+    # also means any future ticker added to GAP_TICKERS just works here too.
+    gap_tickers_loaded = set()
     if DELISTED_DATA_DIR.exists():
         for f in sorted(DELISTED_DATA_DIR.glob("*.csv")):
             ticker = f.stem
             df = pd.read_csv(f, parse_dates=["date"])
             df["ticker"] = ticker
             frames.append(df)
+            gap_tickers_loaded.add(ticker)
     n_gap = len(frames) - n_current
 
     if n_gap == 0:
@@ -146,7 +169,7 @@ def load_all_tickers_pit():
     # if a ticker somehow exists in both dirs, keep the current-universe copy
     data = data.drop_duplicates(subset=["ticker", "date"], keep="first")
     data = data.sort_values(["ticker", "date"]).reset_index(drop=True)
-    return data, n_current, n_gap
+    return data, n_current, n_gap, gap_tickers_loaded
 
 
 def validate_gap_coverage(delisted_dir):
@@ -233,7 +256,15 @@ def validate_gap_coverage(delisted_dir):
 def apply_delisting_exit_floor(feat: pd.DataFrame, gap_tickers, label_col: str) -> pd.DataFrame:
     feat = feat.copy()
     gap_set = set(gap_tickers)
-    present = sorted(set(feat.loc[feat["ticker"].isin(gap_set), "ticker"].unique()))
+    # Match on ticker_orig (the real symbol) when price_discontinuity.py has
+    # run and added that column -- a gap ticker that also got split at a
+    # detected break still needs the exit-floor fix applied to whichever of
+    # its SEGMENTS (identified by the possibly-suffixed "ticker" column) is
+    # the one that actually ends in an unresolved NaN tail. Falls back to
+    # matching on "ticker" directly if ticker_orig isn't present (keeps this
+    # function usable standalone / on older panels).
+    match_col = "ticker_orig" if "ticker_orig" in feat.columns else "ticker"
+    present = sorted(set(feat.loc[feat[match_col].isin(gap_set), "ticker"].unique()))
     fixed_count = 0
     skipped_untrusted = []
     for ticker in present:
@@ -280,15 +311,35 @@ def apply_delisting_exit_floor(feat: pd.DataFrame, gap_tickers, label_col: str) 
 
 def main():
     print("Loading merged price panel (current universe + point-in-time gap tickers)...")
-    raw, n_current, n_gap = load_all_tickers_pit()
+    raw, n_current, n_gap, gap_tickers_loaded = load_all_tickers_pit()
     gap_present = raw[raw["ticker"].isin(ALL_GAP_TICKERS)]["ticker"].nunique()
     print(f"Loaded {raw['ticker'].nunique()} tickers total ({n_current} files from the current "
           f"universe, {n_gap} from td_data_delisted/ -- {gap_present}/{len(ALL_GAP_TICKERS)} of "
-          f"the 211 gap tickers actually found), {len(raw)} rows, "
-          f"{raw['date'].min().date()} to {raw['date'].max().date()}")
+          f"the ORIGINAL 211 pit_universe.py gap tickers found, {len(gap_tickers_loaded)} total "
+          f"distinct gap-ticker files found on disk including the 2007-2008 extension), "
+          f"{len(raw)} rows, {raw['date'].min().date()} to {raw['date'].max().date()}")
+
+    # Detect and neutralize fabricated single-day "returns" from unadjusted
+    # corporate-action discontinuities (bankruptcy-reorg equity conversions,
+    # botched split adjustments) BEFORE build_features() computes any
+    # rolling/return feature -- see price_discontinuity.py's module
+    # docstring for why this exists (a real, confirmed CHRD/Chord-Energy
+    # case produced a fabricated +6,254% single-window backtest return) and
+    # its detection rule. This must run on `raw` (pre-feature, still just
+    # ticker/date/OHLCV) so every downstream rolling window and forward-
+    # return label is computed on the segmented ticker identity, never
+    # spanning the seam.
+    raw, _ticker_orig_col, breaks_found = find_and_apply_breaks(raw)
+    print_breaks_report(breaks_found)
 
     feat = build_features(raw)
-    feat = apply_delisting_exit_floor(feat, ALL_GAP_TICKERS, LABEL_COL)
+    # Apply the delisting exit-floor fix to EVERY gap ticker actually found on
+    # disk (gap_tickers_loaded), not just the original fixed 211
+    # (ALL_GAP_TICKERS) -- see load_all_tickers_pit()'s docstring comment
+    # above for why this matters for the 2007-2008 extension specifically.
+    # Matches on ticker_orig now (see apply_delisting_exit_floor) so this
+    # still works correctly for a gap ticker that also got split above.
+    feat = apply_delisting_exit_floor(feat, gap_tickers_loaded, LABEL_COL)
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     validate_gap_coverage(DELISTED_DATA_DIR)
@@ -296,6 +347,16 @@ def main():
     out_path = OUT_DIR / "features_pit.parquet"
     atomic_to_parquet(feat, out_path)
     print(f"\nSaved -> {out_path}  shape={feat.shape}")
+
+    # Sidecar file recording exactly which tickers came from td_data_delisted/
+    # this run -- continuous_walkforward_pit.py (and anything else that needs
+    # "which tickers in this panel are gap tickers" at runtime) reads this
+    # instead of re-deriving it or depending on a hardcoded list, so it always
+    # matches whatever was actually pulled, however many tickers that is.
+    gap_tickers_path = OUT_DIR / "gap_tickers_used.json"
+    with open(gap_tickers_path, "w") as f:
+        json.dump(sorted(gap_tickers_loaded), f, indent=2)
+    print(f"Saved -> {gap_tickers_path}  ({len(gap_tickers_loaded)} gap tickers)")
 
 
 if __name__ == "__main__":

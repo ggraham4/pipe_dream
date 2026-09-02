@@ -22,23 +22,41 @@ running while you use it.
 top picks preview, backtest win rate.
 
 **Stock Buy/No-Buy**
-- *Today's Picks* — reads `out/current_top10.csv` / `out/lstm_current_top10.csv`
-  (whatever `current_signal.py` / `lstm_current_signal.py` last wrote). A
-  "Retrain both models on latest data" button reruns those two scripts (plus
-  `features.py` first) in the background and streams their log.
-- *Query a Ticker* — look up any ticker(s), instantly, using the **currently
-  saved** model checkpoints (`out/models/xgb_current_model.json`,
-  `lstm_current_model.pt`) — no retraining. Shows probability, rank,
-  percentile, and a BUY/NO BUY/MIXED verdict per model, same top-quartile
-  rule `recommend.py` uses. If the saved model is older than your latest
-  pulled data, you'll see a banner suggesting a retrain.
-- *Model Weights* — XGBoost's `feature_importances_` as a chart + table, and
-  the LSTM's architecture/training config (it doesn't have a simple
-  per-feature weight table the way a tree model does).
-- *Backtest & History* — the 8-timepoint walk-forward backtest tables, AUC/MCC
-  by timepoint, the horizon sweep (10/20/40/60 days), and the equity chart.
+- *Today's Picks* (**primary signal**, updated 2026-09-02) — the
+  point-in-time (survivorship-bias-corrected) augmented model with an
+  empirically-optimized 15% stop-loss, reading `out/current_signal_pit.csv`
+  (whatever `src/current_signal_pit.py` last wrote — see `app/lib/
+  pit_model.py`). Replaces the old HMM-gated blend per Gabe's explicit
+  instruction ("we are no longer using the HMM"). A "Retrain" button reruns
+  `features.py` → `features_pit.py` → `fundamentals_features_pit.py` →
+  `current_signal_pit.py` in the background and streams the log. See
+  `backtest/survivorship-bias-correction-results.md` (Round 7: point-in-time
+  mid-cap+ eligibility floor; Round 8: stop-loss optimization) for the full
+  methodology and backtest numbers behind this model.
+- *Query a Ticker* — look up any ticker(s) against the primary model's
+  **currently saved** checkpoint (`out/models/xgb_pit_augmented_model.json`)
+  — no retraining. Shows probability, rank, percentile, and a BUY/NO BUY/
+  INELIGIBLE verdict (INELIGIBLE = fails the point-in-time mid-cap+ floor
+  today, regardless of what the model thinks of it) — same top-quartile
+  rule the rest of this project uses. Also has an expander to cross-check
+  against the secondary XGBoost/LSTM models. If the saved model is older
+  than your latest pulled data, you'll see a banner suggesting a retrain.
+- *Model Weights* — the primary model's `feature_importances_` as a chart +
+  table (fundamentals features marked 🧾). An expander below also shows the
+  secondary XGBoost's importances and the LSTM's architecture/training
+  config (it doesn't have a simple per-feature weight table the way a tree
+  model does).
+- *Backtest & History* — the primary model's continuous point-in-time
+  walk-forward equity curves (baseline/augmented/stoploss vs. SPY) and the
+  Round-8 stop-loss-percentage sweep table. An expander below also shows
+  the secondary models' 8-timepoint backtest tables, AUC/MCC, the horizon
+  sweep (10/20/40/60 days), and the equity chart.
 - *Universe* — ticker count, date range, forward-return horizon, feature
   list — all read live from `features.parquet`, not hardcoded.
+- *Secondary Models (XGBoost / LSTM)* — the original non-PIT, price-only
+  models, kept for transparency/comparison. Not survivorship-bias-corrected
+  and not part of the primary signal. A "Retrain both models" button here
+  reruns `features.py` → `current_signal.py` → `lstm_current_signal.py`.
 
 **Options Premium** — same four-tab structure, calls only. Puts are shown in
 *Model Weights* for transparency (their round-2 numbers never beat the
@@ -53,11 +71,14 @@ refresh actions (see below).
 
 ## The three refresh buttons
 
-1. **Refresh stock price data + retrain both models.** Runs
+1. **Refresh stock price data + retrain both (secondary) models.** Runs
    `scripts/local_data_pull.py` (yfinance, your own network — this is why it
    has to run locally, not in any sandboxed shell), then `features.py`,
    `current_signal.py`, `lstm_current_signal.py` in sequence. Can take
-   several minutes across the full ~1,620-ticker universe.
+   several minutes across the full ~1,620-ticker universe. This is the
+   *secondary* models' button (Data & Updates tab); the primary PIT model
+   has its own "Retrain" button on the Today's Picks tab, and "Retrain ALL
+   models" (Data & Updates tab, button 0) runs everything including it.
 
 2. **Refresh today's live options chain.** Runs the new
    `scripts/pull_live_options_chain.py`, which pulls a same-day option chain

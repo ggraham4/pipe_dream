@@ -2,30 +2,30 @@
   {
     "timepoint": "2013-01-02",
     "pit_snapshot_date": "2013-01-02",
-    "n_candidates_scored": 1048,
-    "n_gap_tickers_eligible": 16,
+    "n_candidates_scored": 1126,
+    "n_gap_tickers_eligible": 94,
     "baseline_picks": [
-      "UI",
       "TGTX",
+      "UI",
       "CORT",
       "DECK",
-      "ARCB"
+      "AMD"
     ],
     "baseline_gap_picks": 0,
-    "baseline_return_pct": 13.08,
+    "baseline_return_pct": 9.35,
     "augmented_picks": [
-      "CORT",
+      "TGTX",
       "DECK",
-      "AMD",
-      "CVSA",
-      "UI"
+      "SGI",
+      "CORT",
+      "AMD"
     ],
     "augmented_gap_picks": 0,
-    "augmented_return_pct": 13.51,
+    "augmented_return_pct": 12.42,
     "hmm_weight_on_augmented": 0.105,
     "blend_allocation": [
       {
-        "ticker": "CORT",
+        "ticker": "TGTX",
         "allocation_pct": 20.0
       },
       {
@@ -33,121 +33,113 @@
         "allocation_pct": 20.0
       },
       {
-        "ticker": "UI",
+        "ticker": "CORT",
         "allocation_pct": 20.0
       },
       {
-        "ticker": "TGTX",
-        "allocation_pct": 17.9
-      },
-      {
-        "ticker": "ARCB",
-        "allocation_pct": 17.9
-      },
-      {
         "ticker": "AMD",
-        "allocation_pct": 2.1
+        "allocation_pct": 20.0
       },
       {
-        "ticker": "CVSA",
+        "ticker": "UI",
+        "allocation_pct": 17.9
+      },
+      {
+        "ticker": "SGI",
         "allocation_pct": 2.1
       }
     ],
-    "blend_return_pct": 13.12,
+    "blend_return_pct": 9.67,
     "spy_return_pct": 4.14
   },
   {
     "timepoint": "2015-01-02",
     "pit_snapshot_date": "2014-12-24",
-    "n_candidates_scored": 1126,
-    "n_gap_tickers_eligible": 18,
+    "n_candidates_scored": 1201,
+    "n_gap_tickers_eligible": 93,
     "baseline_picks": [
       "LEU",
       "EXEL",
       "CLF",
       "RIG",
-      "CHRD"
+      "SLS"
     ],
     "baseline_gap_picks": 1,
-    "baseline_return_pct": 9.31,
+    "baseline_return_pct": 17.56,
     "augmented_picks": [
-      "RIG",
-      "NOG",
-      "LEU",
       "CLF",
-      "CRK"
+      "EXEL",
+      "RDNT",
+      "CRK",
+      "AAOI"
     ],
-    "augmented_gap_picks": 1,
-    "augmented_return_pct": -1.23,
+    "augmented_gap_picks": 0,
+    "augmented_return_pct": 15.92,
     "hmm_weight_on_augmented": 0.0059,
     "blend_allocation": [
-      {
-        "ticker": "RIG",
-        "allocation_pct": 20.0
-      },
-      {
-        "ticker": "LEU",
-        "allocation_pct": 20.0
-      },
       {
         "ticker": "CLF",
         "allocation_pct": 20.0
       },
       {
         "ticker": "EXEL",
+        "allocation_pct": 20.0
+      },
+      {
+        "ticker": "LEU",
         "allocation_pct": 19.88
       },
       {
-        "ticker": "CHRD",
+        "ticker": "RIG",
         "allocation_pct": 19.88
       },
       {
-        "ticker": "NOG",
+        "ticker": "SLS",
+        "allocation_pct": 19.88
+      },
+      {
+        "ticker": "RDNT",
         "allocation_pct": 0.12
       },
       {
         "ticker": "CRK",
         "allocation_pct": 0.12
+      },
+      {
+        "ticker": "AAOI",
+        "allocation_pct": 0.12
       }
     ],
-    "blend_return_pct": 9.25,
+    "blend_return_pct": 17.55,
     "spy_return_pct": 2.77
   },
   {
     "timepoint": "2017-01-03",
     "pit_snapshot_date": "2017-01-03",
-    "n_candidates_scored": 1213,
-    "n_gap_tickers_eligible": 17,
+    "n_candidates_scored": 1272,
+    "n_gap_tickers_eligible": 76,
     "baseline_picks": [
       "SLS",
-      "SRPT",
-      "CDNA",
       "MGNI",
-      "CDE"
+      "CDE",
+      "SRPT",
+      "HL"
     ],
     "baseline_gap_picks": 0,
-    "baseline_return_pct": -10.61,
+    "baseline_return_pct": -10.97,
     "augmented_picks": [
-      "ANF",
-      "ARWR",
-      "CLDX",
       "NVDA",
-      "SLS"
+      "ARWR",
+      "ANF",
+      "CDNA",
+      "LEU"
     ],
     "augmented_gap_picks": 0,
-    "augmented_return_pct": -5.02,
+    "augmented_return_pct": 2.82,
     "hmm_weight_on_augmented": 0.0068,
     "blend_allocation": [
       {
         "ticker": "SLS",
-        "allocation_pct": 20.0
-      },
-      {
-        "ticker": "SRPT",
-        "allocation_pct": 19.86
-      },
-      {
-        "ticker": "CDNA",
         "allocation_pct": 19.86
       },
       {
@@ -159,7 +151,15 @@
         "allocation_pct": 19.86
       },
       {
-        "ticker": "ANF",
+        "ticker": "SRPT",
+        "allocation_pct": 19.86
+      },
+      {
+        "ticker": "HL",
+        "allocation_pct": 19.86
+      },
+      {
+        "ticker": "NVDA",
         "allocation_pct": 0.14
       },
       {
@@ -167,40 +167,44 @@
         "allocation_pct": 0.14
       },
       {
-        "ticker": "CLDX",
+        "ticker": "ANF",
         "allocation_pct": 0.14
       },
       {
-        "ticker": "NVDA",
+        "ticker": "CDNA",
+        "allocation_pct": 0.14
+      },
+      {
+        "ticker": "LEU",
         "allocation_pct": 0.14
       }
     ],
-    "blend_return_pct": -10.57,
+    "blend_return_pct": -10.88,
     "spy_return_pct": 5.78
   },
   {
     "timepoint": "2019-01-02",
     "pit_snapshot_date": "2019-01-02",
-    "n_candidates_scored": 1280,
-    "n_gap_tickers_eligible": 16,
+    "n_candidates_scored": 1326,
+    "n_gap_tickers_eligible": 62,
     "baseline_picks": [
       "TGTX",
       "UNFI",
       "SPB",
-      "MDGL",
+      "MHK",
       "UCTT"
     ],
     "baseline_gap_picks": 0,
-    "baseline_return_pct": 36.49,
+    "baseline_return_pct": 34.39,
     "augmented_picks": [
       "UNFI",
-      "DAN",
-      "FLEX",
+      "VECO",
       "UCTT",
-      "VISN"
+      "WTTR",
+      "MHK"
     ],
     "augmented_gap_picks": 0,
-    "augmented_return_pct": 34.61,
+    "augmented_return_pct": 35.03,
     "hmm_weight_on_augmented": 0.2559,
     "blend_allocation": [
       {
@@ -212,6 +216,10 @@
         "allocation_pct": 20.0
       },
       {
+        "ticker": "MHK",
+        "allocation_pct": 20.0
+      },
+      {
         "ticker": "TGTX",
         "allocation_pct": 14.88
       },
@@ -220,48 +228,40 @@
         "allocation_pct": 14.88
       },
       {
-        "ticker": "MDGL",
-        "allocation_pct": 14.88
-      },
-      {
-        "ticker": "DAN",
+        "ticker": "VECO",
         "allocation_pct": 5.12
       },
       {
-        "ticker": "FLEX",
-        "allocation_pct": 5.12
-      },
-      {
-        "ticker": "VISN",
+        "ticker": "WTTR",
         "allocation_pct": 5.12
       }
     ],
-    "blend_return_pct": 36.01,
+    "blend_return_pct": 34.55,
     "spy_return_pct": 12.09
   },
   {
     "timepoint": "2021-01-04",
     "pit_snapshot_date": "2020-12-21",
-    "n_candidates_scored": 1361,
-    "n_gap_tickers_eligible": 12,
+    "n_candidates_scored": 1396,
+    "n_gap_tickers_eligible": 47,
     "baseline_picks": [
-      "CCL",
       "ARLP",
-      "NCLH",
+      "CCL",
       "GEL",
-      "PR"
+      "PAA",
+      "MAC"
     ],
     "baseline_gap_picks": 0,
-    "baseline_return_pct": 73.09,
+    "baseline_return_pct": 31.28,
     "augmented_picks": [
-      "FSLY",
-      "ZM",
-      "PBF",
-      "NMRK",
-      "CCL"
+      "SPG",
+      "CCL",
+      "ATRO",
+      "ETSY",
+      "PBF"
     ],
     "augmented_gap_picks": 0,
-    "augmented_return_pct": 39.76,
+    "augmented_return_pct": 54.09,
     "hmm_weight_on_augmented": 0.0444,
     "blend_allocation": [
       {
@@ -273,42 +273,42 @@
         "allocation_pct": 19.11
       },
       {
-        "ticker": "NCLH",
-        "allocation_pct": 19.11
-      },
-      {
         "ticker": "GEL",
         "allocation_pct": 19.11
       },
       {
-        "ticker": "PR",
+        "ticker": "PAA",
         "allocation_pct": 19.11
       },
       {
-        "ticker": "FSLY",
+        "ticker": "MAC",
+        "allocation_pct": 19.11
+      },
+      {
+        "ticker": "SPG",
         "allocation_pct": 0.89
       },
       {
-        "ticker": "ZM",
+        "ticker": "ATRO",
+        "allocation_pct": 0.89
+      },
+      {
+        "ticker": "ETSY",
         "allocation_pct": 0.89
       },
       {
         "ticker": "PBF",
         "allocation_pct": 0.89
-      },
-      {
-        "ticker": "NMRK",
-        "allocation_pct": 0.89
       }
     ],
-    "blend_return_pct": 71.61,
+    "blend_return_pct": 32.29,
     "spy_return_pct": 3.42
   },
   {
     "timepoint": "2023-01-03",
     "pit_snapshot_date": "2022-12-22",
-    "n_candidates_scored": 1494,
-    "n_gap_tickers_eligible": 7,
+    "n_candidates_scored": 1514,
+    "n_gap_tickers_eligible": 27,
     "baseline_picks": [
       "IRON",
       "CVNA",
@@ -320,13 +320,13 @@
     "baseline_return_pct": 73.94,
     "augmented_picks": [
       "CVNA",
+      "NFLX",
       "AVAH",
       "ACMR",
-      "NFLX",
-      "SMCI"
+      "LEU"
     ],
     "augmented_gap_picks": 0,
-    "augmented_return_pct": 42.06,
+    "augmented_return_pct": 44.15,
     "hmm_weight_on_augmented": 0.3793,
     "blend_allocation": [
       {
@@ -350,6 +350,10 @@
         "allocation_pct": 12.41
       },
       {
+        "ticker": "NFLX",
+        "allocation_pct": 7.59
+      },
+      {
         "ticker": "AVAH",
         "allocation_pct": 7.59
       },
@@ -358,52 +362,40 @@
         "allocation_pct": 7.59
       },
       {
-        "ticker": "NFLX",
-        "allocation_pct": 7.59
-      },
-      {
-        "ticker": "SMCI",
+        "ticker": "LEU",
         "allocation_pct": 7.59
       }
     ],
-    "blend_return_pct": 61.84,
+    "blend_return_pct": 62.64,
     "spy_return_pct": 4.46
   },
   {
     "timepoint": "2025-01-02",
     "pit_snapshot_date": "2024-12-23",
-    "n_candidates_scored": 1529,
-    "n_gap_tickers_eligible": 2,
+    "n_candidates_scored": 1541,
+    "n_gap_tickers_eligible": 14,
     "baseline_picks": [
-      "FSLY",
-      "SMMT",
-      "ZETA",
       "ASTS",
-      "CE"
+      "ZETA",
+      "SMMT",
+      "AMLX",
+      "TMDX"
     ],
     "baseline_gap_picks": 0,
-    "baseline_return_pct": -6.33,
+    "baseline_return_pct": 1.42,
     "augmented_picks": [
-      "CE",
-      "SMCI",
       "TRLV",
-      "NVTS",
-      "ACMR"
+      "AGIO",
+      "SMCI",
+      "KSS",
+      "CE"
     ],
     "augmented_gap_picks": 0,
-    "augmented_return_pct": 0.45,
+    "augmented_return_pct": -9.16,
     "hmm_weight_on_augmented": 0.0439,
     "blend_allocation": [
       {
-        "ticker": "CE",
-        "allocation_pct": 20.0
-      },
-      {
-        "ticker": "FSLY",
-        "allocation_pct": 19.12
-      },
-      {
-        "ticker": "SMMT",
+        "ticker": "ASTS",
         "allocation_pct": 19.12
       },
       {
@@ -411,52 +403,64 @@
         "allocation_pct": 19.12
       },
       {
-        "ticker": "ASTS",
+        "ticker": "SMMT",
         "allocation_pct": 19.12
       },
       {
-        "ticker": "SMCI",
-        "allocation_pct": 0.88
+        "ticker": "AMLX",
+        "allocation_pct": 19.12
+      },
+      {
+        "ticker": "TMDX",
+        "allocation_pct": 19.12
       },
       {
         "ticker": "TRLV",
         "allocation_pct": 0.88
       },
       {
-        "ticker": "NVTS",
+        "ticker": "AGIO",
         "allocation_pct": 0.88
       },
       {
-        "ticker": "ACMR",
+        "ticker": "SMCI",
+        "allocation_pct": 0.88
+      },
+      {
+        "ticker": "KSS",
+        "allocation_pct": 0.88
+      },
+      {
+        "ticker": "CE",
         "allocation_pct": 0.88
       }
     ],
-    "blend_return_pct": -6.04,
+    "blend_return_pct": 0.96,
     "spy_return_pct": -1.33
   },
   {
     "timepoint": "2026-06-01",
     "pit_snapshot_date": "2026-06-01",
-    "n_candidates_scored": 1571,
-    "n_gap_tickers_eligible": 2,
+    "n_candidates_scored": 1573,
+    "n_gap_tickers_eligible": 4,
     "baseline_picks": [
-      "WGS",
-      "GPCR",
       "KRMN",
-      "TMDX",
-      "RGTI"
+      "GPCR",
+      "WGS",
+      "HL",
+      "FSLY"
     ],
     "baseline_gap_picks": 0,
-    "baseline_return_pct": -0.53,
+    "baseline_return_pct": 3.88,
     "augmented_picks": [
+      "SHAK",
       "WGS",
       "PLNT",
-      "IBP",
-      "SHAK",
-      "ACMR"
+      "CHTR",
+      "IBP"
     ],
     "augmented_gap_picks": 0,
-    "augmented_return_pct": 4.76,
+    "augmented_return_pct": 9.21,
     "hmm_weight_on_augmented": 0.0073,
     "blend_allocation": [
       {
@@ -464,39 +468,39 @@
         "allocation_pct": 20.0
       },
       {
-        "ticker": "GPCR",
-        "allocation_pct": 19.85
-      },
-      {
         "ticker": "KRMN",
         "allocation_pct": 19.85
       },
       {
-        "ticker": "TMDX",
+        "ticker": "GPCR",
         "allocation_pct": 19.85
       },
       {
-        "ticker": "RGTI",
+        "ticker": "HL",
         "allocation_pct": 19.85
       },
       {
-        "ticker": "PLNT",
-        "allocation_pct": 0.15
-      },
-      {
-        "ticker": "IBP",
-        "allocation_pct": 0.15
+        "ticker": "FSLY",
+        "allocation_pct": 19.85
       },
       {
         "ticker": "SHAK",
         "allocation_pct": 0.15
       },
       {
-        "ticker": "ACMR",
+        "ticker": "PLNT",
+        "allocation_pct": 0.15
+      },
+      {
+        "ticker": "CHTR",
+        "allocation_pct": 0.15
+      },
+      {
+        "ticker": "IBP",
         "allocation_pct": 0.15
       }
     ],
-    "blend_return_pct": -0.49,
+    "blend_return_pct": 3.92,
     "spy_return_pct": -3.83
   }
 ]

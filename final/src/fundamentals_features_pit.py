@@ -57,7 +57,13 @@ def main():
     if not price_pit_path.exists():
         raise SystemExit(f"{price_pit_path} not found -- run features_pit.py first.")
     price_full = pd.read_parquet(price_pit_path)
-    price_lean = price_full[["ticker", "date", "close"]].sort_values(["ticker", "date"]).reset_index(drop=True)
+    # ticker_orig (added by price_discontinuity.py, features_pit.py) holds the
+    # REAL symbol even for a segmented "TICKER__postYYYYMMDD" row -- needed
+    # below so a split ticker's post-break segment still finds its real
+    # fundamentals data, which is naturally filed under the real symbol only.
+    has_ticker_orig = "ticker_orig" in price_full.columns
+    lean_cols = ["ticker", "date", "close"] + (["ticker_orig"] if has_ticker_orig else [])
+    price_lean = price_full[lean_cols].sort_values(["ticker", "date"]).reset_index(drop=True)
 
     print("Loading raw fundamentals pull (current universe + point-in-time gap tickers)...")
     raw = load_fundamentals_raw_pit()
@@ -68,6 +74,11 @@ def main():
     gc.collect()
 
     print("Grouping price panel by ticker...")
+    if has_ticker_orig:
+        orig_by_segment = price_lean.drop_duplicates("ticker").set_index("ticker")["ticker_orig"].to_dict()
+        price_lean = price_lean.drop(columns=["ticker_orig"])
+    else:
+        orig_by_segment = {}
     price_by_ticker = {t: g for t, g in price_lean.groupby("ticker", sort=False)}
     del price_lean
     gc.collect()
@@ -78,7 +89,10 @@ def main():
     pieces = []
     for i, ticker in enumerate(tickers, 1):
         price_g = price_by_ticker[ticker]
-        raw_g = raw_by_ticker.get(ticker)
+        # look up real fundamentals under the ORIGINAL symbol for a segmented
+        # ticker (e.g. "CHRD__post20201118" -> "CHRD"); a non-segmented
+        # ticker's orig equals itself, same lookup either way
+        raw_g = raw_by_ticker.get(orig_by_segment.get(ticker, ticker))
         pieces.append(process_ticker(ticker, price_g, raw_g))
         if i % 200 == 0:
             print(f"  {i}/{len(tickers)} tickers done")
