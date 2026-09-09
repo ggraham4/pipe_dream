@@ -1,0 +1,381 @@
+{
+  "summary": [
+    {
+      "target_moneyness": 0.8,
+      "n": 4,
+      "eq_avg": 21.52,
+      "eq_std": 23.33,
+      "eq_win": "2/4",
+      "kelly_avg": 15.99,
+      "kelly_std": 30.18,
+      "kelly_win": "2/4",
+      "avg_realized_moneyness": 0.802,
+      "per_timepoint": [
+        {
+          "timepoint": "2023-01-15",
+          "eq_pct": 35.93,
+          "kelly_pct": 48.42,
+          "actual_avg_moneyness": 0.805,
+          "n": 5
+        },
+        {
+          "timepoint": "2024-01-15",
+          "eq_pct": 52.18,
+          "kelly_pct": 43.84,
+          "actual_avg_moneyness": 0.801,
+          "n": 5
+        },
+        {
+          "timepoint": "2025-01-15",
+          "eq_pct": 1.67,
+          "kelly_pct": -13.54,
+          "actual_avg_moneyness": 0.8,
+          "n": 5
+        },
+        {
+          "timepoint": "2026-01-15",
+          "eq_pct": -3.7,
+          "kelly_pct": -14.74,
+          "actual_avg_moneyness": 0.802,
+          "n": 5
+        }
+      ]
+    },
+    {
+      "target_moneyness": 0.85,
+      "n": 4,
+      "eq_avg": 23.37,
+      "eq_std": 28.58,
+      "eq_win": "3/4",
+      "kelly_avg": 17.39,
+      "kelly_std": 37.44,
+      "kelly_win": "2/4",
+      "avg_realized_moneyness": 0.847,
+      "per_timepoint": [
+        {
+          "timepoint": "2023-01-15",
+          "eq_pct": 46.97,
+          "kelly_pct": 59.54,
+          "actual_avg_moneyness": 0.838,
+          "n": 5
+        },
+        {
+          "timepoint": "2024-01-15",
+          "eq_pct": 56.14,
+          "kelly_pct": 48.91,
+          "actual_avg_moneyness": 0.855,
+          "n": 5
+        },
+        {
+          "timepoint": "2025-01-15",
+          "eq_pct": -9.7,
+          "kelly_pct": -27.3,
+          "actual_avg_moneyness": 0.842,
+          "n": 5
+        },
+        {
+          "timepoint": "2026-01-15",
+          "eq_pct": 0.07,
+          "kelly_pct": -11.58,
+          "actual_avg_moneyness": 0.852,
+          "n": 5
+        }
+      ]
+    },
+    {
+      "target_moneyness": 0.9,
+      "n": 4,
+      "eq_avg": 17.67,
+      "eq_std": 62.83,
+      "eq_win": "2/4",
+      "kelly_avg": 24.03,
+      "kelly_std": 28.61,
+      "kelly_win": "3/4",
+      "avg_realized_moneyness": 0.899,
+      "per_timepoint": [
+        {
+          "timepoint": "2023-01-15",
+          "eq_pct": 68.48,
+          "kelly_pct": 57.31,
+          "actual_avg_moneyness": 0.902,
+          "n": 5
+        },
+        {
+          "timepoint": "2024-01-15",
+          "eq_pct": 81.58,
+          "kelly_pct": 47.4,
+          "actual_avg_moneyness": 0.898,
+          "n": 5
+        },
+        {
+          "timepoint": "2025-01-15",
+          "eq_pct": -4.01,
+          "kelly_pct": -7.18,
+          "actual_avg_moneyness": 0.896,
+          "n": 5
+        },
+        {
+          "timepoint": "2026-01-15",
+          "eq_pct": -75.36,
+          "kelly_pct": -1.41,
+          "actual_avg_moneyness": 0.898,
+          "n": 5
+        }
+      ]
+    },
+    {
+      "target_moneyness": 0.95,
+      "n": 4,
+      "eq_avg": 30.02,
+      "eq_std": 81.48,
+      "eq_win": "2/4",
+      "kelly_avg": 5.41,
+      "kelly_std": 5.73,
+      "kelly_win": "3/4",
+      "avg_realized_moneyness": 0.948,
+      "per_timepoint": [
+        {
+          "timepoint": "2023-01-15",
+          "eq_pct": 73.68,
+          "kelly_pct": 10.19,
+          "actual_avg_moneyness": 0.941,
+          "n": 5
+        },
+        {
+          "timepoint": "2024-01-15",
+          "eq_pct": 136.57,
+          "kelly_pct": 11.99,
+          "actual_avg_moneyness": 0.959,
+          "n": 5
+        },
+        {
+          "timepoint": "2025-01-15",
+          "eq_pct": -13.32,
+          "kelly_pct": -0.79,
+          "actual_avg_moneyness": 0.937,
+          "n": 5
+        },
+        {
+          "timepoint": "2026-01-15",
+          "eq_pct": -76.84,
+          "kelly_pct": 0.26,
+          "actual_avg_moneyness": 0.954,
+          "n": 5
+        }
+      ]
+    },
+    {
+      "target_moneyness": 1.0,
+      "n": 4,
+      "eq_avg": 50.88,
+      "eq_std": 107.89,
+      "eq_win": "2/4",
+      "kelly_avg": 0.99,
+      "kelly_std": 9.01,
+      "kelly_win": "3/4",
+      "avg_realized_moneyness": 1.001,
+      "per_timepoint": [
+        {
+          "timepoint": "2023-01-15",
+          "eq_pct": 92.6,
+          "kelly_pct": 3.9,
+          "actual_avg_moneyness": 1.007,
+          "n": 5
+        },
+        {
+          "timepoint": "2024-01-15",
+          "eq_pct": 203.78,
+          "kelly_pct": 12.54,
+          "actual_avg_moneyness": 1.002,
+          "n": 5
+        },
+        {
+          "timepoint": "2025-01-15",
+          "eq_pct": -11.09,
+          "kelly_pct": -12.5,
+          "actual_avg_moneyness": 0.991,
+          "n": 5
+        },
+        {
+          "timepoint": "2026-01-15",
+          "eq_pct": -81.79,
+          "kelly_pct": 0.02,
+          "actual_avg_moneyness": 1.003,
+          "n": 5
+        }
+      ]
+    },
+    {
+      "target_moneyness": 1.05,
+      "n": 4,
+      "eq_avg": 85.54,
+      "eq_std": 152.84,
+      "eq_win": "2/4",
+      "kelly_avg": 1.15,
+      "kelly_std": 4.05,
+      "kelly_win": "1/4",
+      "avg_realized_moneyness": 1.041,
+      "per_timepoint": [
+        {
+          "timepoint": "2023-01-15",
+          "eq_pct": 117.49,
+          "kelly_pct": 0.0,
+          "actual_avg_moneyness": 1.033,
+          "n": 5
+        },
+        {
+          "timepoint": "2024-01-15",
+          "eq_pct": 317.48,
+          "kelly_pct": -2.65,
+          "actual_avg_moneyness": 1.046,
+          "n": 5
+        },
+        {
+          "timepoint": "2025-01-15",
+          "eq_pct": -2.82,
+          "kelly_pct": -0.7,
+          "actual_avg_moneyness": 1.039,
+          "n": 5
+        },
+        {
+          "timepoint": "2026-01-15",
+          "eq_pct": -90.0,
+          "kelly_pct": 7.96,
+          "actual_avg_moneyness": 1.047,
+          "n": 5
+        }
+      ]
+    },
+    {
+      "target_moneyness": 1.1,
+      "n": 4,
+      "eq_avg": 131.96,
+      "eq_std": 235.81,
+      "eq_win": "2/4",
+      "kelly_avg": 0.45,
+      "kelly_std": 2.07,
+      "kelly_win": "1/4",
+      "avg_realized_moneyness": 1.097,
+      "per_timepoint": [
+        {
+          "timepoint": "2023-01-15",
+          "eq_pct": 129.04,
+          "kelly_pct": 0.0,
+          "actual_avg_moneyness": 1.092,
+          "n": 5
+        },
+        {
+          "timepoint": "2024-01-15",
+          "eq_pct": 514.95,
+          "kelly_pct": 0.0,
+          "actual_avg_moneyness": 1.097,
+          "n": 5
+        },
+        {
+          "timepoint": "2025-01-15",
+          "eq_pct": -16.15,
+          "kelly_pct": -1.95,
+          "actual_avg_moneyness": 1.097,
+          "n": 5
+        },
+        {
+          "timepoint": "2026-01-15",
+          "eq_pct": -100.0,
+          "kelly_pct": 3.76,
+          "actual_avg_moneyness": 1.101,
+          "n": 5
+        }
+      ]
+    },
+    {
+      "target_moneyness": 1.15,
+      "n": 4,
+      "eq_avg": 217.18,
+      "eq_std": 317.77,
+      "eq_win": "2/4",
+      "kelly_avg": -0.09,
+      "kelly_std": 0.15,
+      "kelly_win": "1/4",
+      "avg_realized_moneyness": 1.146,
+      "per_timepoint": [
+        {
+          "timepoint": "2023-01-15",
+          "eq_pct": 230.6,
+          "kelly_pct": 0.0,
+          "actual_avg_moneyness": 1.147,
+          "n": 5
+        },
+        {
+          "timepoint": "2024-01-15",
+          "eq_pct": 730.39,
+          "kelly_pct": 0.0,
+          "actual_avg_moneyness": 1.156,
+          "n": 5
+        },
+        {
+          "timepoint": "2025-01-15",
+          "eq_pct": -17.15,
+          "kelly_pct": -0.35,
+          "actual_avg_moneyness": 1.14,
+          "n": 5
+        },
+        {
+          "timepoint": "2026-01-15",
+          "eq_pct": -75.12,
+          "kelly_pct": 0.0,
+          "actual_avg_moneyness": 1.14,
+          "n": 5
+        }
+      ]
+    },
+    {
+      "target_moneyness": 1.2,
+      "n": 4,
+      "eq_avg": 231.68,
+      "eq_std": 331.3,
+      "eq_win": "2/4",
+      "kelly_avg": 0.0,
+      "kelly_std": 0.0,
+      "kelly_win": "1/4",
+      "avg_realized_moneyness": 1.195,
+      "per_timepoint": [
+        {
+          "timepoint": "2023-01-15",
+          "eq_pct": 295.17,
+          "kelly_pct": 0.0,
+          "actual_avg_moneyness": 1.206,
+          "n": 5
+        },
+        {
+          "timepoint": "2024-01-15",
+          "eq_pct": 746.19,
+          "kelly_pct": 0.0,
+          "actual_avg_moneyness": 1.205,
+          "n": 5
+        },
+        {
+          "timepoint": "2025-01-15",
+          "eq_pct": -17.15,
+          "kelly_pct": 0.0,
+          "actual_avg_moneyness": 1.181,
+          "n": 5
+        },
+        {
+          "timepoint": "2026-01-15",
+          "eq_pct": -97.51,
+          "kelly_pct": 0.0,
+          "actual_avg_moneyness": 1.187,
+          "n": 5
+        }
+      ]
+    }
+  ],
+  "spy_rets": {
+    "2021-01-15": 4.41841230944382,
+    "2022-01-15": -3.8991209910463898,
+    "2023-01-15": 2.4542029559088796,
+    "2024-01-15": 4.7893801797072255,
+    "2025-01-15": 2.854344288593169,
+    "2026-01-15": -1.515369002421163
+  }
+}

@@ -1,0 +1,129 @@
+[
+  {
+    "timepoint": "2021-01-15",
+    "n_cohort": 6635,
+    "n_tickers": 504,
+    "eq_pct": null,
+    "kelly_pct": null
+  },
+  {
+    "timepoint": "2022-01-15",
+    "n_cohort": 7877,
+    "n_tickers": 571,
+    "eq_pct": -17.22,
+    "eq_picks": [
+      {
+        "t": "MTB",
+        "mny": 0.711
+      },
+      {
+        "t": "AVNT",
+        "mny": 0.662
+      },
+      {
+        "t": "SBRA",
+        "mny": 0.723
+      },
+      {
+        "t": "SM",
+        "mny": 0.668
+      },
+      {
+        "t": "HQY",
+        "mny": 0.722
+      }
+    ],
+    "kelly_pct": 0.0,
+    "kelly_cash": 1.0
+  },
+  {
+    "timepoint": "2024-01-15",
+    "n_cohort": 8788,
+    "n_tickers": 656,
+    "eq_pct": 8.0,
+    "eq_picks": [
+      {
+        "t": "MANH",
+        "mny": 0.693
+      },
+      {
+        "t": "XPO",
+        "mny": 0.708
+      },
+      {
+        "t": "ORLY",
+        "mny": 0.695
+      },
+      {
+        "t": "PARR",
+        "mny": 0.675
+      },
+      {
+        "t": "CPRT",
+        "mny": 0.681
+      }
+    ],
+    "kelly_pct": 0.0,
+    "kelly_cash": 1.0
+  },
+  {
+    "timepoint": "2025-01-15",
+    "n_cohort": 7425,
+    "n_tickers": 742,
+    "eq_pct": 11.37,
+    "eq_picks": [
+      {
+        "t": "CE",
+        "mny": 0.775
+      },
+      {
+        "t": "CRS",
+        "mny": 0.807
+      },
+      {
+        "t": "OPCH",
+        "mny": 0.782
+      },
+      {
+        "t": "TDG",
+        "mny": 0.8
+      },
+      {
+        "t": "EME",
+        "mny": 0.797
+      }
+    ],
+    "kelly_pct": 0.0,
+    "kelly_cash": 1.0
+  },
+  {
+    "timepoint": "2026-01-15",
+    "n_cohort": 10414,
+    "n_tickers": 804,
+    "eq_pct": -8.18,
+    "eq_picks": [
+      {
+        "t": "TALO",
+        "mny": 0.627
+      },
+      {
+        "t": "CDP",
+        "mny": 0.662
+      },
+      {
+        "t": "STRL",
+        "mny": 0.689
+      },
+      {
+        "t": "APLE",
+        "mny": 0.608
+      },
+      {
+        "t": "FAST",
+        "mny": 0.698
+      }
+    ],
+    "kelly_pct": 0.0,
+    "kelly_cash": 1.0
+  }
+]

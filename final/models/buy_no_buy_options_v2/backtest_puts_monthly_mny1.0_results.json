@@ -1,0 +1,774 @@
+[
+  {
+    "timepoint": "2019-05-25",
+    "n_cohort": 1983,
+    "n_tickers": 547,
+    "eq_pct": null,
+    "kelly_pct": null
+  },
+  {
+    "timepoint": "2019-06-22",
+    "n_cohort": 1802,
+    "n_tickers": 553,
+    "eq_pct": 0.13,
+    "kelly_pct": -0.4,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2019-07-20",
+    "n_cohort": 1877,
+    "n_tickers": 559,
+    "eq_pct": -5.46,
+    "kelly_pct": -8.05,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2019-08-24",
+    "n_cohort": 2080,
+    "n_tickers": 548,
+    "eq_pct": 3.92,
+    "kelly_pct": 1.14,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2019-09-21",
+    "n_cohort": 1792,
+    "n_tickers": 547,
+    "eq_pct": 1.52,
+    "kelly_pct": 1.37,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2019-10-19",
+    "n_cohort": 1901,
+    "n_tickers": 560,
+    "eq_pct": 4.5,
+    "kelly_pct": 3.71,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2019-11-23",
+    "n_cohort": 2186,
+    "n_tickers": 628,
+    "eq_pct": 3.26,
+    "kelly_pct": 3.97,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2019-12-21",
+    "n_cohort": 1888,
+    "n_tickers": 632,
+    "eq_pct": -3.93,
+    "kelly_pct": -1.21,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2020-01-22",
+    "n_cohort": 2389,
+    "n_tickers": 646,
+    "eq_pct": -2.61,
+    "kelly_pct": -2.46,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2020-02-19",
+    "n_cohort": 2091,
+    "n_tickers": 638,
+    "eq_pct": -25.42,
+    "kelly_pct": -33.54,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2020-03-18",
+    "n_cohort": 1869,
+    "n_tickers": 475,
+    "eq_pct": 16.35,
+    "kelly_pct": 0.54,
+    "kelly_cash": 0.842,
+    "n_kelly_positions": 1
+  },
+  {
+    "timepoint": "2020-04-15",
+    "n_cohort": 3399,
+    "n_tickers": 565,
+    "eq_pct": 9.12,
+    "kelly_pct": 2.28,
+    "kelly_cash": 0.7,
+    "n_kelly_positions": 1
+  },
+  {
+    "timepoint": "2020-05-20",
+    "n_cohort": 3991,
+    "n_tickers": 608,
+    "eq_pct": 5.15,
+    "kelly_pct": 5.59,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2020-06-17",
+    "n_cohort": 3599,
+    "n_tickers": 630,
+    "eq_pct": 2.92,
+    "kelly_pct": 3.31,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2020-07-22",
+    "n_cohort": 3990,
+    "n_tickers": 639,
+    "eq_pct": 10.0,
+    "kelly_pct": 9.8,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2020-08-19",
+    "n_cohort": 2946,
+    "n_tickers": 641,
+    "eq_pct": 7.24,
+    "kelly_pct": 4.78,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2020-09-16",
+    "n_cohort": 3254,
+    "n_tickers": 626,
+    "eq_pct": 5.03,
+    "kelly_pct": 4.15,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2020-10-21",
+    "n_cohort": 4304,
+    "n_tickers": 648,
+    "eq_pct": 9.06,
+    "kelly_pct": 8.92,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2020-11-18",
+    "n_cohort": 3331,
+    "n_tickers": 631,
+    "eq_pct": 6.57,
+    "kelly_pct": 6.05,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2020-12-16",
+    "n_cohort": 3705,
+    "n_tickers": 694,
+    "eq_pct": 6.29,
+    "kelly_pct": 5.48,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2021-01-20",
+    "n_cohort": 4591,
+    "n_tickers": 717,
+    "eq_pct": 6.23,
+    "kelly_pct": 4.23,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2021-02-17",
+    "n_cohort": 3903,
+    "n_tickers": 716,
+    "eq_pct": 7.33,
+    "kelly_pct": 2.7,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2021-03-17",
+    "n_cohort": 3528,
+    "n_tickers": 720,
+    "eq_pct": 5.39,
+    "kelly_pct": 5.52,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2021-04-21",
+    "n_cohort": 4201,
+    "n_tickers": 726,
+    "eq_pct": 6.93,
+    "kelly_pct": 4.15,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2021-05-19",
+    "n_cohort": 2078,
+    "n_tickers": 411,
+    "eq_pct": 6.68,
+    "kelly_pct": 4.63,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2021-06-16",
+    "n_cohort": 3106,
+    "n_tickers": 735,
+    "eq_pct": -2.26,
+    "kelly_pct": -2.79,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2021-07-21",
+    "n_cohort": 4291,
+    "n_tickers": 735,
+    "eq_pct": 1.36,
+    "kelly_pct": 3.22,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2021-08-18",
+    "n_cohort": 3611,
+    "n_tickers": 734,
+    "eq_pct": 5.08,
+    "kelly_pct": 5.54,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2021-09-15",
+    "n_cohort": 3608,
+    "n_tickers": 748,
+    "eq_pct": 5.82,
+    "kelly_pct": 2.98,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2021-10-20",
+    "n_cohort": 4503,
+    "n_tickers": 751,
+    "eq_pct": 2.61,
+    "kelly_pct": -1.12,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2021-11-17",
+    "n_cohort": 3676,
+    "n_tickers": 759,
+    "eq_pct": -11.88,
+    "kelly_pct": -9.47,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2021-12-22",
+    "n_cohort": 4567,
+    "n_tickers": 756,
+    "eq_pct": -11.73,
+    "kelly_pct": -9.48,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2022-01-19",
+    "n_cohort": 4294,
+    "n_tickers": 762,
+    "eq_pct": 2.06,
+    "kelly_pct": 2.45,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2022-02-16",
+    "n_cohort": 4056,
+    "n_tickers": 762,
+    "eq_pct": 5.03,
+    "kelly_pct": 5.81,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2022-03-14",
+    "n_cohort": 2584,
+    "n_tickers": 537,
+    "eq_pct": 9.28,
+    "kelly_pct": 8.74,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2022-04-20",
+    "n_cohort": 4674,
+    "n_tickers": 749,
+    "eq_pct": -8.16,
+    "kelly_pct": -7.5,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2022-05-18",
+    "n_cohort": 4220,
+    "n_tickers": 751,
+    "eq_pct": 5.98,
+    "kelly_pct": 4.15,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2022-06-15",
+    "n_cohort": 3804,
+    "n_tickers": 734,
+    "eq_pct": 9.7,
+    "kelly_pct": 3.69,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2022-07-20",
+    "n_cohort": 4920,
+    "n_tickers": 761,
+    "eq_pct": -7.02,
+    "kelly_pct": -1.65,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2022-08-17",
+    "n_cohort": 3859,
+    "n_tickers": 772,
+    "eq_pct": -1.44,
+    "kelly_pct": 0.35,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2022-09-21",
+    "n_cohort": 4641,
+    "n_tickers": 746,
+    "eq_pct": 7.55,
+    "kelly_pct": 7.26,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2022-10-19",
+    "n_cohort": 4258,
+    "n_tickers": 751,
+    "eq_pct": 8.29,
+    "kelly_pct": 5.13,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2022-11-16",
+    "n_cohort": 4340,
+    "n_tickers": 787,
+    "eq_pct": 3.46,
+    "kelly_pct": 1.85,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2022-12-21",
+    "n_cohort": 4566,
+    "n_tickers": 769,
+    "eq_pct": 5.47,
+    "kelly_pct": 5.38,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2023-01-20",
+    "n_cohort": 3858,
+    "n_tickers": 778,
+    "eq_pct": 7.28,
+    "kelly_pct": 4.56,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2023-02-15",
+    "n_cohort": 4017,
+    "n_tickers": 795,
+    "eq_pct": 0.17,
+    "kelly_pct": 1.52,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2023-03-22",
+    "n_cohort": 4880,
+    "n_tickers": 788,
+    "eq_pct": 5.52,
+    "kelly_pct": 3.54,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2023-04-19",
+    "n_cohort": 4137,
+    "n_tickers": 794,
+    "eq_pct": 0.29,
+    "kelly_pct": 2.04,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2023-05-17",
+    "n_cohort": 3991,
+    "n_tickers": 796,
+    "eq_pct": 6.5,
+    "kelly_pct": 5.83,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2023-06-21",
+    "n_cohort": 4444,
+    "n_tickers": 804,
+    "eq_pct": 5.42,
+    "kelly_pct": 4.46,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2023-07-19",
+    "n_cohort": 4574,
+    "n_tickers": 826,
+    "eq_pct": -0.49,
+    "kelly_pct": -4.59,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2023-08-16",
+    "n_cohort": 4149,
+    "n_tickers": 806,
+    "eq_pct": 1.35,
+    "kelly_pct": 1.91,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2023-09-20",
+    "n_cohort": 6262,
+    "n_tickers": 825,
+    "eq_pct": 10.04,
+    "kelly_pct": 7.97,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2023-10-18",
+    "n_cohort": 5729,
+    "n_tickers": 820,
+    "eq_pct": 5.76,
+    "kelly_pct": 5.7,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2023-11-16",
+    "n_cohort": 5733,
+    "n_tickers": 857,
+    "eq_pct": 11.88,
+    "kelly_pct": 8.98,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2023-12-20",
+    "n_cohort": 7339,
+    "n_tickers": 894,
+    "eq_pct": 5.96,
+    "kelly_pct": 5.6,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2024-01-17",
+    "n_cohort": 6422,
+    "n_tickers": 887,
+    "eq_pct": 10.21,
+    "kelly_pct": 8.82,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2024-02-14",
+    "n_cohort": 6483,
+    "n_tickers": 892,
+    "eq_pct": 9.08,
+    "kelly_pct": 8.5,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2024-03-20",
+    "n_cohort": 7244,
+    "n_tickers": 898,
+    "eq_pct": 4.87,
+    "kelly_pct": 5.01,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2024-04-17",
+    "n_cohort": 6430,
+    "n_tickers": 889,
+    "eq_pct": 9.31,
+    "kelly_pct": 8.06,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2024-05-22",
+    "n_cohort": 7368,
+    "n_tickers": 910,
+    "eq_pct": 8.49,
+    "kelly_pct": 7.46,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2024-06-19",
+    "n_cohort": 6545,
+    "n_tickers": 908,
+    "eq_pct": 8.72,
+    "kelly_pct": 7.84,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2024-07-17",
+    "n_cohort": 7071,
+    "n_tickers": 942,
+    "eq_pct": 5.93,
+    "kelly_pct": 6.3,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2024-08-21",
+    "n_cohort": 7839,
+    "n_tickers": 947,
+    "eq_pct": 8.62,
+    "kelly_pct": 7.71,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2024-09-18",
+    "n_cohort": 5046,
+    "n_tickers": 936,
+    "eq_pct": 8.13,
+    "kelly_pct": 7.64,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2024-10-16",
+    "n_cohort": 5249,
+    "n_tickers": 954,
+    "eq_pct": 10.87,
+    "kelly_pct": -0.38,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2024-11-20",
+    "n_cohort": 5870,
+    "n_tickers": 960,
+    "eq_pct": 8.62,
+    "kelly_pct": 8.57,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2024-12-18",
+    "n_cohort": 5069,
+    "n_tickers": 951,
+    "eq_pct": 7.71,
+    "kelly_pct": 7.78,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2025-01-22",
+    "n_cohort": 5866,
+    "n_tickers": 971,
+    "eq_pct": 4.05,
+    "kelly_pct": 2.37,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2025-02-19",
+    "n_cohort": 5255,
+    "n_tickers": 977,
+    "eq_pct": 2.86,
+    "kelly_pct": 1.51,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2025-03-18",
+    "n_cohort": 4926,
+    "n_tickers": 962,
+    "eq_pct": 3.38,
+    "kelly_pct": 4.0,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2025-04-16",
+    "n_cohort": 4675,
+    "n_tickers": 933,
+    "eq_pct": 12.12,
+    "kelly_pct": 10.85,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2025-05-21",
+    "n_cohort": 7313,
+    "n_tickers": 967,
+    "eq_pct": 6.88,
+    "kelly_pct": 6.66,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2025-06-18",
+    "n_cohort": 6350,
+    "n_tickers": 963,
+    "eq_pct": 8.68,
+    "kelly_pct": 4.57,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2025-07-16",
+    "n_cohort": 6642,
+    "n_tickers": 976,
+    "eq_pct": 8.42,
+    "kelly_pct": 6.37,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2025-08-20",
+    "n_cohort": 7900,
+    "n_tickers": 995,
+    "eq_pct": 5.98,
+    "kelly_pct": 6.51,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2025-09-17",
+    "n_cohort": 6763,
+    "n_tickers": 1006,
+    "eq_pct": 5.56,
+    "kelly_pct": 5.75,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2025-10-22",
+    "n_cohort": 7987,
+    "n_tickers": 1012,
+    "eq_pct": -3.25,
+    "kelly_pct": -4.48,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2025-11-19",
+    "n_cohort": 6875,
+    "n_tickers": 1009,
+    "eq_pct": 9.25,
+    "kelly_pct": 8.69,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2025-12-17",
+    "n_cohort": 7224,
+    "n_tickers": 1014,
+    "eq_pct": -1.42,
+    "kelly_pct": 2.33,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2026-01-21",
+    "n_cohort": 8365,
+    "n_tickers": 1054,
+    "eq_pct": 7.19,
+    "kelly_pct": 4.7,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2026-02-18",
+    "n_cohort": 7491,
+    "n_tickers": 1052,
+    "eq_pct": 8.59,
+    "kelly_pct": 7.74,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2026-03-18",
+    "n_cohort": 6808,
+    "n_tickers": 1027,
+    "eq_pct": 11.47,
+    "kelly_pct": 10.66,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2026-04-15",
+    "n_cohort": 7468,
+    "n_tickers": 1074,
+    "eq_pct": 10.5,
+    "kelly_pct": 10.45,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2026-06-17",
+    "n_cohort": 7575,
+    "n_tickers": 1093,
+    "eq_pct": -8.5,
+    "kelly_pct": -3.02,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2026-07-22",
+    "n_cohort": 8911,
+    "n_tickers": 1130,
+    "eq_pct": 0.08,
+    "kelly_pct": 4.53,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  }
+]

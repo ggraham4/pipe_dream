@@ -1,0 +1,13 @@
+
+timepoint      model %     SPY %  univ avg %  beat SPY
+2021-01-15       10.76      1.60      -31.68      True
+2022-01-15      -83.00     -3.88      -57.12     False
+2023-01-15      129.94      2.87      -10.81      True
+2024-01-15      -23.01      5.76       12.35     False
+2025-01-15       36.83     -1.07      -27.75      True
+2026-01-15      -28.40      0.59       13.08     False
+
+Win rate vs SPY: 3/6
+Avg model return/trial: 7.19% (std 66.17%)
+Avg SPY return/trial: 0.98%
+$60000 across 6 independent $10k trials -> $64,312.00 (model) vs $60,587.00 (SPY)

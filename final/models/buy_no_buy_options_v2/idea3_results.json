@@ -1,0 +1,133 @@
+[
+  {
+    "timepoint": "2021-01-15",
+    "n_cohort": 13344,
+    "equal_weight_return_pct": null,
+    "kelly_return_pct": null
+  },
+  {
+    "timepoint": "2022-01-15",
+    "n_cohort": 12714,
+    "n_survivors": 854,
+    "equal_weight_return_pct": -17.91,
+    "equal_weight_picks": [
+      "MRNA",
+      "PENN",
+      "NEO",
+      "HCI",
+      "TDC"
+    ],
+    "kelly_return_pct": -16.28,
+    "kelly_cash_frac": 0.0,
+    "kelly_picks": [
+      "MRNA",
+      "PENN",
+      "NEO",
+      "HCI",
+      "TDC",
+      "OLLI",
+      "HAE",
+      "CAR"
+    ]
+  },
+  {
+    "timepoint": "2023-01-15",
+    "n_cohort": 12721,
+    "n_survivors": 890,
+    "equal_weight_return_pct": 41.7,
+    "equal_weight_picks": [
+      "LNTH",
+      "CENX",
+      "NEO",
+      "PLMR",
+      "ROG"
+    ],
+    "kelly_return_pct": 44.75,
+    "kelly_cash_frac": 0.165,
+    "kelly_picks": [
+      "LNTH",
+      "CENX",
+      "NEO",
+      "PLMR",
+      "NEOG",
+      "TSLA",
+      "META",
+      "EPAM"
+    ]
+  },
+  {
+    "timepoint": "2024-01-15",
+    "n_cohort": 14455,
+    "n_survivors": 960,
+    "equal_weight_return_pct": 11.53,
+    "equal_weight_picks": [
+      "PAYC",
+      "CUBI",
+      "ENPH",
+      "ZION",
+      "MXL"
+    ],
+    "kelly_return_pct": 8.56,
+    "kelly_cash_frac": 0.332,
+    "kelly_picks": [
+      "PAYC",
+      "ENPH",
+      "MXL",
+      "VICR",
+      "ILMN",
+      "VSAT",
+      "EL",
+      "FHN"
+    ]
+  },
+  {
+    "timepoint": "2025-01-15",
+    "n_cohort": 12863,
+    "n_survivors": 1053,
+    "equal_weight_return_pct": 16.39,
+    "equal_weight_picks": [
+      "GME",
+      "CE",
+      "PI",
+      "TMDX",
+      "SMCI"
+    ],
+    "kelly_return_pct": 6.15,
+    "kelly_cash_frac": 0.323,
+    "kelly_picks": [
+      "GME",
+      "CE",
+      "PI",
+      "TMDX",
+      "SMCI",
+      "YOU",
+      "VSAT",
+      "PLTR"
+    ]
+  },
+  {
+    "timepoint": "2026-01-15",
+    "n_cohort": 18163,
+    "n_survivors": 1146,
+    "equal_weight_return_pct": 7.02,
+    "equal_weight_picks": [
+      "CORT",
+      "DUOL",
+      "SRPT",
+      "ACHC",
+      "ORCL"
+    ],
+    "kelly_return_pct": -4.1,
+    "kelly_cash_frac": 0.796,
+    "kelly_picks": [
+      "CORT",
+      "DUOL",
+      "SRPT",
+      "ACHC",
+      "ORCL",
+      "MARA",
+      "SEZL",
+      "CLSK"
+    ]
+  }
+]

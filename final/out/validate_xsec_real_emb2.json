@@ -1,0 +1,8 @@
+{
+  "tag": "real_emb2",
+  "mode": "real",
+  "embargo_mult": 2,
+  "mean_ic": 0.134177061201921,
+  "ic_t": 8.56083575088113,
+  "n_windows": 117
+}

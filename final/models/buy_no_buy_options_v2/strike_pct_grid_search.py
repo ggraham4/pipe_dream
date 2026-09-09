@@ -1,0 +1,103 @@
+"""
+Strike-percentage grid search, per Gabe's request ("tinker with strike
+pricing changes... % above or below the current sale price... grid search
+before more complicated regressions").
+
+Uses the buy/no-buy-gated mechanism (idea 1) to isolate strike choice from
+stock choice: same top-5 buy/no-buy picks at each timepoint as before, but
+instead of always taking the ATM strike, sweep a grid of target moneyness
+(strike / spot) levels and see which performs best, worst, and how variance
+scales with strike distance from spot.
+
+Run on the PIT-CORRECTED universe (market_cap>=$2B AND close>$10, BOTH
+point-in-time, fail-closed -- see pit_corrected_backtest.py) since the
+uncorrected expanded universe was just shown to inflate returns via
+look-ahead survivorship bias. This keeps the grid search itself honest
+rather than repeating the same mistake at a different strike level.
+"""
+from pathlib import Path
+import json
+import numpy as np
+import pandas as pd
+
+OUT_DIR = Path(__file__).resolve().parent
+REPO_FINAL = Path(__file__).resolve().parents[2]
+
+TIMEPOINTS = [pd.Timestamp(f"{y}-01-15") for y in range(2021, 2027)]
+COHORT_WINDOW_DAYS = 15
+TOP_N = 5
+MONEYNESS_GRID = [0.80, 0.85, 0.90, 0.95, 1.00, 1.05, 1.10, 1.15, 1.20]
+
+raw = pd.read_parquet(OUT_DIR / "options_calls_expanded_with_pit_capcheck_splitfixed.parquet")
+raw["entry_date"] = pd.to_datetime(raw["entry_date"])
+raw["expiration_date"] = pd.to_datetime(raw["expiration_date"])
+MIN_MARKET_CAP, MIN_PRICE = 2_000_000_000.0, 10.0
+calls = raw[(raw["market_cap"].notna()) & (raw["market_cap"] >= MIN_MARKET_CAP) &
+            (raw["underlying_close_entry"] > MIN_PRICE)].copy()
+print(f"PIT-corrected universe for grid search: {len(calls)} rows, {calls['act_symbol'].nunique()} tickers", flush=True)
+
+scores = pd.read_parquet(OUT_DIR / "buy_no_buy_walkforward_scores.parquet")
+scores["entry_date"] = pd.to_datetime(scores["entry_date"])
+spy = pd.read_csv(REPO_FINAL / "scripts" / "td_data_local" / "SPY.csv", parse_dates=["date"]).sort_values("date")
+
+grid_results = {m: [] for m in MONEYNESS_GRID}
+
+for T in TIMEPOINTS:
+    cand_entry_dates = scores["entry_date"].drop_duplicates()
+    cand_entry_dates = cand_entry_dates[(cand_entry_dates >= T - pd.Timedelta(days=COHORT_WINDOW_DAYS)) &
+                                         (cand_entry_dates <= T + pd.Timedelta(days=COHORT_WINDOW_DAYS))]
+    if cand_entry_dates.empty:
+        continue
+    entry_date = cand_entry_dates.iloc[(cand_entry_dates - T).abs().argsort().iloc[0]]
+
+    cohort_scores = scores[scores["entry_date"] == entry_date].sort_values("buy_no_buy_proba", ascending=False)
+    cohort_calls = calls[calls["entry_date"] == entry_date]
+    if cohort_calls.empty:
+        continue
+
+    # same top-5 buy/no-buy picks (among tickers that have a PIT-eligible option
+    # contract at this entry_date), reused for every strike level in the grid
+    eligible_tickers = set(cohort_calls["act_symbol"].unique())
+    top5_tickers = [t for t in cohort_scores["act_symbol"] if t in eligible_tickers][:TOP_N]
+    if not top5_tickers:
+        continue
+
+    for target_m in MONEYNESS_GRID:
+        picks = []
+        for ticker in top5_tickers:
+            tcalls = cohort_calls[cohort_calls["act_symbol"] == ticker]
+            row = tcalls.iloc[(tcalls["moneyness_strike_over_spot"] - target_m).abs().argsort().iloc[0]]
+            picks.append(row)
+        n = len(picks)
+        ending = sum(10000/n * (1 + p["pct_return_on_premium"]) for p in picks)
+        ret = ending/10000 - 1
+        actual_m = np.mean([p["moneyness_strike_over_spot"] for p in picks])
+        grid_results[target_m].append({"timepoint": str(T.date()), "return_pct": round(float(ret)*100, 2),
+                                        "actual_avg_moneyness": round(float(actual_m), 3), "n_picks": n})
+
+spy_rets = {}
+for T in TIMEPOINTS:
+    e = spy[spy["date"] <= T]
+    x = spy[spy["date"] <= T + pd.Timedelta(days=32)]
+    if e.empty or x.empty: continue
+    spy_rets[str(T.date())] = (x.iloc[-1]["close"]/e.iloc[-1]["close"] - 1)*100
+
+print(f"\n{'target moneyness':>18}{'n':>4}{'avg %':>10}{'std %':>10}{'win/n':>8}{'avg realized mny':>18}")
+summary = []
+for m in MONEYNESS_GRID:
+    rows = grid_results[m]
+    vals = [r["return_pct"] for r in rows]
+    wins = sum(1 for r in rows if spy_rets.get(r["timepoint"]) is not None and r["return_pct"] > spy_rets[r["timepoint"]])
+    avg_mny = np.mean([r["actual_avg_moneyness"] for r in rows]) if rows else None
+    n = len(vals)
+    avg = np.mean(vals) if n else None
+    std = np.std(vals) if n else None
+    print(f"{m:>18.2f}{n:>4}{avg:>10.2f}{std:>10.2f}{f'{wins}/{n}':>8}{avg_mny:>18.3f}")
+    summary.append({"target_moneyness": m, "n": n, "avg_pct": round(avg,2) if avg is not None else None,
+                     "std_pct": round(std,2) if std is not None else None, "win": f"{wins}/{n}",
+                     "avg_realized_moneyness": round(avg_mny,3) if avg_mny is not None else None,
+                     "per_timepoint": rows})
+
+with open(OUT_DIR / "strike_grid_search_results.json", "w") as f:
+    json.dump({"summary": summary, "spy_rets": spy_rets}, f, indent=2, default=str)
+print("\nsaved strike_grid_search_results.json")

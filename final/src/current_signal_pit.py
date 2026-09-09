@@ -54,13 +54,17 @@ already have been run (this script reads
 out/features_with_fundamentals_pit.parquet).
 """
 import numpy as np
+import os
+
 import pandas as pd
 from xgboost import XGBClassifier
 
 from features import (FEATURE_COLS, FORWARD_WINDOW, LABEL_COL, OUT_DIR, MODELS_DIR,
                        atomic_to_csv, atomic_write_json)
 from fundamentals_features_beta import FUNDAMENTAL_FEATURE_COLS
-from continuous_walkforward_pit import MIN_MARKET_CAP, MIN_PRICE, load_gap_ticker_set
+from continuous_walkforward_pit import (MIN_MARKET_CAP, MIN_PRICE,
+                                        load_gap_ticker_set,
+                                        load_pit_universe)
 
 CUTOFF_PERCENTILE = 75
 TOP_N = 5
@@ -75,6 +79,11 @@ AUGMENTED_FEATURE_COLS = FEATURE_COLS + NO_STALE_COLS
 # overfit number). See backtest/survivorship-bias-correction-results.md,
 # Round 8, for the full sweep table.
 OPTIMAL_STOP_PCT = 0.15
+
+# Round 11 (2026-09-09). "pit" reads the rebuilt point-in-time panel and takes
+# eligibility from pit_universe.parquet. Set PIPE_DREAM_UNIVERSE=expanded to
+# fall back to the pre-Round-11 behaviour.
+UNIVERSE = os.environ.get("PIPE_DREAM_UNIVERSE", "pit")
 
 CONTEXT_COLS = ["close", "momentum_20", "momentum_60", "momentum_120",
                 "relative_strength_20", "pct_from_high_252", "pct_from_low_252", "volatility_20",
@@ -117,7 +126,11 @@ def latest_complete_date_pit(feat, gap_tickers, min_coverage=0.9):
 
 
 def main():
-    feat = pd.read_parquet(OUT_DIR / "features_with_fundamentals_pit.parquet")
+    _panel = (OUT_DIR / "features_with_fundamentals_sharadar_pit.parquet"
+              if UNIVERSE == "pit"
+              else OUT_DIR / "features_with_fundamentals_pit.parquet")
+    print(f"Panel: {_panel.name}  (universe={UNIVERSE})")
+    feat = pd.read_parquet(_panel)
     feat = feat.sort_values(["ticker", "date"]).reset_index(drop=True)
 
     gap_tickers = load_gap_ticker_set()
@@ -149,7 +162,24 @@ def main():
     # than guess" philosophy as the rest of this project. See the module
     # docstring for why gap tickers aren't separately folded in here.
     n_before = len(today_rows)
-    eligible = today_rows[(today_rows["close"] > MIN_PRICE) & (today_rows["market_cap"] >= MIN_MARKET_CAP)].copy()
+    if UNIVERSE == "pit":
+        # Eligibility already applied as of the date, on daily.marketcap and
+        # closeunadj -- the correct quantities. Re-applying the panel's own
+        # market_cap (= close x sharesbas) and split-adjusted close here
+        # would screen on two different numbers than the universe was built
+        # from. See patch_signal.py's header.
+        _pit = load_pit_universe()
+        _day = _pit.get(str(pd.Timestamp(latest_date).date()), frozenset())
+        if not _day:
+            raise RuntimeError(
+                f"pit_universe.parquet has no rows for {latest_date} -- rebuild "
+                f"it (build_pit_universe.py) after refreshing the panel.")
+        eligible = today_rows[today_rows["ticker"].isin(_day)].copy()
+        print(f"PIT universe eligibility on {pd.Timestamp(latest_date).date()}: "
+              f"{len(eligible)} of {len(today_rows)} scored rows "
+              f"({len(_day)} names eligible that day)")
+    else:
+        eligible = today_rows[(today_rows["close"] > MIN_PRICE) & (today_rows["market_cap"] >= MIN_MARKET_CAP)].copy()
     print(f"Point-in-time mid-cap+ floor (market_cap >= ${MIN_MARKET_CAP:,.0f}, close > ${MIN_PRICE:.0f}): "
           f"{len(eligible)}/{n_before} tickers eligible today")
     if eligible.empty:

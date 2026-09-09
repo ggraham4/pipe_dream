@@ -1,0 +1,159 @@
+[
+  {
+    "timepoint": "2021-01-15",
+    "n_cohort": 10573,
+    "n_tickers": 742,
+    "eq_pct": null,
+    "kelly_pct": null
+  },
+  {
+    "timepoint": "2022-01-15",
+    "n_cohort": 6369,
+    "n_tickers": 407,
+    "eq_pct": -0.09,
+    "eq_picks": [
+      {
+        "t": "GME",
+        "mny": 0.686
+      },
+      {
+        "t": "HAE",
+        "mny": 0.664
+      },
+      {
+        "t": "CAR",
+        "mny": 0.768
+      },
+      {
+        "t": "MRNA",
+        "mny": 0.708
+      },
+      {
+        "t": "CCL",
+        "mny": 0.654
+      }
+    ],
+    "kelly_pct": -8.72,
+    "kelly_cash": 0.038
+  },
+  {
+    "timepoint": "2023-01-15",
+    "n_cohort": 3429,
+    "n_tickers": 252,
+    "eq_pct": -28.19,
+    "eq_picks": [
+      {
+        "t": "CVLT",
+        "mny": 0.679
+      },
+      {
+        "t": "VIAV",
+        "mny": 0.712
+      },
+      {
+        "t": "EXTR",
+        "mny": 0.652
+      },
+      {
+        "t": "KD",
+        "mny": 0.716
+      },
+      {
+        "t": "ARWR",
+        "mny": 0.679
+      }
+    ],
+    "kelly_pct": -31.74,
+    "kelly_cash": 0.135
+  },
+  {
+    "timepoint": "2024-01-15",
+    "n_cohort": 7286,
+    "n_tickers": 476,
+    "eq_pct": -55.06,
+    "eq_picks": [
+      {
+        "t": "CYTK",
+        "mny": 0.701
+      },
+      {
+        "t": "ENPH",
+        "mny": 0.68
+      },
+      {
+        "t": "TSLA",
+        "mny": 0.723
+      },
+      {
+        "t": "ALB",
+        "mny": 0.714
+      },
+      {
+        "t": "MP",
+        "mny": 0.703
+      }
+    ],
+    "kelly_pct": -23.74,
+    "kelly_cash": 0.545
+  },
+  {
+    "timepoint": "2025-01-15",
+    "n_cohort": 10483,
+    "n_tickers": 995,
+    "eq_pct": -9.51,
+    "eq_picks": [
+      {
+        "t": "PLTR",
+        "mny": 0.801
+      },
+      {
+        "t": "VST",
+        "mny": 0.79
+      },
+      {
+        "t": "MRNA",
+        "mny": 0.734
+      },
+      {
+        "t": "INTC",
+        "mny": 0.791
+      },
+      {
+        "t": "GME",
+        "mny": 0.836
+      }
+    ],
+    "kelly_pct": -20.12,
+    "kelly_cash": 0.501
+  },
+  {
+    "timepoint": "2026-01-15",
+    "n_cohort": 14939,
+    "n_tickers": 1076,
+    "eq_pct": 37.65,
+    "eq_picks": [
+      {
+        "t": "VSAT",
+        "mny": 0.697
+      },
+      {
+        "t": "HL",
+        "mny": 0.716
+      },
+      {
+        "t": "LITE",
+        "mny": 0.709
+      },
+      {
+        "t": "MP",
+        "mny": 0.696
+      },
+      {
+        "t": "MU",
+        "mny": 0.689
+      }
+    ],
+    "kelly_pct": 3.78,
+    "kelly_cash": 0.618
+  }
+]

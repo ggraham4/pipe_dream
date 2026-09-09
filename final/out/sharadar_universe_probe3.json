@@ -1,0 +1,1067 @@
+{
+  "paging": {
+    "offset": {
+      "first": "AAC.U",
+      "works": true
+    },
+    "skip": {
+      "first": "AAC.U",
+      "works": true
+    },
+    "page": {
+      "first": "PHXE-P",
+      "works": false
+    },
+    "start": {
+      "first": "PHXE-P",
+      "works": false
+    },
+    "cursor?": {
+      "first": "PHXE-P",
+      "works": false
+    },
+    "json_envelope": "{\"count\":2,\"data\":[{\"table\":\"stocks\",\"permaticker\":\"645405\",\"ticker\":\"PHXE-P\",\"name\":\"PHOENIX ENERGY ONE LLC\",\"exchange\":\"NYSEMKT\",\"isdelisted\":\"N\",\"category\":\"Domestic Preferred Stock\",\"cusips\":null,\"siccode\":\"1311\",\"sicsector\":\"Mining\",\"sicindustry\":\"Crude Petroleum & Natural Gas\",\"figi\":null,\"famaindustry\":null,\"sector\":\"Energy\",\"industry\":\"Oil & Gas E&P\",\"scalemarketcap\":null,\"scalerevenue\":null,\"relatedtickers\":null,\"currency\":\"USD\",\"location\":\"Colorado; U.S.A\",\"lastupdated\":\"2026-09-08\",\"firstadded\":\"2025-10-10\",\"firstpricedate\":\"2025-09-30\",\"lastpricedate\":\"2026-09-08\",\"firstquarter\":nu"
+  },
+  "master": {
+    "n": 20965,
+    "n_delisted": 14640,
+    "truncated": false
+  },
+  "dead_resolution": {
+    "LEH": {},
+    "BSC": {
+      "BSC1": [
+        {
+          "permaticker": "123481",
+          "name": "BEAR STEARNS COMPANIES INC",
+          "isdelisted": "Y",
+          "first": "1986-01-01",
+          "last": "2008-05-30",
+          "related": "BSC",
+          "exchange": "NYSE"
+        }
+      ]
+    },
+    "WM": {
+      "WM": [
+        {
+          "permaticker": "198260",
+          "name": "WASTE MANAGEMENT INC",
+          "isdelisted": "N",
+          "first": "1991-09-30",
+          "last": "2026-09-08",
+          "related": "WMI",
+          "exchange": "NYSE"
+        }
+      ]
+    },
+    "ENE": {},
+    "SHLD": {},
+    "BBBY": {},
+    "FRC": {},
+    "SIVB": {}
+  },
+  "contamination_resolution": {
+    "AT": {
+      "direct": [
+        {
+          "permaticker": "193731",
+          "name": "ATLANTIC POWER CORP",
+          "isdelisted": "Y",
+          "first": "2009-12-03",
+          "last": "2021-05-14",
+          "related": "ATLIF",
+          "exchange": "NYSE"
+        }
+      ],
+      "suffixed": {
+        "AT1": [
+          {
+            "permaticker": "178829",
+            "name": "ALLTEL CORP",
+            "isdelisted": "Y",
+            "first": "1986-01-01",
+            "last": "2007-11-15",
+            "related": "AT",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "NSM": {
+      "direct": [
+        {
+          "permaticker": "192351",
+          "name": "NATIONSTAR MORTGAGE HOLDINGS INC",
+          "isdelisted": "Y",
+          "first": "2012-03-08",
+          "last": "2018-07-30",
+          "related": "",
+          "exchange": "NYSE"
+        }
+      ],
+      "suffixed": {
+        "NSM1": [
+          {
+            "permaticker": "188085",
+            "name": "NATIONAL SEMICONDUCTOR CORP",
+            "isdelisted": "Y",
+            "first": "1986-01-01",
+            "last": "2011-09-23",
+            "related": "NSM",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "MMI": {
+      "direct": [
+        {
+          "permaticker": "191423",
+          "name": "MARCUS & MILLICHAP INC",
+          "isdelisted": "N",
+          "first": "2013-10-31",
+          "last": "2026-09-08",
+          "related": "",
+          "exchange": "NYSE"
+        }
+      ],
+      "suffixed": {
+        "MMI1": [
+          {
+            "permaticker": "188002",
+            "name": "MOTOROLA MOBILITY HOLDINGS INC",
+            "isdelisted": "Y",
+            "first": "2010-12-22",
+            "last": "2012-05-21",
+            "related": "MMI",
+            "exchange": "NYSE"
+          }
+        ],
+        "MMI2": [
+          {
+            "permaticker": "119907",
+            "name": "MMI COMPANIES INC",
+            "isdelisted": "Y",
+            "first": "1993-06-24",
+            "last": "2000-04-17",
+            "related": "MMI",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "WB": {
+      "direct": [
+        {
+          "permaticker": "166889",
+          "name": "WEIBO CORP",
+          "isdelisted": "N",
+          "first": "2014-04-17",
+          "last": "2026-09-08",
+          "related": "",
+          "exchange": "NASDAQ"
+        }
+      ],
+      "suffixed": {
+        "WB1": [
+          {
+            "permaticker": "173407",
+            "name": "WACHOVIA CORP",
+            "isdelisted": "Y",
+            "first": "1986-01-01",
+            "last": "2008-12-31",
+            "related": "WB FTU",
+            "exchange": "NYSE"
+          }
+        ],
+        "WB2": [
+          {
+            "permaticker": "116402",
+            "name": "WACHOVIA CORP",
+            "isdelisted": "Y",
+            "first": "1986-01-01",
+            "last": "2001-08-31",
+            "related": "WB",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "TSG": {
+      "direct": [
+        {
+          "permaticker": "124281",
+          "name": "STARS GROUP INC",
+          "isdelisted": "Y",
+          "first": "2015-06-08",
+          "last": "2020-05-04",
+          "related": "AYA AMYGF",
+          "exchange": "NASDAQ"
+        }
+      ],
+      "suffixed": {
+        "TSG1": [
+          {
+            "permaticker": "173840",
+            "name": "SABRE HOLDINGS CORP",
+            "isdelisted": "Y",
+            "first": "1996-10-11",
+            "last": "2007-03-29",
+            "related": "TSG",
+            "exchange": "NASDAQ"
+          }
+        ]
+      }
+    },
+    "FDC": {
+      "direct": [
+        {
+          "permaticker": "165460",
+          "name": "FIRST DATA CORP",
+          "isdelisted": "Y",
+          "first": "2015-10-15",
+          "last": "2019-07-26",
+          "related": "",
+          "exchange": "NYSE"
+        }
+      ],
+      "suffixed": {
+        "FDC1": [
+          {
+            "permaticker": "197837",
+            "name": "FIRST DATA CORP",
+            "isdelisted": "Y",
+            "first": "1992-04-09",
+            "last": "2007-09-21",
+            "related": "FDC",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "MI": {
+      "direct": [
+        {
+          "permaticker": "124571",
+          "name": "NFT LTD",
+          "isdelisted": "N",
+          "first": "2015-11-25",
+          "last": "2026-09-08",
+          "related": "TKAT",
+          "exchange": "NYSEMKT"
+        }
+      ],
+      "suffixed": {
+        "MI1": [
+          {
+            "permaticker": "119445",
+            "name": "MARSHALL INDUSTRIES",
+            "isdelisted": "Y",
+            "first": "1986-01-01",
+            "last": "1999-10-20",
+            "related": "MI",
+            "exchange": "NYSE"
+          }
+        ],
+        "MI2": [
+          {
+            "permaticker": "188840",
+            "name": "MARSHALL & ILSLEY CORP",
+            "isdelisted": "Y",
+            "first": "1986-01-01",
+            "last": "2011-07-05",
+            "related": "MRIS MI",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "CCEP": {
+      "direct": [
+        {
+          "permaticker": "192894",
+          "name": "COCA-COLA EUROPACIFIC PARTNERS PLC",
+          "isdelisted": "N",
+          "first": "2016-05-31",
+          "last": "2026-09-08",
+          "related": "CCE",
+          "exchange": "NASDAQ"
+        }
+      ],
+      "suffixed": {}
+    },
+    "DTV": {
+      "direct": [
+        {
+          "permaticker": "112587",
+          "name": "DTE ENERGY CO",
+          "isdelisted": "Y",
+          "first": "2016-10-12",
+          "last": "2019-09-30",
+          "related": "DTE DTG DTENU DTW DTQ DTY DTP DTEFU DTK DTZ DTJ DTB",
+          "exchange": "NYSE"
+        }
+      ],
+      "suffixed": {
+        "DTV1": [
+          {
+            "permaticker": "193222",
+            "name": "DIRECTV",
+            "isdelisted": "Y",
+            "first": "2003-12-24",
+            "last": "2015-07-24",
+            "related": "HS DTV",
+            "exchange": "NASDAQ"
+          }
+        ]
+      }
+    },
+    "STR": {
+      "direct": [
+        {
+          "permaticker": "123005",
+          "name": "SITIO ROYALTIES CORP",
+          "isdelisted": "Y",
+          "first": "2017-09-08",
+          "last": "2025-08-18",
+          "related": "OSPRU OSPR FLMN",
+          "exchange": "NYSE"
+        }
+      ],
+      "suffixed": {
+        "STR1": [
+          {
+            "permaticker": "198649",
+            "name": "QUESTAR CORP",
+            "isdelisted": "Y",
+            "first": "1987-12-29",
+            "last": "2016-09-16",
+            "related": "STR",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "SE": {
+      "direct": [
+        {
+          "permaticker": "120655",
+          "name": "SEA LTD",
+          "isdelisted": "N",
+          "first": "2017-10-20",
+          "last": "2026-09-08",
+          "related": "",
+          "exchange": "NYSE"
+        }
+      ],
+      "suffixed": {
+        "SE1": [
+          {
+            "permaticker": "194340",
+            "name": "SPECTRA ENERGY CORP",
+            "isdelisted": "Y",
+            "first": "2006-12-14",
+            "last": "2017-02-24",
+            "related": "SE",
+            "exchange": "NYSE"
+          }
+        ],
+        "SE2": [
+          {
+            "permaticker": "119786",
+            "name": "STERLING COMMERCE INC",
+            "isdelisted": "Y",
+            "first": "1996-03-08",
+            "last": "2000-03-24",
+            "related": "SE",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "ALTR": {
+      "direct": [
+        {
+          "permaticker": "121796",
+          "name": "ALTAIR ENGINEERING INC",
+          "isdelisted": "Y",
+          "first": "2017-11-01",
+          "last": "2025-03-25",
+          "related": "",
+          "exchange": "NASDAQ"
+        }
+      ],
+      "suffixed": {
+        "ALTR1": [
+          {
+            "permaticker": "198590",
+            "name": "ALTERA CORP",
+            "isdelisted": "Y",
+            "first": "1988-03-31",
+            "last": "2015-12-24",
+            "related": "ALTR",
+            "exchange": "NASDAQ"
+          }
+        ]
+      }
+    },
+    "ADT": {
+      "direct": [
+        {
+          "permaticker": "120658",
+          "name": "ADT INC",
+          "isdelisted": "N",
+          "first": "2018-01-19",
+          "last": "2026-09-08",
+          "related": "",
+          "exchange": "NYSE"
+        }
+      ],
+      "suffixed": {
+        "ADT1": [
+          {
+            "permaticker": "191948",
+            "name": "ADT CORP",
+            "isdelisted": "Y",
+            "first": "2012-09-17",
+            "last": "2016-04-29",
+            "related": "ADT",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "PLL": {
+      "direct": [
+        {
+          "permaticker": "119353",
+          "name": "PIEDMONT LITHIUM INC",
+          "isdelisted": "Y",
+          "first": "2018-05-07",
+          "last": "2025-08-29",
+          "related": "PLLLY PLLL",
+          "exchange": "NASDAQ"
+        }
+      ],
+      "suffixed": {
+        "PLL1": [
+          {
+            "permaticker": "199445",
+            "name": "PALL CORP",
+            "isdelisted": "Y",
+            "first": "1986-01-01",
+            "last": "2015-08-28",
+            "related": "PLL",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "EQ": {
+      "direct": [
+        {
+          "permaticker": "114201",
+          "name": "EQUILLIUM INC",
+          "isdelisted": "N",
+          "first": "2018-10-12",
+          "last": "2026-09-08",
+          "related": "",
+          "exchange": "NASDAQ"
+        }
+      ],
+      "suffixed": {
+        "EQ1": [
+          {
+            "permaticker": "180415",
+            "name": "EMBARQ CORP",
+            "isdelisted": "Y",
+            "first": "2006-05-05",
+            "last": "2009-06-30",
+            "related": "EQ",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "PD": {
+      "direct": [
+        {
+          "permaticker": "110999",
+          "name": "PAGERDUTY INC",
+          "isdelisted": "N",
+          "first": "2019-04-11",
+          "last": "2026-09-08",
+          "related": "",
+          "exchange": "NYSE"
+        }
+      ],
+      "suffixed": {
+        "PD1": [
+          {
+            "permaticker": "173319",
+            "name": "PHELPS DODGE CORP",
+            "isdelisted": "Y",
+            "first": "1986-01-01",
+            "last": "2007-03-19",
+            "related": "PD",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "TE": {
+      "direct": [
+        {
+          "permaticker": "110348",
+          "name": "T1 ENERGY INC",
+          "isdelisted": "N",
+          "first": "2019-11-26",
+          "last": "2026-09-08",
+          "related": "ALUS FREY ALUS.U",
+          "exchange": "NYSE"
+        }
+      ],
+      "suffixed": {
+        "TE1": [
+          {
+            "permaticker": "199049",
+            "name": "TECO ENERGY INC",
+            "isdelisted": "Y",
+            "first": "1986-01-01",
+            "last": "2016-06-30",
+            "related": "TE",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "ADCT": {
+      "direct": [
+        {
+          "permaticker": "631161",
+          "name": "ADC THERAPEUTICS SA",
+          "isdelisted": "N",
+          "first": "2020-05-15",
+          "last": "2026-09-08",
+          "related": "",
+          "exchange": "NYSE"
+        }
+      ],
+      "suffixed": {
+        "ADCT1": [
+          {
+            "permaticker": "185581",
+            "name": "ADC TELECOMMUNICATIONS INC",
+            "isdelisted": "Y",
+            "first": "1986-01-01",
+            "last": "2010-12-09",
+            "related": "ADCT",
+            "exchange": "NASDAQ"
+          }
+        ]
+      }
+    },
+    "SII": {
+      "direct": [
+        {
+          "permaticker": "617728",
+          "name": "SPROTT INC",
+          "isdelisted": "N",
+          "first": "2020-06-29",
+          "last": "2026-09-08",
+          "related": "SPOXF",
+          "exchange": "NYSE"
+        }
+      ],
+      "suffixed": {
+        "SII1": [
+          {
+            "permaticker": "188461",
+            "name": "SMITH INTERNATIONAL INC",
+            "isdelisted": "Y",
+            "first": "1986-01-01",
+            "last": "2010-08-27",
+            "related": "SII",
+            "exchange": "NASDAQ"
+          }
+        ]
+      }
+    },
+    "DNB": {
+      "direct": [
+        {
+          "permaticker": "631609",
+          "name": "DUN & BRADSTREET HOLDINGS INC",
+          "isdelisted": "Y",
+          "first": "2020-07-01",
+          "last": "2025-08-25",
+          "related": "",
+          "exchange": "NYSE"
+        }
+      ],
+      "suffixed": {
+        "DNB1": [
+          {
+            "permaticker": "110782",
+            "name": "DUN & BRADSTREET CORP",
+            "isdelisted": "Y",
+            "first": "1998-07-01",
+            "last": "2000-10-02",
+            "related": "DNB",
+            "exchange": "NYSE"
+          }
+        ],
+        "DNB2": [
+          {
+            "permaticker": "110781",
+            "name": "DUN & BRADSTREET CORP",
+            "isdelisted": "Y",
+            "first": "1986-01-01",
+            "last": "1998-06-30",
+            "related": "DNB",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "MON": {
+      "direct": [
+        {
+          "permaticker": "632974",
+          "name": "MONUMENT CIRCLE ACQUISITION CORP",
+          "isdelisted": "Y",
+          "first": "2021-01-14",
+          "last": "2022-12-23",
+          "related": "MONCU",
+          "exchange": "NASDAQ"
+        }
+      ],
+      "suffixed": {
+        "MON1": [
+          {
+            "permaticker": "102099",
+            "name": "MONEY STORE INC",
+            "isdelisted": "Y",
+            "first": "1991-09-20",
+            "last": "1998-06-29",
+            "related": "MON",
+            "exchange": "NYSE"
+          }
+        ],
+        "MON2": [
+          {
+            "permaticker": "196059",
+            "name": "MONSANTO CO",
+            "isdelisted": "Y",
+            "first": "2000-10-18",
+            "last": "2018-06-06",
+            "related": "MON",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "HCP": {
+      "direct": [
+        {
+          "permaticker": "636896",
+          "name": "HASHICORP INC",
+          "isdelisted": "Y",
+          "first": "2021-12-09",
+          "last": "2025-02-26",
+          "related": "",
+          "exchange": "NASDAQ"
+        }
+      ],
+      "suffixed": {}
+    },
+    "HMA": {
+      "direct": [
+        {
+          "permaticker": "637292",
+          "name": "HEARTLAND MEDIA ACQUISITION CORP",
+          "isdelisted": "Y",
+          "first": "2022-01-21",
+          "last": "2023-07-25",
+          "related": "HMA.U",
+          "exchange": "NYSE"
+        }
+      ],
+      "suffixed": {
+        "HMA1": [
+          {
+            "permaticker": "198474",
+            "name": "HEALTH MANAGEMENT ASSOCIATES INC",
+            "isdelisted": "Y",
+            "first": "1991-04-16",
+            "last": "2014-01-24",
+            "related": "HMA",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "EP": {
+      "direct": [
+        {
+          "permaticker": "109509",
+          "name": "EMPIRE PETROLEUM CORP",
+          "isdelisted": "N",
+          "first": "2022-03-08",
+          "last": "2026-09-08",
+          "related": "EMPR",
+          "exchange": "NYSEMKT"
+        }
+      ],
+      "suffixed": {
+        "EP1": [
+          {
+            "permaticker": "188361",
+            "name": "EL PASO CORP",
+            "isdelisted": "Y",
+            "first": "1992-03-16",
+            "last": "2012-05-24",
+            "related": "EP-PC EP",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "STI": {
+      "direct": [
+        {
+          "permaticker": "638287",
+          "name": "SOLIDION TECHNOLOGY INC",
+          "isdelisted": "N",
+          "first": "2022-03-11",
+          "last": "2026-09-08",
+          "related": "NUBI NUBIU",
+          "exchange": "NASDAQ"
+        }
+      ],
+      "suffixed": {
+        "STI1": [
+          {
+            "permaticker": "198658",
+            "name": "SUNTRUST BANKS INC",
+            "isdelisted": "Y",
+            "first": "1987-12-30",
+            "last": "2019-12-06",
+            "related": "STI STI-PE STI-PA",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "DO": {
+      "direct": [
+        {
+          "permaticker": "638382",
+          "name": "DIAMOND OFFSHORE DRILLING INC",
+          "isdelisted": "Y",
+          "first": "2022-03-30",
+          "last": "2024-09-03",
+          "related": "",
+          "exchange": "NYSE"
+        }
+      ],
+      "suffixed": {}
+    },
+    "EMC": {
+      "direct": [],
+      "suffixed": {
+        "EMC1": [
+          {
+            "permaticker": "198495",
+            "name": "EMC CORP",
+            "isdelisted": "Y",
+            "first": "1988-12-16",
+            "last": "2016-09-06",
+            "related": "EMC",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "INFO": {
+      "direct": [],
+      "suffixed": {
+        "INFO1": [
+          {
+            "permaticker": "166332",
+            "name": "IHS MARKIT LTD",
+            "isdelisted": "Y",
+            "first": "2014-06-19",
+            "last": "2022-02-25",
+            "related": "MRKT INFO",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "KG": {
+      "direct": [
+        {
+          "permaticker": "644493",
+          "name": "KESTREL GROUP LTD",
+          "isdelisted": "N",
+          "first": "2025-05-28",
+          "last": "2026-09-08",
+          "related": "",
+          "exchange": "NASDAQ"
+        }
+      ],
+      "suffixed": {
+        "KG1": [
+          {
+            "permaticker": "188852",
+            "name": "KING PHARMACEUTICALS INC",
+            "isdelisted": "Y",
+            "first": "1998-06-26",
+            "last": "2011-02-28",
+            "related": "KG",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "FB": {
+      "direct": [],
+      "suffixed": {
+        "FB1": [
+          {
+            "permaticker": "120466",
+            "name": "FBR ASSET INVESTMENT CORP",
+            "isdelisted": "Y",
+            "first": "1999-09-29",
+            "last": "2003-03-28",
+            "related": "FB",
+            "exchange": "NYSEMKT"
+          }
+        ]
+      }
+    },
+    "PCL": {
+      "direct": [],
+      "suffixed": {
+        "PCL1": [
+          {
+            "permaticker": "198117",
+            "name": "PLUM CREEK TIMBER CO INC",
+            "isdelisted": "Y",
+            "first": "1989-06-02",
+            "last": "2016-02-19",
+            "related": "PCL",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "CAM": {
+      "direct": [],
+      "suffixed": {
+        "CAM1": [
+          {
+            "permaticker": "114682",
+            "name": "CAMCO INTERNATIONAL INC",
+            "isdelisted": "Y",
+            "first": "1993-12-13",
+            "last": "1998-08-31",
+            "related": "CAM",
+            "exchange": "NYSE"
+          }
+        ],
+        "CAM2": [
+          {
+            "permaticker": "197286",
+            "name": "CAMERON INTERNATIONAL CORP",
+            "isdelisted": "Y",
+            "first": "1995-07-05",
+            "last": "2016-04-01",
+            "related": "CAM RON",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "POM": {
+      "direct": [
+        {
+          "permaticker": "645463",
+          "name": "POMDOCTOR LTD",
+          "isdelisted": "N",
+          "first": "2025-10-08",
+          "last": "2026-09-08",
+          "related": "",
+          "exchange": "NASDAQ"
+        }
+      ],
+      "suffixed": {
+        "POM1": [
+          {
+            "permaticker": "195861",
+            "name": "PEPCO HOLDINGS INC",
+            "isdelisted": "Y",
+            "first": "1987-01-02",
+            "last": "2016-03-23",
+            "related": "POM",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "SPLS": {
+      "direct": [],
+      "suffixed": {
+        "SPLS1": [
+          {
+            "permaticker": "198486",
+            "name": "STAPLES INC",
+            "isdelisted": "Y",
+            "first": "1990-03-26",
+            "last": "2017-09-12",
+            "related": "SPLS",
+            "exchange": "NASDAQ"
+          }
+        ]
+      }
+    },
+    "SGP": {
+      "direct": [
+        {
+          "permaticker": "646452",
+          "name": "SPYGLASS PHARMA INC",
+          "isdelisted": "N",
+          "first": "2026-02-06",
+          "last": "2026-09-08",
+          "related": "",
+          "exchange": "NASDAQ"
+        }
+      ],
+      "suffixed": {
+        "SGP1": [
+          {
+            "permaticker": "165457",
+            "name": "SCHERING PLOUGH CORP",
+            "isdelisted": "Y",
+            "first": "1986-01-01",
+            "last": "2009-11-03",
+            "related": "SGP",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "APC": {
+      "direct": [
+        {
+          "permaticker": "646745",
+          "name": "ARKO PETROLEUM CORP",
+          "isdelisted": "N",
+          "first": "2026-02-12",
+          "last": "2026-09-08",
+          "related": "",
+          "exchange": "NASDAQ"
+        }
+      ],
+      "suffixed": {
+        "APC1": [
+          {
+            "permaticker": "198565",
+            "name": "ANADARKO PETROLEUM CORP",
+            "isdelisted": "Y",
+            "first": "1986-09-09",
+            "last": "2019-08-08",
+            "related": "ANDKU AEUA APC",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "CA": {
+      "direct": [],
+      "suffixed": {
+        "CA1": [
+          {
+            "permaticker": "198986",
+            "name": "CA INC",
+            "isdelisted": "Y",
+            "first": "1986-01-01",
+            "last": "2018-11-05",
+            "related": "CA",
+            "exchange": "NASDAQ"
+          }
+        ]
+      }
+    },
+    "NFX": {
+      "direct": [],
+      "suffixed": {
+        "NFX1": [
+          {
+            "permaticker": "197557",
+            "name": "NEWFIELD EXPLORATION CO",
+            "isdelisted": "Y",
+            "first": "1993-11-12",
+            "last": "2019-02-12",
+            "related": "NFX",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    },
+    "BBBY": {
+      "direct": [],
+      "suffixed": {}
+    },
+    "EQR": {
+      "direct": [],
+      "suffixed": {}
+    },
+    "CSRA": {
+      "direct": [],
+      "suffixed": {
+        "CSRA1": [
+          {
+            "permaticker": "165454",
+            "name": "CSRA INC",
+            "isdelisted": "Y",
+            "first": "2015-11-30",
+            "last": "2018-04-03",
+            "related": "CSRA",
+            "exchange": "NYSE"
+          }
+        ]
+      }
+    }
+  },
+  "sizing": {
+    "stocks:2008-06-30": {
+      "n": 5995
+    },
+    "daily:2008-06-30": {
+      "n": 5880,
+      "n_over_2b": 1
+    },
+    "stocks:2015-06-30": {
+      "n": 5851
+    },
+    "daily:2015-06-30": {
+      "n": 5333,
+      "n_over_2b": 0
+    },
+    "stocks:2022-06-30": {
+      "n": 7517
+    },
+    "daily:2022-06-30": {
+      "n": 6234,
+      "n_over_2b": 0
+    },
+    "daily_depth_AAPL": {
+      "n": 6984,
+      "first": "1998-12-01",
+      "last": "2026-09-08"
+    }
+  }
+}

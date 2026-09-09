@@ -1,0 +1,8 @@
+{
+  "tag": "placebo_emb1",
+  "mode": "placebo",
+  "embargo_mult": 1,
+  "mean_ic": -0.004653632857698153,
+  "ic_t": -0.7182685298664468,
+  "n_windows": 117
+}

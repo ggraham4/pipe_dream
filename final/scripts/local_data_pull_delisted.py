@@ -129,7 +129,39 @@ def _clean(df):
         "Date": "date", "Open": "open", "High": "high",
         "Low": "low", "Close": "close", "Volume": "volume",
     })
-    return df[["date", "open", "high", "low", "close", "volume"]]
+    df = df[["date", "open", "high", "low", "close", "volume"]]
+    return _assert_ohlc_coherent(df)
+
+
+def _assert_ohlc_coherent(df, max_incoherent=0.02):
+    """Round 9 (2026-09-07). Refuse to write a panel whose `close` is on a
+    different adjustment basis than its own `open`/`high`/`low`.
+
+    The delisted panel shipped with exactly this defect: `close` held the
+    dividend-adjusted close while open/high/low were split-adjusted-only,
+    so 157 of 260 tickers had `close` outside their own [low, high] on
+    >98% of bars. Nothing close-to-close noticed, but the stop-loss reads
+    `low` and compares it against an entry taken from `close`, so stops
+    effectively stopped firing on those names (17.2% stop-out rate vs
+    44.7% on the clean tickers) -- which is a large part of why the 15%
+    stop looked like it was carrying the whole strategy.
+
+    A real bar always contains its own close. If it does not, the columns
+    are not on the same basis and the file must not be written.
+    """
+    d = df[(df["close"] > 0) & (df["low"] > 0) & (df["high"] > 0)]
+    if len(d) < 20:
+        return df
+    bad = ((d["close"] < d["low"] * 0.999) | (d["close"] > d["high"] * 1.001)).mean()
+    if bad > max_incoherent:
+        raise ValueError(
+            f"OHLC adjustment incoherence: `close` falls outside [low, high] on "
+            f"{bad:.1%} of bars. This means close is adjusted on a different basis "
+            f"than open/high/low (typically Adj Close written into `close` while "
+            f"open/high/low stayed raw). Pull all five columns on ONE convention "
+            f"before writing. See src/repair_ohlc_coherence.py."
+        )
+    return df
 
 
 def pull_ticker(ticker: str):

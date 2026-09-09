@@ -100,6 +100,21 @@ RS_WINDOW = 20
 PRICE_LEVEL_WINDOW = 252
 FORWARD_WINDOW = 40  # trading days ~ 2 months -- see docstring above
 LABEL_COL = f"forward_return_{FORWARD_WINDOW}"
+# Round 9 (2026-09-07) -- the TRADABLE label.
+#
+# LABEL_COL above measures close[t+H] / close[t], i.e. it credits the move
+# from the closing print the signal was computed on. That return is not
+# obtainable: you cannot rank the universe on close[t] and also have bought
+# at close[t]. Training on it teaches the model to favour names that are
+# about to gap overnight -- and the diagnostic bears that out, with the
+# entire published edge sitting in the 30 of 123 windows whose picks gapped
+# up between close[t] and open[t+1].
+#
+# TRADABLE_LABEL_COL measures close[t+H] / open[t+1]: buy at the first price
+# actually available after the signal, hold to the same exit. Use this as
+# the training target whenever the backtest is scored with realistic
+# execution, so the model is optimizing the return it can actually capture.
+TRADABLE_LABEL_COL = f"forward_return_tradable_{FORWARD_WINDOW}"
 
 FEATURE_COLS = [
     "daily_return",
@@ -176,6 +191,11 @@ def build_features(data: pd.DataFrame) -> pd.DataFrame:
 
         # forward return label: close FORWARD_WINDOW trading days ahead vs today
         g[LABEL_COL] = g["close"].shift(-FORWARD_WINDOW) / g["close"] - 1
+        # tradable variant: same exit, but entered at the next bar's open --
+        # the first price obtainable after a signal computed on close[t].
+        # See TRADABLE_LABEL_COL's note above.
+        g[TRADABLE_LABEL_COL] = (g["close"].shift(-FORWARD_WINDOW)
+                                  / g["open"].shift(-1)) - 1
 
         pieces.append(g)
 

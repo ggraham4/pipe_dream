@@ -1,0 +1,304 @@
+{
+  "results": [
+    {
+      "timepoint": "2021-01-15",
+      "entry_date": "2021-01-20",
+      "expiration_date": "2021-02-19",
+      "n_picks": 5,
+      "picks": [
+        "NCLH",
+        "CCL",
+        "UAL",
+        "RCL",
+        "TALO"
+      ],
+      "pick_detail": [
+        {
+          "ticker": "NCLH",
+          "proba": 0.495,
+          "moneyness": 0.992,
+          "pct_return_on_premium": -10.84
+        },
+        {
+          "ticker": "CCL",
+          "proba": 0.494,
+          "moneyness": 1.011,
+          "pct_return_on_premium": 153.71
+        },
+        {
+          "ticker": "UAL",
+          "proba": 0.481,
+          "moneyness": 0.996,
+          "pct_return_on_premium": -5.31
+        },
+        {
+          "ticker": "RCL",
+          "proba": 0.473,
+          "moneyness": 1.002,
+          "pct_return_on_premium": 16.24
+        },
+        {
+          "ticker": "TALO",
+          "proba": 0.469,
+          "moneyness": 0.928,
+          "pct_return_on_premium": -100.0
+        }
+      ],
+      "model_return_pct": 10.760000228881836,
+      "spy_return_pct": 1.6,
+      "universe_avg_return_pct": -31.68,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2022-01-15",
+      "entry_date": "2022-01-19",
+      "expiration_date": "2022-02-18",
+      "n_picks": 5,
+      "picks": [
+        "MRNA",
+        "GME",
+        "PENN",
+        "NEO",
+        "HCI"
+      ],
+      "pick_detail": [
+        {
+          "ticker": "MRNA",
+          "proba": 0.512,
+          "moneyness": 1.005,
+          "pct_return_on_premium": -100.0
+        },
+        {
+          "ticker": "GME",
+          "proba": 0.468,
+          "moneyness": 2.815,
+          "pct_return_on_premium": -100.0
+        },
+        {
+          "ticker": "PENN",
+          "proba": 0.463,
+          "moneyness": 1.047,
+          "pct_return_on_premium": -14.98
+        },
+        {
+          "ticker": "NEO",
+          "proba": 0.462,
+          "moneyness": 0.999,
+          "pct_return_on_premium": -100.0
+        },
+        {
+          "ticker": "HCI",
+          "proba": 0.441,
+          "moneyness": 0.996,
+          "pct_return_on_premium": -100.0
+        }
+      ],
+      "model_return_pct": -83.0,
+      "spy_return_pct": -3.88,
+      "universe_avg_return_pct": -57.12,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2023-01-15",
+      "entry_date": "2023-01-20",
+      "expiration_date": "2023-02-17",
+      "n_picks": 5,
+      "picks": [
+        "LNTH",
+        "CENX",
+        "NEO",
+        "PLMR",
+        "ROG"
+      ],
+      "pick_detail": [
+        {
+          "ticker": "LNTH",
+          "proba": 0.432,
+          "moneyness": 1.03,
+          "pct_return_on_premium": 138.99
+        },
+        {
+          "ticker": "CENX",
+          "proba": 0.432,
+          "moneyness": 1.034,
+          "pct_return_on_premium": -100.0
+        },
+        {
+          "ticker": "NEO",
+          "proba": 0.429,
+          "moneyness": 0.894,
+          "pct_return_on_premium": 165.08
+        },
+        {
+          "ticker": "PLMR",
+          "proba": 0.428,
+          "moneyness": 1.016,
+          "pct_return_on_premium": 187.18
+        },
+        {
+          "ticker": "ROG",
+          "proba": 0.421,
+          "moneyness": 1.015,
+          "pct_return_on_premium": 258.46
+        }
+      ],
+      "model_return_pct": 129.94000244140625,
+      "spy_return_pct": 2.87,
+      "universe_avg_return_pct": -10.81,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2024-01-15",
+      "entry_date": "2024-01-17",
+      "expiration_date": "2024-02-16",
+      "n_picks": 5,
+      "picks": [
+        "PAYC",
+        "CUBI",
+        "SMCI",
+        "ENPH",
+        "ZION"
+      ],
+      "pick_detail": [
+        {
+          "ticker": "PAYC",
+          "proba": 0.418,
+          "moneyness": 0.989,
+          "pct_return_on_premium": -94.36
+        },
+        {
+          "ticker": "CUBI",
+          "proba": 0.415,
+          "moneyness": 0.97,
+          "pct_return_on_premium": -17.41
+        },
+        {
+          "ticker": "SMCI",
+          "proba": 0.413,
+          "moneyness": 6.913,
+          "pct_return_on_premium": -100.0
+        },
+        {
+          "ticker": "ENPH",
+          "proba": 0.413,
+          "moneyness": 0.995,
+          "pct_return_on_premium": 172.1
+        },
+        {
+          "ticker": "ZION",
+          "proba": 0.413,
+          "moneyness": 0.977,
+          "pct_return_on_premium": -75.38
+        }
+      ],
+      "model_return_pct": -23.010000228881836,
+      "spy_return_pct": 5.76,
+      "universe_avg_return_pct": 12.35,
+      "beat_spy": false
+    },
+    {
+      "timepoint": "2025-01-15",
+      "entry_date": "2025-01-22",
+      "expiration_date": "2025-02-21",
+      "n_picks": 5,
+      "picks": [
+        "GME",
+        "CE",
+        "PI",
+        "TMDX",
+        "SMCI"
+      ],
+      "pick_detail": [
+        {
+          "ticker": "GME",
+          "proba": 0.461,
+          "moneyness": 0.995,
+          "pct_return_on_premium": -100.0
+        },
+        {
+          "ticker": "CE",
+          "proba": 0.451,
+          "moneyness": 1.027,
+          "pct_return_on_premium": -100.0
+        },
+        {
+          "ticker": "PI",
+          "proba": 0.44,
+          "moneyness": 1.009,
+          "pct_return_on_premium": -100.0
+        },
+        {
+          "ticker": "TMDX",
+          "proba": 0.429,
+          "moneyness": 0.968,
+          "pct_return_on_premium": 88.19
+        },
+        {
+          "ticker": "SMCI",
+          "proba": 0.423,
+          "moneyness": 1.004,
+          "pct_return_on_premium": 395.96
+        }
+      ],
+      "model_return_pct": 36.83000183105469,
+      "spy_return_pct": -1.07,
+      "universe_avg_return_pct": -27.75,
+      "beat_spy": true
+    },
+    {
+      "timepoint": "2026-01-15",
+      "entry_date": "2026-01-21",
+      "expiration_date": "2026-02-20",
+      "n_picks": 5,
+      "picks": [
+        "CORT",
+        "DUOL",
+        "SRPT",
+        "ACHC",
+        "ORCL"
+      ],
+      "pick_detail": [
+        {
+          "ticker": "CORT",
+          "proba": 0.493,
+          "moneyness": 1.033,
+          "pct_return_on_premium": -100.0
+        },
+        {
+          "ticker": "DUOL",
+          "proba": 0.479,
+          "moneyness": 1.001,
+          "pct_return_on_premium": -100.0
+        },
+        {
+          "ticker": "SRPT",
+          "proba": 0.478,
+          "moneyness": 1.006,
+          "pct_return_on_premium": -100.0
+        },
+        {
+          "ticker": "ACHC",
+          "proba": 0.466,
+          "moneyness": 1.047,
+          "pct_return_on_premium": 258.0
+        },
+        {
+          "ticker": "ORCL",
+          "proba": 0.461,
+          "moneyness": 1.006,
+          "pct_return_on_premium": -100.0
+        }
+      ],
+      "model_return_pct": -28.399999618530273,
+      "spy_return_pct": 0.59,
+      "universe_avg_return_pct": 13.08,
+      "beat_spy": false
+    }
+  ],
+  "summary": {
+    "win_rate": "3/6",
+    "avg_model_pct": 7.186666965484619,
+    "std_model_pct": 66.17118835449219,
+    "avg_spy_pct": 0.9783333333333332
+  }
+}

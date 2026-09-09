@@ -1,0 +1,120 @@
+{
+  "mode": "augmented",
+  "stop_pct": 0.15,
+  "cost_bps": 50.0,
+  "horizon": 40,
+  "ladder": [
+    {
+      "name": "A. as-published: same-bar entry, exact stop, no cost",
+      "n": 123,
+      "terminal": 203731.79762615764,
+      "spy_terminal": 55338.5746748113,
+      "cagr": 0.1669422230614983,
+      "spy_cagr": 0.09158492694741893,
+      "vol": 0.3790098364243208,
+      "sharpe": 0.5739316106579916,
+      "spy_sharpe": 0.6020710441256356,
+      "t_excess": 1.5440421235689221,
+      "alpha": 0.0160365326885582,
+      "t_alpha": 1.3641568964159816,
+      "beta": 1.126769293493456,
+      "max_dd": -0.4501920090467577,
+      "win_rate": 0.5365853658536586
+    },
+    {
+      "name": "B. + next-open entry (one-bar lag)",
+      "n": 123,
+      "terminal": 69817.90266237309,
+      "spy_terminal": 47687.310504232686,
+      "cagr": 0.10465730212799929,
+      "spy_cagr": 0.0832968043272404,
+      "vol": 0.3581046609013941,
+      "sharpe": 0.4330742410395028,
+      "spy_sharpe": 0.5694359262766556,
+      "t_excess": 0.8537526328908555,
+      "alpha": 0.00871904255404454,
+      "t_alpha": 0.7748922528351456,
+      "beta": 1.0566448213725015,
+      "max_dd": -0.47139822622028293,
+      "win_rate": 0.4959349593495935
+    },
+    {
+      "name": "C. + realistic stop fills (gap-through)",
+      "n": 123,
+      "terminal": 46794.85027551739,
+      "spy_terminal": 47687.310504232686,
+      "cagr": 0.08224906134172483,
+      "spy_cagr": 0.0832968043272404,
+      "vol": 0.36149218579078984,
+      "sharpe": 0.3751073026726377,
+      "spy_sharpe": 0.5694359262766556,
+      "t_excess": 0.5745729924335128,
+      "alpha": 0.0052651292629381855,
+      "t_alpha": 0.46550168745408105,
+      "beta": 1.0806155564989552,
+      "max_dd": -0.48510595403569357,
+      "win_rate": 0.4796747967479675
+    },
+    {
+      "name": "D. + transaction costs (50bp round trip)",
+      "n": 123,
+      "terminal": 25299.177334108215,
+      "spy_terminal": 47687.310504232686,
+      "cagr": 0.04868948425017283,
+      "spy_cagr": 0.0832968043272404,
+      "vol": 0.3596892322456986,
+      "sharpe": 0.2877500965982129,
+      "spy_sharpe": 0.5694359262766556,
+      "t_excess": 0.12330797573579287,
+      "alpha": 0.0002513380945445834,
+      "t_alpha": 0.0223327403639543,
+      "beta": 1.0752259527258932,
+      "max_dd": -0.5478740132818037,
+      "win_rate": 0.44715447154471544
+    },
+    {
+      "name": "E. no stop at all (corrected execution + costs)",
+      "n": 123,
+      "terminal": 22249.27232736164,
+      "spy_terminal": 47687.310504232686,
+      "cagr": 0.041811978303421427,
+      "spy_cagr": 0.0832968043272404,
+      "vol": 0.45044095639771037,
+      "sharpe": 0.3088903765658548,
+      "spy_sharpe": 0.5694359262766556,
+      "t_excess": 0.5254347181367415,
+      "alpha": -0.002759421652888953,
+      "t_alpha": -0.21437090296921066,
+      "beta": 1.651298532204435,
+      "max_dd": -0.695326478784202,
+      "win_rate": 0.5203252032520326
+    }
+  ],
+  "stop_stats": {
+    "A. as-published: same-bar entry, exact stop, no cost": {
+      "stopped": 265,
+      "gap_through": 45,
+      "truncated": 4
+    },
+    "B. + next-open entry (one-bar lag)": {
+      "stopped": 272,
+      "gap_through": 43,
+      "truncated": 4
+    },
+    "C. + realistic stop fills (gap-through)": {
+      "stopped": 272,
+      "gap_through": 43,
+      "truncated": 4
+    },
+    "D. + transaction costs (50bp round trip)": {
+      "stopped": 272,
+      "gap_through": 43,
+      "truncated": 4
+    },
+    "E. no stop at all (corrected execution + costs)": {
+      "stopped": 0,
+      "gap_through": 0,
+      "truncated": 4
+    }
+  }
+}

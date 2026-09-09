@@ -1,0 +1,38 @@
+{
+  "OLD": {
+    "variant": "OLD (unfiltered universe, price/vol only)",
+    "old_avg": 0.11434810678785963,
+    "old_std": 0.4160698048485184,
+    "old_win_vs_spy": 4,
+    "n": 5,
+    "new_avg": 0.07280698613321977,
+    "new_std": 0.17659806633128095,
+    "new_win_vs_spy": 3,
+    "spy_avg": 0.009488658623214973,
+    "universe_avg": -0.09981031763542972
+  },
+  "BASE_PIT": {
+    "variant": "BASE-PIT (PIT-eligible universe, price/vol only)",
+    "old_avg": -0.015570219421215881,
+    "old_std": 0.24873772647617165,
+    "old_win_vs_spy": 4,
+    "n": 5,
+    "new_avg": -0.006388561031838573,
+    "new_std": 0.18668621727776,
+    "new_win_vs_spy": 2,
+    "spy_avg": 0.009488658623214973,
+    "universe_avg": -0.11041277779328182
+  },
+  "AUG_PIT": {
+    "variant": "AUG-PIT (PIT-eligible universe + fundamentals)",
+    "old_avg": 0.0615043734365589,
+    "old_std": 0.15809418780486062,
+    "old_win_vs_spy": 2,
+    "n": 5,
+    "new_avg": 0.06519540480183925,
+    "new_std": 0.20675049932206477,
+    "new_win_vs_spy": 2,
+    "spy_avg": 0.009488658623214973,
+    "universe_avg": -0.11041277779328182
+  }
+}

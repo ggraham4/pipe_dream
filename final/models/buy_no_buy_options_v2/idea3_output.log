@@ -1,0 +1,9 @@
+Modeling dataset: (1010892, 30)
+  2021-01-15: cohort=13344 survivors=None EQ=None KELLY=None fit=0.5s
+  2022-01-15: cohort=12714 survivors=854 EQ=-17.91 KELLY=-16.28 fit=0.7s
+  2023-01-15: cohort=12721 survivors=890 EQ=41.7 KELLY=44.75 fit=1.0s
+  2024-01-15: cohort=14455 survivors=960 EQ=11.53 KELLY=8.56 fit=1.0s
+  2025-01-15: cohort=12863 survivors=1053 EQ=16.39 KELLY=6.15 fit=1.2s
+  2026-01-15: cohort=18163 survivors=1146 EQ=7.02 KELLY=-4.1 fit=1.2s
+
+Saved idea3_results.json

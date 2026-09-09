@@ -1,0 +1,80 @@
+{
+  "OLD_tweedie_retuned": {
+    "variant": "OLD",
+    "model": "Tweedie-retuned(power=1.1,alpha=0)",
+    "old_avg": -0.025017005424070114,
+    "old_std": 0.3067701655699794,
+    "old_win_vs_spy": 3,
+    "n": 5,
+    "new_avg": 0.07307545789124027,
+    "new_std": 0.19320499800851135,
+    "new_win_vs_spy": 4,
+    "spy_avg": 0.009488658623214973,
+    "universe_avg": -0.09981031763542972
+  },
+  "OLD_gam": {
+    "variant": "OLD",
+    "model": "GAM(lam=100,n_splines=6)",
+    "old_avg": -0.44806914460975455,
+    "old_std": 0.7255688340150477,
+    "old_win_vs_spy": 1,
+    "n": 5,
+    "new_avg": -0.06074069628051989,
+    "new_std": 0.23513325034890736,
+    "new_win_vs_spy": 2,
+    "spy_avg": 0.009488658623214973,
+    "universe_avg": -0.09981031763542972
+  },
+  "BASE_PIT_tweedie_retuned": {
+    "variant": "BASE_PIT",
+    "model": "Tweedie-retuned(power=1.1,alpha=0)",
+    "old_avg": -0.0668669811018093,
+    "old_std": 0.26285641699582385,
+    "old_win_vs_spy": 3,
+    "n": 5,
+    "new_avg": 0.033167597833109894,
+    "new_std": 0.12419122259946803,
+    "new_win_vs_spy": 3,
+    "spy_avg": 0.009488658623214973,
+    "universe_avg": -0.11041277779328182
+  },
+  "BASE_PIT_gam": {
+    "variant": "BASE_PIT",
+    "model": "GAM(lam=20,n_splines=10)",
+    "old_avg": -0.7239334286829617,
+    "old_std": 0.17228810837224287,
+    "old_win_vs_spy": 0,
+    "n": 5,
+    "new_avg": -0.1515879188797534,
+    "new_std": 0.26510384683713256,
+    "new_win_vs_spy": 0,
+    "spy_avg": 0.009488658623214973,
+    "universe_avg": -0.11041277779328182
+  },
+  "AUG_PIT_tweedie_retuned": {
+    "variant": "AUG_PIT",
+    "model": "Tweedie-retuned(power=1.1,alpha=0)",
+    "old_avg": -0.012744650070874951,
+    "old_std": 0.11560064946543556,
+    "old_win_vs_spy": 2,
+    "n": 5,
+    "new_avg": 0.07248952010651984,
+    "new_std": 0.14458426447991563,
+    "new_win_vs_spy": 3,
+    "spy_avg": 0.009488658623214973,
+    "universe_avg": -0.11041277779328182
+  },
+  "AUG_PIT_gam": {
+    "variant": "AUG_PIT",
+    "model": "GAM(lam=20,n_splines=10)",
+    "old_avg": -0.46055390965919746,
+    "old_std": 0.3230277512579928,
+    "old_win_vs_spy": 1,
+    "n": 5,
+    "new_avg": -0.07071919700036318,
+    "new_std": 0.1501797855593108,
+    "new_win_vs_spy": 1,
+    "spy_avg": 0.007607160720600729,
+    "universe_avg": -0.11041277779328182
+  }
+}

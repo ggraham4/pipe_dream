@@ -1,0 +1,149 @@
+"""
+Gabe's concern (2026-09-04): some picks show strikes far below spot, and
+he suspects the strong baseline/idea3 numbers might be riding the SAME
+kind of survivorship/look-ahead bias the stock model already found and
+fixed (continuous_walkforward_pit.py's point-in-time market_cap>=$2B /
+close>$10 floor) -- except the options model's universe was NEVER given
+that fix (AGENTS.md's own Known Gaps section already flags this: "The
+options model's universe was built from TODAY's roster, not a
+point-in-time-correct one").
+
+This applies that exact floor to the expanded-universe calls training
+table using data/options_pit_fundamentals_slim.parquet (point-in-time
+market_cap, asof-joined by ticker+date, tolerance 120 days) -- FAIL-CLOSED
+per production convention (no PIT market_cap match = excluded, not assumed
+eligible). That panel only covers the original 495-ticker set, so this
+necessarily shrinks the "expanded" universe back down -- that's the whole
+point of the check: does the expanded universe's edge survive once
+look-ahead bias is actually controlled for the tickers we CAN verify.
+
+Reruns baseline (Tweedie GLM + Kelly, no buy/no-buy) and idea3 (decile
+filter + buy/no-buy rank) on this PIT-corrected data, same walk-forward
+protocol as before, for direct comparison against the uncorrected numbers.
+"""
+from pathlib import Path
+import json
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import TweedieRegressor
+from sklearn.preprocessing import StandardScaler
+
+OUT_DIR = Path(__file__).resolve().parent
+BASE_FEATURES = [
+    "moneyness_strike_over_spot", "days_to_expiration", "entry_iv",
+    "realized_vol_21d_asof", "hv_current", "iv_current",
+    "momentum_5", "momentum_20", "momentum_60", "momentum_120",
+    "volatility_20", "volatility_60",
+    "relative_strength_20", "pct_from_high_252", "pct_from_low_252",
+    "daily_return", "cumulative_return", "log_volume_20",
+]
+TWEEDIE_POWER, TWEEDIE_ALPHA = 1.4, 0.001
+N_DECILES = 10
+MIN_DECILE_N = 30
+KELLY_FRACTION_MULTIPLIER = 0.5
+KELLY_CAP_PER_DECILE = 1.0
+MAX_POSITION_FRAC = 0.30
+MIN_DECILE_FOR_FILTER = 3
+TIMEPOINTS = [pd.Timestamp(f"{y}-01-15") for y in range(2021, 2027)]
+COHORT_WINDOW_DAYS = 15
+MIN_MARKET_CAP = 2_000_000_000.0
+MIN_PRICE = 10.0
+
+raw = pd.read_parquet(OUT_DIR / "options_calls_expanded_with_pit_capcheck.parquet")
+raw["entry_date"] = pd.to_datetime(raw["entry_date"])
+raw["expiration_date"] = pd.to_datetime(raw["expiration_date"])
+n_before = len(raw)
+n_tickers_before = raw["act_symbol"].nunique()
+
+# FAIL-CLOSED point-in-time eligibility: must have a PIT market_cap match
+# AND clear both floors, exactly like continuous_walkforward_pit.py
+df = raw[(raw["market_cap"].notna()) &
+         (raw["market_cap"] >= MIN_MARKET_CAP) &
+         (raw["underlying_close_entry"] > MIN_PRICE)].copy()
+
+print(f"PIT-corrected universe: {len(df)} rows ({len(df)/n_before*100:.1f}% of {n_before}), "
+      f"{df['act_symbol'].nunique()} tickers (was {n_tickers_before})", flush=True)
+
+df["log_volume_20"] = np.log1p(df["volume_20"].clip(lower=0))
+df = df.dropna(subset=BASE_FEATURES + ["buy_no_buy_proba", "return_ratio", "pct_return_on_premium"]).reset_index(drop=True)
+print(f"After feature dropna: {df.shape}", flush=True)
+
+
+def kelly_fraction(decile, decile_stats):
+    if pd.isna(decile) or decile not in decile_stats.index:
+        return 0.0
+    row = decile_stats.loc[decile]
+    if row["count"] < MIN_DECILE_N or row["var"] <= 0 or row["mean"] <= 0:
+        return 0.0
+    f = np.clip(row["mean"] / row["var"], 0, KELLY_CAP_PER_DECILE)
+    return min(f * KELLY_FRACTION_MULTIPLIER, MAX_POSITION_FRAC)
+
+
+def run(label):
+    calibration_pool = []
+    per_timepoint = []
+    for T in TIMEPOINTS:
+        train_mask = df["expiration_date"] <= T
+        cohort_mask = (df["entry_date"] >= T - pd.Timedelta(days=COHORT_WINDOW_DAYS)) & \
+                      (df["entry_date"] <= T + pd.Timedelta(days=COHORT_WINDOW_DAYS))
+        train = df[train_mask]
+        cohort = df[cohort_mask].copy()
+        if len(train) < 2000 or cohort.empty:
+            print(f"  skip {T.date()}: train={len(train)} cohort={len(cohort)}", flush=True)
+            continue
+        scaler = StandardScaler().fit(train[BASE_FEATURES].to_numpy())
+        Xtr = np.clip(scaler.transform(train[BASE_FEATURES].to_numpy()), -5, 5)
+        model = TweedieRegressor(power=TWEEDIE_POWER, alpha=TWEEDIE_ALPHA, link="log", max_iter=300)
+        model.fit(Xtr, train["return_ratio"].to_numpy())
+        Xc = np.clip(scaler.transform(cohort[BASE_FEATURES].to_numpy()), -5, 5)
+        cohort["pred_pct_return"] = model.predict(Xc) - 1.0
+        cohort["realized_pct_return"] = cohort["return_ratio"] - 1.0
+
+        pool_df = pd.DataFrame(calibration_pool)
+        row = {"timepoint": str(T.date()), "n_cohort": len(cohort), "n_tickers_cohort": cohort["act_symbol"].nunique()}
+        if len(pool_df) >= 1000:
+            edges = np.quantile(pool_df["pred_pct_return"], np.linspace(0, 1, N_DECILES + 1))
+            edges[0], edges[-1] = -np.inf, np.inf
+            pool_df["decile"] = pd.cut(pool_df["pred_pct_return"], edges, labels=False, duplicates="drop")
+            decile_stats = pool_df.groupby("decile")["realized_pct_return"].agg(["mean", "var", "count"])
+            cohort["decile"] = pd.cut(cohort["pred_pct_return"], edges, labels=False, duplicates="drop")
+            best_per_ticker = cohort.loc[cohort.groupby("act_symbol")["pred_pct_return"].idxmax()].copy()
+            best_per_ticker["kelly_frac"] = best_per_ticker["decile"].apply(lambda d: kelly_fraction(d, decile_stats))
+
+            # BASELINE: top-5 equal-weight by predicted edge, and Kelly by predicted edge
+            top5 = best_per_ticker.sort_values("pred_pct_return", ascending=False).head(5)
+            row["baseline_eq_pct"] = round(float((10000/len(top5)*(1+top5["realized_pct_return"])).sum()/10000*100 - 100), 2) if len(top5) else None
+            row["baseline_eq_picks"] = [{"t": t, "strike": float(s), "spot": float(sp), "mny": round(float(m),3)}
+                                          for t,s,sp,m in zip(top5["act_symbol"], top5["strike"], top5["underlying_close_entry"], top5["moneyness_strike_over_spot"])]
+            kpicks = best_per_ticker[best_per_ticker["kelly_frac"] > 0].sort_values("pred_pct_return", ascending=False).head(8)
+            tf = kpicks["kelly_frac"].sum()
+            if tf > 1.0:
+                kpicks = kpicks.copy(); kpicks["kelly_frac"] /= tf; tf = 1.0
+            row["baseline_kelly_pct"] = round(float((kpicks["kelly_frac"]*kpicks["realized_pct_return"]).sum())*100, 2) if len(kpicks) else 0.0
+            row["baseline_kelly_cash"] = round(1.0-tf, 3)
+
+            # IDEA3: decile>=3 filter, rank by buy_no_buy_proba
+            survivors = best_per_ticker[best_per_ticker["decile"] >= MIN_DECILE_FOR_FILTER]
+            top5_3 = survivors.sort_values("buy_no_buy_proba", ascending=False).head(5)
+            row["idea3_eq_pct"] = round(float((10000/len(top5_3)*(1+top5_3["realized_pct_return"])).sum()/10000*100 - 100), 2) if len(top5_3) else None
+            row["idea3_eq_picks"] = [{"t": t, "strike": float(s), "spot": float(sp), "mny": round(float(m),3)}
+                                       for t,s,sp,m in zip(top5_3["act_symbol"], top5_3["strike"], top5_3["underlying_close_entry"], top5_3["moneyness_strike_over_spot"])]
+            picks3 = survivors[survivors["kelly_frac"] > 0].sort_values("buy_no_buy_proba", ascending=False).head(8)
+            tf3 = picks3["kelly_frac"].sum()
+            if tf3 > 1.0:
+                picks3 = picks3.copy(); picks3["kelly_frac"] /= tf3; tf3 = 1.0
+            row["idea3_kelly_pct"] = round(float((picks3["kelly_frac"]*picks3["realized_pct_return"]).sum())*100, 2) if len(picks3) else 0.0
+        else:
+            row.update(baseline_eq_pct=None, baseline_kelly_pct=None, idea3_eq_pct=None, idea3_kelly_pct=None)
+
+        per_timepoint.append(row)
+        print(f"  {T.date()}: cohort={row['n_cohort']} (tickers={row['n_tickers_cohort']}) "
+              f"BASE_EQ={row.get('baseline_eq_pct')} BASE_KELLY={row.get('baseline_kelly_pct')} "
+              f"IDEA3_EQ={row.get('idea3_eq_pct')} IDEA3_KELLY={row.get('idea3_kelly_pct')}", flush=True)
+        calibration_pool.extend(cohort[["pred_pct_return", "realized_pct_return"]].to_dict("records"))
+    return per_timepoint
+
+results = run("PIT-corrected")
+with open(OUT_DIR / "pit_corrected_results.json", "w") as f:
+    json.dump(results, f, indent=2, default=str)
+print("\nsaved pit_corrected_results.json", flush=True)

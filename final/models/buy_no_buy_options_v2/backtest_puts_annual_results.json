@@ -1,0 +1,54 @@
+[
+  {
+    "timepoint": "2021-01-15",
+    "n_cohort": 11634,
+    "n_tickers": 738,
+    "eq_pct": null,
+    "kelly_pct": null
+  },
+  {
+    "timepoint": "2022-01-15",
+    "n_cohort": 11314,
+    "n_tickers": 794,
+    "eq_pct": 17.8,
+    "kelly_pct": 15.66,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2023-01-15",
+    "n_cohort": 11397,
+    "n_tickers": 823,
+    "eq_pct": 18.5,
+    "kelly_pct": 16.27,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2024-01-15",
+    "n_cohort": 12867,
+    "n_tickers": 900,
+    "eq_pct": 18.46,
+    "kelly_pct": 14.75,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2025-01-15",
+    "n_cohort": 11838,
+    "n_tickers": 992,
+    "eq_pct": 15.69,
+    "kelly_pct": 14.68,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  },
+  {
+    "timepoint": "2026-01-15",
+    "n_cohort": 16931,
+    "n_tickers": 1083,
+    "eq_pct": 16.77,
+    "kelly_pct": 15.2,
+    "kelly_cash": 0.0,
+    "n_kelly_positions": 8
+  }
+]

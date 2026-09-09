@@ -128,15 +128,30 @@ sidecar features_pit.py now writes).
 import argparse
 import gc
 import json
+import os
+
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import xgboost as xgb
 from xgboost import XGBClassifier
 
-from features import FEATURE_COLS, FORWARD_WINDOW, LABEL_COL, DATA_DIR, OUT_DIR
+from features import (FEATURE_COLS, FORWARD_WINDOW, LABEL_COL, TRADABLE_LABEL_COL,
+                       DATA_DIR, OUT_DIR)
 from fundamentals_features_beta import FUNDAMENTAL_FEATURE_COLS
 from features_pit import MIN_TRAILING_DAYS
 from pit_universe_continuous import gap_tickers_asof, members_asof
+from execution import (realize_portfolio, load_ohlc_panel, SegmentedOHLCPanel,
+                        apply_turnover_costs,
+                        DEFAULT_COST_BPS, DEFAULT_ENTRY_LAG, DEFAULT_ENTRY_AT)
+
+# Hyperparameters, held identical to the XGBClassifier(n_estimators=100,
+# max_depth=3, learning_rate=0.1, eval_metric="logloss") the pre-Round-9 runs
+# used -- only the training API changed, for memory reasons.
+XGB_PARAMS = {"objective": "binary:logistic", "max_depth": 3, "eta": 0.1,
+              "eval_metric": "logloss", "tree_method": "hist", "verbosity": 0}
+XGB_ROUNDS = 100
 
 TOP_N = 5
 CUTOFF_PERCENTILE = 75
@@ -150,6 +165,218 @@ STOP_LOSS_PCT = 0.30
 # STEP instead of only once against today's values. See module docstring.
 MIN_MARKET_CAP = 2_000_000_000.0
 MIN_PRICE = 10.0
+# Repaired delisted panel takes precedence -- see repair_ohlc_coherence.py.
+PRICE_DIRS = [DATA_DIR,
+              DATA_DIR.parent / "td_data_delisted_repaired",
+              DATA_DIR.parent / "td_data_delisted"]
+
+# Round 11 (2026-09-09). With --universe pit, execution reads ONLY the
+# Sharadar export. Not "first in the list" -- only. load_ohlc_panel resolves
+# collisions by earliest-directory-wins, which would be enough for a ticker
+# present in both, but not for one present only in the old directories:
+#   * td_data_delisted still holds the 41 wrong-issuer files, so a name
+#     missing from the export would silently supply another company's prices;
+#   * the two sources sit on different corporate-action bases for ~13% of
+#     tickers, so mixing them would price a position on a different series
+#     from the one its features were computed on.
+PRICE_DIRS_PIT = [DATA_DIR.parent / "td_data_sharadar"]
+
+
+def price_dirs_for(universe):
+    return PRICE_DIRS_PIT if universe == "pit" else PRICE_DIRS
+
+
+class _ChunkIter(xgb.core.DataIter):
+    """Feed XGBoost the training block in chunks.
+
+    Round 9 (2026-09-07): QuantileDMatrix built from one dense array still
+    peaks at roughly the size of that array on top of the sketch, and the
+    walk-forward's training set GROWS at every step (expanding window), so
+    peak RSS climbed ~0.3GB per 15 steps and the run died around step 62.
+    Streaming fixed-size chunks makes the peak independent of how much
+    history has accumulated -- the bins are the same either way, so the
+    resulting model is unchanged.
+    """
+
+    def __init__(self, X, y, n, mask=None, chunk=400_000):
+        self._X, self._y, self._n = X, y, n
+        self._mask, self._chunk = mask, chunk
+        self._i = 0
+        super().__init__()
+
+    def next(self, input_data):
+        while self._i < self._n:
+            j = min(self._i + self._chunk, self._n)
+            xb = self._X[self._i:j]
+            yb = self._y[self._i:j]
+            if self._mask is not None:
+                mb = self._mask[self._i:j]
+                xb, yb = xb[mb], yb[mb]
+            self._i = j
+            if len(yb):
+                input_data(data=xb, label=yb)
+                return 1
+        return 0
+
+    def reset(self):
+        self._i = 0
+
+
+def _booster_importances(booster, feature_cols):
+    """Match XGBClassifier.feature_importances_ (weight, normalized to 1)."""
+    raw = booster.get_score(importance_type="weight")
+    vals = [float(raw.get(f"f{i}", raw.get(c, 0.0)))
+            for i, c in enumerate(feature_cols)]
+    tot = sum(vals)
+    if tot > 0:
+        vals = [v / tot for v in vals]
+    return {c: round(v, 5) for c, v in zip(feature_cols, vals)}
+
+
+def _block_bounds(codes):
+    """Start index of each contiguous ticker block, plus a trailing sentinel.
+    The panel is written per-ticker in date order, so ticker blocks are
+    contiguous -- verified at load time."""
+    if len(codes) == 0:
+        return np.array([0], dtype=np.int64)
+    brk = np.flatnonzero(codes[1:] != codes[:-1]) + 1
+    return np.concatenate(([0], brk, [len(codes)])).astype(np.int64)
+
+
+def _forward_ratio(numer, denom, bounds, fwd_num, fwd_den):
+    """(numer[i+fwd_num] / denom[i+fwd_den]) - 1, computed only where both
+    offsets stay inside the same ticker block. Everything else is NaN.
+
+    This replaces a pandas groupby().shift(), which on a 7M-row panel
+    allocates several intermediate frames and is what pushed the augmented
+    run over the memory ceiling.
+    """
+    n = len(numer)
+    out = np.full(n, np.nan, dtype=np.float32)
+    for b in range(len(bounds) - 1):
+        lo, hi = bounds[b], bounds[b + 1]
+        m = hi - lo
+        k = m - max(fwd_num, fwd_den)
+        if k <= 0:
+            continue
+        a = numer[lo + fwd_num: lo + fwd_num + k]
+        d = denom[lo + fwd_den: lo + fwd_den + k]
+        with np.errstate(divide="ignore", invalid="ignore"):
+            out[lo: lo + k] = np.where(d > 0, a / d - 1.0, np.nan)
+    return out
+
+
+def load_panel_prepared(path, numeric_cols, filter_cols, horizon):
+    """Round 9 (2026-09-07): load a large panel, derive the tradable label and
+    apply the feature-NaN row filter, without ever materializing the whole
+    thing.
+
+    The naive path -- pd.read_parquet, then groupby().shift() for the label,
+    then dropna().copy() -- peaks at roughly three times the finished frame
+    (float64 upcast, Arrow's own copy, then a full copy for the filter). On
+    the ~930MB augmented panel that is over 3GB and gets OOM-killed.
+
+    Here: pass A reads only ticker/date/open/close and derives both labels
+    over the full panel (they need every row, including ones the filter will
+    later drop). Pass B streams the feature columns row group by row group,
+    keeps only rows with complete features, and writes them straight into
+    preallocated arrays. Peak memory is about the size of the result.
+
+    Returns (DataFrame, n_rows_before_filter).
+    """
+    import pyarrow.parquet as pq
+
+    pf = pq.ParquetFile(path)
+    available = set(pf.schema_arrow.names)
+    numeric_cols = [c for c in dict.fromkeys(numeric_cols) if c in available]
+    filter_cols = [c for c in filter_cols if c in numeric_cols]
+    n = pf.metadata.num_rows
+    ngroups = pf.metadata.num_row_groups
+
+    # ---- pass A: labels over the full panel -------------------------------
+    close = np.empty(n, dtype=np.float32)
+    open_ = np.empty(n, dtype=np.float32) if "open" in available else None
+    dates = np.empty(n, dtype="datetime64[ns]")
+    codes = np.empty(n, dtype=np.int32)
+    lookup, order = {}, []
+    cols_a = ["ticker", "date", "close"] + (["open"] if open_ is not None else [])
+    off = 0
+    for i in range(ngroups):
+        tbl = pf.read_row_group(i, columns=cols_a)
+        m = tbl.num_rows
+        close[off:off + m] = tbl.column("close").to_numpy(zero_copy_only=False)
+        if open_ is not None:
+            open_[off:off + m] = tbl.column("open").to_numpy(zero_copy_only=False)
+        dates[off:off + m] = tbl.column("date").to_numpy(zero_copy_only=False)
+        for k, t in enumerate(tbl.column("ticker").to_pylist()):
+            c = lookup.get(t)
+            if c is None:
+                c = lookup[t] = len(order)
+                order.append(t)
+            codes[off + k] = c
+        off += m
+        del tbl
+        gc.collect()
+
+    if not bool((codes[1:] >= codes[:-1]).all()):
+        raise SystemExit(
+            "  Panel ticker blocks are not contiguous -- load_panel_prepared assumes "
+            "the per-ticker, date-ordered layout features_pit.py writes.")
+    bounds = _block_bounds(codes)
+    lbl_pub = _forward_ratio(close, close, bounds, horizon, 0)
+    lbl_trd = (_forward_ratio(close, open_, bounds, horizon, 1)
+               if open_ is not None else None)
+    del open_
+    gc.collect()
+
+    # ---- pass B: filtered fill --------------------------------------------
+    keep_numeric = [c for c in numeric_cols if c not in ("open",)]
+    X = np.empty((n, len(keep_numeric)), dtype=np.float32)
+    d_out = np.empty(n, dtype="datetime64[ns]")
+    c_out = np.empty(n, dtype=np.int32)
+    p_out = np.empty(n, dtype=np.float32)
+    t_out = np.empty(n, dtype=np.float32) if lbl_trd is not None else None
+
+    off = kept = 0
+    for i in range(ngroups):
+        tbl = pf.read_row_group(i, columns=keep_numeric)
+        m = tbl.num_rows
+        block = np.empty((m, len(keep_numeric)), dtype=np.float32)
+        for j, c in enumerate(keep_numeric):
+            block[:, j] = tbl.column(c).to_numpy(zero_copy_only=False)
+        del tbl
+        idx = [keep_numeric.index(c) for c in filter_cols]
+        mask = np.isfinite(block[:, idx]).all(axis=1)
+        k = int(mask.sum())
+        if k:
+            X[kept:kept + k] = block[mask]
+            d_out[kept:kept + k] = dates[off:off + m][mask]
+            c_out[kept:kept + k] = codes[off:off + m][mask]
+            p_out[kept:kept + k] = lbl_pub[off:off + m][mask]
+            if t_out is not None:
+                t_out[kept:kept + k] = lbl_trd[off:off + m][mask]
+            kept += k
+        off += m
+        del block, mask
+        gc.collect()
+
+    del close, dates, codes, lbl_pub, lbl_trd
+    gc.collect()
+
+    # Sort by date ONCE here. The walk-forward slices "everything on or before
+    # the training cutoff" at every one of ~124 steps; on a date-sorted frame
+    # that is a positional slice instead of a boolean mask over 6.6M rows,
+    # which is the difference between a view and a full copy each step.
+    ordr = np.argsort(d_out[:kept], kind="stable")
+    df = pd.DataFrame(X[:kept][ordr], columns=keep_numeric, copy=False)
+    df["date"] = d_out[:kept][ordr]
+    df["ticker"] = pd.Categorical.from_codes(c_out[:kept][ordr], categories=order)
+    df[LABEL_COL] = p_out[:kept][ordr]
+    if t_out is not None:
+        df[TRADABLE_LABEL_COL] = t_out[:kept][ordr]
+    del ordr
+    gc.collect()
+    return df, n
 
 
 def load_gap_ticker_set():
@@ -199,10 +426,67 @@ def build_gap_validity(feat, gap_tickers):
     present = feat[feat["ticker"].isin(gap_tickers)]
     if present.empty:
         return pd.Series(dtype="datetime64[ns]")
-    return present.groupby("ticker")["date"].min()
+    # observed=True is LOAD-BEARING, not a warning silencer. Round 9 stores
+    # "ticker" as a pandas Categorical to fit the panel in memory, and a
+    # groupby on a Categorical with observed=False returns EVERY category --
+    # all 1,840 tickers -- not just the gap tickers actually present. That
+    # made gap_earliest.index contain the whole universe, and since gap
+    # tickers are EXEMT from the $2B market-cap and $10 price floors, every
+    # candidate became exempt: 100% of picks came back gap-flagged, median
+    # entry price fell from $35.63 to $9.46, and the backtest "made" 31x SPY
+    # by buying sub-$2 nano-caps. Guarded below.
+    out = present.groupby("ticker", observed=True)["date"].min()
+    out = out[out.notna()]
+    if len(out) > len(set(gap_tickers)):
+        raise AssertionError(
+            f"build_gap_validity returned {len(out)} tickers but only "
+            f"{len(set(gap_tickers))} gap tickers exist -- a categorical groupby "
+            f"has leaked unobserved categories into the gap set.")
+    return out
 
 
-def allowed_universe_at(tp, current_universe_tickers, gap_earliest, universe="expanded"):
+PIT_UNIVERSE_PATH = OUT_DIR.parent / "data" / "sharadar" / "pit_universe.parquet"
+_PIT_UNIVERSE_CACHE = {}
+
+
+def load_pit_universe(path=None):
+    """date string -> frozenset of tickers eligible on that date.
+
+    Round 11 (2026-09-09). This REPLACES the "$2B today UNION gap tickers"
+    pool, which was hindsight-determined: membership could only be known
+    after the fact, so a model trained on it could separate survivors from
+    non-survivors without learning anything about selection. Measured
+    against the rebuilt point-in-time universe, the old pool was missing
+    32.1% of eligible domestic names in June 2008, and 89% of what was
+    missing had since died.
+
+    pit_universe.parquet already encodes marketcap >= $2B and close > $10
+    AS OF each date, and already excludes rows where the vendor's two
+    independent market-cap columns disagree by more than 10x. So when this
+    is the universe, the separate eligibility floor further down is
+    redundant and is skipped -- applying it twice would silently re-impose
+    a survivor screen on a pool built specifically to avoid one.
+    """
+    path = Path(path) if path else PIT_UNIVERSE_PATH
+    key = str(path)
+    if key in _PIT_UNIVERSE_CACHE:
+        return _PIT_UNIVERSE_CACHE[key]
+    if not path.exists():
+        raise FileNotFoundError(
+            f"{path} not found -- run build_pit_universe.py first.")
+    u = pd.read_parquet(path, columns=["date", "ticker"])
+    u["date"] = u["date"].astype(str).str.slice(0, 10)
+    u["ticker"] = u["ticker"].astype(str)
+    m = {d: frozenset(g) for d, g in u.groupby("date")["ticker"]}
+    print(f"  PIT universe: {len(u):,} rows, {len(m):,} trading days, "
+          f"{u['ticker'].nunique():,} distinct tickers, "
+          f"{u['date'].min()} .. {u['date'].max()}")
+    _PIT_UNIVERSE_CACHE[key] = m
+    return m
+
+
+def allowed_universe_at(tp, current_universe_tickers, gap_earliest,
+                        universe="expanded", pit_map=None):
     """universe="expanded" (default, original behavior): current-universe
     tickers UNION valid PIT gap tickers.
 
@@ -222,6 +506,14 @@ def allowed_universe_at(tp, current_universe_tickers, gap_earliest, universe="ex
     the segmentation suffix format is fixed, so stripping it recovers the
     real symbol without needing that extra column here."""
     tp_str = str(tp.date())
+    if universe == "pit":
+        # The panel may carry price_discontinuity segments ("CHRD__post...")
+        # that the universe file, built from raw Sharadar tickers, does not.
+        # Match on the base symbol so a segmented ticker is not silently
+        # dropped from a pool it belongs in.
+        base = pit_map.get(tp_str, frozenset())
+        return {t for t in current_universe_tickers
+                if t.split("__post")[0] in base} | set(base)
     gap_candidates = gap_tickers_asof(tp_str, current_universe_tickers)
     min_trailing = pd.Timedelta(days=MIN_TRAILING_DAYS)
     valid_gap = {t for t in gap_candidates
@@ -246,7 +538,10 @@ def build_step_dates(all_dates, start_date, step):
 
 
 def run_walkforward(feat, all_dates, feature_cols, tag, start_date,
-                     current_universe_tickers, gap_earliest, universe="expanded"):
+                     current_universe_tickers, gap_earliest, universe="expanded",
+                     price_panel=None, entry_lag=DEFAULT_ENTRY_LAG,
+                     entry_at=DEFAULT_ENTRY_AT, cost_bps=DEFAULT_COST_BPS,
+                     stop_pct=None, label_col=LABEL_COL, resume=False):
     spy = pd.read_csv(DATA_DIR / "SPY.csv", parse_dates=["date"]).sort_values("date").reset_index(drop=True)
     spy["spy_fwd_return"] = spy["close"].shift(-FORWARD_WINDOW) / spy["close"] - 1
     spy = spy.set_index("date")
@@ -260,28 +555,126 @@ def run_walkforward(feat, all_dates, feature_cols, tag, start_date,
           f"windows requested starting {step_dates[0].date()} (panel covers "
           f"{all_dates.min().date()} to {all_dates.max().date()})")
 
+    # Round 9 (2026-09-07): hoist the feature matrix out of the loop.
+    # `train[feature_cols]` inside the loop rebuilt a 6.6M x 24 float32 copy
+    # at every one of ~124 steps -- ~630MB allocated and thrown away each
+    # time, on top of the training slice and XGBoost's own copy. Extract it
+    # once as a contiguous float32 array and index it positionally; the frame
+    # is only needed for ticker/date/close/market_cap after this.
+    # Round 9 (2026-09-07): spill the feature matrix to disk and read it back
+    # as a memmap. It is ~640MB, it is needed for the whole run, and holding
+    # it resident alongside XGBoost's growing DMatrix is what pins peak RSS
+    # near the ceiling on a small box. The chunk iterator reads slices, so the
+    # OS pages in only what each batch touches. Written to scratch (NOT into
+    # the repo) and removed on exit.
+    import tempfile, atexit
+    _tmpdir = tempfile.mkdtemp(prefix="pipe_dream_featmat_")
+    _mmpath = os.path.join(_tmpdir, "featmat.npy")
+    _arr = np.ascontiguousarray(
+        feat[feature_cols].to_numpy(dtype=np.float32, copy=False))
+    _shape = _arr.shape
+    _mm = np.memmap(_mmpath, dtype=np.float32, mode="w+", shape=_shape)
+    _mm[:] = _arr
+    _mm.flush()
+    del _arr, _mm
+    gc.collect()
+    featmat = np.memmap(_mmpath, dtype=np.float32, mode="r", shape=_shape)
+
+    def _cleanup_featmat(d=_tmpdir):
+        import shutil
+        shutil.rmtree(d, ignore_errors=True)
+    atexit.register(_cleanup_featmat)
+    labels = feat[label_col].to_numpy(dtype=np.float32, copy=False)
+    dates_arr = feat["date"].values
+    # The frame duplicated every feature column that featmat now holds -- on
+    # this panel that is ~600MB of dead weight. After this point only
+    # ticker/date/close/market_cap are read off the frame.
+    _keep_cols = [c for c in ("ticker", "date", "close", "market_cap") if c in feat.columns]
+    feat = feat[_keep_cols]
+    gc.collect()
+    print(f"[{tag}] feature matrix {featmat.shape} float32 "
+          f"({featmat.nbytes/1e9:.2f}GB) built once; frame trimmed to {_keep_cols}")
+
+    # Round 9 (2026-09-07): resumable. Each completed timepoint is
+    # checkpointed, so a run that is interrupted (or has to be sliced across
+    # limited compute windows) picks up where it stopped instead of starting
+    # over. Delete out/_ckpt_<tag>.json to force a clean run.
     results = []
-    for tp in step_dates:
+    ckpt = OUT_DIR / f"_ckpt_{tag}.json"
+    done_tps = set()
+    if resume and ckpt.exists():
+        try:
+            _prev = json.load(open(ckpt))
+            results = _prev.get("results", [])
+            done_tps = {r["timepoint"] for r in results}
+            print(f"[{tag}] resuming from checkpoint: {len(results)} windows already "
+                  f"done, last {results[-1]['timepoint'] if results else 'n/a'}")
+        except Exception as e:
+            print(f"[{tag}] checkpoint unreadable ({e}) -- starting fresh")
+            results, done_tps = [], set()
+    _pit_map = load_pit_universe() if universe == "pit" else None
+    for _n, tp in enumerate(step_dates, 1):
+        if str(tp.date()) in done_tps:
+            continue
+        if _n % 5 == 0 or _n == 1:
+            try:
+                import resource, sys as _sys
+                # ru_maxrss is KILOBYTES on Linux and BYTES on macOS.
+                _div = 1e9 if _sys.platform == "darwin" else 1e6
+                _rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / _div
+            except Exception:
+                _rss = float("nan")
+            print(f"[{tag}] step {_n}/{len(step_dates)} {tp.date()} "
+                  f"({len(results)} windows kept, peakRSS {_rss:.2f}GB)", flush=True)
+            with open(ckpt, "w") as f:
+                json.dump({"tag": tag, "completed": _n, "results": results}, f)
         idx = all_dates[all_dates == tp].index[0]
         if idx < embargo_days:
             continue
         train_cutoff_date = all_dates.iloc[idx - embargo_days]
-        train = feat[feat["date"] <= train_cutoff_date]
-        if len(train) < 300:
-            print(f"[{tag}] skip {tp.date()}: only {len(train)} training rows")
+        # Round 9 (2026-09-07): the label filter belongs HERE, on the
+        # TRAINING set only -- not on the whole panel before the loop. See
+        # the note in main() on the survivorship hole that created.
+        # feat is date-sorted (load_panel_prepared), so searchsorted gives the
+        # cutoff boundary and the slice is positional rather than a boolean
+        # mask over the whole panel.
+        _hi = int(np.searchsorted(dates_arr, np.datetime64(train_cutoff_date), "right"))
+        _lab = labels[:_hi]
+        _fin = np.isfinite(_lab)
+        _n_train = int(_fin.sum())
+        if _n_train < 300:
+            print(f"[{tag}] skip {tp.date()}: only {_n_train} training rows")
             continue
 
-        allowed = allowed_universe_at(tp, current_universe_tickers, gap_earliest, universe)
+        allowed = allowed_universe_at(tp, current_universe_tickers,
+                                      gap_earliest, universe, _pit_map)
 
-        cutoff_val = np.percentile(train[LABEL_COL], CUTOFF_PERCENTILE)
-        y_train = (train[LABEL_COL] > cutoff_val).astype(int)
-        model = XGBClassifier(n_estimators=100, max_depth=3, learning_rate=0.1,
-                               eval_metric="logloss", verbosity=0)
-        model.fit(train[feature_cols], y_train)
+        # Round 9 (2026-09-07): never materialize the training block.
+        # `featmat[_keep]` was a fancy-index copy that grew with the expanding
+        # window (~630MB by the last step) and is what kept OOM-killing the
+        # run. The mask is applied inside the chunk iterator instead, so peak
+        # memory is one chunk regardless of how much history has accumulated.
+        y_lab = _lab[_fin]
+        cutoff_val = np.percentile(y_lab, CUTOFF_PERCENTILE)
+        del y_lab
+        y_all = (_lab > cutoff_val).astype(np.int8)
+        dtrain = xgb.QuantileDMatrix(
+            _ChunkIter(featmat, y_all, _hi, mask=_fin), max_bin=256)
+        del y_all, _lab, _fin
+        gc.collect()
+        booster = xgb.train(XGB_PARAMS, dtrain, num_boost_round=XGB_ROUNDS)
+        del dtrain
+        gc.collect()
 
-        test_rows = feat[(feat["date"] == tp) & (feat["ticker"].isin(allowed))].copy()
+        _lo = int(np.searchsorted(dates_arr, np.datetime64(tp), "left"))
+        _hi2 = int(np.searchsorted(dates_arr, np.datetime64(tp), "right"))
+        test_rows = feat.iloc[_lo:_hi2]
+        test_pos = np.arange(_lo, _hi2)
+        _sel = test_rows["ticker"].isin(allowed).values
+        test_rows = test_rows[_sel]
+        test_pos = test_pos[_sel]
         if test_rows.empty:
-            del model, train
+            del booster
             gc.collect()
             continue
 
@@ -295,29 +688,66 @@ def run_walkforward(feat, all_dates, feature_cols, tag, start_date,
         # is too spotty to apply this cleanly -- a legitimately-eligible gap
         # ticker with no market_cap on file would otherwise be wrongly
         # disqualified. See module docstring.
-        is_gap_candidate = test_rows["ticker"].isin(gap_earliest.index)
-        meets_price = test_rows["close"] > MIN_PRICE
-        meets_cap = test_rows["market_cap"] >= MIN_MARKET_CAP
-        test_rows = test_rows[is_gap_candidate | (meets_price & meets_cap)]
+        if universe == "pit":
+            # Already applied, point-in-time, when the universe was built.
+            # See load_pit_universe(): re-applying a market_cap floor here
+            # would use the panel's own market_cap column, which is a
+            # DIFFERENT quantity (close x sharesbas) from the one the
+            # universe was screened on, and would reintroduce a survivor
+            # screen on a pool built specifically to avoid one.
+            _ok = np.ones(len(test_rows), dtype=bool)
+        else:
+            is_gap_candidate = test_rows["ticker"].isin(gap_earliest.index)
+            meets_price = test_rows["close"] > MIN_PRICE
+            meets_cap = test_rows["market_cap"] >= MIN_MARKET_CAP
+            _ok = (is_gap_candidate | (meets_price & meets_cap)).values
+        test_rows = test_rows[_ok]
+        test_pos = test_pos[_ok]
         if test_rows.empty:
             print(f"[{tag}] skip {tp.date()}: no candidates cleared the point-in-time "
                   f"mid-cap+ eligibility floor")
-            del model, train
+            del booster
             gc.collect()
             continue
 
-        test_rows["buy_proba"] = model.predict_proba(test_rows[feature_cols])[:, 1]
+        test_rows = test_rows.copy()
+        test_rows["buy_proba"] = booster.inplace_predict(featmat[test_pos])
 
-        top_picks = test_rows.sort_values("buy_proba", ascending=False).head(TOP_N)
-        picks_realized = top_picks.dropna(subset=[LABEL_COL])
+        # Round 9 (2026-09-07): the picks are whatever the model ranked
+        # highest -- a name is NOT quietly dropped because its forward label
+        # is missing. A missing label overwhelmingly means the price series
+        # ends inside the holding window, i.e. the position blew up or was
+        # delisted, which is exactly the outcome that must be counted.
+        picks_realized = test_rows.sort_values("buy_proba", ascending=False).head(TOP_N)
         if picks_realized.empty:
-            print(f"[{tag}] skip {tp.date()}: no picks with realized forward return")
-            del model, test_rows, train
+            del booster, test_rows
             gc.collect()
             continue
 
-        per_stock_weight = 1.0 / len(picks_realized)
-        portfolio_return = (per_stock_weight * (1 + picks_realized[LABEL_COL])).sum() - 1
+        if price_panel is not None:
+            # Realistic execution: signal on close[tp], enter one bar later,
+            # stop fills that honour gap-throughs, exit at the last available
+            # print when the series ends mid-window, and transaction costs.
+            port, per_ticker = realize_portfolio(
+                picks_realized["ticker"].tolist(), price_panel, tp, FORWARD_WINDOW,
+                entry_lag=entry_lag, entry_at=entry_at, stop_pct=stop_pct,
+                cost_bps=cost_bps)
+            if port is None:
+                print(f"[{tag}] skip {tp.date()}: none of the picks were tradable")
+                del booster, test_rows
+                gc.collect()
+                continue
+            portfolio_return = port["net_return"]
+        else:
+            # Legacy path: same-bar entry off the precomputed label. Kept only
+            # for reproducing the pre-Round-9 numbers.
+            lbl = picks_realized[label_col].dropna()
+            if lbl.empty:
+                del booster, test_rows
+                gc.collect()
+                continue
+            portfolio_return = (1.0 / len(lbl) * (1 + lbl)).sum() - 1
+            port, per_ticker = None, {}
 
         spy_return = (float(spy.loc[tp, "spy_fwd_return"])
                       if tp in spy.index and pd.notna(spy.loc[tp, "spy_fwd_return"]) else None)
@@ -332,13 +762,22 @@ def run_walkforward(feat, all_dates, feature_cols, tag, start_date,
             "n_gap_tickers_eligible": len(allowed) - len(current_universe_tickers),
             "gap_picks": n_gap_picks,
             "model_return_pct": round(float(portfolio_return) * 100, 2),
+            "execution": ({"entry_lag": entry_lag, "entry_at": entry_at,
+                            "cost_bps": cost_bps, "stop_pct": stop_pct,
+                            "n_positions": port["n_positions"],
+                            "gross_return_pct": round(port["gross_return"] * 100, 2),
+                            "n_stopped": port["n_stopped"],
+                            "n_gap_through": port["n_gap_through"],
+                            "n_series_end_exits": port["n_truncated"],
+                            "per_ticker_gross": {k: round(v["gross_return"], 6)
+                                                  for k, v in per_ticker.items()}}
+                           if port is not None else None),
             "spy_return_pct": round(float(spy_return) * 100, 2) if spy_return is not None else None,
             "beat_spy": bool(spy_return is not None and portfolio_return > spy_return),
-            "feature_importances": {c: round(float(imp), 5)
-                                     for c, imp in zip(feature_cols, model.feature_importances_)},
+            "feature_importances": _booster_importances(booster, feature_cols),
         })
 
-        del model, test_rows, train
+        del booster, test_rows
         gc.collect()
 
     return results
@@ -370,8 +809,19 @@ def simulate_stop_loss(picks_result, price_by_ticker, stop_pct=STOP_LOSS_PCT):
         stop_price = entry * (1 - stop_pct)
         hit = window[window["low"] <= stop_price]
         if not hit.empty:
-            per_ticker_returns[ticker] = -stop_pct
-            stop_triggered_on[ticker] = str(hit.iloc[0]["date"].date())
+            # Round 9 (2026-09-07): fill at min(stop, that bar's open) rather
+            # than at exactly -stop_pct. 42% of positions were being booked at
+            # precisely -15.00% on names selected for maximum trailing
+            # volatility; a bar that opened below the trigger never offered
+            # the trigger price, and roughly 12% of stopped names ended the
+            # window below -50% on the unstopped path -- those gapped straight
+            # through. Booking them at -15% is a fiction worth several
+            # percentage points of annual return.
+            bar = hit.iloc[0]
+            bar_open = float(bar["open"]) if "open" in bar else float("nan")
+            fill = min(stop_price, bar_open) if np.isfinite(bar_open) else stop_price
+            per_ticker_returns[ticker] = float(fill / entry - 1.0)
+            stop_triggered_on[ticker] = str(bar["date"].date())
         else:
             last_close = window["close"].iloc[-1]
             per_ticker_returns[ticker] = float(last_close / entry - 1)
@@ -404,17 +854,17 @@ def _stop_pct_suffix(stop_pct):
     return f"_stop{round(stop_pct * 100)}"
 
 
-def _load_lean_low_close_panel():
+def _load_lean_low_close_panel(universe="expanded"):
     """The [ticker, date, low, close] panel every stop-loss simulation needs,
     grouped per ticker -- factored out (Round 8) so the sweep mode loads it
     ONCE instead of once per stop percentage tested."""
-    feat = pd.read_parquet(OUT_DIR / "features_pit.parquet")[["ticker", "date", "low", "close"]]
-    feat = feat.sort_values(["ticker", "date"]).reset_index(drop=True)
-    price_by_ticker = {t: g[["date", "low", "close"]].reset_index(drop=True)
-                        for t, g in feat.groupby("ticker", sort=False)}
-    del feat
-    gc.collect()
-    return price_by_ticker
+    # Round 9 (2026-09-07): this now reads the OHLC CSV panel rather than
+    # features_pit.parquet, for two reasons. It needs `open` (a stop that
+    # gapped through must fill at the open, not at the trigger), and the
+    # repaired delisted panel is only available as CSVs -- see
+    # repair_ohlc_coherence.py for why the raw delisted panel must not be
+    # used for anything that reads intraday columns.
+    return load_ohlc_panel(price_dirs_for(universe))
 
 
 def _run_stoploss(mode, universe="expanded", stop_pct=STOP_LOSS_PCT):
@@ -433,7 +883,7 @@ def _run_stoploss(mode, universe="expanded", stop_pct=STOP_LOSS_PCT):
 
     print(f"Loading daily low/close price panel for stop-loss re-simulation ({mode}, "
           f"universe={universe}, stop_pct={stop_pct:.0%})...")
-    price_by_ticker = _load_lean_low_close_panel()
+    price_by_ticker = _load_lean_low_close_panel(universe)
 
     results = []
     for r in src["results"]:
@@ -485,7 +935,7 @@ def _run_stoploss_sweep(mode, universe="expanded", grid=None):
 
     print(f"Loading daily low/close price panel once for the sweep ({len(grid)} stop "
           f"percentages, universe={universe})...")
-    price_by_ticker = _load_lean_low_close_panel()
+    price_by_ticker = _load_lean_low_close_panel(universe)
 
     sweep_rows = []
     for stop_pct in grid:
@@ -646,7 +1096,44 @@ def main():
                          help="Earliest step date to attempt (default 2007-01-02 -- reaches "
                               "for 2008 coverage; the actual first step used depends on real "
                               "trailing-history availability, see the printed output).")
-    parser.add_argument("--universe", choices=["expanded", "sp500"], default="expanded",
+    parser.add_argument("--execution", choices=["realistic", "as_published"],
+                         default="realistic",
+                         help="Round 9 (2026-09-07). 'realistic' (default) prices every "
+                              "position through execution.py: signal on close[t], entry one "
+                              "bar later, gap-through-aware stop fills, exit at the last "
+                              "available print when a series ends mid-window, and transaction "
+                              "costs. 'as_published' reproduces the pre-Round-9 same-bar, "
+                              "zero-cost numbers and should only be used for comparison.")
+    parser.add_argument("--entry-at", choices=["open", "close"], default=DEFAULT_ENTRY_AT,
+                         help="Which print of the entry bar is transacted (default open).")
+    parser.add_argument("--cost-bps", type=float, default=DEFAULT_COST_BPS,
+                         help="Round-trip transaction cost in basis points (default 50).")
+    parser.add_argument("--walkforward-stop", type=float, default=None,
+                         help="Stop-loss level applied INSIDE the walk-forward run, e.g. 0.15 "
+                              "(distinct from --stop_pct, which re-simulates an already-"
+                              "completed run). Omit for no stop.")
+    parser.add_argument("--label", choices=["tradable", "as_published"], default="tradable",
+                         help="Round 9 (2026-09-07). Training target. 'tradable' (default) "
+                              "trains on close[t+H]/open[t+1] -- the return actually "
+                              "obtainable from a signal computed on close[t]. 'as_published' "
+                              "trains on close[t+H]/close[t], which credits an overnight move "
+                              "the strategy cannot capture and which carried the entire "
+                              "published edge. Requires features.py to have been re-run so the "
+                              "panel carries the tradable label column.")
+    parser.add_argument("--cost-model", choices=["turnover_aware", "per_window"],
+                         default="turnover_aware",
+                         help="Round 9 (2026-09-07). 'turnover_aware' (default) charges a "
+                              "round trip only when a position is actually opened or closed "
+                              "-- a name re-selected at the next step is held, not sold and "
+                              "rebought. 'per_window' charges every position every window, "
+                              "which overstates cost by ~33% at the measured ~75% turnover.")
+    parser.add_argument("--resume", action="store_true",
+                         help="Continue from out/_ckpt_<mode>.json instead of restarting. "
+                              "Timepoints already recorded are skipped.")
+    parser.add_argument("--panel", default=None,
+                         help="Explicit path to the feature panel parquet, "
+                              "overriding the mode/universe default.")
+    parser.add_argument("--universe", choices=["expanded", "sp500", "pit"], default="expanded",
                          help="expanded (default, unchanged behavior): current-universe "
                               "(~1,650 tickers, mkt cap > $2B) UNION valid PIT gap tickers. "
                               "sp500 (added 2026-09-01, Gabe's suggestion): further restrict "
@@ -688,21 +1175,32 @@ def main():
         return
 
     print(f"Loading PIT panel for mode={args.mode}...")
-    panel_path = OUT_DIR / ("features_with_fundamentals_pit.parquet" if args.mode == "augmented"
-                             else "features_pit.parquet")
+    if args.panel:
+        panel_path = Path(args.panel)
+    elif args.universe == "pit":
+        panel_path = OUT_DIR / (
+            "features_with_fundamentals_sharadar_pit.parquet"
+            if args.mode == "augmented" else "features_sharadar_pit.parquet")
+    else:
+        panel_path = OUT_DIR / ("features_with_fundamentals_pit.parquet"
+                                 if args.mode == "augmented"
+                                 else "features_pit.parquet")
     if not panel_path.exists():
         raise FileNotFoundError(
             f"{panel_path} not found -- run features_pit.py"
             + (" and fundamentals_features_pit.py" if args.mode == "augmented" else "")
             + " first."
         )
-    feat = pd.read_parquet(panel_path)
-    feat = feat.sort_values(["ticker", "date"]).reset_index(drop=True)
     cols = NO_STALE_COLS if args.mode == "augmented" else []
-    keep_cols = ["ticker", "date", "close"] + FEATURE_COLS + cols + [LABEL_COL]
-    feat = feat[keep_cols]
-    for c in FEATURE_COLS + cols + [LABEL_COL]:
-        feat[c] = feat[c].astype("float32")
+    # Round 9 (2026-09-07): read ONLY the columns actually used. The full
+    # panel is ~930MB on disk and materializing every column costs several GB
+    # of RAM for no reason. "open" is read so the tradable label can be
+    # derived here rather than requiring a full features.py rebuild.
+    numeric = ["close", "open", "market_cap"] + FEATURE_COLS + cols
+    feat, n_before = load_panel_prepared(panel_path, numeric, FEATURE_COLS, FORWARD_WINDOW)
+    print(f"  {len(feat):,} of {n_before:,} rows carry complete features "
+          f"({feat['ticker'].nunique()} tickers); both labels derived over the full panel "
+          f"before filtering.")
     gc.collect()
 
     if "market_cap" not in feat.columns:
@@ -717,10 +1215,43 @@ def main():
     gc.collect()
 
     gap_tickers = load_gap_ticker_set()
-    current_universe_tickers = set(feat["ticker"].unique()) - gap_tickers
+    current_universe_tickers = set(map(str, feat["ticker"].unique())) - gap_tickers
     gap_earliest = build_gap_validity(feat, gap_tickers)
 
-    feat_restricted = feat.dropna(subset=FEATURE_COLS + [LABEL_COL]).copy()
+    # Round 9 (2026-09-07) -- SURVIVORSHIP FIX.
+    #
+    # This used to read `.dropna(subset=FEATURE_COLS + [LABEL_COL])`, which
+    # removed every row with a missing FORWARD LABEL before the walk-forward
+    # loop ever ran. A stock whose price series ends within the next 40
+    # trading days has no forward label -- so it was deleted from the
+    # candidate pool on precisely the dates it was about to stop trading.
+    # The model literally could not pick a name on the eve of its blow-up.
+    #
+    # Candidates now only need FEATURES (you cannot score a row without
+    # them). A missing label is no longer disqualifying: execution.py
+    # realizes such a position at the last available print, which is the
+    # honest outcome. The label filter moved into run_walkforward, where it
+    # belongs -- on the TRAINING set only.
+    label_col = TRADABLE_LABEL_COL if args.label == "tradable" else LABEL_COL
+    if label_col not in feat.columns:
+        raise SystemExit(
+            f"\n  The feature panel does not carry '{label_col}'.\n"
+            f"  Re-run features.py (and fundamentals_features_pit.py) to rebuild the panel "
+            f"with the tradable label, or pass --label as_published to train on the old "
+            f"close[t+H]/close[t] target.\n"
+            f"  See AGENTS.md, Round 9, for why the tradable label is the right default.")
+    print(f"  Training target: {label_col}")
+    # Round 9: drop the label we are NOT training on before the row filter --
+    # on a 7M-row panel every surviving column costs ~28MB and the filter
+    # below copies the frame once.
+    _unused = LABEL_COL if label_col == TRADABLE_LABEL_COL else TRADABLE_LABEL_COL
+    if _unused in feat.columns:
+        feat.drop(columns=[_unused], inplace=True)
+        gc.collect()
+
+    # The feature-NaN filter was applied during load (see
+    # load_panel_prepared) -- the full unfiltered frame is never materialized.
+    feat_restricted = feat
     del feat
     gc.collect()
     all_dates = feat_restricted["date"].drop_duplicates().sort_values().reset_index(drop=True)
@@ -728,21 +1259,90 @@ def main():
           f"({len(current_universe_tickers)} current-universe, {len(gap_tickers)} gap tickers "
           f"found on disk, {len(gap_earliest)} of those present in this feature panel), "
           f"dates {all_dates.min().date()} to {all_dates.max().date()}")
-    print(f"  Point-in-time mid-cap+ eligibility floor active for current-universe candidates: "
-          f"market_cap >= ${MIN_MARKET_CAP:,.0f} and close > ${MIN_PRICE:.0f} ON THE PICK DATE "
-          f"(gap tickers exempt, see module docstring Round 7)")
+    if args.universe == "pit":
+        # Do NOT print the old floor here -- it is not applied on this path,
+        # and a log line claiming a screen that is not running is how a
+        # wrong result gets believed later.
+        print(f"  Eligibility comes from pit_universe.parquet: marketcap >= "
+              f"${MIN_MARKET_CAP:,.0f} and closeunadj > ${MIN_PRICE:.0f} applied "
+              f"AS OF each date, on domestic common stock, excluding rows where "
+              f"the vendor's two market-cap columns disagree by >10x. The old "
+              f"current-universe floor and the gap-ticker exemption are both "
+              f"skipped -- see load_pit_universe().")
+    else:
+        print(f"  Point-in-time mid-cap+ eligibility floor active for current-universe candidates: "
+              f"market_cap >= ${MIN_MARKET_CAP:,.0f} and close > ${MIN_PRICE:.0f} ON THE PICK DATE "
+              f"(gap tickers exempt, see module docstring Round 7)")
 
     feature_cols = AUGMENTED_FEATURE_COLS if args.mode == "augmented" else FEATURE_COLS
-    results = run_walkforward(feat_restricted, all_dates, feature_cols, args.mode,
-                               args.start, current_universe_tickers, gap_earliest, args.universe)
+    price_panel = None
+    if args.execution == "realistic":
+        needed = set(feat_restricted["ticker"].unique())
+        print(f"  Loading OHLC panel for realistic execution "
+              f"(entry_lag={DEFAULT_ENTRY_LAG}, entry_at={args.entry_at}, "
+              f"cost={args.cost_bps:.0f}bp, stop={args.walkforward_stop})...")
+        # Segment bounds straight off the panel: a "__post" identity is a
+        # DIFFERENT security from its pre-break namesake, and execution must
+        # not price across the break. See SegmentedOHLCPanel.
+        _b = feat_restricted.groupby("ticker", observed=True)["date"].agg(["min", "max"])
+        segments = {t: (str(t).split("__post")[0], r["min"], r["max"])
+                    for t, r in _b.iterrows()}
+        _nseg = sum(1 for t in segments if "__post" in str(t))
+        price_panel = SegmentedOHLCPanel(price_dirs_for(args.universe), segments)
+        print(f"  execution price panel is lazy and segment-aware "
+              f"({len(needed)} tickers eligible, {_nseg} post-break segments)")
+        del _b
+        gc.collect()
 
-    out_path = OUT_DIR / f"continuous_walkforward_pit_{args.mode}{suffix}.json"
+    results = run_walkforward(feat_restricted, all_dates, feature_cols, args.mode,
+                               args.start, current_universe_tickers, gap_earliest, args.universe,
+                               price_panel=price_panel, entry_at=args.entry_at,
+                               cost_bps=args.cost_bps, stop_pct=args.walkforward_stop,
+                               label_col=label_col, resume=args.resume)
+
+    results = sorted(results, key=lambda r: r["timepoint"])
+    if args.execution == "realistic" and args.cost_model == "turnover_aware":
+        # Re-price costs on actual turnover: a name the model re-selects is
+        # held, not sold and rebought. See execution.apply_turnover_costs.
+        results = apply_turnover_costs(results, args.cost_bps)
+        _fn = np.mean([r["execution"]["frac_new"] for r in results
+                        if r.get("execution", {}).get("frac_new") is not None])
+        print(f"  turnover-aware costs applied at {args.cost_bps:.0f}bp: "
+              f"{_fn:.0%} of each window's book is new (a per-window round trip on "
+              f"every name would assume 100%)")
+    # Round 9 (2026-09-07): a realistic-execution run writes to its OWN file.
+    # It is not comparable to the pre-Round-9 same-bar, zero-cost numbers and
+    # must never silently overwrite them -- the published baseline is the
+    # reference every corrected result is measured against.
+    _exec_tag = "" if args.execution == "as_published" else "_realistic"
+    if _exec_tag and args.label == "tradable":
+        _exec_tag += "_tradable"
+    out_path = OUT_DIR / f"continuous_walkforward_pit_{args.mode}{suffix}{_exec_tag}.json"
     with open(out_path, "w") as f:
         json.dump({"mode": args.mode, "universe": args.universe, "start_requested": args.start,
+                    "label_col": label_col, "execution": args.execution,
+                    "entry_at": args.entry_at, "cost_bps": args.cost_bps,
+                    "walkforward_stop": args.walkforward_stop,
                     "results": results}, f, indent=2)
     if results:
         wins = sum(r["beat_spy"] for r in results)
         total_gap_picks = sum(r["gap_picks"] for r in results)
+        # Round 9 sanity print. The eligibility screen failing open is silent
+        # in every other statistic, so surface it directly: if nearly every
+        # pick is gap-flagged, or the median entry price collapses, the
+        # market-cap/price floor is not doing its job.
+        _npos = sum(len(r["picks"]) for r in results)
+        _ngap = sum(r.get("gap_picks", 0) for r in results)
+        _px = [v for r in results for v in r["pick_entry_close"].values()]
+        _med = float(np.median(_px)) if _px else float("nan")
+        _sub10 = (float(np.mean([p < 10 for p in _px])) if _px else float("nan"))
+        print(f"  eligibility check: {_ngap}/{_npos} picks gap-flagged "
+              f"({_ngap/max(_npos,1):.0%}), median entry ${_med:,.2f}, "
+              f"{_sub10:.0%} under $10")
+        if _npos and _ngap / _npos > 0.9:
+            print("  *** WARNING: nearly every pick is gap-flagged. Gap tickers are "
+                  "exempt from the market-cap/price floor, so this almost certainly "
+                  "means the floor is failing open. Do not trust these results. ***")
         print(f"{args.mode} (universe={args.universe}): {len(results)} windows, {wins} beat SPY "
               f"({wins/len(results):.0%}), {total_gap_picks} total gap-ticker picks, "
               f"steps {results[0]['timepoint']} to {results[-1]['timepoint']}")

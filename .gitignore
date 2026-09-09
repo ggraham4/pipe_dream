@@ -44,3 +44,26 @@ final/out/models/
 
 # --- App runtime logs (regenerates itself) ---
 final/app/logs/
+
+# --- Round 11 (2026-09-09) Sharadar point-in-time dataset. All of it is
+# reproducible from final/src/ -- see claude/DATA-PIPELINE-HANDOFF.md in the
+# Claude Project for the exact 9-step sequence and runtimes. Sizes are why
+# these are ignored rather than tracked:
+#   final/data/sharadar/panel/          1.7 GB  (30M+32.5M rows, monthly parquet)
+#   final/scripts/td_data_sharadar/     525 MB  (4,011 per-ticker OHLCV CSVs)
+#   final/out/features_*sharadar*.parquet 2.2 GB (already caught by *.parquet)
+# The small master/derived CSVs under final/data/sharadar/ are ignored too;
+# tickers_master.csv and sf1_shares.csv are one API call each to regenerate.
+final/data/sharadar/
+final/scripts/td_data_sharadar/
+
+# --- Scratch/probe artifacts from the Round 11 data audit ---
+final/out/_smoke_pit.log
+final/out/_ckpt_*.json
+final/src/_patch_*.py
+
+# --- Repaired delisted-price CSV variants (regenerate with
+# repair_ohlc_causal.py). Superseded by final/scripts/td_data_sharadar/
+# as of Round 11, kept on disk only for reproducing pre-Round-11 results. ---
+final/scripts/td_data_delisted_repaired/
+final/scripts/td_data_delisted_repaired_causal/

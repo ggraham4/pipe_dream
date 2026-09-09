@@ -1,0 +1,55 @@
+{
+  "n_windows": 117,
+  "cash_yield": 2.0,
+  "spy_terminal": 48077.13700129743,
+  "rules": {
+    "universe_ew|spy_above_200dma": {
+      "terminal": 24946.986261245216,
+      "cash_windows": 29,
+      "null_p50": 30025.49472579886,
+      "percentile": 31.840000000000003
+    },
+    "universe_ew|spy_mom120_pos": {
+      "terminal": 31368.119700949268,
+      "cash_windows": 31,
+      "null_p50": 29331.09856561317,
+      "percentile": 56.28999999999999
+    },
+    "universe_ew|breadth_gt_50pct": {
+      "terminal": 25182.535393665163,
+      "cash_windows": 32,
+      "null_p50": 29488.690878387024,
+      "percentile": 35.05
+    },
+    "universe_ew|rvol_below_median": {
+      "terminal": 12994.703657445294,
+      "cash_windows": 58,
+      "null_p50": 23758.924562518645,
+      "percentile": 8.84
+    },
+    "model_5|spy_above_200dma": {
+      "terminal": 31252.462995107853,
+      "cash_windows": 29,
+      "null_p50": 36375.58523095837,
+      "percentile": 42.5
+    },
+    "model_5|spy_mom120_pos": {
+      "terminal": 50939.93735722056,
+      "cash_windows": 31,
+      "null_p50": 35752.72222629663,
+      "percentile": 66.31
+    },
+    "model_5|breadth_gt_50pct": {
+      "terminal": 33590.02569267521,
+      "cash_windows": 32,
+      "null_p50": 35341.74692193909,
+      "percentile": 47.510000000000005
+    },
+    "model_5|rvol_below_median": {
+      "terminal": 26533.42934326054,
+      "cash_windows": 58,
+      "null_p50": 26546.249801236525,
+      "percentile": 49.96
+    }
+  }
+}

@@ -1,0 +1,10 @@
+PIT-corrected universe: 523290 rows (52.8% of 991580), 473 tickers (was 1265)
+After feature dropna: (515993, 32)
+  2021-01-15: cohort=7148 (tickers=378) BASE_EQ=None BASE_KELLY=None IDEA3_EQ=None IDEA3_KELLY=None
+  2022-01-15: cohort=6474 (tickers=392) BASE_EQ=-7.53 BASE_KELLY=-1.59 IDEA3_EQ=8.96 IDEA3_KELLY=-26.08
+  2023-01-15: cohort=6672 (tickers=414) BASE_EQ=23.31 BASE_KELLY=39.0 IDEA3_EQ=53.77 IDEA3_KELLY=45.61
+  2024-01-15: cohort=7202 (tickers=427) BASE_EQ=17.5 BASE_KELLY=20.99 IDEA3_EQ=10.7 IDEA3_KELLY=2.53
+  2025-01-15: cohort=6675 (tickers=448) BASE_EQ=5.67 BASE_KELLY=-15.32 IDEA3_EQ=-27.14 IDEA3_KELLY=-44.86
+  2026-01-15: cohort=9170 (tickers=464) BASE_EQ=-26.42 BASE_KELLY=-0.6 IDEA3_EQ=-32.17 IDEA3_KELLY=2.13
+
+saved pit_corrected_results.json

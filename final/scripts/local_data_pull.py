@@ -306,6 +306,48 @@ def pull_ticker(ticker: str):
         new = _clean(new, ticker)
         if new is None:
             return
+        # Round 9 (2026-09-07) -- SPLIT-SAFE TOP-UP.
+        #
+        # Yahoo back-adjusts the WHOLE series for splits. Concatenating a
+        # freshly-pulled recent window onto history pulled BEFORE a split
+        # therefore silently glues post-split bars onto pre-split history and
+        # fabricates a one-day crash at the join (-50% for a 2:1, -66.7% for
+        # a 3:1). This had already corrupted MNST (2:1, 2026-07-13) and PRIM
+        # (2:1, 2026-05-06) in the live panel -- and since volatility_60 and
+        # pct_from_high_252 are the two highest-importance features, and the
+        # model selects on exactly those extremes, a fabricated crash makes a
+        # name MORE likely to be picked, not less.
+        #
+        # Detect it on the overlap: where old and new both have a date, their
+        # closes must agree. If they do not, the split factor has moved and
+        # the correct action is a FULL re-pull, not a splice.
+        overlap = existing.merge(new, on="date", suffixes=("_old", "_new"))
+        needs_full = False
+        if len(overlap) >= 3:
+            ratio = (overlap["close_new"] / overlap["close_old"]).median()
+            if not (0.99 < float(ratio) < 1.01):
+                needs_full = True
+                print(f"{ticker}: adjustment factor changed on the overlap "
+                      f"(median new/old close = {float(ratio):.4f}) -- almost certainly a "
+                      f"split or other adjustment event. Re-pulling the full history "
+                      f"instead of splicing.")
+        elif len(overlap) == 0:
+            # No overlap at all means we cannot verify the join; the top-up
+            # window is shorter than the gap since the last pull.
+            needs_full = True
+            print(f"{ticker}: no overlapping dates between existing history and the "
+                  f"{RECENT_DAYS}d top-up -- re-pulling the full history so the join "
+                  f"cannot be silently mis-adjusted.")
+
+        if needs_full:
+            df = yf.download(symbol, start=START_DATE, progress=False, auto_adjust=False)
+            df = _clean(df, ticker)
+            if df is None:
+                return
+            _atomic_to_csv(df, out_path)
+            print(f"{ticker}: full re-pull, {len(df)} rows -> {out_path}")
+            return
+
         combined = pd.concat([existing, new]).drop_duplicates(subset="date", keep="last")
         combined = combined.sort_values("date")
         _atomic_to_csv(combined, out_path)

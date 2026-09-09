@@ -1,0 +1,8 @@
+{
+  "tag": "real_emb1_nogap",
+  "mode": "real",
+  "embargo_mult": 1,
+  "mean_ic": -0.0012677270557434634,
+  "ic_t": -0.09539623560422779,
+  "n_windows": 107
+}

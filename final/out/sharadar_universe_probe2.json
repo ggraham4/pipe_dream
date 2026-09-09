@@ -1,0 +1,575 @@
+{
+  "tickers": {
+    "n": 50000,
+    "columns": [
+      "table",
+      "permaticker",
+      "ticker",
+      "name",
+      "exchange",
+      "isdelisted",
+      "category",
+      "cusips",
+      "siccode",
+      "sicsector",
+      "sicindustry",
+      "figi",
+      "famaindustry",
+      "sector",
+      "industry",
+      "scalemarketcap",
+      "scalerevenue",
+      "relatedtickers",
+      "currency",
+      "location",
+      "lastupdated",
+      "firstadded",
+      "firstpricedate",
+      "lastpricedate",
+      "firstquarter",
+      "lastquarter",
+      "secfilings",
+      "companysite"
+    ],
+    "key_columns": {
+      "permaticker": "permaticker",
+      "isdelisted": "isdelisted",
+      "firstpricedate": "firstpricedate",
+      "lastpricedate": "lastpricedate"
+    },
+    "n_delisted": 13039
+  },
+  "contamination_audit": {
+    "AT": [],
+    "NSM": [],
+    "MMI": [],
+    "WB": [],
+    "TSG": [],
+    "FDC": [],
+    "MI": [],
+    "CCEP": [],
+    "DTV": [],
+    "STR": [],
+    "SE": [],
+    "ALTR": [],
+    "ADT": [],
+    "PLL": [],
+    "EQ": [],
+    "PD": [],
+    "TE": [],
+    "ADCT": [],
+    "SII": [],
+    "DNB": [],
+    "MON": [],
+    "HCP": [],
+    "HMA": [],
+    "EP": [],
+    "STI": [],
+    "DO": [],
+    "EMC": [],
+    "INFO": [],
+    "KG": [],
+    "FB": [],
+    "PCL": [],
+    "CAM": [],
+    "POM": [],
+    "SPLS": [],
+    "SGP": [],
+    "APC": [],
+    "CA": [],
+    "NFX": [],
+    "BBBY": [],
+    "EQR": [],
+    "CSRA": []
+  },
+  "enumeration": {
+    "stocks {'date': '2015-06-30', 'limit': 5}": {
+      "n": 5,
+      "columns": [
+        "ticker",
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "closeadj",
+        "closeunadj",
+        "lastupdated"
+      ],
+      "marketcap_cols": []
+    },
+    "stocks {'date.gte': '2015-06-30', 'date.lte': '2015-06-30', 'limit': 5}": {
+      "n": 5,
+      "columns": [
+        "ticker",
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "closeadj",
+        "closeunadj",
+        "lastupdated"
+      ],
+      "marketcap_cols": []
+    },
+    "stocks {'date_gte': '2015-06-30', 'date_lte': '2015-06-30', 'limit': 5}": {
+      "n": 5,
+      "columns": [
+        "ticker",
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "closeadj",
+        "closeunadj",
+        "lastupdated"
+      ],
+      "marketcap_cols": []
+    },
+    "daily {'date': '2015-06-30', 'limit': 5}": {
+      "n": 5,
+      "columns": [
+        "ticker",
+        "date",
+        "lastupdated",
+        "ev",
+        "evebit",
+        "evebitda",
+        "marketcap",
+        "pb",
+        "pe",
+        "ps"
+      ],
+      "marketcap_cols": [
+        "marketcap"
+      ]
+    },
+    "daily {'ticker': 'AAPL', 'limit': 3}": {
+      "n": 3,
+      "columns": [
+        "ticker",
+        "date",
+        "lastupdated",
+        "ev",
+        "evebit",
+        "evebitda",
+        "marketcap",
+        "pb",
+        "pe",
+        "ps"
+      ],
+      "marketcap_cols": [
+        "marketcap"
+      ]
+    },
+    "fundamentals {'date': '2015-06-30', 'limit': 5}": {
+      "n": 5,
+      "columns": [
+        "ticker",
+        "dimension",
+        "calendardate",
+        "date",
+        "reportperiod",
+        "fiscalperiod",
+        "lastupdated",
+        "accoci",
+        "assets",
+        "assetsavg",
+        "assetsc",
+        "assetsnc",
+        "assetturnover",
+        "bvps",
+        "capex",
+        "cashneq",
+        "cashnequsd",
+        "cor",
+        "consolinc",
+        "currentratio",
+        "de",
+        "debt",
+        "debtc",
+        "debtnc",
+        "debtusd",
+        "deferredrev",
+        "depamor",
+        "deposits",
+        "divyield",
+        "dps",
+        "ebit",
+        "ebitda",
+        "ebitdamargin",
+        "ebitdausd",
+        "ebitusd",
+        "ebt",
+        "eps",
+        "epsdil",
+        "epsusd",
+        "equity",
+        "equityavg",
+        "equityusd",
+        "ev",
+        "evebit",
+        "evebitda",
+        "fcf",
+        "fcfps",
+        "fxusd",
+        "gp",
+        "grossmargin",
+        "intangibles",
+        "intexp",
+        "invcap",
+        "invcapavg",
+        "inventory",
+        "investments",
+        "investmentsc",
+        "investmentsnc",
+        "liabilities",
+        "liabilitiesc",
+        "liabilitiesnc",
+        "marketcap",
+        "ncf",
+        "ncfbus",
+        "ncfcommon",
+        "ncfdebt",
+        "ncfdiv",
+        "ncff",
+        "ncfi",
+        "ncfinv",
+        "ncfo",
+        "ncfx",
+        "netinc",
+        "netinccmn",
+        "netinccmnusd",
+        "netincdis",
+        "netincnci",
+        "netmargin",
+        "opex",
+        "opinc",
+        "payables",
+        "payoutratio",
+        "pb",
+        "pe",
+        "pe1",
+        "ppnenet",
+        "prefdivis",
+        "price",
+        "ps",
+        "ps1",
+        "receivables",
+        "retearn",
+        "revenue",
+        "revenueusd",
+        "rnd",
+        "roa",
+        "roe",
+        "roic",
+        "ros",
+        "sbcomp",
+        "sgna",
+        "sharefactor",
+        "sharesbas",
+        "shareswa",
+        "shareswadil",
+        "sps",
+        "tangibles",
+        "taxassets",
+        "taxexp",
+        "taxliabilities",
+        "tbvps",
+        "workingcapital"
+      ],
+      "marketcap_cols": [
+        "marketcap"
+      ]
+    },
+    "fundamentals {'dimension': 'ARQ', 'calendardate': '2015-06-30', 'limit': 5}": {
+      "n": 0,
+      "columns": [],
+      "marketcap_cols": []
+    },
+    "sf1 {'ticker': 'AAPL', 'limit': 2}": {
+      "n": 2,
+      "columns": [
+        "ticker",
+        "dimension",
+        "calendardate",
+        "date",
+        "reportperiod",
+        "fiscalperiod",
+        "lastupdated",
+        "accoci",
+        "assets",
+        "assetsavg",
+        "assetsc",
+        "assetsnc",
+        "assetturnover",
+        "bvps",
+        "capex",
+        "cashneq",
+        "cashnequsd",
+        "cor",
+        "consolinc",
+        "currentratio",
+        "de",
+        "debt",
+        "debtc",
+        "debtnc",
+        "debtusd",
+        "deferredrev",
+        "depamor",
+        "deposits",
+        "divyield",
+        "dps",
+        "ebit",
+        "ebitda",
+        "ebitdamargin",
+        "ebitdausd",
+        "ebitusd",
+        "ebt",
+        "eps",
+        "epsdil",
+        "epsusd",
+        "equity",
+        "equityavg",
+        "equityusd",
+        "ev",
+        "evebit",
+        "evebitda",
+        "fcf",
+        "fcfps",
+        "fxusd",
+        "gp",
+        "grossmargin",
+        "intangibles",
+        "intexp",
+        "invcap",
+        "invcapavg",
+        "inventory",
+        "investments",
+        "investmentsc",
+        "investmentsnc",
+        "liabilities",
+        "liabilitiesc",
+        "liabilitiesnc",
+        "marketcap",
+        "ncf",
+        "ncfbus",
+        "ncfcommon",
+        "ncfdebt",
+        "ncfdiv",
+        "ncff",
+        "ncfi",
+        "ncfinv",
+        "ncfo",
+        "ncfx",
+        "netinc",
+        "netinccmn",
+        "netinccmnusd",
+        "netincdis",
+        "netincnci",
+        "netmargin",
+        "opex",
+        "opinc",
+        "payables",
+        "payoutratio",
+        "pb",
+        "pe",
+        "pe1",
+        "ppnenet",
+        "prefdivis",
+        "price",
+        "ps",
+        "ps1",
+        "receivables",
+        "retearn",
+        "revenue",
+        "revenueusd",
+        "rnd",
+        "roa",
+        "roe",
+        "roic",
+        "ros",
+        "sbcomp",
+        "sgna",
+        "sharefactor",
+        "sharesbas",
+        "shareswa",
+        "shareswadil",
+        "sps",
+        "tangibles",
+        "taxassets",
+        "taxexp",
+        "taxliabilities",
+        "tbvps",
+        "workingcapital"
+      ],
+      "marketcap_cols": [
+        "marketcap"
+      ]
+    },
+    "metrics {'ticker': 'AAPL', 'limit': 2}": {
+      "n": 1,
+      "columns": [
+        "ticker",
+        "date",
+        "lastupdated",
+        "beta1y",
+        "beta5y",
+        "dividendyieldforward",
+        "dividendyieldtrailing",
+        "high52w",
+        "high5y",
+        "low52w",
+        "low5y",
+        "ma200d",
+        "ma200w",
+        "ma50d",
+        "ma50w",
+        "price",
+        "return1y",
+        "return5y",
+        "returnytd",
+        "volume",
+        "volumeavg1m",
+        "volumeavg3m"
+      ],
+      "marketcap_cols": []
+    }
+  },
+  "dead_largecap_coverage": {
+    "LEH": {
+      "ok": false,
+      "rows": 0,
+      "range": ""
+    },
+    "BSC": {
+      "ok": false,
+      "rows": 0,
+      "range": ""
+    },
+    "WM": {
+      "ok": true,
+      "rows": 7215,
+      "range": "1997-12-31 .. 2026-09-08"
+    },
+    "ENE": {
+      "ok": false,
+      "rows": 0,
+      "range": ""
+    },
+    "SHLD": {
+      "ok": false,
+      "rows": 0,
+      "range": ""
+    },
+    "BBBY": {
+      "ok": false,
+      "rows": 0,
+      "range": ""
+    },
+    "FRC": {
+      "ok": false,
+      "rows": 0,
+      "range": ""
+    },
+    "SIVB": {
+      "ok": false,
+      "rows": 0,
+      "range": ""
+    }
+  },
+  "actions": {
+    "columns": [
+      "date",
+      "action",
+      "ticker",
+      "name",
+      "value",
+      "contraticker",
+      "contraname"
+    ],
+    "values": [
+      [
+        "relation",
+        1976
+      ],
+      [
+        "dividend",
+        1778
+      ],
+      [
+        "split",
+        65
+      ],
+      [
+        "listed",
+        57
+      ],
+      [
+        "delisted",
+        36
+      ],
+      [
+        "tickerchangeto",
+        26
+      ],
+      [
+        "tickerchangefrom",
+        26
+      ],
+      [
+        "spacunitseparation",
+        6
+      ],
+      [
+        "acquisitionof",
+        6
+      ],
+      [
+        "acquisitionby",
+        6
+      ],
+      [
+        "regulatorydelisting",
+        4
+      ],
+      [
+        "acquisitioncash",
+        3
+      ],
+      [
+        "namechangeto",
+        2
+      ],
+      [
+        "namechangefrom",
+        2
+      ],
+      [
+        "mergerto",
+        2
+      ],
+      [
+        "mergerfrom",
+        2
+      ],
+      [
+        "adrratiosplit",
+        1
+      ],
+      [
+        "voluntarydelisting",
+        1
+      ],
+      [
+        "acquisitionstock",
+        1
+      ]
+    ]
+  }
+}

@@ -8,7 +8,7 @@ the narrative history — see "Where the fuller history lives" at the bottom
 for the documents that record *why* decisions were made, not just *what*
 the current state is.
 
-**This file will go stale.** It reflects the repo as of 2026-09-02. If
+**This file will go stale.** It reflects the repo as of 2026-09-04. If
 something here contradicts what you actually find on disk (a file that's
 supposed to exist doesn't, a script behaves differently than described),
 trust the repo over this file, and please update this file to match once
@@ -191,20 +191,179 @@ but re-confirm priority with Gabe rather than assuming the old gate still
 applies.
 
 **3. Options premium model (in active development, design doc 2026-08-26
-onward, NOT the same thing as the stock model, and NOT yet integrated
-with any of the PIT/survivorship-correction work below — explicitly
-flagged by Gabe as a longer-term goal, out of scope for now as of
-2026-09-02).** Predicts a distribution over the underlying's price at
-expiration, prices calls/puts off that distribution against real market
-premiums (sourced free from DoltHub's `post-no-preference/options`, ~91M
-rows, 2019-02 to present, S&P 500 + expanded-universe coverage), and
-sizes positions via a calibrated-decile Kelly optimizer. **Calls show a
-real, if noisy, edge** — a Tweedie GLM beats a "market is fairly priced"
-benchmark on held-out data, and the decile-calibrated Kelly sizing cut a
-would-be −50% trial down to −11% by correctly sizing down when its own
-signal was weak. **Puts do not have a working model** — every candidate
-underperformed the benchmark, an open, unsolved problem. Full detail:
-`models/options-premium-model-design.md`.
+onward, NOT the same thing as the stock model).** Predicts a distribution
+over the underlying's price at expiration, prices calls/puts off that
+distribution against real market premiums (sourced free from DoltHub's
+`post-no-preference/options`, ~91M rows, 2019-02 to present, S&P 500 +
+expanded-universe coverage), and sizes positions via a calibrated-decile
+Kelly optimizer. **Calls show a real, if noisy, edge** — a Tweedie GLM
+beats a "market is fairly priced" benchmark on held-out data (though see
+the PIT-integration CV-retune discrepancy below), and the decile-calibrated
+Kelly sizing cut a would-be −50% trial down to −11% by correctly sizing
+down when its own signal was weak. **Puts do not have a working model** —
+every candidate underperformed the benchmark, an open, unsolved problem.
+**PIT/fundamentals integration attempted 2026-09-02, per Gabe's request —
+no clear win, not adopted into production.** Joined the stock model's PIT
+fundamentals panel onto the calls training data (point-in-time, no
+lookahead) and applied the same market_cap>=$2B/close>=$10 eligibility
+floor the stock model uses, evaluated at each option's own entry_date. At
+the fixed production hyperparameters (power=1.4, alpha=0.001, so the
+comparison isolates the data change): the eligibility floor ALONE made the
+walk-forward backtest worse (avg return −1.56%/−0.64% equal-weight/Kelly
+vs. the original +11.43%/+7.28%); adding fundamentals back on top mostly
+recovered what the floor cost (+6.15%/+6.52%) and meaningfully cut variance
+(std 15.8% vs. the original 41.6% for equal-weight — a better
+return-per-unit-of-risk ratio) but didn't clearly beat the existing
+production model, and win-rate against SPY dropped (2/5 vs. the original
+4/5). Sample size is thin throughout (5-6 usable annual timepoints) — none
+of this should be read as decisive. The reusable deliverable from this pass
+is the reproduction pipeline itself:
+`final/models/pit_integration/` (5 scripts + README) — at the fixed
+production hyperparameters it reproduces the existing backtest numbers to
+the basis point, closing the "no reproduction script" gap below. Full
+detail, including a from-scratch CV-retune discrepancy worth resolving
+before trusting either version's exact numbers as final:
+`models/options-premium-model-design.md`'s "PIT/fundamentals integration"
+section.
+**Hyperparameters re-evaluated 2026-09-02, same day, per Gabe's direct
+follow-up request — production hyperparameters (power=1.4, alpha=0.001)
+CONFIRMED, not changed.** A much wider Tweedie grid (63 combos, power
+1.1-1.9) and a re-swept GAM hurdle model (unchanged since Round 1/2) were
+run across all three variants (OLD/BASE-PIT/AUG-PIT), then — critically —
+both CV "winners" were validated against the real walk-forward dollar
+backtest rather than trusted on offline accuracy alone. Result: GAM wins
+offline MAE by a wide margin (1.02-1.05 vs. Tweedie's 1.08-1.09 across
+variants) but is a genuine trap — it produces −45% to −72% average
+backtest return (0-2/5 win rate vs. SPY) in every variant, apparently from
+overfitting on the small training pools available at early backtest
+timepoints (BASE-PIT and AUG-PIT both post an identical −76.63% at the
+very first usable timepoint). The widened Tweedie search's CV-optimal
+power (1.1) sits at the edge of the tested grid and is roughly tied with
+production only under Kelly sizing, not equal-weight — not a clear enough
+win to adopt given it's an edge-of-grid result on a 5-timepoint backtest.
+Reusable deliverable: `final/models/hyperparameter_retune/` (2 scripts +
+README). Full detail: `models/options-premium-model-design.md`'s
+"Hyperparameter re-evaluation" section.
+
+**Major rebuild + selling-premium pivot, 2026-09-04 (six rounds, same
+day, `final/models/buy_no_buy_options_v2/`) — real bugs fixed, one
+genuinely promising (if still unconfirmed) new signal found, several
+dead ends closed off with evidence rather than guesswork.** Started from
+Gabe's suspicion (correctly) that some calls the model was recommending
+had strikes implausibly far from spot, tracing back to leftover
+survivorship-biased data.
+
+*Fixed, real wins:*
+- **The options model's PIT-fundamentals coverage gap (flagged below in
+  "Known gaps" as of 2026-09-02) is now closed for eligibility purposes**:
+  re-filtered the stock model's existing
+  `final/out/features_with_fundamentals_pit.parquet` (already covers the
+  full expanded options universe via the SEC EDGAR pull done for the stock
+  model — no new Sharadar call needed) up from 495 to **1,266 tickers**,
+  joined via `merge_asof` (120-day tolerance) — see
+  `options_pit_fundamentals_expanded.parquet` /
+  `build_pit_capcheck_v3.py`. Applies to both calls and puts now.
+- **Root-caused and properly fixed a stock-split price/strike scale
+  mismatch**: local price data is split-adjusted for continuity, but
+  DoltHub's option chain strikes are never retroactively adjusted — so a
+  strike pulled from 2019 and a "current" split-adjusted spot price are on
+  different scales for any ticker that's split since. Fixed with a
+  cumulative "still-to-come" split-ratio rescale, keyed off a fresh
+  Sharadar `actions`-table pull (`sharadar_splits_raw.csv`, 1,326 events /
+  660 tickers, validated against 5 known real splits) —
+  `final/scripts/sharadar_splits_pull.py` (run directly by Gabe, same
+  network-blocked-from-sandbox reason as the other Sharadar scripts) and
+  `build02c_v3_properrescale.py`. This replaced an earlier crude
+  workaround (drop rows with weird moneyness) that was silently deleting
+  ~4.4% of rows concentrated in large/liquid/high-momentum names — which
+  had been *inflating* the apparent baseline edge (+2.11% under the old
+  workaround vs. −0.70% once properly fixed — see below).
+- **Found and fixed two independent EOD-data-quality bugs** while
+  building a 60-day-horizon variant: an MLK-Day exact-date-join gap
+  (~20% of rows silently dropped — fixed via `merge_asof(direction=
+  "backward", tolerance=3 days)` instead of an exact-date merge) and a
+  universe-wide missing-`iv_current`-on-one-specific-date gap in
+  `volatility_history_expanded.parquet` (fixed via `dropna` before the
+  asof join). Both are now-known failure modes worth checking for in any
+  future asof join against this options data.
+- **Built a full parallel short-puts ("selling premium") pipeline**,
+  mirroring the calls pipeline end to end: `build02b_pull_puts.py` →
+  `build02c_puts_properrescale.py` (same split-rescale/PIT/feature
+  infrastructure, computing cash-secured-put economics: `loss_ratio`,
+  `premium_pct_of_collateral`, `pct_return_on_collateral`,
+  `loss_ratio_plus1` as the Tweedie target) → `build_pit_puts.py`.
+- **Diagnosed a too-good-to-be-true backtest down to its actual root
+  causes** rather than reporting it — worth reading as a caution for any
+  future session that gets a suspiciously good number. An unconstrained
+  puts backtest showed +15%/cohort Kelly average, 5/5 win years; three
+  checks exposed it as almost entirely artifact: (1) the *same 1-2
+  tickers* dominated every single year's top picks — a red flag on its
+  own; (2) those tickers (MNST, APH) each carry a stock split dated
+  suspiciously close to the data-pull date, which had corrupted their
+  entire reconstructed price history via the split-rescale math; (3)
+  systematically comparing every row's quoted premium against a
+  Black-Scholes fair value computed from that row's *own* stated
+  `entry_iv` — a cheap "richness ratio" check that needs no real
+  bid/ask/volume data — showed the 90th-percentile deep-OTM pick was
+  priced 16-50x its own theoretical value (99th percentile: 2,400x),
+  i.e. stale/unexecutable quotes, not real mispricing. Under 1% of rows
+  had missing or implausible `entry_iv` yet dominated nearly every year's
+  picks. Fixed via `build_pit_puts_cleaned.py` (drop richness_ratio>3x,
+  9.1% of rows) plus an `entry_iv` sanity range (0-150%, 0.8% of rows) in
+  the generic backtest script.
+- **After cleaning, a real, modest, tail-risk-honest signal survives**,
+  confirmed at monthly cadence (85 real timepoints from
+  `entry_expiration_pairs.parquet`, not just 5-6 annual snapshots):
+  selling near-ATM/OTM cash-secured puts, Kelly avg **+3.32%/cohort
+  (~30-day hold), std 5.95%, win 70/85 (82%)** — including a real
+  −33.5% drawdown in the Feb-2020 (COVID-crash) cohort, which is itself
+  reassuring: the cleaned backtest now shows realistic short-vol tail
+  risk instead of an implausible always-positive streak. Treat as a
+  promising lead, not a confirmed edge — see caveats in the Project doc
+  (below): cleaning thresholds were reasonable-but-ad-hoc, no transaction-
+  cost/assignment modeling, and one COVID-sized month in an 85-month
+  sample can't fully characterize short-vol tail risk either way.
+
+*Dead ends, closed off with evidence (don't re-try these without a new
+reason to believe they'd work now):*
+- **Buy/no-buy gate + ATM strike, on the corrected expanded universe**:
+  underperformed the ungated baseline (Kelly avg −9.44%, std 14.99%,
+  1/5 win) — not adopted.
+- **Strike-moneyness grid search** across the expanded universe: noisy,
+  unstable across every tested point — no confident signal at any
+  moneyness.
+- **60-day horizon**: clearly worse than the 30-day baseline (Kelly avg
+  −16.11%, std 12.40%, 1/5 win).
+- **~2-day horizon** (closest honest proxy to 0DTE): Kelly avg 0.00% —
+  the calibrated-Kelly sizer correctly held 100% cash every timepoint
+  (n=4; one skipped for a genuine data gap). **Literal 0DTE was
+  deliberately never built**: entry_date==expiration_date makes
+  moneyness and payoff deterministic functions of the same EOD price —
+  methodologically circular, not a real forecasting test.
+- **Very-long (6mo/1yr) horizon**: infeasible, a real data ceiling —
+  per-ticker coverage cliff-drops from 843 tickers at 73 DTE to 25 at 74
+  DTE and stays low past 100 days, not concentrated in real LEAPS-active
+  names.
+- **The existing calls baseline itself, once properly rescaled + widened
+  + confirmed at monthly cadence**: Kelly avg −0.70% (annual, n=5) /
+  −0.16% (monthly, n=74, std 3.28%, win 14/74) — no edge, essentially
+  flat. This supersedes the earlier +2.11%/+11.43% numbers reported
+  elsewhere in this doc and in `models/options-premium-model-design.md`,
+  which predate the split-rescale fix above and the wider PIT
+  fundamentals coverage; those numbers should now be read as
+  superseded, not as the current honest baseline.
+
+The canonical reusable script going forward is `backtest_generic.py`
+(`MODE=calls|puts`, `CADENCE=annual|monthly`, optional `MAX_MONEYNESS`
+arg, env vars `EXCLUDE_RECENT_SPLITS`/`FILTER_BAD_IV`/`USE_CLEANED_PUTS`)
+— prefer it over the older one-off `baseline_properrescale_backtest*.py`
+scripts for any new backtest variant in this workstream. **None of
+today's new files are in git** (per standing constraint #5 — written
+directly to Gabe's `final/models/buy_no_buy_options_v2/` folder, nothing
+committed). Full blow-by-blow, including every intermediate number in the
+data-artifact diagnosis above and the full caveats list, is in the
+Project doc `models/2026-09-04-buy-no-buy-options-integration.md`
+(six rounds, all in one doc, most-recent-round-first).
 
 **4. Survivorship-bias correction / PIT (point-in-time) pipeline —
 COMPLETE enough to be the primary live model, actively being extended
@@ -276,19 +435,86 @@ acquired. What exists now, in order:
     close]`) are the exception — those have run successfully via the
     device bridge.
 
+## Round 9 (2026-09-07) — independent review, and what it broke
+
+An outside methodology review of commit `3b59675` was worked through in
+full. Read `backtest/2026-09-07-review-response-and-execution-corrections.md`
+in the Project for the complete write-up. The short version, because it
+changes how every number above should be read:
+
+**The headline result does not survive corrected execution.** With a
+one-bar entry lag, gap-through-aware stop fills, the delisting exit floor
+and 50bp round-trip costs, the augmented + 15% stop model returns $25,299
+against SPY's $55,597 over the same 122 windows. A stop level chosen on
+2007-2019 only (16%, not 15%) delivers **t = 0.01** on the 2020-2026
+hold-out. Treat every pre-Round-9 terminal-dollar figure in this file as
+an upper bound produced by same-bar execution and zero costs.
+
+**Two data bugs, neither previously documented.**
+
+1. `--refresh-recent` in `local_data_pull.py` spliced freshly-pulled
+   (post-split) bars onto stored (pre-split) history, fabricating a
+   one-day crash at the join. It had corrupted **MNST** (2:1, 2026-07-13)
+   and **PRIM** (2:1, 2026-05-06) — i.e. the *live signal*, not the
+   backtest. The top-up now verifies the adjustment factor on the
+   overlapping dates and re-pulls in full when it has moved.
+
+2. **`scripts/td_data_delisted/` has `close` on the dividend-adjusted
+   basis and `open`/`high`/`low` on the split-adjusted-only basis.** 157
+   of 260 tickers have `close` outside their own `[low, high]` on >98% of
+   bars (`td_data_local` is clean: 0 of 1,648). Close-to-close returns
+   never noticed, but the stop-loss reads `low` against an entry taken
+   from `close`, so stops barely fired on those names — 17.2% stop-out
+   rate versus 44.7% on clean tickers. Since the gap tickers *are* the
+   survivorship correction, the 15% stop was capping losses on half the
+   book only. Windows containing at least one such pick average +5.21%
+   excess vs SPY; windows containing none average +0.31%.
+
+   Run `src/repair_ohlc_coherence.py` before anything that reads intraday
+   columns. It writes `scripts/td_data_delisted_repaired/` and is
+   non-destructive. `local_data_pull_delisted.py` now refuses to write an
+   incoherent file.
+
+**A note on the review itself:** its section 4 claimed unadjusted splits
+across the whole panel. That is wrong — yfinance back-adjusts splits even
+with `auto_adjust=False`, verified against AAPL/NVDA/TSLA/GOOGL/AMZN and a
+6.4M-bar scan. The historical feature panels were never split-contaminated.
+The bugs above are different and were found while checking the claim.
+
+**Survivorship fix.** `continuous_walkforward_pit.py` no longer does
+`dropna(subset=FEATURE_COLS + [LABEL_COL])` before the walk-forward loop
+— that deleted any stock whose series ends within the next 40 trading
+days from the candidate pool on exactly the dates it was about to blow
+up. Candidates now need only features; the label filter applies to the
+training set only. **Expect a retrain to look worse than the numbers
+above** — it adds those positions back.
+
+**New modules.** `src/execution.py` is now the single place a position is
+realized (entry lag, stop fills, exit floor, costs) — use it rather than
+growing another copy of the arithmetic. `src/resimulate_corrected.py` and
+`src/holdout_analysis.py` reproduce the tables in the Project doc.
+`--execution as_published` reproduces pre-Round-9 numbers for comparison.
+
 ## Known gaps — read before assuming something "just works"
 
-- **`final/models/final_model_calls.pkl` and `final_model_puts.pkl` have
-  NO reproduction script currently in this repo.** The round-1/round-2
-  model comparison and hyperparameter search that produced them
-  (`models/options-premium-model-design.md`) was run ad-hoc in a prior
-  Claude cloud session's sandbox and never saved as a checked-in script.
-  These two files are deliberately **left tracked in git** (not
-  gitignored) specifically because of this — they're currently
-  irreplaceable, not just inconvenient to rebuild. If you're a future
-  session working on the options model, a real to-do is extracting that
-  fitting logic into an actual `scripts/train_options_premium_model.py`
-  so this stops being a single point of failure.
+- **`final/models/final_model_calls.pkl` and `final_model_puts.pkl` still
+  have no DIRECT reproduction script** — the original round-1/round-2 model
+  comparison and hyperparameter search that produced them was run ad-hoc in
+  a prior Claude cloud session's sandbox and never saved as a checked-in
+  script, and these two files are deliberately **left tracked in git** (not
+  gitignored) because of that. **Partially mitigated 2026-09-02**:
+  `final/models/pit_integration/train_options_pit_model.py` independently
+  reconstructs the Round 2 protocol (4 purged folds, 25-combo power/alpha
+  grid, same holdout) from scratch, and its "OLD" variant's backtest output
+  (via `backtest_pit_variants.py`, fixed hyperparameters) reproduces the
+  existing documented backtest numbers exactly — a working, validated
+  substitute for the original ad-hoc process, though it picked a different
+  hyperparameter combo on its own CV re-tune (power=1.2/alpha=0 vs. the
+  originally-documented 1.4/0.001) and didn't beat the benchmark on
+  deviance the way the original Round 2 claimed to — an unresolved
+  discrepancy, see `models/options-premium-model-design.md`. Extracting a
+  clean `scripts/train_options_premium_model.py` from this is still a real
+  to-do, not done here.
 - **`build_training_data_expanded.py`, `optimizer_backtest_expanded.py`,
   and related expanded-universe options scripts are referenced by name in
   `models/options-premium-model-design.md` but were not confirmed present
@@ -301,11 +527,29 @@ acquired. What exists now, in order:
 - **Puts (options model) has no working model.** Don't build on top of a
   puts signal assuming it's just unoptimized — it was tested and
   genuinely underperforms the "market is fairly priced" benchmark.
-- **The options premium model is NOT survivorship-bias-corrected and NOT
-  integrated with any of the PIT work in workstream 4.** It still scores
-  off the plain current-universe screen. Gabe has explicitly flagged
-  integrating the two as a longer-term goal, not something to start
-  without being asked (as of 2026-09-02).
+- **The options premium model's live scoring path (`live_score.py`,
+  `app/lib/options_model.py`) still scores off the plain current-universe
+  screen, NOT the PIT-integrated version.** The 2026-09-02 PIT/fundamentals
+  integration (see workstream 3 above) was a research pass only — it
+  wasn't adopted (no clear win) and nothing in the live app or
+  `live_score.py` was changed. If a future session wants to actually adopt
+  it, `final/models/pit_integration/` has the pipeline, but the current
+  live behavior is unchanged from before this pass.
+- **The options model's universe was built from TODAY's roster, not a
+  point-in-time-correct one — PARTIALLY addressed 2026-09-04, still a
+  real gap.** The 2026-09-04 rebuild (see workstream 3 above) widened PIT
+  fundamentals coverage to 1,266 tickers and applies a point-in-time
+  market_cap/price eligibility floor at each option's own entry_date, for
+  both calls and puts — closing the *fundamentals-eligibility* half of
+  this gap. What's still NOT point-in-time-correct: the underlying
+  option-chain pull itself (`expanded_universe_tickers.txt` and friends)
+  is still built from today's roster — a company that had tradeable
+  options in, say, 2019-2021 before later being removed from the current
+  expanded-universe list is a real, still-uncaptured source of
+  survivorship bias distinct from the eligibility-floor fix. Flagged in
+  both the design doc's PIT-integration section and
+  `models/2026-09-04-buy-no-buy-options-integration.md` as a real next
+  step, not resolved.
 - **Survivorship-bias correction (workstream 4) is real and now the
   primary signal, but still has known, documented incompleteness** — not
   every gap ticker has usable Sharadar coverage (of the current 264-file
@@ -338,7 +582,16 @@ acquired. What exists now, in order:
   `pit_universe_continuous.py`, `current_signal_pit.py`) and the app
   changes (`app.py`, `app/lib/pit_model.py`) delivered 2026-09-02 —
   written to Gabe's files but, per standing constraint #5, not committed
-  by any AI assistant. Don't assume these are in git history yet.
+  by any AI assistant. Don't assume these are in git history yet. The same
+  applies to `final/models/pit_integration/` (new, 2026-09-02) and
+  `final/data/options_pit_fundamentals_slim.parquet` and
+  `final/data/training/options_calls_training_pit.parquet` — the latter
+  two are large generated data files and should probably stay gitignored
+  rather than committed; the scripts under `pit_integration/` are the part
+  worth adding to git. This also now includes `final/models/hyperparameter_
+  retune/` (new, 2026-09-02, same day) — two scripts + README + a
+  `results/` subfolder of JSON/CSV, all worth adding to git (no large
+  generated data files this time, just results).
 
 ## Reproducing every gitignored path
 
@@ -374,11 +627,25 @@ specific confirmed-blocked details.
 section is DONE** — see workstream 4 above for current status. What's
 actually open now:
 
-- **Integrate the PIT/survivorship-corrected data into the options
-  premium model (workstream 3).** Gabe's own words (2026-09-02): "A
-  longer term goal is to update the options model to integrate this new
-  data, though that is beyond the scope of what I want to do right now."
-  Explicitly not started, not to be started without being asked.
+- **Options-model PIT/fundamentals integration was attempted 2026-09-02**
+  (see workstream 3 above) — no clear win, not adopted into production.
+  Real follow-ups if this gets revisited: (a) rebuild the options
+  training-data ticker list from a point-in-time-correct universe rather
+  than today's roster (the integration pass never touched WHICH tickers
+  are included, only added features/eligibility for the existing 496); (b)
+  combine with the expanded (1,284-ticker) universe rather than keeping
+  them isolated; (c) root-cause why the from-scratch CV retune picked
+  different hyperparameters and didn't beat the benchmark on deviance the
+  way the original Round 2 did.
+- **A much deeper hyperparameter search was also run 2026-09-02** (same
+  day, separate request) — confirmed production hyperparameters
+  (power=1.4, alpha=0.001) rather than finding a better setting. See
+  workstream 3 above. If GAM is ever revisited despite its backtest
+  failure here, a real speed fix (fewer spline terms, a feature-selection
+  pass before GAM, or accepting a much longer run) is needed before a
+  Tweedie-scale grid becomes practical, and the −76.63%-at-first-timepoint
+  pattern deserves an actual learning-curve check rather than the
+  by-pattern diagnosis this pass used.
 - **Adjusted-vs-unadjusted-close question, still open**:
   `sharadar_data_pull.py` defaults to Sharadar's `closeadj` (split/
   dividend-adjusted close) for momentum/volatility feature consistency,
@@ -545,6 +812,12 @@ Project attached to this work (not as files in this git repo):
   1,619/1,620-ticker universe was built
 - `signals/2026-08-25-top-10-buy-list.md` — a dated snapshot of live
   model output
+- `models/2026-09-04-buy-no-buy-options-integration.md` — the 2026-09-04
+  options-model rebuild + selling-premium pivot, six rounds in one doc
+  (most-recent-round-first): survivorship-bias/split-rescale fixes, the
+  buy/no-buy-gate and strike/duration dead ends, the too-good-to-be-true
+  puts backtest and how it was diagnosed down to real root causes, and
+  the modest signal that survived cleaning
 
 If you're an AI assistant with access to a "Projects" tool tied to this
 work, read those directly rather than relying on this file's necessarily

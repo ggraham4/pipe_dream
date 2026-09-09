@@ -1,0 +1,19 @@
+Modeling dataset: (1010892, 30), entries 2020-01-22 to 2026-07-22
+
+=== BASELINE (no buy/no-buy feature) (18 features) ===
+  2021-01-15: train=120759 cohort=13344 fit=0.6s OLD=10.19 NEW=None
+  2022-01-15: train=248134 cohort=12714 fit=0.9s OLD=-27.56 NEW=-1.63
+  2023-01-15: train=401023 cohort=12721 fit=1.0s OLD=10.45 NEW=13.59
+  2024-01-15: train=563763 cohort=14455 fit=1.2s OLD=-15.67 NEW=18.75
+  2025-01-15: train=724023 cohort=12863 fit=1.3s OLD=85.05 NEW=36.22
+  2026-01-15: train=893421 cohort=18163 fit=1.7s OLD=-48.61 NEW=-2.1
+
+=== AUGMENTED (+ buy_no_buy_proba) (19 features) ===
+  2021-01-15: train=120759 cohort=13344 fit=0.5s OLD=10.19 NEW=None
+  2022-01-15: train=248134 cohort=12714 fit=1.1s OLD=-27.56 NEW=-20.37
+  2023-01-15: train=401023 cohort=12721 fit=1.2s OLD=2.01 NEW=18.41
+  2024-01-15: train=563763 cohort=14455 fit=1.3s OLD=-15.67 NEW=17.18
+  2025-01-15: train=724023 cohort=12863 fit=1.6s OLD=59.34 NEW=24.06
+  2026-01-15: train=893421 cohort=18163 fit=1.6s OLD=-48.61 NEW=3.23
+
+Saved idea2_results.json
