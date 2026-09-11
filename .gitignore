@@ -67,3 +67,16 @@ final/src/_patch_*.py
 # as of Round 11, kept on disk only for reproducing pre-Round-11 results. ---
 final/scripts/td_data_delisted_repaired/
 final/scripts/td_data_delisted_repaired_causal/
+
+# --- Round 13/14 sweep harness outputs (2026-09-11). The score caches and the
+# realized-outcomes table are large regenerable derivatives (~218MB total);
+# rebuild with `python3 -m sweep.cli scores` then `... outcomes`. The small
+# result CSVs alongside them are deliberately NOT ignored -- they are the
+# evidence behind the findings recorded in the Claude Project docs. ---
+final/out/sweep/scores/
+final/out/*.log
+final/out/sweep/*.log
+
+# --- Backup copies taken before in-place edits. Git is the backup. ---
+*.bak_*
+*.bak_round*

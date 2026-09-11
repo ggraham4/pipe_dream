@@ -1,0 +1,182 @@
+[
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 15.0,
+    "cost_model": "turnover",
+    "untradable": "drop"
+  },
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 15.0,
+    "cost_model": "turnover",
+    "untradable": "zero"
+  },
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 15.0,
+    "cost_model": "turnover",
+    "untradable": "worst"
+  },
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 15.0,
+    "cost_model": "per_window",
+    "untradable": "drop"
+  },
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 15.0,
+    "cost_model": "per_window",
+    "untradable": "zero"
+  },
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 15.0,
+    "cost_model": "per_window",
+    "untradable": "worst"
+  },
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 50.0,
+    "cost_model": "turnover",
+    "untradable": "drop"
+  },
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 50.0,
+    "cost_model": "turnover",
+    "untradable": "zero"
+  },
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 50.0,
+    "cost_model": "turnover",
+    "untradable": "worst"
+  },
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 50.0,
+    "cost_model": "per_window",
+    "untradable": "drop"
+  },
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 50.0,
+    "cost_model": "per_window",
+    "untradable": "zero"
+  },
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 50.0,
+    "cost_model": "per_window",
+    "untradable": "worst"
+  },
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 100.0,
+    "cost_model": "turnover",
+    "untradable": "drop"
+  },
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 100.0,
+    "cost_model": "turnover",
+    "untradable": "zero"
+  },
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 100.0,
+    "cost_model": "turnover",
+    "untradable": "worst"
+  },
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 100.0,
+    "cost_model": "per_window",
+    "untradable": "drop"
+  },
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 100.0,
+    "cost_model": "per_window",
+    "untradable": "zero"
+  },
+  {
+    "top_n": 20,
+    "weighting": "equal",
+    "stop": null,
+    "bucket": "none",
+    "vol_target": null,
+    "cost_bps": 100.0,
+    "cost_model": "per_window",
+    "untradable": "worst"
+  }
+]

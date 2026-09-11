@@ -1,0 +1,164 @@
+{
+  "cell": "price_fund_h40_q75_trd_xgb_d3e01r100_expanding_pit_s40",
+  "portfolio": {
+    "top_n": 5,
+    "weighting": "invvol",
+    "bucket": "volq",
+    "cost_bps": 15.0,
+    "cost_model": "turnover",
+    "untradable": "drop",
+    "vol_target": null
+  },
+  "stop": null,
+  "metrics": {
+    "n_windows": 82,
+    "years": 13.02,
+    "model_mult": 6.294528541531122,
+    "spy_mult": 2.142442100631625,
+    "mult_ratio": 2.9380157063172896,
+    "model_cagr": 0.1517477516025283,
+    "spy_cagr": 0.06026048372405235,
+    "excess_cagr": 0.09148726787847594,
+    "mean_excess": 0.015239810554122277,
+    "t_excess": 2.2623657702388886,
+    "win_rate": 0.5609756097560976,
+    "sharpe": 0.7541844838280153,
+    "info_ratio": 0.626949860576798,
+    "vol_ann": 0.22032926638280617,
+    "max_dd": -0.3465961704761634,
+    "skew": 0.19051927751652362,
+    "kurt": 2.773393822577838,
+    "mean_exposure": 1.0,
+    "mean_turnover": 0.8853658536585365,
+    "mean_n": 5.0,
+    "mean_ic": 0.002046600730959627,
+    "t_ic": 0.09088477204398411,
+    "n_ic": 82
+  },
+  "attribution": {
+    "n_windows": 82,
+    "mean_return": 0.02638736056861006,
+    "models": {
+      "raw": {
+        "coef": {
+          "alpha": 0.02638736056861006
+        },
+        "t": {
+          "alpha": 2.721495398512464
+        },
+        "r2": 0.0
+      },
+      "vs SPY": {
+        "coef": {
+          "alpha": 0.014524294500206902,
+          "spy": 1.06418594695565
+        },
+        "t": {
+          "alpha": 2.109780333396678,
+          "spy": 9.294803100987473
+        },
+        "r2": 0.519211597464197
+      },
+      "vs universe": {
+        "coef": {
+          "alpha": 0.015491076486492193,
+          "univ": 1.0081331640974425
+        },
+        "t": {
+          "alpha": 2.456698664935902,
+          "univ": 10.795853506879517
+        },
+        "r2": 0.5929798237422221
+      },
+      "vs SPY+univ": {
+        "coef": {
+          "alpha": 0.01659536177251783,
+          "spy": -0.590175594352647,
+          "univ": 1.5146593778182096
+        },
+        "t": {
+          "alpha": 2.6275959652341956,
+          "spy": -1.410076217769957,
+          "univ": 4.082476596267613
+        },
+        "r2": 0.6029724294397569
+      },
+      "vs SPY+volspread": {
+        "coef": {
+          "alpha": 0.020308704089665952,
+          "spy": 0.6018215173251551,
+          "volspread": 0.6115516559294122
+        },
+        "t": {
+          "alpha": 3.2563546278218,
+          "spy": 4.266302559684947,
+          "volspread": 4.7302247783592275
+        },
+        "r2": 0.6253289875328725
+      },
+      "vs SPY+univ+volspread": {
+        "coef": {
+          "alpha": 0.02003568828621185,
+          "spy": -0.2513682652005666,
+          "univ": 0.8902019658561052,
+          "volspread": 0.45399816214415367
+        },
+        "t": {
+          "alpha": 3.289041879183827,
+          "spy": -0.6107644929413238,
+          "univ": 2.1999390238586645,
+          "volspread": 3.1277411919531453
+        },
+        "r2": 0.6472183290597491
+      }
+    },
+    "null_t_alpha": {
+      "n": 300,
+      "model": "vs SPY+univ+volspread",
+      "t_alpha_p50": -0.19817958917703848,
+      "t_alpha_p90": 1.119043126219214,
+      "t_alpha_p95": 1.5034879003659098,
+      "t_alpha_p99": 2.1256438475169386,
+      "t_alpha_max": 2.953672667728052,
+      "alpha_p95_pct_per_window": 0.7360926589713865,
+      "observed": 3.289041879183827,
+      "p_value": 0.0
+    },
+    "window_concentration": {
+      "full": {
+        "t_alpha": 3.289041879183827,
+        "alpha": 0.02003568828621185,
+        "n": 82
+      },
+      "drop_best_1": {
+        "t_alpha": 2.9844646070374954,
+        "alpha": 0.017768054750656237,
+        "n": 81
+      },
+      "drop_best_3": {
+        "t_alpha": 2.763976102704687,
+        "alpha": 0.016714541515480626,
+        "n": 79
+      },
+      "drop_best_5": {
+        "t_alpha": 2.393538141756325,
+        "alpha": 0.01440214365044137,
+        "n": 77
+      },
+      "share_of_total_return": {
+        "best_1": 0.12930660680026207,
+        "best_3": 0.3072594678744688,
+        "best_5": 0.47130295810238376
+      },
+      "skew": 0.19408786134207826
+    }
+  },
+  "exposure": {
+    "n_windows": 82,
+    "mean_vol_percentile": 0.5489026093795689,
+    "mean_cap_percentile": 0.37773906233035415
+  },
+  "clustered_consistency": {
+    "error": "no 'null_pctile' column -- this results file was written by a run with --null-draws 0, which computes no matched null. Re-run `portfolio` with --null-draws 100 to regenerate it."
+  }
+}

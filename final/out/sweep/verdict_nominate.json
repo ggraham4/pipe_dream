@@ -1,0 +1,40 @@
+{
+  "n_cells": 1152,
+  "metric": "mult_ratio",
+  "consistency": {
+    "cells_with_null": 1152,
+    "frac_above_null_p95": 0.14756944444444445,
+    "expected_under_null": 0.05,
+    "n_above_p95": 170,
+    "z_vs_binomial": 15.194739779248092,
+    "frac_above_null_median": 0.46875,
+    "median_null_pctile": 0.45
+  },
+  "best_value": 2.9380157063172896,
+  "best_cell": "price_fund_h40_q75_trd_xgb_d3e01r100_expanding_pit_s40",
+  "grid_mean": 0.755332524449531,
+  "grid_median": 0.7455187842150726,
+  "grid_p95": 1.3045919964729735,
+  "grid_max": 2.9380157063172896,
+  "n_beating_1x": 204,
+  "frac_beating_1x": 0.17708333333333334,
+  "trial_sharpe_var": 0.004772698345349964,
+  "deflated": {
+    "dsr": 0.7459413282262998,
+    "sr": 0.300538890063404,
+    "sr0": 0.22764427369910323,
+    "T": 82,
+    "skew": 0.19051927751652362,
+    "kurt": 2.773393822577838,
+    "z": 0.6617720152344023
+  },
+  "reality_check": {
+    "p_value": 0.6095,
+    "V": 0.14719989327743324,
+    "K": 1008,
+    "boot_mean": 0.18223363783444935,
+    "boot_p95": 0.34057909400751957,
+    "n_cells_in_test": 1008,
+    "n_windows_used": 82
+  }
+}

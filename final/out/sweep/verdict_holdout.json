@@ -1,0 +1,40 @@
+{
+  "n_cells": 4,
+  "metric": "mult_ratio",
+  "consistency": {
+    "cells_with_null": 4,
+    "frac_above_null_p95": 0.25,
+    "expected_under_null": 0.05,
+    "n_above_p95": 1,
+    "z_vs_binomial": 1.8353258709644944,
+    "frac_above_null_median": 1.0,
+    "median_null_pctile": 0.945
+  },
+  "best_value": 1.525983824135739,
+  "best_cell": "price_fund_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+  "grid_mean": 1.0865394267732642,
+  "grid_median": 1.0037536374565943,
+  "grid_p95": 1.4618045262126969,
+  "grid_max": 1.525983824135739,
+  "n_beating_1x": 2,
+  "frac_beating_1x": 0.5,
+  "trial_sharpe_var": 0.004092842979712864,
+  "deflated": {
+    "dsr": 0.9562147650350913,
+    "sr": 0.3402334865332898,
+    "sr0": 0.06730990595609455,
+    "T": 42,
+    "skew": -0.02889427113957728,
+    "kurt": 2.264628293422128,
+    "z": 1.708355117383602
+  },
+  "reality_check": {
+    "p_value": 0.2215,
+    "V": 0.11167725712825508,
+    "K": 4,
+    "boot_mean": 0.06493816289377644,
+    "boot_p95": 0.21969543111236056,
+    "n_cells_in_test": 4,
+    "n_windows_used": 42
+  }
+}

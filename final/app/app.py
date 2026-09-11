@@ -158,7 +158,8 @@ def render_overview():
             else:
                 c3.metric("Forward horizon", f"{sm.universe_summary()['forward_window_days']}d")
             if pit_df is not None:
-                st.caption("Augmented + stop-loss (PIT, primary signal) — today's picks")
+                st.caption("Best-case configuration (PIT, recency-limited, "
+                           "vol-bucketed 5) — today's picks. NOT a validated edge.")
                 show = pit_df[["ticker", "allocation_pct", "close", "suggested_stop_loss_price"]].copy()
                 show["allocation_pct"] = show["allocation_pct"].map(lambda v: f"{v:.2f}%")
                 st.dataframe(show, hide_index=True, use_container_width=True)
@@ -330,7 +331,7 @@ def render_stock_query():
 
 
 def render_stock_weights():
-    st.subheader("Augmented + stop-loss (PIT, primary)")
+    st.subheader("Best-case config (PIT, primary)")
     st.caption(
         "The point-in-time mid-cap+ eligibility floor and the 15% stop-loss are both applied AFTER this "
         "model scores a ticker — they don't change what the model itself learned, only which tickers it's "
@@ -395,7 +396,7 @@ def render_stock_weights():
 
 
 def render_stock_backtest():
-    st.subheader("Augmented + stop-loss (PIT, primary)")
+    st.subheader("Best-case config (PIT, primary)")
     gbt = pm.get_backtest_tables()
     if not gbt:
         st.info("No PIT continuous walk-forward backtest output yet — run "
@@ -507,15 +508,40 @@ def render_stock_pit():
         return
 
     st.caption(
-        "**Primary signal.** Trains the augmented model (price momentum + point-in-time SEC fundamentals, "
-        "no_staleness) fresh on all history through today, restricts today's candidates to the same "
+        "**Primary signal — \"best case\" configuration (Round 13, 2026-09-11).** Trains the augmented "
+        "model (price momentum + point-in-time SEC fundamentals, no_staleness) on the **most recent "
+        "500,000 labelled rows** rather than all history, restricts today's candidates to the "
         "point-in-time mid-cap+ eligibility floor used in the backtest (market cap ≥ $2B and price > $10 "
-        "*as of today*, not just at some point in the past — see Round 7), and takes the top-5 by "
-        "predicted probability. Each pick's suggested stop-loss is 15% below its entry close — the "
-        "empirically-optimized level from a sweep over the backtest (Round 8), not an automated order."
+        "*as of today* — see Round 7), then selects the **single best name from each of 5 trailing-volatility "
+        "quintiles (5 total)** and weights them by **inverse volatility**. The configuration holds to the "
+        "40-day horizon with no stop-loss; the 15% stop level is still shown per name as risk guidance but "
+        "is not part of the backtested configuration."
+    )
+    st.error(
+        "**This is not a validated edge, and it is not claimed to be one.** A pre-registered sweep of "
+        "1,152 configurations (Round 12) failed its acceptance criteria: Deflated Sharpe 0.746 against a "
+        "0.95 threshold, White Reality Check p = 0.61, and 0 of 24 signal configurations reaching an "
+        "information-coefficient t-statistic above 2. A follow-up screen (Round 13) showed that every "
+        "fundamental feature that appeared to carry signal is a **sector bet** — neutralizing on sector "
+        "drops the strongest feature from t = 3.28 to t = 0.77 — and that none of the 12 price/volume "
+        "features reaches |t| = 1.25 at any horizon. "
+        "This configuration was selected as the one with the best **expected** outcome among options that "
+        "are individually indistinguishable from noise, so that the app reflects the current state of the "
+        "art while new data sources and architectures are developed. It is a placeholder, not a result. "
+        "For calibration: in a synthetic grid containing **no signal at all**, 27% of configurations "
+        "\"beat the market\" and the best reached 2.58x. Full detail: "
+        "`backtest/2026-09-11-round12-sweep-results.md` and `models/2026-09-11-feature-ic-screen.md`."
     )
     st.caption(
-        "Backtested $10k → $214,606 vs. SPY's $53,306 over 123 non-overlapping 40-day windows, 2007–2026 "
+        "**Backtested performance of THIS configuration**, net of 15bp round-trip costs, entered at the "
+        "next open. Selection era 2007-2019 (82 windows): **2.80x SPY**, +8.7%/yr excess, max drawdown "
+        "-36.6%. Hold-out 2020-2026 (42 windows, looked at once): **1.53x SPY**, +7.3%/yr excess, max "
+        "drawdown -27.4%. The previous configuration shown here returned 1.18x and 1.10x on the same two "
+        "spans. "
+        "**None of this is statistically significant.** The hold-out's Deflated Sharpe of 0.96 deflates "
+        "against only the 4 configurations in that confirmation run; against the 1,152 this one was "
+        "actually selected from it is **0.79 -- a fail** -- and White's Reality Check agrees at p = 0.22. "
+        "The hold-out is now spent, so no unused data remains to validate this choice."
         "(expanded, mid-cap-floor-corrected universe). Caveats worth keeping in view: no transaction-cost/ "
         "slippage modeling, and the stop-loss percentage was chosen from a backtested sweep — a broad, "
         "well-supported plateau (12–17%), not a single lucky point, but still not guaranteed to hold going "
@@ -832,7 +858,7 @@ def render_data_updates():
         "re-pulling full history, and runs an options history update — all from your own network, so "
         "this should finish in a few minutes even across the full universe. \"Retrain all models\" "
         "rebuilds every feature panel (including the PIT price/fundamentals panels) and retrains "
-        "XGBoost, the LSTM, and the primary augmented + stop-loss (PIT) model. The options Tweedie GLM "
+        "XGBoost, the LSTM, and the primary best-case config (PIT) model. The options Tweedie GLM "
         "needs no separate retrain step — it refits automatically next time it's used, off whatever "
         "training data is newest on disk. Run the data update first, then retrain, if you want a fully "
         "current read in one sitting. Note: neither button refreshes scripts/fundamentals_raw/ (SEC "
@@ -884,20 +910,29 @@ def render_data_updates():
         if st.button("🔁 Retrain ALL models", key="btn_retrain_all_models", use_container_width=True):
             py = sys.executable
             cmds = [
+                # secondary models -- still on the OLD universe, see
+                # patch_app_round11.py's "NOT CHANGED, ON PURPOSE"
                 [py, str(paths.SRC_DIR / "features.py")],
-                [py, str(paths.SRC_DIR / "features_pit.py")],
-                [py, str(paths.SRC_DIR / "fundamentals_features_pit.py")],
                 [py, str(paths.SRC_DIR / "current_signal.py")],
                 [py, str(paths.SRC_DIR / "lstm_current_signal.py")],
+                # primary PIT model -- Round 11 sequence
+                [py, str(paths.SRC_DIR / "sharadar_pull_pit_panel.py")],
+                [py, str(paths.SRC_DIR / "build_pit_universe.py")],
+                [py, str(paths.SRC_DIR / "build_features_sharadar.py")],
+                [py, str(paths.SRC_DIR / "build_features_fundamentals_sharadar.py")],
+                [py, str(paths.SRC_DIR / "export_sharadar_ohlc.py")],
                 [py, str(paths.SRC_DIR / "current_signal_pit.py")],
             ]
             labels = [
-                "Rebuild price features.parquet",
-                "Rebuild PIT price panel (features_pit.py)",
-                "Rebuild PIT fundamentals panel",
-                "Retrain XGBoost (secondary, price-only)",
-                "Retrain LSTM (secondary)",
-                "Retrain primary model (augmented + stop-loss, PIT) + compute today's picks",
+                "Rebuild price features.parquet (secondary models, old universe)",
+                "Retrain XGBoost (secondary, price-only, old universe)",
+                "Retrain LSTM (secondary, old universe)",
+                "Top up the Sharadar panel (needs SHARADAR_API_KEY)",
+                "Rebuild the point-in-time universe",
+                "Rebuild price features (PIT)",
+                "Rebuild fundamental features (PIT)",
+                "Export per-ticker OHLCV for execution",
+                "Retrain primary model (best-case config, PIT) + compute today's picks",
             ]
             dr.run_step_sequence("retrain_all_models", cmds, labels, cwd=paths.SRC_DIR)
             st.rerun()

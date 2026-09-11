@@ -30,9 +30,22 @@ from . import paths
 
 paths.ensure_src_on_path()
 
+PIT_STEP_LABELS = [
+    "Top up the Sharadar price/marketcap panel (needs SHARADAR_API_KEY)",
+    "Rebuild the point-in-time universe",
+    "Rebuild price features",
+    "Rebuild fundamental features",
+    "Export per-ticker OHLCV for execution",
+    "Retrain primary model + compute today's picks",
+]
+
 SIGNAL_CSV = paths.OUT_DIR / "current_signal_pit.csv"
 SIGNAL_META = paths.OUT_DIR / "current_signal_pit_meta.json"
-FUND_PIT_PARQUET = paths.OUT_DIR / "features_with_fundamentals_pit.parquet"
+# Round 11: the rebuilt point-in-time panel. The old file is still on
+# disk and still readable, but it carries the survivorship-contaminated
+# universe -- reading it here would show contaminated context beside
+# clean picks.
+FUND_PIT_PARQUET = paths.OUT_DIR / "features_with_fundamentals_sharadar_pit.parquet"
 MODEL_PATH = paths.STOCK_MODELS_DIR / "xgb_pit_augmented_model.json"
 
 BUY_PERCENTILE_THRESHOLD = 0.25  # top quartile -> BUY, same convention as every other model in this app
@@ -225,7 +238,7 @@ def query_tickers(tickers: list[str]) -> dict:
     NO BUY (eligible, model just doesn't rank it highly enough)."""
     gfeat = get_fundamentals_pit_features()
     if gfeat is None:
-        return {"error": "features_with_fundamentals_pit.parquet not found -- "
+        return {"error": "features_with_fundamentals_sharadar_pit.parquet not found -- "
                           "run a retrain first (Today's Picks tab)."}
 
     tickers = [t.strip().upper() for t in tickers if t.strip()]
@@ -319,8 +332,10 @@ def retrain_commands() -> list[list[str]]:
     pull either."""
     py = sys.executable
     return [
-        [py, str(paths.SRC_DIR / "features.py")],
-        [py, str(paths.SRC_DIR / "features_pit.py")],
-        [py, str(paths.SRC_DIR / "fundamentals_features_pit.py")],
+        [py, str(paths.SRC_DIR / "sharadar_pull_pit_panel.py")],
+        [py, str(paths.SRC_DIR / "build_pit_universe.py")],
+        [py, str(paths.SRC_DIR / "build_features_sharadar.py")],
+        [py, str(paths.SRC_DIR / "build_features_fundamentals_sharadar.py")],
+        [py, str(paths.SRC_DIR / "export_sharadar_ohlc.py")],
         [py, str(paths.SRC_DIR / "current_signal_pit.py")],
     ]

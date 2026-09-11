@@ -67,7 +67,60 @@ from continuous_walkforward_pit import (MIN_MARKET_CAP, MIN_PRICE,
                                         load_pit_universe)
 
 CUTOFF_PERCENTILE = 75
+
+# ---------------------------------------------------------------------------
+# Round 13 (2026-09-11): "BEST CASE" CONFIGURATION.
+#
+# READ THIS BEFORE TRUSTING ANY NUMBER THIS SCRIPT PRODUCES.
+#
+# The Round 12 sweep (1,152 configurations) and the Round 13 feature screen
+# established that this model has NO statistically demonstrable edge:
+#   * Deflated Sharpe 0.746 against a 0.95 threshold  (FAIL)
+#   * White Reality Check p = 0.61                    (FAIL)
+#   * 0 of 24 signal configurations reach IC |t| > 2
+#   * every fundamental feature that looked significant is a SECTOR bet --
+#     sector-neutralizing drops the best feature from t = 3.28 to t = 0.77
+#
+# This configuration is therefore NOT "the model that beats the market". It is
+# the configuration with the best EXPECTED outcome given that none of them are
+# distinguishable from noise -- chosen at Gabe's explicit request (2026-09-11)
+# so the app reflects the current state of the art while new data and
+# architectures are developed. Selection criteria, in order:
+#
+#   1. TRAINING WINDOW -- recency-limited rather than expanding. The four
+#      recency-limited cells in the grid ranked 1st, 2nd, 4th and 7th of 24 by
+#      MEDIAN compounded ratio. That is a coherent pattern across independent
+#      cells with a plausible mechanism (non-stationarity), not one lucky cell.
+#   2. BREADTH -- 5 names, one from each volatility quintile.
+#      REVISED 2026-09-11 after the hold-out. The first version of this block
+#      chose 50 names, on the grounds that top-5's nomination-era advantage
+#      came from a fat right tail (higher mean, lower MEDIAN across signal
+#      cells) and would not repeat. The 2020-2026 hold-out falsified that
+#      directly, and monotonically in breadth:
+#          top-5   1.526x SPY   +7.3%/yr   max DD -27.4%
+#          top-20  0.909x       -1.6%/yr
+#          top-50  0.813x       -3.4%/yr   <- the original recommendation
+#      The median-across-cells argument answered "which construction is robust
+#      when the signal cell is unknown". The cell is known, and within it
+#      top-5 wins in BOTH eras (2.796x nomination, 1.526x hold-out).
+#   3. VOLATILITY-BUCKETED SELECTION -- the single largest effect in the whole
+#      sweep, lifting the grid mean from 0.606 to 0.905 with no model change.
+#
+# THE HOLD-OUT IS NOW SPENT. Choosing top-5 on the strength of 2020-2026 was
+# the legitimate one-time confirmation use of that data, but it means no
+# unused data remains to validate this choice. Everything from here is
+# in-sample until genuinely new data arrives.
+#
+# And the hold-out's own Deflated Sharpe of 0.956 is NOT a pass: it deflates
+# against the 4 configurations in that mini-grid, not the 1,152 this one was
+# selected from. With the honest denominator it is 0.791 -- a fail -- and the
+# Reality Check agrees at p = 0.22.
+# ---------------------------------------------------------------------------
 TOP_N = 5
+N_VOL_BUCKETS = 5          # pick TOP_N // N_VOL_BUCKETS from each vol quintile
+WEIGHTING = "invvol"       # inverse trailing volatility, normalized to 1
+TRAIN_CAP = 500_000        # most recent N labelled rows; 0 = expanding (old)
+USE_STOP = False           # the selected configuration holds to the horizon
 NO_STALE_COLS = [c for c in FUNDAMENTAL_FEATURE_COLS if c != "fundamentals_age_days"]
 AUGMENTED_FEATURE_COLS = FEATURE_COLS + NO_STALE_COLS
 
@@ -112,6 +165,31 @@ def latest_complete_date_pit(feat, gap_tickers, min_coverage=0.9):
     "CHRD__post20201118") won't match load_gap_ticker_set()'s plain
     symbols, so its post-break segment counts as "current universe" here
     too -- narrow in practice (a handful of tickers), not fixed here."""
+    if UNIVERSE == "pit":
+        # Denominator = the names that were supposed to be trading that day,
+        # not "every ticker in the panel that is not a known gap ticker".
+        # The rebuilt panel carries ~2,100 dead companies that were never in
+        # the old gap list; counting them makes 90% unreachable on a panel
+        # that is perfectly healthy. See patch_signal2.py's header.
+        pit = load_pit_universe()
+        have = feat.groupby("date")["ticker"].apply(set)
+        for d in sorted(have.index, reverse=True):
+            members = pit.get(str(pd.Timestamp(d).date()))
+            if not members:
+                continue
+            cov = len(members & have[d]) / len(members)
+            if cov >= min_coverage:
+                print(f"Freshness: {pd.Timestamp(d).date()} has "
+                      f"{len(members & have[d])}/{len(members)} "
+                      f"({cov:.1%}) of that day's PIT universe in the panel")
+                return d
+        raise RuntimeError(
+            f"No date reaches {min_coverage:.0%} coverage of its own PIT universe. "
+            f"Panel runs to {pd.Timestamp(max(have.index)).date()}, "
+            f"pit_universe.parquet to {max(pit)}. If those differ, rebuild the "
+            f"later one; if they match, the price pull is stale."
+        )
+
     current = feat[~feat["ticker"].isin(gap_tickers)]
     counts = current.groupby("date").size()
     total = current["ticker"].nunique()
@@ -142,6 +220,15 @@ def main():
     # (same reasoning as backtest_pit.py / continuous_walkforward_pit.py's
     # run_walkforward() -- the floor only constrains what's PICKABLE today).
     train = feat.dropna(subset=FEATURE_COLS + [LABEL_COL])
+    # Round 13: recency-limited training. Keep only the most recent TRAIN_CAP
+    # labelled rows. See the header block -- the recency-limited cells ranked
+    # 1/2/4/7 of 24 by median compounded ratio, which is the single most
+    # reproducible pattern the sweep found.
+    if TRAIN_CAP:
+        n_before = len(train)
+        train = train.sort_values("date").tail(int(TRAIN_CAP))
+        print(f"Recency-limited training: {len(train):,} of {n_before:,} labelled "
+              f"rows ({train['date'].min().date()} .. {train['date'].max().date()})")
     cutoff_val = np.percentile(train[LABEL_COL], CUTOFF_PERCENTILE)
     print(f"Training on {len(train)} rows, label cutoff (75th pct {FORWARD_WINDOW}d fwd return) = {cutoff_val:.4f}")
 
@@ -180,8 +267,11 @@ def main():
               f"({len(_day)} names eligible that day)")
     else:
         eligible = today_rows[(today_rows["close"] > MIN_PRICE) & (today_rows["market_cap"] >= MIN_MARKET_CAP)].copy()
-    print(f"Point-in-time mid-cap+ floor (market_cap >= ${MIN_MARKET_CAP:,.0f}, close > ${MIN_PRICE:.0f}): "
-          f"{len(eligible)}/{n_before} tickers eligible today")
+    if UNIVERSE != "pit":
+        print(f"Point-in-time mid-cap+ floor (market_cap >= ${MIN_MARKET_CAP:,.0f}, close > ${MIN_PRICE:.0f}): "
+              f"{len(eligible)}/{n_before} tickers eligible today")
+    # On the pit path the floor above does not run; the PIT
+    # universe line printed earlier is the real screen.
     if eligible.empty:
         raise RuntimeError("No tickers cleared the point-in-time mid-cap+ eligibility floor today -- "
                             "check that fundamentals_features_pit.py ran recently enough to have "
@@ -191,14 +281,32 @@ def main():
     eligible["rank"] = eligible["buy_proba"].rank(ascending=False, method="min").astype(int)
     eligible["percentile"] = eligible["rank"] / len(eligible)
 
-    picks = eligible.sort_values("buy_proba", ascending=False).head(TOP_N).copy()
+    # Round 13: select WITHIN volatility quintiles and weight by inverse
+    # volatility. Both are imported from the sweep harness rather than
+    # reimplemented -- DATA-PIPELINE-HANDOFF.md section 6.4: a live pick and a
+    # backtested pick must not come from two copies of the same rule.
+    from sweep.portfolio import _pick_idx, _weights
+    _d = {
+        "score": eligible["buy_proba"].to_numpy(np.float64),
+        "vol": (eligible["volatility_60"].to_numpy(np.float64)
+                if "volatility_60" in eligible.columns
+                else np.full(len(eligible), np.nan)),
+        "cap": (eligible["market_cap"].to_numpy(np.float64)
+                if "market_cap" in eligible.columns
+                else np.full(len(eligible), np.nan)),
+    }
+    _idx = _pick_idx(_d, TOP_N, "volq", n_buckets=N_VOL_BUCKETS)
+    picks = eligible.iloc[_idx].copy()
+    picks["weight_pct"] = _weights(_d, _idx, WEIGHTING) * 100.0
     picks["stop_loss_price"] = picks["close"] * (1 - OPTIMAL_STOP_PCT)
+    print(f"Selected {len(picks)} names: top {TOP_N // N_VOL_BUCKETS} from each "
+          f"of {N_VOL_BUCKETS} volatility quintiles, {WEIGHTING}-weighted")
 
     rows_out = []
     for _, d in picks.iterrows():
         rows_out.append({
             "ticker": d["ticker"],
-            "allocation_pct": round(100.0 / TOP_N, 2),
+            "allocation_pct": round(float(d["weight_pct"]), 3),
             "buy_proba": round(float(d["buy_proba"]), 4),
             "rank": int(d["rank"]),
             "percentile": round(float(d["percentile"]), 4),
@@ -216,9 +324,15 @@ def main():
     out_df = pd.DataFrame(rows_out)
     print(f"\n=== Augmented + stop-loss (PIT, primary model) top-{TOP_N} as of {latest_date.date()} ===")
     print(out_df.to_string(index=False))
-    print(f"\nEach pick: equal-weight ({100.0/TOP_N:.1f}% of capital), suggested stop-loss "
-          f"{OPTIMAL_STOP_PCT:.0%} below entry close (Round 8's backtested-optimal level -- "
-          f"guidance only, not an automated order).")
+    print(f"\nWeighting: inverse trailing volatility, normalized to 100% of capital "
+          f"({picks['weight_pct'].min():.2f}%-{picks['weight_pct'].max():.2f}% per name).")
+    print(f"The selected configuration holds to the {FORWARD_WINDOW}-day horizon with NO "
+          f"stop-loss; the {OPTIMAL_STOP_PCT:.0%} stop level is still reported per name as "
+          f"risk guidance but is NOT part of the backtested configuration.")
+    print("\nNOT A VALIDATED EDGE. This is the best-EXPECTED-outcome configuration "
+          "among options that are individually indistinguishable from noise "
+          "(Deflated Sharpe 0.746, Reality Check p=0.61). See the header of this "
+          "file and backtest/2026-09-11-round12-sweep-results.md.")
 
     # Atomic writes: the dashboard's Today's Picks tab polls and re-reads
     # these exact files live while this script may still be running as a
