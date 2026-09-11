@@ -528,26 +528,52 @@ def cmd_features(args):
             a, b = (tps < mid).to_numpy(), (tps >= mid).to_numpy()
             if a.sum() >= 12 and b.sum() >= 12:
                 rows = []
+                # NaN-AWARE, to match the headline table. A per-date IC is NaN
+                # whenever the column is constant across the cross-section on
+                # that date -- which is not rare: `rate_beta_x_move` is a beta
+                # times a DATE CONSTANT, and the 10y prints to 2dp, so its
+                # 20-day change is exactly 0.00 on 110 of 5,677 dates (35 of
+                # them in the late era). A plain .mean() propagates one such
+                # NaN to the whole era and the row silently reads "no late-era
+                # estimate" when the truth is "estimated from 47 of 82
+                # windows". Same class of error as the argsort-NaN bug in the
+                # feature screen: a missing value quietly becoming a claim.
+                def _t(v):
+                    v = v[np.isfinite(v)]
+                    if len(v) < 3:
+                        return np.nan, np.nan, len(v)
+                    sd = v.std(ddof=1)
+                    return (float(v.mean()),
+                            float(v.mean() / (sd / np.sqrt(len(v)))) if sd > 0 else np.nan,
+                            len(v))
                 for j, fn in enumerate(fnames):
-                    ea, eb = IC[a, j], IC[b, j]
-                    ta = ea.mean() / (ea.std(ddof=1) / np.sqrt(len(ea))) if ea.std(ddof=1) > 0 else np.nan
-                    tb = eb.mean() / (eb.std(ddof=1) / np.sqrt(len(eb))) if eb.std(ddof=1) > 0 else np.nan
-                    rows.append({"feature": fn, "ic_early": ea.mean(),
-                                 "t_early": ta, "ic_late": eb.mean(),
-                                 "t_late": tb,
-                                 "same_sign": bool(np.sign(ea.mean()) == np.sign(eb.mean())),
-                                 "retained": (eb.mean() / ea.mean())
-                                 if abs(ea.mean()) > 1e-9 else np.nan})
+                    ma, ta, na = _t(IC[a, j])
+                    mb, tb, nb = _t(IC[b, j])
+                    rows.append({"feature": fn, "ic_early": ma,
+                                 "t_early": ta, "ic_late": mb,
+                                 "t_late": tb, "n_early": na, "n_late": nb,
+                                 "same_sign": bool(np.sign(ma) == np.sign(mb))
+                                 if np.isfinite(ma) and np.isfinite(mb) else False,
+                                 "retained": (mb / ma)
+                                 if np.isfinite(ma) and abs(ma) > 1e-9 else np.nan})
                 es = pd.DataFrame(rows)
                 es["horizon"] = h
                 era_tables.append(es)
+                # Persist the raw IC matrix. Every era/stability question asked
+                # after the fact -- a different split date, a subperiod, a
+                # per-window plot -- is a reslice of THIS matrix, and without it
+                # each one costs a full rerun over the 2GB panel.
+                np.savez_compressed(
+                    SWEEP_DIR / f"feature_ic_matrix_{args.era}_h{h}.npz",
+                    ic=IC, timepoints=tps.to_numpy().astype("datetime64[ns]"),
+                    features=np.array(fnames, dtype=object))
                 keep = es.reindex(es.feature.map(
                     dict(zip(tab.feature, tab.t_stat.abs()))).sort_values(
                     ascending=False).index).head(6)
                 print(f"\n  era stability at h={h} "
                       f"(early n={int(a.sum())} / late n={int(b.sum())}, split {args.split}):")
                 print(keep[["feature", "ic_early", "t_early", "ic_late",
-                            "t_late", "same_sign"]].to_string(
+                            "t_late", "n_early", "n_late", "same_sign"]].to_string(
                     index=False, float_format=lambda v: f"{v:+8.4f}"))
         diags[str(h)] = diag
         print(f"  {diag['n_windows']} windows, "
