@@ -80,3 +80,8 @@ final/out/sweep/*.log
 # --- Backup copies taken before in-place edits. Git is the backup. ---
 *.bak_*
 *.bak_round*
+
+# --- Round 18 (2026-09-16). Benchmark ETF price caches for the app's comparison
+# chart. Pulled once by final/src/build_app_benchmarks.py and regenerable from
+# it; same treatment as final/scripts/td_data_local/ above, which holds SPY. ---
+final/data/benchmarks/

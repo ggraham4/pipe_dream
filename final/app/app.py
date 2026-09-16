@@ -138,7 +138,8 @@ def render_overview():
         if feat is None:
             st.info("No data yet.")
         else:
-            pit_df, pit_meta = pm.get_signal()
+            pit_df, pit_meta = pm.get_signal(pm.PRIMARY)
+            cand_df, _ = pm.get_signal(pm.CANDIDATE)
             uc = pm.universe_counts()
             c1, c2, c3 = st.columns(3)
             if uc is not None:
@@ -151,20 +152,31 @@ def render_overview():
             else:
                 c1.metric("Universe (price data)", f"{feat['ticker'].nunique():,}",
                           help="No PIT panel on disk yet — this is the plain non-PIT current-universe "
-                               "count, not the primary model's own universe.")
+                               "count, not the deployed model's own universe.")
             if pit_meta:
                 c2.metric("As of", pit_meta["as_of_date"])
-                c3.metric("Stop-loss", pct(pit_meta.get("stop_loss_pct")))
+                c3.metric("Horizon", f"{pit_meta.get('forward_window_trading_days', 40)}d")
             else:
                 c3.metric("Forward horizon", f"{sm.universe_summary()['forward_window_days']}d")
             if pit_df is not None:
-                st.caption("Best-case configuration (PIT, recency-limited, "
-                           "vol-bucketed 5) — today's picks. NOT a validated edge.")
-                show = pit_df[["ticker", "allocation_pct", "close", "suggested_stop_loss_price"]].copy()
+                st.caption("**Deployed signal** (q75, point-in-time, vol-bucketed top-5, "
+                           "inverse-vol weighted) — today's picks. Not a validated edge.")
+                show = pit_df[["ticker", "allocation_pct", "close",
+                               "suggested_stop_loss_price"]].copy()
                 show["allocation_pct"] = show["allocation_pct"].map(lambda v: f"{v:.2f}%")
                 st.dataframe(show, hide_index=True, use_container_width=True)
             else:
                 st.info("No current_signal_pit.csv yet — see the Today's Picks tab.")
+            if cand_df is not None:
+                agree = pm.get_agreement()
+                n = agree.get("n_overlap") if agree else None
+                st.caption(
+                    f"Tracked candidate (xrank) picks: **{', '.join(cand_df['ticker'])}**"
+                    + (f" · overlap {n}/5" if n is not None else "")
+                    + ". Shown for comparison only — it returned −4.28%/yr excess "
+                      "(0.771× SPY) on the 2020-2026 hold-out. Today's Picks tab has "
+                      "the detail."
+                )
 
     with col2:
         st.subheader("📊 Options premium (calls)")
@@ -190,57 +202,143 @@ def render_overview():
 
     st.divider()
     st.caption(
-        "Not investment advice. The stock signal above is the point-in-time (survivorship-bias-corrected) "
-        "augmented model with an empirically-optimized 15% stop-loss (see "
-        "backtest/survivorship-bias-correction-results.md, Round 7/8); the options signal is a Tweedie GLM "
-        "on premium. No transaction costs, and backtest sample-size caveats — see each model's Backtest "
-        "tab for the full writeup."
+        "Not investment advice. The stock signal is the point-in-time "
+        "(survivorship-bias-corrected) price + fundamentals model, held to a "
+        "40-day horizon with no stop-loss; the 15% stop price is per-name risk "
+        "guidance, not part of the backtested configuration. The options signal "
+        "is a Tweedie GLM on premium. Neither has a demonstrated edge: see the "
+        "Stock → Today's Picks and Backtest & History tabs for what was actually "
+        "measured, including the noise band that any result here has to be read "
+        "against."
     )
 
 
 # --------------------------------------------------------------------------
 # Stock model tabs
+#
+# Round 18 (2026-09-16). This tab shows TWO signals side by side at Gabe's
+# request -- the deployed q75 model and the xrank candidate that failed the
+# hold-out -- plus SPY and USMV as reference lines. The pre-Round-18
+# "Secondary Models (XGBoost / LSTM)" tab and every cross-check expander that
+# pointed at it have been removed: those models were trained on the old,
+# survivorship-contaminated universe that Round 11 replaced, so showing them
+# beside point-in-time picks invited a comparison that was not valid in either
+# direction.
 # --------------------------------------------------------------------------
 
-def render_stock_secondary():
-    """The non-PIT price-only XGBoost and LSTM signals, kept here for
-    transparency/comparison. Neither feeds into the primary Today's Picks
-    signal (the PIT augmented+stop-loss model, lib/pit_model.py) -- these
-    predate the survivorship-bias-correction work and are shown here as a
-    reference point, not a recommendation."""
+HOLDOUT_BANNER = (
+    "**The candidate is displayed, not followed.** `xrank` recovered "
+    "model-level information coefficient in Round 17b and then lost to SPY on "
+    "the 2020-2026 hold-out: **-4.28%/yr excess, 0.771x SPY**, against the "
+    "deployed model's **+7.33%/yr, 1.526x**. It is on this page so its "
+    "disagreements with the deployed model are visible, not as an alternative "
+    "to trade. See `backtest/2026-09-12-xrank-fails-the-holdout-do-not-switch.md`."
+)
+
+NOT_AN_EDGE = (
+    "**This is not a validated edge, and it is not claimed to be one.** A "
+    "pre-registered sweep of 1,152 configurations (Round 12) failed its "
+    "acceptance criteria — Deflated Sharpe 0.746 against a 0.95 threshold, "
+    "White Reality Check p = 0.61. Round 13 showed every fundamental feature "
+    "that appeared to carry signal is a **sector bet** (the strongest drops "
+    "from t = 3.28 to t = 0.77 under sector neutralization). Rounds 15 and 15b "
+    "closed off breadth and horizon as levers: effective breadth is capped at "
+    "~16 bets per window by an average pairwise active correlation of 0.055–"
+    "0.076, and varying breadth **13×** did not move the result. "
+    "What the model demonstrably owns is a **low-volatility tilt** "
+    "(score-vs-volatility correlation −0.134) plus a tech/healthcare sector "
+    "bet — both purchasable as ETFs, which is why USMV is on the chart in "
+    "Backtest & History. For calibration: in a synthetic grid containing **no "
+    "signal at all**, 27% of configurations beat the market and the best "
+    "reached 2.58×."
+)
+
+
+def _signal_freshness_warning(status: dict, label: str):
+    if status["exists"] and status["stale"]:
+        st.warning(
+            f"{label}: picks were computed as of {status['as_of_date']}, but the "
+            f"panel on disk goes through {status['latest_data_date']}. Retrain to "
+            f"pick up the newer data."
+        )
+
+
+def _picks_table(df: pd.DataFrame, compact: bool = False) -> pd.DataFrame:
+    show = df.copy()
+    if "allocation_pct" in show.columns:
+        show["allocation_pct"] = show["allocation_pct"].map(lambda v: f"{v:.2f}%")
+    if compact:
+        cols = [c for c in ("ticker", "allocation_pct", "close",
+                            "suggested_stop_loss_price") if c in show.columns]
+        return show[cols]
+    return show
+
+
+def _noise_band_caption(comp):
+    """The single most important number for reading anything else on the page."""
+    ns = (comp or {}).get("noise_scale")
+    if not ns:
+        return None
+    return (
+        f"**Noise scale: {ns['excess_cagr_pct_min']:+.2f} to "
+        f"{ns['excess_cagr_pct_max']:+.2f} %/yr excess, sd "
+        f"{ns['excess_cagr_pct_sd']:.2f}** — across {ns['n_cells']} cells that "
+        f"differ from the deployed one only by a turned knob (training window, "
+        f"training cap, tree depth, market-cap tier, label basis), on the same "
+        f"features, label and model. Any difference smaller than this band is "
+        f"not evidence of anything, including the difference between the two "
+        f"models on this page."
+    )
+
+
+def render_stock_pit():
+    """Today's Picks -- the deployed signal, with the tracked candidate beside
+    it. Both are produced by final/src/current_signal_pit.py in one run; see
+    lib/pit_model.py for what each file on disk is."""
     if feat is None:
         st.warning("No features.parquet — run a data refresh first (Data & Updates tab).")
         return
 
     st.caption(
-        "Secondary/reference models, not survivorship-bias-corrected (no point-in-time mid-cap+ floor, no "
-        "delisted-company coverage) and not part of the primary **Today's Picks** signal. Kept here for "
-        "transparency and cross-checking, not as a recommendation."
+        "**Deployed configuration.** Trains on the most recent **500,000 labelled "
+        "rows** of price momentum + point-in-time SEC fundamentals (24 features), "
+        "restricts today's candidates to that date's **point-in-time universe** "
+        "(the same screen the backtest used), then takes the **single best name "
+        "in each of 5 trailing-volatility quintiles** and weights them by "
+        "**inverse volatility**. Entry is the next open; the position is held to "
+        "the 40-day horizon with **no stop-loss**. The 15% stop price shown per "
+        "name is risk guidance only and is not part of the backtested "
+        "configuration."
     )
+    st.error(NOT_AN_EDGE)
+    st.warning(HOLDOUT_BANNER)
 
-    xgb_top, xgb_meta = sm.get_current_top("xgb")
-    lstm_top, lstm_meta = sm.get_current_top("lstm")
-
-    xgb_status = sm.cached_model_status("xgb")
-    lstm_status = sm.cached_model_status("lstm")
-    if xgb_status.stale or lstm_status.stale:
-        st.warning(
-            f"The saved models were trained as of {xgb_status.as_of_date}, but the latest data on disk "
-            f"goes through {xgb_status.latest_data_date}. Retrain to pick up the newer data."
+    if not pm.fundamentals_pit_panel_exists():
+        st.info(
+            "No features_with_fundamentals_sharadar_pit.parquet yet — hit "
+            "\"Retrain\" below. The first run rebuilds the Sharadar panel, the "
+            "point-in-time universe and both feature panels from scratch, so it "
+            "is much slower than a normal retrain."
         )
 
-    if st.button("🔁 Retrain both models on latest data", key="retrain_stock"):
-        dr.run_step_sequence("stock_retrain", sm.retrain_commands(),
-                              ["Rebuild features.parquet", "Retrain XGBoost", "Retrain LSTM"],
-                              cwd=paths.SRC_DIR)
+    statuses = pm.all_signal_status()
+    for v in pm.VARIANTS:
+        _signal_freshness_warning(statuses[v["key"]], v["short_name"])
+
+    if st.button("🔁 Retrain both signals on latest data", key="retrain_pit"):
+        dr.run_step_sequence("stock_retrain_pit", pm.retrain_commands(),
+                             pm.PIT_STEP_LABELS, cwd=paths.SRC_DIR)
         st.rerun()
 
-    state = dr.refresh_status("stock_retrain")
+    state = dr.refresh_status("stock_retrain_pit")
     if state.status == "running":
-        st.info(f"Retraining in progress (started {state.started_at})... this can take 1-2 minutes, "
-                f"mostly the LSTM. This page will keep refreshing.")
+        st.info(
+            f"Retraining in progress (started {state.started_at})... rebuilding "
+            f"the panels from scratch can take several minutes; this page keeps "
+            f"refreshing."
+        )
         with st.expander("Log", expanded=True):
-            st.code(dr.tail_log("stock_retrain"))
+            st.code(dr.tail_log("stock_retrain_pit"))
         time.sleep(2)
         st.rerun()
     elif state.status in ("done", "failed"):
@@ -248,33 +346,49 @@ def render_stock_secondary():
             f"Last retrain {state.status} at {state.finished_at}."
         )
         with st.expander("Log"):
-            st.code(dr.tail_log("stock_retrain"))
+            st.code(dr.tail_log("stock_retrain_pit"))
 
-    col1, col2 = st.columns(2)
-    with col1:
-        st.subheader("XGBoost")
-        if xgb_meta:
-            st.caption(f"As of {xgb_meta['as_of_date']} · trained on {xgb_meta['train_rows']:,} rows · "
-                       f"label cutoff (75th pct {xgb_meta['forward_window_trading_days']}d return) = "
-                       f"{pct(xgb_meta['label_cutoff_fwd_return'])} · universe scored {xgb_meta['universe_size']:,}")
-        if xgb_top is not None:
-            st.dataframe(xgb_top, hide_index=True, use_container_width=True)
-        else:
-            st.info("No current_top10.csv yet.")
-    with col2:
-        st.subheader("LSTM")
-        if lstm_meta:
-            st.caption(f"As of {lstm_meta['as_of_date']} · trained on {lstm_meta['train_sequences']:,} sequences · "
-                       f"label cutoff = {pct(lstm_meta['label_cutoff_fwd_return'])} · "
-                       f"universe scored {lstm_meta['universe_size']:,} · best epoch {lstm_meta['best_epoch']}")
-        if lstm_top is not None:
-            st.dataframe(lstm_top, hide_index=True, use_container_width=True)
-        else:
-            st.info("No lstm_current_top10.csv yet.")
+    signals = pm.get_all_signals()
+    primary_df, primary_meta = signals[pm.PRIMARY]
+    if primary_meta:
+        c1, c2, c3 = st.columns(3)
+        c1.metric("As of", primary_meta["as_of_date"])
+        c2.metric("Eligible universe today", f"{primary_meta.get('n_eligible_today', 0):,}")
+        c3.metric("Horizon", f"{primary_meta.get('forward_window_trading_days', 40)}d")
 
-    if xgb_top is not None and lstm_top is not None:
-        overlap = sorted(set(xgb_top["ticker"]) & set(lstm_top["ticker"]))
-        st.caption(f"Overlap between the two top-10 lists: **{len(overlap)}/10** — {', '.join(overlap) if overlap else 'none'}.")
+    cols = st.columns(len(pm.VARIANTS))
+    for col, v in zip(cols, pm.VARIANTS):
+        df, meta = signals[v["key"]]
+        with col:
+            if v["role"] == "primary":
+                st.subheader(f"✅ {v['display_name']}")
+                st.caption("The signal this app runs.")
+            else:
+                st.subheader(f"👁️ {v['display_name']}")
+                st.caption("Tracked for comparison. **Not** a recommendation.")
+            if df is None:
+                st.info(f"No {v['signal_csv']} yet — hit Retrain above.")
+                continue
+            st.dataframe(_picks_table(df), hide_index=True, use_container_width=True)
+            if meta:
+                bits = [f"cell `{meta.get('cell_id', v['cell_id'])}`"]
+                if meta.get("holdout_excess_cagr_pct") is not None:
+                    bits.append(
+                        f"hold-out 2020-2026: **{meta['holdout_excess_cagr_pct']:+.2f}%/yr** "
+                        f"excess ({meta.get('holdout_mult_vs_spy')}× SPY)")
+                st.caption(" · ".join(bits))
+
+    agree = pm.get_agreement()
+    if agree:
+        n = agree.get("n_overlap", 0)
+        names = ", ".join(agree.get("overlap", [])) or "none"
+        st.info(f"**Overlap today: {n}/5** — {names}")
+        st.caption(agree.get("caveat", ""))
+
+    comp = pm.get_comparison()
+    band = _noise_band_caption(comp)
+    if band:
+        st.caption(band)
 
 
 def render_stock_query():
@@ -282,15 +396,20 @@ def render_stock_query():
         st.warning("No features.parquet — run a data refresh first.")
         return
     st.caption(
-        "Scores against the **primary PIT augmented + stop-loss model** — the same signal as the Today's "
-        "Picks tab — against the currently *saved* checkpoint (instant — no retraining). If you've pulled "
-        "new price data since the last retrain, hit \"Retrain\" on the Today's Picks tab first for fully "
-        "current results. BUY/NO BUY uses the model's top-quartile-of-predicted-probability rule (same "
-        "convention as the Secondary Models query) — that's a different bar than being in today's absolute "
-        "top-5 picks, so a ticker can show BUY here without being one of today's 5 allocated positions. A "
-        "ticker can also show INELIGIBLE — the model may like it, but it fails the point-in-time mid-cap+ "
-        "floor today (market cap < $2B or price < $10), so it isn't actually a live pick regardless of "
-        "what the model thinks of it."
+        "Scores a ticker against **both** saved checkpoints — the deployed model "
+        "and the tracked candidate — using the currently saved weights (instant, "
+        "no retraining). If you have pulled new price data since the last "
+        "retrain, hit \"Retrain\" on the Today's Picks tab first. "
+        "**BUY** here means top quartile of predicted score among eligible names, "
+        "which is a lower bar than being one of today's five allocated positions, "
+        "so a ticker can read BUY without being a pick. **INELIGIBLE** means the "
+        "name is not in today's point-in-time universe, so it is not pickable "
+        "regardless of what the model thinks of it."
+    )
+    st.caption(
+        "The candidate's verdict is a second opinion to read against the "
+        "deployed one, not a vote to average with it — it lost to SPY on the "
+        "hold-out (-4.28%/yr excess)."
     )
     raw = st.text_input("Ticker(s), comma or space separated", placeholder="AAPL, MSFT, NVDA")
     if st.button("Look up", key="stock_query_btn") and raw.strip():
@@ -299,318 +418,210 @@ def render_stock_query():
             result = pm.query_tickers(tickers)
         if "error" in result:
             st.error(result["error"])
-        else:
-            cap = f"As of {result['as_of_date']}"
-            if result.get("stop_loss_pct") is not None:
-                cap += f" · suggested stop-loss {pct(result['stop_loss_pct'])} below entry"
-            st.caption(cap)
+            return
 
-            df = pd.DataFrame(result["rows"])
-            col_order = (["ticker", "verdict", "buy_proba", "rank", "percentile"] + pm.CONTEXT_COLS)
-            df = df[[c for c in col_order if c in df.columns]]
-            st.dataframe(df, hide_index=True, use_container_width=True)
+        cap = f"As of {result['as_of_date']}"
+        if result.get("stop_loss_pct") is not None:
+            cap += f" · suggested stop-loss {pct(result['stop_loss_pct'])} below entry (guidance only)"
+        st.caption(cap)
 
-            for t in tickers:
-                hist = sm.ticker_history(t, feat)
-                if hist is not None:
-                    with st.expander(f"{t} — price & momentum history"):
-                        st.line_chart(hist.set_index("date")[["close"]])
-                        st.line_chart(hist.set_index("date")[["momentum_20", "momentum_60", "momentum_120"]])
+        df = pd.DataFrame(result["rows"])
+        col_order = (["ticker", "verdict", "score", "rank",
+                      "candidate_verdict", "candidate_score", "candidate_rank"]
+                     + pm.CONTEXT_COLS)
+        df = df[[c for c in col_order if c in df.columns]]
+        st.dataframe(df, hide_index=True, use_container_width=True)
 
-            with st.expander("Also compare against the secondary XGBoost / LSTM models"):
-                st.caption(
-                    "These are the standalone, non-PIT models shown on the Secondary Models tab — not "
-                    "part of the primary signal above. Shown here only for cross-checking."
-                )
-                sec = sm.query_tickers(tickers)
-                if "error" in sec:
-                    st.info(sec["error"])
-                else:
-                    st.caption(f"XGBoost as of {sec['as_of_xgb']} · LSTM as of {sec['as_of_lstm']}")
-                    st.dataframe(pd.DataFrame(sec["rows"]), hide_index=True, use_container_width=True)
+        disagree = [r["ticker"] for r in result["rows"]
+                    if r.get("verdict") != r.get("candidate_verdict")]
+        if disagree:
+            st.caption(f"The two models disagree on: **{', '.join(disagree)}**. "
+                       f"Disagreement is information about how stable the ranking "
+                       f"is, not a tiebreak to resolve.")
+
+        for t in tickers:
+            hist = sm.ticker_history(t, feat)
+            if hist is not None:
+                with st.expander(f"{t} — price & momentum history"):
+                    st.line_chart(hist.set_index("date")[["close"]])
+                    st.line_chart(hist.set_index("date")[["momentum_20", "momentum_60", "momentum_120"]])
 
 
 def render_stock_weights():
-    st.subheader("Best-case config (PIT, primary)")
     st.caption(
-        "The point-in-time mid-cap+ eligibility floor and the 15% stop-loss are both applied AFTER this "
-        "model scores a ticker — they don't change what the model itself learned, only which tickers it's "
-        "allowed to pick and when a pick exits. The feature importances below are what actually drive the "
-        "model's ranking."
+        "Gain-based feature importances off each saved checkpoint. Read them as "
+        "*what the trees split on*, not as *what predicts returns*: Round 17 "
+        "took a raw feature with t = +3.40 and watched it come out of this "
+        "pipeline at t = −0.65, and Round 13 showed the fundamental block's "
+        "apparent signal is a sector bet. A tall bar here is a description of "
+        "the model, not evidence about the world."
     )
-    pimp = pm.get_feature_importances()
-    if pimp is not None:
-        imp_df = pimp["importances"].copy()
-        st.bar_chart(imp_df.set_index("feature")[["importance"]])
-        imp_df["feature"] = imp_df.apply(
-            lambda r: f"{r['feature']} 🧾" if r["is_fundamentals_feature"] else r["feature"], axis=1
-        )
-        imp_df["importance"] = imp_df["importance"].map(lambda v: f"{v:.1%}")
-        st.dataframe(imp_df[["feature", "importance"]], hide_index=True, use_container_width=True)
-        top = pimp["importances"].iloc[0]
-        st.caption(
-            f"🧾 = a fundamentals feature — together they account for {pimp['fundamentals_share']:.1%} of "
-            f"this model's total importance. Top feature: **{top['feature']}** ({top['importance']:.1%})."
-        )
-    else:
-        st.info("No saved xgb_pit_augmented_model.json yet — hit \"Retrain\" on the Today's Picks tab first.")
+    tabs = st.tabs([v["display_name"] for v in pm.VARIANTS])
+    for tab, v in zip(tabs, pm.VARIANTS):
+        with tab:
+            if v["role"] == "candidate":
+                st.warning(HOLDOUT_BANNER)
+            pimp = pm.get_feature_importances(v["key"])
+            if pimp is None:
+                st.info(f"No saved {v['model_file']} yet — hit \"Retrain\" on the "
+                        f"Today's Picks tab first.")
+                continue
+            imp_df = pimp["importances"].copy()
+            st.bar_chart(imp_df.set_index("feature")[["importance"]])
+            shown = imp_df.copy()
+            shown["feature"] = shown.apply(
+                lambda r: f"{r['feature']} 🧾" if r["is_fundamentals_feature"] else r["feature"],
+                axis=1)
+            shown["importance"] = shown["importance"].map(lambda x: f"{x:.1%}")
+            st.dataframe(shown[["feature", "importance"]], hide_index=True,
+                         use_container_width=True)
+            top = imp_df.iloc[0]
+            st.caption(
+                f"🧾 = a fundamentals feature — together {pimp['fundamentals_share']:.1%} "
+                f"of this model's total importance. Top feature: "
+                f"**{top['feature']}** ({top['importance']:.1%})."
+            )
 
     st.divider()
-    with st.expander("Also see the secondary XGBoost / LSTM model weights"):
-        st.subheader("XGBoost feature importances")
-        imp = sm.get_feature_importances()
-        if imp is not None:
-            st.bar_chart(imp.set_index("feature"))
-            st.dataframe(imp.assign(importance=imp["importance"].map(lambda v: f"{v:.1%}")),
-                         hide_index=True, use_container_width=True)
-            top_feat = imp.iloc[0]
-            st.caption(
-                f"**{top_feat['feature']}** alone accounts for {top_feat['importance']:.1%} of the model's "
-                f"decision-making. This concentration is a known, discussed property of this model, not a bug — "
-                f"see models/final-buy-no-buy-model.md."
-            )
-        else:
-            st.info("No feature_importances.csv yet — retrain on the Secondary Models tab.")
-
-        st.divider()
-        st.subheader("LSTM architecture")
-        lstm_full_meta = sm.lstm_meta()
-        if lstm_full_meta:
-            arch = {
-                "Sequence length (trailing days)": lstm_full_meta.get("seq_len"),
-                "Hidden size": lstm_full_meta.get("hidden_size"),
-                "LSTM layers": lstm_full_meta.get("num_layers"),
-                "Training sequences (cap)": f"{lstm_full_meta.get('train_sequences'):,}",
-                "Best epoch (early stopping)": lstm_full_meta.get("best_epoch"),
-                "Forward window (days)": lstm_full_meta.get("forward_window_trading_days"),
-            }
-            st.table(pd.Series(arch, name="value"))
-            st.caption(
-                "An LSTM doesn't have a simple per-feature weight table the way XGBoost's feature_importances_ "
-                "does — its 11 input features are consumed jointly by the recurrent layer across a 20-day "
-                "sequence. A permutation-importance or integrated-gradients pass would be the way to get an "
-                "analogous per-feature breakdown for it; not computed yet."
-            )
-        else:
-            st.info("No lstm_current_model_meta.json yet.")
+    st.caption(
+        "Both models use the identical 24 columns and identical hyperparameters "
+        "(depth 3, eta 0.1, 100 rounds, most recent 500k labelled rows). The "
+        "only difference between them is the training target: a binary "
+        "top-quartile label versus a within-date percentile rank. Any "
+        "difference in the charts above is that one change propagating through "
+        "the trees."
+    )
 
 
 def render_stock_backtest():
-    st.subheader("Best-case config (PIT, primary)")
-    gbt = pm.get_backtest_tables()
-    if not gbt:
-        st.info("No PIT continuous walk-forward backtest output yet — run "
-                 "continuous_walkforward_pit.py (see backtest/survivorship-bias-correction-results.md).")
-    else:
-        if "continuous_walkforward_summary" in gbt:
-            summ = gbt["continuous_walkforward_summary"]
-            st.write(f"**Continuous point-in-time walk-forward** — non-overlapping 40-day windows, "
-                      f"universe={summ.get('universe', 'expanded')}, stop_pct={pct(summ.get('stop_pct'))}")
-            curves = summ.get("curves", {})
-            if curves:
-                chart_df = pd.DataFrame({
-                    name: {row["timepoint"]: row["value"] for row in curve if row["timepoint"]}
-                    for name, curve in curves.items()
-                })
-                st.line_chart(chart_df)
-                finals = {name: curve[-1]["value"] for name, curve in curves.items() if curve}
-                st.dataframe(
-                    pd.DataFrame([{"mode": k, "$10k ->": money(v)} for k, v in finals.items()]),
-                    hide_index=True, use_container_width=True,
-                )
-                if "augmented_stoploss" in finals and "spy" in finals:
-                    n_windows = len(summ.get("results", {}).get("augmented_stoploss", []))
-                    st.caption(
-                        f"augmented_stoploss (this model, {pct(summ.get('stop_pct'))} stop): "
-                        f"{money(finals['augmented_stoploss'])} vs. SPY {money(finals['spy'])} over "
-                        f"{n_windows} windows. See backtest/survivorship-bias-correction-results.md, "
-                        f"Round 7 (universe/eligibility floor fix) and Round 8 (this stop-loss percentage's "
-                        f"optimization sweep), for the full methodology and caveats — small-sample, no "
-                        f"transaction costs, and the stop-loss level was chosen from a backtested sweep, "
-                        f"not guaranteed to hold going forward."
-                    )
-
-            fi = summ.get("feature_importance_avg", {}).get("augmented")
-            if fi:
-                st.divider()
-                st.write("**Aggregate feature importance across all walk-forward steps**")
-                fi_df = pd.DataFrame([{"feature": k, "importance": v} for k, v in fi.items()])
-                st.bar_chart(fi_df.set_index("feature"))
-                st.dataframe(fi_df.assign(importance=fi_df["importance"].map(lambda v: f"{v:.1%}")),
-                             hide_index=True, use_container_width=True)
-
-        if "stop_pct_sweep" in gbt:
-            st.divider()
-            st.write("**Stop-loss percentage sweep (Round 8)** — re-simulates the same picks across a grid "
-                      "of stop percentages to find the empirically-best level")
-            sweep = gbt["stop_pct_sweep"].get("sweep", [])
-            if sweep:
-                sweep_df = pd.DataFrame(sweep)
-                st.dataframe(sweep_df, hide_index=True, use_container_width=True)
-                best = sweep_df.loc[sweep_df["final_value"].idxmax()]
-                st.caption(
-                    f"Best in this sweep: {pct(best['stop_pct'])} stop ({money(best['final_value'])} final "
-                    f"value) — the operating value shown above may differ slightly (a rounder, less "
-                    f"overfit choice within the same plateau; see Round 8 in the project doc for why)."
-                )
-
-    st.divider()
-    with st.expander("Also see the secondary XGBoost / LSTM backtest & horizon sweep"):
-        bt = sm.get_backtest_tables()
-        if not bt:
-            st.info("No backtest output yet.")
-        else:
-            col1, col2 = st.columns(2)
-            with col1:
-                st.subheader("XGBoost")
-                if "xgb_picks" in bt:
-                    st.dataframe(bt["xgb_picks"], hide_index=True, use_container_width=True)
-                if "xgb_metrics" in bt:
-                    st.dataframe(pd.DataFrame(bt["xgb_metrics"]), hide_index=True, use_container_width=True)
-            with col2:
-                st.subheader("LSTM")
-                if "lstm_picks" in bt:
-                    st.dataframe(bt["lstm_picks"], hide_index=True, use_container_width=True)
-                if "lstm_metrics" in bt:
-                    st.dataframe(pd.DataFrame(bt["lstm_metrics"]), hide_index=True, use_container_width=True)
-
-            if bt.get("chart_path"):
-                st.image(str(bt["chart_path"]), caption="Backtest equity curve")
-
-            if "horizon_sweep" in bt:
-                st.divider()
-                st.subheader("Horizon sweep (10 / 20 / 40 / 60 trading days)")
-                rows = []
-                for horizon, models in bt["horizon_sweep"].items():
-                    for model_name, m in models.items():
-                        rows.append({"horizon_days": int(horizon), "model": model_name,
-                                     "win_rate": f"{m['wins']}/{m['n']}",
-                                     "avg_model_pct": m["avg_model_pct"], "avg_spy_pct": m["avg_spy_pct"]})
-                st.dataframe(pd.DataFrame(rows).sort_values(["horizon_days", "model"]),
-                             hide_index=True, use_container_width=True)
-                st.caption(
-                    "40 trading days is the current permanent default — see models/final-buy-no-buy-model.md "
-                    "for why. Change FORWARD_WINDOW in features.py to test a different horizon; this table "
-                    "will only update after horizon_sweep.py is rerun."
-                )
-
-
-def render_stock_pit():
-    """Primary signal (2026-09-02): the point-in-time (survivorship-bias-
-    corrected) augmented model, with an empirically-optimized 15% stop-loss.
-    Replaces the HMM-gated blend per Gabe's explicit instruction -- "we are
-    no longer using the HMM, augmented stoploss should be the primary
-    model displayed in the app." See lib/pit_model.py and
-    backtest/survivorship-bias-correction-results.md (Round 7/8) for the
-    full methodology."""
-    if feat is None:
-        st.warning("No features.parquet — run a data refresh first (Data & Updates tab).")
+    comp = pm.get_comparison()
+    if comp is None:
+        st.info(
+            "No out/app_model_comparison.json yet — run "
+            "`python3 final/src/build_app_benchmarks.py`, or hit \"Retrain\" on "
+            "the Today's Picks tab (it is the last step of that sequence)."
+        )
         return
 
+    cons = comp.get("construction", {})
     st.caption(
-        "**Primary signal — \"best case\" configuration (Round 13, 2026-09-11).** Trains the augmented "
-        "model (price momentum + point-in-time SEC fundamentals, no_staleness) on the **most recent "
-        "500,000 labelled rows** rather than all history, restricts today's candidates to the "
-        "point-in-time mid-cap+ eligibility floor used in the backtest (market cap ≥ $2B and price > $10 "
-        "*as of today* — see Round 7), then selects the **single best name from each of 5 trailing-volatility "
-        "quintiles (5 total)** and weights them by **inverse volatility**. The configuration holds to the "
-        "40-day horizon with no stop-loss; the 15% stop level is still shown per name as risk guidance but "
-        "is not part of the backtested configuration."
+        f"Non-overlapping {cons.get('horizon_trading_days', 40)}-trading-day "
+        f"windows. Each window: top name in each of {cons.get('top_n', 5)} "
+        f"volatility quintiles, {cons.get('weighting', 'invvol')}-weighted, "
+        f"entered at the **next open**, exited at the close "
+        f"{cons.get('horizon_trading_days', 40)} trading days later, "
+        f"{cons.get('cost_bps', 15)}bp charged against turnover. Benchmarks use "
+        f"the identical entry/exit convention. "
+        f"**{cons.get('returns', 'price only, no dividends on either side')}** — "
+        f"so SPY and USMV are each understated by roughly their ~1.8–1.9%/yr "
+        f"distribution yield, and so are the model's own picks."
     )
-    st.error(
-        "**This is not a validated edge, and it is not claimed to be one.** A pre-registered sweep of "
-        "1,152 configurations (Round 12) failed its acceptance criteria: Deflated Sharpe 0.746 against a "
-        "0.95 threshold, White Reality Check p = 0.61, and 0 of 24 signal configurations reaching an "
-        "information-coefficient t-statistic above 2. A follow-up screen (Round 13) showed that every "
-        "fundamental feature that appeared to carry signal is a **sector bet** — neutralizing on sector "
-        "drops the strongest feature from t = 3.28 to t = 0.77 — and that none of the 12 price/volume "
-        "features reaches |t| = 1.25 at any horizon. "
-        "This configuration was selected as the one with the best **expected** outcome among options that "
-        "are individually indistinguishable from noise, so that the app reflects the current state of the "
-        "art while new data sources and architectures are developed. It is a placeholder, not a result. "
-        "For calibration: in a synthetic grid containing **no signal at all**, 27% of configurations "
-        "\"beat the market\" and the best reached 2.58x. Full detail: "
-        "`backtest/2026-09-11-round12-sweep-results.md` and `models/2026-09-11-feature-ic-screen.md`."
-    )
+
+    band = _noise_band_caption(comp)
+    if band:
+        st.warning(band)
+
+    era_labels = {"nominate": "2007–2019 (selection era)",
+                  "holdout": "2020–2026 (hold-out)"}
+    present = [e for e in ("holdout", "nominate") if e in comp.get("eras", {})]
+    if not present:
+        st.info("The comparison file has no eras in it — rebuild it.")
+        return
+
+    tabs = st.tabs([era_labels.get(e, e) for e in present])
+    for tab, era in zip(tabs, present):
+        with tab:
+            if era == "holdout":
+                st.caption(
+                    "**Spent.** 2020-2026 was used once, in Round 13, to confirm "
+                    "the top-5 breadth choice, and once more in Round 18 to test "
+                    "the xrank label. It is replotted here because those numbers "
+                    "are already paid for — it cannot adjudicate anything new. "
+                    "Nothing from here may be confirmed on it."
+                )
+            else:
+                st.caption(
+                    "**In-sample.** The deployed configuration was selected on "
+                    "this span out of 1,152 candidates, so its result here is "
+                    "biased upward by the search and is not an estimate of "
+                    "forward return."
+                )
+            df = pm.comparison_frame(era)
+            if df is not None:
+                st.line_chart(df)
+                st.caption(
+                    "Growth of $1 across the windows in this era. A series that "
+                    "starts later (USMV, inception 2011-10) is rebased to $1 at "
+                    "its own first window rather than back-filled, so read its "
+                    "level against SPY over the same sub-span, not against the "
+                    "left edge of the chart."
+                )
+            summ = comp["eras"][era].get("summary", {})
+            labels = {}
+            labels.update({k: v["display_name"] for k, v in comp.get("cells", {}).items()})
+            labels.update({k: v["display_name"] for k, v in comp.get("benchmarks", {}).items()})
+            rows = []
+            for k, s in summ.items():
+                if not s:
+                    continue
+                rows.append({
+                    "series": labels.get(k, k),
+                    "windows": s["n_windows"],
+                    "$1 →": f"${s['mult']:.2f}",
+                    "CAGR": f"{s['cagr_pct']:+.2f}%",
+                    "excess vs SPY": ("—" if s.get("excess_cagr_pct") is None
+                                      else f"{s['excess_cagr_pct']:+.2f}%/yr"),
+                    "× SPY": ("—" if s.get("mult_vs_spy") is None
+                              else f"{s['mult_vs_spy']:.3f}"),
+                    "max drawdown": f"{s['max_drawdown_pct']:.2f}%",
+                    "full span": "yes" if s.get("covers_full_era", True) else "partial",
+                })
+            if rows:
+                st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+
+    unavailable = [b["display_name"] for b in comp.get("benchmarks", {}).values()
+                   if b.get("unavailable_reason")]
+    if unavailable:
+        why = "; ".join(f"{b['display_name']}: {b['unavailable_reason']}"
+                        for b in comp.get("benchmarks", {}).values()
+                        if b.get("unavailable_reason"))
+        st.caption(f"Missing benchmark line(s) — {why}. Rerun "
+                   f"`build_app_benchmarks.py` from a machine with network "
+                   f"access; it pulls once and caches to data/benchmarks/.")
+
     st.caption(
-        "**Backtested performance of THIS configuration**, net of 15bp round-trip costs, entered at the "
-        "next open. Selection era 2007-2019 (82 windows): **2.80x SPY**, +8.7%/yr excess, max drawdown "
-        "-36.6%. Hold-out 2020-2026 (42 windows, looked at once): **1.53x SPY**, +7.3%/yr excess, max "
-        "drawdown -27.4%. The previous configuration shown here returned 1.18x and 1.10x on the same two "
-        "spans. "
-        "**None of this is statistically significant.** The hold-out's Deflated Sharpe of 0.96 deflates "
-        "against only the 4 configurations in that confirmation run; against the 1,152 this one was "
-        "actually selected from it is **0.79 -- a fail** -- and White's Reality Check agrees at p = 0.22. "
-        "The hold-out is now spent, so no unused data remains to validate this choice."
-        "(expanded, mid-cap-floor-corrected universe). Caveats worth keeping in view: no transaction-cost/ "
-        "slippage modeling, and the stop-loss percentage was chosen from a backtested sweep — a broad, "
-        "well-supported plateau (12–17%), not a single lucky point, but still not guaranteed to hold going "
-        "forward. See backtest/survivorship-bias-correction-results.md, Round 7 and Round 8, for the full "
-        "writeup."
+        "Read the whole table against the noise band above before concluding "
+        "anything from a gap between two rows."
     )
-
-    if not pm.fundamentals_pit_panel_exists():
-        st.info(
-            "No features_with_fundamentals_pit.parquet yet — hit \"Retrain\" below. The first run also "
-            "rebuilds the base price panel and the PIT fundamentals panel from scratch, so it's slower "
-            "than a normal retrain. Note: this needs features_pit.py's point-in-time gap-ticker data "
-            "(scripts/td_data_delisted/, scripts/fundamentals_raw_delisted/, via sharadar_data_pull.py) to "
-            "already be on disk — see the project doc's \"What Gabe needs to do next\" section if this is "
-            "a fresh machine."
-        )
-
-    pit_df, pit_meta = pm.get_signal()
-    status = pm.signal_status()
-    if status["exists"] and status["stale"]:
-        st.warning(
-            f"The saved picks were computed as of {status['as_of_date']}, but the latest data on "
-            f"disk goes through {status['latest_data_date']}. Retrain to pick up the newer data."
-        )
-
-    if st.button("🔁 Retrain on latest data", key="retrain_pit"):
-        dr.run_step_sequence(
-            "stock_retrain_pit", pm.retrain_commands(),
-            ["Rebuild features.parquet", "Rebuild PIT price panel", "Rebuild PIT fundamentals panel",
-             "Retrain model + compute today's picks"],
-            cwd=paths.SRC_DIR,
-        )
-        st.rerun()
-
-    state = dr.refresh_status("stock_retrain_pit")
-    if state.status == "running":
-        st.info(
-            f"Retraining in progress (started {state.started_at})... rebuilding the full PIT price and "
-            f"fundamentals panels from scratch can take several minutes; this page will keep refreshing."
-        )
-        with st.expander("Log", expanded=True):
-            st.code(dr.tail_log("stock_retrain_pit"))
-        time.sleep(2)
-        st.rerun()
-    elif state.status in ("done", "failed"):
-        (st.success if state.status == "done" else st.error)(
-            f"Last retrain {state.status} at {state.finished_at}."
-        )
-        with st.expander("Log"):
-            st.code(dr.tail_log("stock_retrain_pit"))
-
-    if pit_meta:
-        c1, c2, c3 = st.columns(3)
-        c1.metric("As of", pit_meta["as_of_date"])
-        c2.metric("Stop-loss", pct(pit_meta.get("stop_loss_pct")))
-        c3.metric("Eligible universe today", f"{pit_meta.get('n_eligible_today', 0):,}")
-
-    if pit_df is not None:
-        st.subheader("Today's picks")
-        show = pit_df.copy()
-        show["allocation_pct"] = show["allocation_pct"].map(lambda v: f"{v:.2f}%")
-        st.dataframe(show, hide_index=True, use_container_width=True)
-        if pit_meta:
-            st.caption(f"Picks: {', '.join(pit_meta['picks'])}")
-    else:
-        st.info("No current_signal_pit.csv yet — hit Retrain above.")
 
 
 def render_stock_universe():
+    """NOTE ON WHAT THIS TAB DESCRIBES. The counts below come from
+    features.parquet -- the plain current-universe price panel. That is NOT the
+    universe either signal picks from. Both models are restricted, on every
+    date, to that date's point-in-time universe
+    (data/sharadar/pit_universe.parquet), which includes companies that have
+    since been delisted, acquired or gone bankrupt and excludes ones that had
+    not yet qualified. The PIT count is the metric at the top of this block;
+    everything under it is the price panel."""
+    uc = pm.universe_counts()
+    if uc is not None:
+        p1, p2 = st.columns(2)
+        p1.metric("Point-in-time universe (what the models pick from)",
+                  f"{uc['total_pit_tickers']:,}")
+        if uc.get("current_universe_tickers") is not None:
+            p2.metric("of which currently listed", f"{uc['current_universe_tickers']:,}",
+                      help=f"The remaining "
+                           f"{uc['total_pit_tickers'] - uc['current_universe_tickers']:,} "
+                           f"are point-in-time gap tickers: delisted, acquired or "
+                           f"bankrupt names that were genuinely investable at the "
+                           f"time. Round 11 found the old pool was missing a third "
+                           f"of the eligible 2008 universe, 89% of it dead, which "
+                           f"is why every performance number predating 2026-09-09 "
+                           f"was invalidated.")
+        st.divider()
+    st.caption("Below: the plain current-universe price panel (features.parquet), "
+               "used for the sidebar, ticker history charts and this tab only.")
     u = sm.universe_summary()
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Tickers (price CSVs)", f"{u['csv_ticker_count']:,}" if u["csv_ticker_count"] else "—")
@@ -828,11 +839,13 @@ def render_data_updates():
     for label, p, is_dir in [
         ("Stock price CSVs", paths.STOCK_DATA_DIR, True),
         ("Stock features.parquet", paths.FEATURES_PARQUET, False),
-        ("PIT features_pit.parquet", paths.OUT_DIR / "features_pit.parquet", False),
-        ("PIT features_with_fundamentals_pit.parquet", paths.OUT_DIR / "features_with_fundamentals_pit.parquet", False),
-        ("Primary model checkpoint (PIT augmented)", paths.STOCK_MODELS_DIR / "xgb_pit_augmented_model.json", False),
-        ("XGBoost checkpoint (secondary)", paths.STOCK_MODELS_DIR / "xgb_current_model.json", False),
-        ("LSTM checkpoint (secondary)", paths.STOCK_MODELS_DIR / "lstm_current_model.pt", False),
+        ("PIT universe (pit_universe.parquet)", paths.PIT_UNIVERSE_PARQUET, False),
+        ("PIT panel (features_with_fundamentals_sharadar_pit.parquet)", pm.FUND_PIT_PARQUET, False),
+        ("Deployed checkpoint (q75)", pm.model_path(pm.PRIMARY), False),
+        ("Candidate checkpoint (xrank)", pm.model_path(pm.CANDIDATE), False),
+        ("Deployed picks (current_signal_pit.csv)", pm.signal_csv(pm.PRIMARY), False),
+        ("Candidate picks (current_signal_pit_xrank.csv)", pm.signal_csv(pm.CANDIDATE), False),
+        ("Benchmark comparison (app_model_comparison.json)", pm.COMPARISON_JSON, False),
         ("Options raw (option_chain)", paths.OPTION_CHAIN_SP500, False),
         ("Options raw (volatility_history)", paths.VOLATILITY_HISTORY_SP500, False),
         ("Options calls training table", paths.OPTIONS_CALLS_TRAINING, False),
@@ -857,13 +870,14 @@ def render_data_updates():
         "training data\" tops up the last ~40 days of prices (full universe + SPY) instead of "
         "re-pulling full history, and runs an options history update — all from your own network, so "
         "this should finish in a few minutes even across the full universe. \"Retrain all models\" "
-        "rebuilds every feature panel (including the PIT price/fundamentals panels) and retrains "
-        "XGBoost, the LSTM, and the primary best-case config (PIT) model. The options Tweedie GLM "
+        "rebuilds every feature panel (including the point-in-time price/fundamentals panels), retrains "
+        "**both** stock signals — the deployed q75 model and the tracked xrank candidate — and rebuilds "
+        "the SPY/USMV comparison chart. The options Tweedie GLM "
         "needs no separate retrain step — it refits automatically next time it's used, off whatever "
         "training data is newest on disk. Run the data update first, then retrain, if you want a fully "
         "current read in one sitting. Note: neither button refreshes scripts/fundamentals_raw/ (SEC "
         "EDGAR) or scripts/fundamentals_raw_delisted/ (Sharadar) — those are separate, much less "
-        "frequent pulls, see the project doc."
+        "frequent pulls, see AGENTS.md."
     )
     c1, c2 = st.columns(2)
     with c1:
@@ -909,49 +923,35 @@ def render_data_updates():
     with c2:
         if st.button("🔁 Retrain ALL models", key="btn_retrain_all_models", use_container_width=True):
             py = sys.executable
-            cmds = [
-                # secondary models -- still on the OLD universe, see
-                # patch_app_round11.py's "NOT CHANGED, ON PURPOSE"
-                [py, str(paths.SRC_DIR / "features.py")],
-                [py, str(paths.SRC_DIR / "current_signal.py")],
-                [py, str(paths.SRC_DIR / "lstm_current_signal.py")],
-                # primary PIT model -- Round 11 sequence
-                [py, str(paths.SRC_DIR / "sharadar_pull_pit_panel.py")],
-                [py, str(paths.SRC_DIR / "build_pit_universe.py")],
-                [py, str(paths.SRC_DIR / "build_features_sharadar.py")],
-                [py, str(paths.SRC_DIR / "build_features_fundamentals_sharadar.py")],
-                [py, str(paths.SRC_DIR / "export_sharadar_ohlc.py")],
-                [py, str(paths.SRC_DIR / "current_signal_pit.py")],
-            ]
-            labels = [
-                "Rebuild price features.parquet (secondary models, old universe)",
-                "Retrain XGBoost (secondary, price-only, old universe)",
-                "Retrain LSTM (secondary, old universe)",
-                "Top up the Sharadar panel (needs SHARADAR_API_KEY)",
-                "Rebuild the point-in-time universe",
-                "Rebuild price features (PIT)",
-                "Rebuild fundamental features (PIT)",
-                "Export per-ticker OHLCV for execution",
-                "Retrain primary model (best-case config, PIT) + compute today's picks",
-            ]
+            # Round 18: this is now exactly pm.retrain_commands(), with the
+            # plain features.parquet rebuild kept in front of it because the
+            # sidebar and the Universe tab still read that panel. The old
+            # current_signal.py / lstm_current_signal.py steps were dropped
+            # with the models they fed -- they trained on the pre-Round-11
+            # universe, so rerunning them only refreshed numbers nothing on
+            # this page should be compared against.
+            cmds = [[py, str(paths.SRC_DIR / "features.py")]] + pm.retrain_commands()
+            labels = ["Rebuild price features.parquet (sidebar + Universe tab)"] \
+                + pm.PIT_STEP_LABELS
             dr.run_step_sequence("retrain_all_models", cmds, labels, cwd=paths.SRC_DIR)
             st.rerun()
         _job_status_block("retrain_all_models")
 
     st.divider()
-    st.subheader("1. Refresh stock price data + retrain both models")
+    st.subheader("1. Refresh stock price data + retrain both signals")
     st.caption(
-        "Runs local_data_pull.py (yfinance, your own network) for the full universe, rebuilds "
-        "features.parquet, then retrains and rescoring XGBoost and the LSTM. The price pull only tops up "
-        "the last ~40 days for tickers you already have data for (--refresh-recent), so it's much "
-        "quicker than a first-time pull across ~1,600 tickers; the LSTM retrain is roughly a minute on "
-        "top of that."
+        "Runs local_data_pull.py (yfinance, your own network) for the full universe, then the full "
+        "point-in-time rebuild and both signal retrains. The price pull only tops up the last ~40 days "
+        "for tickers you already have data for (--refresh-recent), so it's much quicker than a "
+        "first-time pull across ~1,600 tickers. This is the same sequence as \"Retrain ALL models\" "
+        "above with a price pull in front of it."
     )
     if st.button("Run full stock refresh", key="btn_stock_refresh"):
         py = sys.executable
-        cmds = [[py, str(paths.SCRIPTS_DIR / "local_data_pull.py"), "--refresh-recent"]] + sm.retrain_commands()
+        cmds = ([[py, str(paths.SCRIPTS_DIR / "local_data_pull.py"), "--refresh-recent"]]
+                + pm.retrain_commands())
         dr.run_step_sequence("stock_full_refresh", cmds,
-                              ["Pull price data (yfinance)", "Rebuild features", "Retrain XGBoost", "Retrain LSTM"])
+                             ["Pull price data (yfinance)"] + pm.PIT_STEP_LABELS)
         st.rerun()
     _job_status_block("stock_full_refresh")
 
@@ -1015,8 +1015,15 @@ with tab_overview:
     render_overview()
 
 with tab_stock:
-    t1, t2, t3, t4, t5, t6 = st.tabs(
-        ["Today's Picks", "Query a Ticker", "Model Weights", "Backtest & History", "Universe", "Secondary Models (XGBoost / LSTM)"]
+    # Round 18: the "Secondary Models (XGBoost / LSTM)" tab was removed. Those
+    # models were trained on the pre-Round-11 universe, which was missing a
+    # third of the eligible early names -- 89% of them dead -- so every number
+    # they produced is measured on data now known to be defective. Keeping them
+    # beside point-in-time picks invited a comparison that was not valid in
+    # either direction. The two models shown now differ ONLY in training label.
+    t1, t2, t3, t4, t5 = st.tabs(
+        ["Today's Picks", "Query a Ticker", "Model Weights",
+         "Backtest & History", "Universe"]
     )
     with t1:
         render_stock_pit()
@@ -1028,8 +1035,6 @@ with tab_stock:
         render_stock_backtest()
     with t5:
         render_stock_universe()
-    with t6:
-        render_stock_secondary()
 
 with tab_options:
     t1, t2, t3, t4, t5 = st.tabs(["Today's Picks", "Query a Ticker", "Model Weights", "Backtest & History", "Universe"])

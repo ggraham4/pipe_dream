@@ -127,6 +127,24 @@ final/
 │                         (the live signal generator app/lib/pit_model.py
 │                         wraps — trains fresh, no cached-checkpoint-only
 │                         path exists for this one yet).
+│                         NOTE (2026-09-11): current_signal_pit.py now
+│                         IMPORTS its selection and weighting from
+│                         sweep.portfolio rather than reimplementing them,
+│                         so the live pick and the backtested pick cannot
+│                         drift apart. STOP_LOSS_PCT is no longer used by
+│                         the deployed config (Round 13 holds to horizon).
+│   └── sweep/        <- the pre-registered sweep harness (Rounds 12-17).
+│                         Splits a backtest into an expensive half (score
+│                         caching, one model run per signal config) and a
+│                         cheap half (portfolio post-processing, free), so
+│                         27 x 48 = 1,296 backtests cost 27 model runs.
+│                         Also holds every measurement tool built since:
+│                         feature_ic.py (per-feature IC screen), factors.py
+│                         (sector/size/vol neutralization), breadth.py
+│                         (effective breadth), stats.py (deflated Sharpe,
+│                         Reality Check, matched nulls), attribute.py, and
+│                         the feature families rates.py and events.py.
+│                         START AT final/src/sweep/RUNBOOK.md.
 ├── scripts/          <- data-acquisition scripts, meant to be run
 │                         directly by Gabe (not through an AI assistant's
 │                         sandboxed tools — see individual script
@@ -148,6 +166,12 @@ final/
 ```
 
 ## Current state of the project (as of 2026-09-02)
+
+> **SUPERSEDED IN PART.** Everything in this section describing model
+> PERFORMANCE predates the Round 11 data rebuild (2026-09-09), which
+> replaced the universe every prior result was measured on. The repo map,
+> file locations and workstream descriptions here are still accurate; the
+> numbers are not. See "Rounds 10-17" below before trusting any figure.
 
 **The headline change since this file was last accurate:** the
 survivorship-bias-correction workstream (was "#4, in progress") is now
@@ -494,6 +518,329 @@ realized (entry lag, stop fills, exit floor, costs) — use it rather than
 growing another copy of the arithmetic. `src/resimulate_corrected.py` and
 `src/holdout_analysis.py` reproduce the tables in the Project doc.
 `--execution as_published` reproduces pre-Round-9 numbers for comparison.
+
+## Rounds 10–17 (2026-09-09 → 2026-09-12) — the data rebuild, and what survived it
+
+**If you read one section of this file, read this one.** Everything above
+describing model performance predates a data rebuild that invalidated it.
+
+### The short version
+
+Round 11 replaced the universe every prior result was measured on. Rounds 12–15b
+then established, with well-powered negatives, that the model has **no detectable
+stock-selection edge** — what looked like one was survivorship bias, then a
+sector bet, then the winner's curse. Round 16 found the first genuine positive in
+the project's history: an **earnings-event timing feature**. Round 17 (pruning)
+is in progress.
+
+The full write-ups live in the Claude Project, not in this repo. The index is at
+the end of this section.
+
+### Round 11 — the universe was wrong, and so was everything measured on it
+
+The candidate pool every prior result used was missing **a third of the eligible
+early universe, and 89% of what was missing had since died**:
+
+```
+2008-06-30   981 eligible   old pool had 666   missing 315, of which 281 dead (89%)
+2014-06-30 1,418 eligible   old pool had 923   missing 495, of which 396 dead (80%)
+```
+
+Missing names include Genentech, Monsanto, Anheuser-Busch, Dell, DuPont,
+Wachovia, EMC, Yahoo, Sprint. Three further defects found in the same pass, all
+affecting prior results:
+
+1. **41 of 264 gap price files were the wrong company** — symbols reissued to new
+   issuers, 46,854 wrong-issuer bars.
+2. **The $10 price floor was look-ahead** — applied to split-adjusted `close`, it
+   excluded Apple ($5.98 adjusted vs $167.44 actual), Amazon, NVIDIA and 41 other
+   names worth $708B from the 2008 universe, because they split *later*.
+3. **~240 tickers' features used prices carrying spinoff adjustments that had not
+   happened yet.**
+
+A genuinely point-in-time universe now exists:
+`final/data/sharadar/pit_universe.parquet` — 6,888,686 rows, 5,454 trading days,
+4,011 tickers.
+
+**Treat any performance number in this file dated before 2026-09-09 as measured
+on defective data — untrustworthy in either direction, not merely pessimistic.**
+
+### Rounds 12–15b — five well-powered negatives
+
+| round | question | verdict |
+|---|---|---|
+| 12 | does any of 1,296 configs beat the market? | **NO.** Deflated Sharpe 0.746, Reality Check p=0.61 |
+| 13 | is the fundamental signal real? | **NO.** It is a sector bet — `rnd_intensity` t 3.28 → **0.77** after sector neutralization; 0 of 24 features reach \|t\|>2 |
+| 14 | do rate-sensitivity features help? | **NO.** The one candidate was 2019: that year is 8% of windows and **45% of the effect** |
+| 15 | is breadth the missing lever? | **NO.** Capped at `1/ρ ≈ 16` bets per window by an average pairwise active correlation of 0.055–0.076 that is flat across book sizes 5–100 and horizons 10/20/40 — a property of the asset class, not our construction |
+| 15b | does shortening the horizon help? | **NO.** Breadth varied **13×** (24.7 → 366.9 bets/yr) and the result did not move. Under `IR = IC × √breadth` that is only possible if IC ≈ 0 |
+
+**Calibration everyone should know before reading any backtest in this repo:**
+in a synthetic grid containing **no signal at all**, 27% of configurations beat
+the market and the best reached **2.577×**. A single config beating SPY is not
+evidence of anything.
+
+**What the deployed model actually does.** Its sector-neutralized IC is −0.0038
+(t −0.63) — slightly *negative*. Residualizing scores on size/vol/sector drops
+the nomination-era result from 2.7957× to **0.7719 against a null median of
+0.7721** — the exact centre of its own matched null. So 100% of the apparent
+performance is factor loading. Decomposed:
+
+```
+static sector tilt (tech/health/energy)   +0.54%/yr   t 1.99, survives LOYO, ETF-replicable
+sector timing / rotation                  +0.42%/yr   t 0.28 - nothing
+within-sector stock picking                ~0%/yr     at or below random
+```
+
+The `volq` + `invvol` construction is where the headline number comes from, and
+it works by **cutting variance drag, not by picking better**: at top-5 it barely
+moves arithmetic return (+14.54 → +16.30%/yr) while halving volatility, taking
+drag from 7.16%/yr to 2.49%/yr.
+
+### Round 16 — the first genuine positive
+
+`days_to_next_filing` — days until a company's next earnings filing.
+
+```
+h=20   IC -0.0153   t -4.17   BH q 0.0004   permutation p 0.000
+h=40   IC -0.0179   t -3.14   BH q 0.020    permutation p 0.035
+```
+
+It **gains** strength under sector neutralization (t → −4.59), so it is not a
+sector bet. It survives leave-one-year-out: min \|t\| across all 13 year-drops is
+**3.42** at h=20. The sign matches the **earnings announcement premium** (Beaver
+1968; Frazzini & Lamont 2007) — a named, heavily-replicated anomaly. And PC1 is
+only 27–33% of IC variance (versus 67–69% for the price/fundamental families), so
+this is genuinely independent information.
+
+**The caveat that governs how it may be used.** The strong variant uses the
+*true* next-filing date. Earnings dates are scheduled and announced weeks ahead,
+so a real trader knows them — but neither Sharadar nor Alpha Vantage records
+*when a date was announced*, only when the filing landed, so this dataset cannot
+prove it was knowable. Three variants are therefore carried side by side:
+
+```
+_est        cadence (last filing + own median gap)     provably causal   t -1.66
+_seasonal   same quarter last year (Frazzini-Lamont)   provably causal   t -2.18
+_actual     the true next date                         unverifiable      t -4.17
+```
+
+**`_actual` and `_known` are excluded from every training feature set.** Shipping
+an unverifiable column in a deployed model is not acceptable. The seasonal
+estimator is the tradeable version. Note the asymmetry in our favour: live
+trading *will* have real announced dates, so the honest backtest **understates**
+live performance.
+
+A training-free stage 2 (rank or filter the model's top-50 by earnings proximity)
+was tested and **failed** — nearest-earnings sits at the null median. The only
+robust piece is that *farthest*-from-earnings is bad (1st–2nd percentile), i.e.
+the premium seen from the short side. An IC of 0.008 cannot be detected in 82
+portfolio windows; it belongs inside the model as a column, not outside it as a
+rule.
+
+### The gate philosophy changed on 2026-09-12
+
+`claude/validation-gates.md` now has a **DECISION BAR** section that supersedes
+Gate B for deployment questions. Gate B's `t > 3` is a hypothesis-testing bar
+applied to what is actually a decision problem. The standard is now: **deploy
+when expected excess return is positive after costs and the downside is
+understood. Significance is not required; honesty about the expectation is.**
+
+Two things did *not* change:
+
+- **Gate A is unchanged and absolute** — placebo, look-ahead, pool integrity.
+  Those catch *bugs*, not insignificance.
+- **Leave-one-year-out survives**, because concentration is a statement about
+  forward expectation rather than significance. A result that is 45% one year has
+  a near-zero forward expectation whatever its p-value.
+
+What does *not* work, and is recorded because it is the tempting mistake: "27% of
+zero-signal configs beat the market, so we will take something in that 27%." That
+27% is measured **in-sample**. It is the lucky tail of a distribution centred on
+zero, not a subpopulation with an edge. Winning a large search is not evidence
+about forward return; a reason to work, or confirmation on untouched data, is.
+
+### The hold-out is spent
+
+2020–2026 was used **once**, in Round 13, to confirm the top-5 breadth choice.
+Rounds 15, 15b, 16 and 17 are all nomination-era only, and the `breadth` and
+`horizon` CLI commands refuse `--era holdout` outright. **Nothing may be
+confirmed on it again.** Anything that passes from here is a *nomination*,
+confirmable only on genuinely new data.
+
+### New code since Round 11
+
+```
+final/src/sweep/              the sweep package - see its RUNBOOK.md
+  breadth.py                  Round 15 - effective breadth
+  rates.py                    Round 14 - rate sensitivity (screened, rejected, kept)
+  events.py                   Round 16 - earnings timing + tail shape
+  factors.py  feature_ic.py  attribute.py  stats.py  outcomes.py
+final/src/build_rate_features.py
+final/src/build_event_features.py
+final/data/rates/treasury_yields.csv
+```
+
+Panels are additive and never overwrite each other, so every prior result stays
+reproducible from the panel it was built on:
+`features_with_fundamentals_*` → `features_with_rates_*` → `features_with_events_*`.
+
+### Six bugs, one pattern — read before adding a feature
+
+| bug | how it presented | what caught it |
+|---|---|---|
+| NaN ranking (R13) | `argsort` sorts NaN last, so an 85%-missing column got top ranks and manufactured IC | asking what a mostly-empty column *should* score |
+| NaN era split (R14) | one NaN made `.mean()` return NaN for a whole era, printed as "no estimate exists" | asking why an estimate would be missing |
+| breadth estimator (R15) | assumed equal position variances; under invvol over vol quintiles reported 19.1 where truth was 5.0 | `capture > 1`, impossible by definition |
+| merge_asof alignment (R16) | `merge_asof` resets the index, so `.sort_index()` is a no-op and six columns landed on wrong rows | a fire rate of 0.7% where cadence implies 64% |
+| empty feature list (R17) | column missing from `PanelContext.want` → screened nothing, reported "no windows" | noticing it reported *nothing*, not *no signal* |
+| inf in features (R17) | `pct_change` over zero revenue → 27k infinities; XGBoost takes NaN but rejects inf | three cells dying at training time |
+
+**Every one passed its automated checks.** In every case the checks verified
+*internal consistency* and the bug was in *correspondence to the outside world*.
+Distribution-shaped checks — coverage, dispersion, range, monotonicity — cannot
+detect a permutation of rows, because a permutation preserves every distribution.
+
+**Standing rule.** Any feature whose expected magnitude or frequency is derivable
+from something already known — a filing cadence, a sector count, a named company,
+a physical bound — gets that number written into its acceptance check as an
+explicit expected value with a tolerance. This is Gate A7c restated: **verify by
+naming what should be there, not by counting.** Every automated check passed on a
+2008 universe with no Apple in it.
+
+### Where the Round 10–17 write-ups live
+
+In the Claude Project (`pipe_dream`), not this repo:
+
+```
+claude/validation-gates.md                       gates + the DECISION BAR
+claude/DATA-PIPELINE-HANDOFF.md                  pipeline contract
+claude/2026-09-12-merge-asof-alignment-bug.md    bug post-mortem
+universe/2026-09-09-*                            the Round 11 rebuild (6 docs)
+backtest/2026-09-11-round12-sweep-results.md
+models/2026-09-11-feature-ic-screen.md           Round 13
+models/2026-09-11-rates-feature-screen.md        Round 14
+backtest/2026-09-12-round15-breadth-results.md
+backtest/2026-09-12-round15b-horizon-results.md
+models/2026-09-12-sector-bet-decomposition.md
+backtest/2026-09-12-turnover-and-what-the-ranking-actually-buys.md
+models/2026-09-11-deployed-best-case-config.md   what the app is running
+```
+
+Pre-registrations sit alongside under `claude/`, written before each round ran.
+
+## Round 18 (2026-09-16) — the app shows two models, and what that cost
+
+### What changed on the app
+
+The Stock tab now renders **two signals side by side** plus **SPY and USMV**:
+
+```
+PRIMARY    q75    price_fund_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40
+CANDIDATE  xrank  price_fund_h40_xrank_trd_xgb_reg_d3e01r100_expanding_cap500k_pit_s40
+```
+
+Identical features (24), identical hyperparameters (depth 3, eta 0.1, 100
+rounds, most recent 500k labelled rows), identical construction (top 1 from
+each of 5 volatility quintiles, inverse-vol weighted, next-open entry, 40-day
+hold, no stop). **The only difference is the training target.**
+
+| | 2007-2019 (in-sample) | 2020-2026 (hold-out) |
+|---|---|---|
+| q75 | +8.71%/yr, 2.796× SPY | **+7.33%/yr, 1.526×** |
+| xrank | +6.35%/yr, 2.132× SPY | **−4.28%/yr, 0.771×** |
+
+The candidate is **displayed, not traded**, and every surface that renders it
+carries the hold-out number. Nothing blends the two scores, and nothing should:
+overlap between them is near-foregone given how much they share.
+
+USMV is on the chart because Round 18's attribution says the model's edge is a
+**low-volatility tilt** (score-vol correlation −0.134; 88% of the volatility
+bucketing's benefit is higher arithmetic return, not reduced variance drag)
+plus a tech/healthcare sector bet. Both are purchasable for an expense ratio.
+Putting the min-vol ETF on the same axes is the honest question in front of the
+model every time it is opened.
+
+### Two live-vs-backtest divergences found and fixed
+
+`current_signal_pit.py` had drifted from the cell whose backtest the app
+quotes. Both changed today's picks:
+
+1. **Label basis.** The cell id ends in `_trd_` — trained on
+   `forward_return_tradable_40` (`close[t+H] / open[t+1]`). The live script was
+   training on `forward_return_40` (`close[t]`-to-`close[t+H]`), which credits a
+   move that was over before you could trade it. Now `TRADABLE_LABEL_COL`.
+2. **Candidate pool.** The sweep scores **every** name in that day's
+   point-in-time universe and lets XGBoost handle missing features natively.
+   The live script was dropping any name with a NaN in `FEATURE_COLS` before
+   scoring, silently excluding recently-listed names the backtest did hold.
+   Training is likewise masked on label availability only, matching
+   `scorecache._run_cell`. The script prints how many names the change admits.
+
+This is the same class of defect as the six in the Rounds 10-17 table: every
+automated check passed, because each verified internal consistency while the
+error was in correspondence to the thing being claimed. **Standing addition: a
+live script that names a backtested cell id must be diffable against that
+cell's config, field by field.** The feature list already was (24 columns, same
+order, verified). The label basis was not, and nothing caught it for five days.
+
+### New / changed files
+
+```
+final/src/current_signal_pit.py        rewritten -- trains BOTH signals from one
+                                       panel load; VARIANTS is the single place a
+                                       signal is defined; --only <key> for one
+final/src/build_app_benchmarks.py      NEW -- out/app_model_comparison.json:
+                                       equity curves + summaries for both cells
+                                       against SPY and USMV, both eras
+final/app/lib/pit_model.py             rewritten -- variant-aware; both-model
+                                       ticker query; comparison loader
+final/app/lib/paths.py                 + SHARADAR_DIR, PIT_UNIVERSE_PARQUET,
+                                       BENCHMARKS_DIR
+final/app/app.py                       Stock tab rewritten; Secondary Models tab
+                                       and every XGBoost/LSTM cross-check removed
+final/app/README.md                    rewritten for the two-signal layout
+```
+
+New outputs: `out/current_signal_pit_xrank.csv`, `..._xrank_meta.json`,
+`out/current_signal_compare.json`, `out/app_model_comparison.json`,
+`out/models/xgb_pit_xrank_model.json`, `data/benchmarks/USMV.csv`.
+
+### The Secondary Models tab is gone
+
+The non-PIT price-only XGBoost and LSTM were trained on the pre-Round-11
+universe — missing a third of the eligible 2008 names, 89% of them since dead.
+Every number they produced is measured on data now known to be defective, so
+showing them beside point-in-time picks invited a comparison that was not valid
+in either direction. `src/current_signal.py` and `src/lstm_current_signal.py`
+are still on disk; nothing in the app calls them, and the "Retrain ALL models"
+sequence no longer runs them.
+
+### `build_app_benchmarks.py` touches the hold-out, and why that is allowed
+
+Every other command in `sweep/` refuses `--era holdout`. This one evaluates it,
+under three constraints written into the file:
+
+- The cell list is **hard-coded**. No grid, no glob, no `--only`. A report over
+  a fixed set of two is not a search.
+- Both hold-out numbers were **already spent and published** — q75 in Round 13,
+  xrank in Round 18. Re-plotting a number already paid for costs nothing.
+- Adding a third cell to that list to "see how it does" is the exact search the
+  file is shaped to prevent. Don't.
+
+The rule is unchanged: nothing new may be confirmed on 2020-2026.
+
+### The number to read everything else against
+
+Ten cells differing from the deployed one **only by a turned knob** (training
+window, training cap, tree depth, market-cap tier, label basis) — same features,
+same label, same model — span **−8.01 to +9.15 %/yr excess, mean +3.40,
+sd 5.03**. The deployed cell's +8.71 is 1.06 sd above its own family mean.
+
+The app prints this band above both equity charts and beside today's picks.
+Any gap smaller than it — including the gap between the two plotted models — is
+not evidence of anything. `build_app_benchmarks.py` recomputes it from
+`out/sweep/live_nominate.csv` rather than hardcoding it, so it tracks the grid.
 
 ## Known gaps — read before assuming something "just works"
 
