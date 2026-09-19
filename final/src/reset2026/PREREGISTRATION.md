@@ -110,13 +110,23 @@ full coverage, and coverage itself is reported per date as a diagnostic.
 Two variants are run side by side, per Round 13's discriminator:
 
 - **raw** — the composite as defined above.
-- **neutral** — each factor residualized cross-sectionally on
-  {sector, log market cap, `volatility_60`} (reusing `sweep/factors.py`'s
-  design, sector map from `tickers_master` — current-day classification, the
-  same declared limitation Round 13 already carries) BEFORE rank-transforming
-  and combining. If `raw` shows excess return that `neutral` does not, the
-  edge is a sector/size/vol bet, not stock selection, per Round 13's own
-  finding on the deployed model.
+- **neutral** — each of the 9 factors residualized cross-sectionally on
+  **sector only** (dummy variables, `tickers_master.sector` — current-day
+  classification, the same declared limitation Round 13 already carries)
+  BEFORE rank-transforming and combining. If `raw` shows excess return that
+  `neutral` does not, the edge is a sector bet, not stock selection, per
+  Round 13's own finding on the deployed model.
+
+  **Amendment (pre-run, before any score was computed):** the control set is
+  sector alone, not {sector, size, vol} as an earlier draft of this section
+  said. `volatility_60` is factor #3 in the table above — residualizing it on
+  itself is degenerate (identically zero), and more importantly, low-vol is
+  a disclosed, literature-backed factor in this composite, not a confound to
+  neutralize away. The vol/size-tilt question this project already knows to
+  ask (Round 18: "is the edge just a purchasable ETF's tilt") is answered
+  instead by the **USMV comparison in §6**, which tests it directly against
+  a real low-vol fund rather than against a synthetic residualization that
+  would have partly cancelled one of this composite's own named factors.
 
 ## 4. Portfolio construction — two variants, both reported
 
@@ -134,10 +144,35 @@ Two variants are run side by side, per Round 13's discriminator:
 ## 5. Execution and horizon
 
 40-trading-day holds, non-overlapping windows, next-open entry with a
-1-trading-day lag, 50bp round-trip cost — same conventions as
-`execution.py`/`portfolio.py`. No stop-loss (Round 13: the model this project
-already has does not need one to be readable, and it is one more knob this
-reset is deliberately not adding back).
+1-trading-day lag (`execution.realize_position`, unmodified, imported not
+reimplemented) — same conventions as `execution.py`/`portfolio.py`. No
+stop-loss (Round 13: the model this project already has does not need one to
+be readable, and it is one more knob this reset is deliberately not adding
+back).
+
+**Amendment (pre-run):** cost is reported at TWO points, both post-processed
+from the same cached gross per-position returns via `execution.
+apply_turnover_costs`'s turnover-aware model (charges a position only on
+actual entries/exits, not on every held position every window — Round 9's
+finding that the naive alternative overstates cost by ~a third): **15bp**
+round-trip, `execution.py`'s own current `DEFAULT_COST_BPS` (revised down
+from an earlier, unchecked 50bp assumption — see that file's header), as the
+base case, and **50bp** as an explicit stress case. An earlier draft of this
+section named only 50bp as "matching execution.py"; that was a stale
+assumption never checked against the file's actual current default, caught
+before any score was computed.
+
+Real underlying OHLC for every position (entries, exits, and the delisting
+exit floor for any name that stops trading inside the 40-day hold) comes from
+`scripts/td_data_sharadar/` — the single Sharadar-sourced, per-ticker export
+that `continuous_walkforward_pit.py`'s own `--universe pit` path uses for
+exactly this reason (see that file's `PRICE_DIRS_PIT` comment): mixing it
+with the older `td_data_local`/`td_data_delisted` directories would price a
+position on a different corporate-action basis from the one its features
+were computed on for ~13% of tickers, and `td_data_delisted` still carries
+41 wrong-issuer files. SPY and USMV benchmarks use their own existing files
+(`scripts/td_data_local/SPY.csv`, `data/benchmarks/USMV.csv`) run through the
+identical `realize_position` call for exact comparability.
 
 **All 40 grid offsets are used, not offset 0.** `check_grid_offset.py`
 demonstrated the non-overlapping-grid choice is a coin flip for weak signals
