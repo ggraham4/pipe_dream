@@ -32,6 +32,14 @@ PROJECT_ROOT = FINAL_DIR                                    # kept as an alias; 
 # stock buy/no-buy model
 SRC_DIR = FINAL_DIR / "src"
 STOCK_DATA_DIR = FINAL_DIR / "scripts" / "td_data_local"
+# Round 11 rebuild: the point-in-time universe and the Sharadar panel it is
+# built from. The app reads pit_universe.parquet for freshness only -- the
+# screen itself is applied in final/src/current_signal_pit.py.
+SHARADAR_DIR = FINAL_DIR / "data" / "sharadar"
+PIT_UNIVERSE_PARQUET = SHARADAR_DIR / "pit_universe.parquet"
+# Benchmark ETF price caches for the app's comparison chart (SPY lives in
+# STOCK_DATA_DIR already; USMV and anything added later land here).
+BENCHMARKS_DIR = FINAL_DIR / "data" / "benchmarks"
 OUT_DIR = FINAL_DIR / "out"
 STOCK_MODELS_DIR = OUT_DIR / "models"
 FEATURES_PARQUET = OUT_DIR / "features.parquet"

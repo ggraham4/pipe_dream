@@ -1,0 +1,34 @@
+[
+ {
+  "horizon": 40,
+  "label_basis": "tradable",
+  "depth": 3,
+  "eta": 0.1,
+  "rounds": 100,
+  "train": "expanding",
+  "train_cap": 500000,
+  "universe": "pit",
+  "cap_tier": "all",
+  "step": 40,
+  "seed": 0,
+  "features": "price_fund_causal_events",
+  "label": "q75",
+  "model": "xgb"
+ },
+ {
+  "horizon": 40,
+  "label_basis": "tradable",
+  "depth": 3,
+  "eta": 0.1,
+  "rounds": 100,
+  "train": "expanding",
+  "train_cap": 500000,
+  "universe": "pit",
+  "cap_tier": "all",
+  "step": 40,
+  "seed": 0,
+  "features": "price_fund_causal_events",
+  "label": "xrank",
+  "model": "xgb_reg"
+ }
+]

@@ -1,0 +1,455 @@
+{
+ "candidates": [
+  {
+   "id": "pf_curve_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_curve_beta_120",
+   "column": "curve_beta_120",
+   "panel": "features_with_rates_sharadar_pit.parquet",
+   "null": [
+    "pf_curve_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufcurve_beta_1200",
+    "pf_curve_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufcurve_beta_1201",
+    "pf_curve_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufcurve_beta_1202",
+    "pf_curve_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufcurve_beta_1203",
+    "pf_curve_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufcurve_beta_1204",
+    "pf_curve_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufcurve_beta_1205",
+    "pf_curve_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufcurve_beta_1206",
+    "pf_curve_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufcurve_beta_1207"
+   ]
+  },
+  {
+   "id": "pf_d_y10_20_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_d_y10_20",
+   "column": "d_y10_20",
+   "panel": "features_with_rates_sharadar_pit.parquet",
+   "null": [
+    "pf_d_y10_20_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufd_y10_200",
+    "pf_d_y10_20_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufd_y10_201",
+    "pf_d_y10_20_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufd_y10_202",
+    "pf_d_y10_20_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufd_y10_203",
+    "pf_d_y10_20_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufd_y10_204",
+    "pf_d_y10_20_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufd_y10_205",
+    "pf_d_y10_20_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufd_y10_206",
+    "pf_d_y10_20_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufd_y10_207"
+   ]
+  },
+  {
+   "id": "pf_days_to_next_filing_est_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_days_to_next_filing_est",
+   "column": "days_to_next_filing_est",
+   "panel": "features_with_events_sharadar_pit.parquet",
+   "null": [
+    "pf_days_to_next_filing_est_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufdays_to_next_filing_est0",
+    "pf_days_to_next_filing_est_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufdays_to_next_filing_est1",
+    "pf_days_to_next_filing_est_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufdays_to_next_filing_est2",
+    "pf_days_to_next_filing_est_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufdays_to_next_filing_est3",
+    "pf_days_to_next_filing_est_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufdays_to_next_filing_est4",
+    "pf_days_to_next_filing_est_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufdays_to_next_filing_est5",
+    "pf_days_to_next_filing_est_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufdays_to_next_filing_est6",
+    "pf_days_to_next_filing_est_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufdays_to_next_filing_est7"
+   ]
+  },
+  {
+   "id": "pf_days_to_next_filing_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_days_to_next_filing_seasonal",
+   "column": "days_to_next_filing_seasonal",
+   "panel": "features_with_events_sharadar_pit.parquet",
+   "null": [
+    "pf_days_to_next_filing_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufdays_to_next_filing_seasonal0",
+    "pf_days_to_next_filing_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufdays_to_next_filing_seasonal1",
+    "pf_days_to_next_filing_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufdays_to_next_filing_seasonal2",
+    "pf_days_to_next_filing_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufdays_to_next_filing_seasonal3",
+    "pf_days_to_next_filing_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufdays_to_next_filing_seasonal4",
+    "pf_days_to_next_filing_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufdays_to_next_filing_seasonal5",
+    "pf_days_to_next_filing_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufdays_to_next_filing_seasonal6",
+    "pf_days_to_next_filing_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufdays_to_next_filing_seasonal7"
+   ]
+  },
+  {
+   "id": "pf_earnings_in_window_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_earnings_in_window",
+   "column": "earnings_in_window",
+   "panel": "features_with_events_sharadar_pit.parquet",
+   "null": [
+    "pf_earnings_in_window_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_in_window0",
+    "pf_earnings_in_window_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_in_window1",
+    "pf_earnings_in_window_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_in_window2",
+    "pf_earnings_in_window_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_in_window3",
+    "pf_earnings_in_window_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_in_window4",
+    "pf_earnings_in_window_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_in_window5",
+    "pf_earnings_in_window_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_in_window6",
+    "pf_earnings_in_window_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_in_window7"
+   ]
+  },
+  {
+   "id": "pf_earnings_in_window_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_earnings_in_window_seasonal",
+   "column": "earnings_in_window_seasonal",
+   "panel": "features_with_events_sharadar_pit.parquet",
+   "null": [
+    "pf_earnings_in_window_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_in_window_seasonal0",
+    "pf_earnings_in_window_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_in_window_seasonal1",
+    "pf_earnings_in_window_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_in_window_seasonal2",
+    "pf_earnings_in_window_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_in_window_seasonal3",
+    "pf_earnings_in_window_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_in_window_seasonal4",
+    "pf_earnings_in_window_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_in_window_seasonal5",
+    "pf_earnings_in_window_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_in_window_seasonal6",
+    "pf_earnings_in_window_seasonal_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_in_window_seasonal7"
+   ]
+  },
+  {
+   "id": "pf_earnings_move_sens_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_earnings_move_sens",
+   "column": "earnings_move_sens",
+   "panel": "features_with_events_sharadar_pit.parquet",
+   "null": [
+    "pf_earnings_move_sens_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_move_sens0",
+    "pf_earnings_move_sens_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_move_sens1",
+    "pf_earnings_move_sens_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_move_sens2",
+    "pf_earnings_move_sens_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_move_sens3",
+    "pf_earnings_move_sens_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_move_sens4",
+    "pf_earnings_move_sens_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_move_sens5",
+    "pf_earnings_move_sens_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_move_sens6",
+    "pf_earnings_move_sens_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufearnings_move_sens7"
+   ]
+  },
+  {
+   "id": "pf_filed_going_concern_120d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_filed_going_concern_120d",
+   "column": "filed_going_concern_120d",
+   "panel": "features_with_edgar_events_sharadar_pit.parquet",
+   "null": [
+    "pf_filed_going_concern_120d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_going_concern_120d0",
+    "pf_filed_going_concern_120d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_going_concern_120d1",
+    "pf_filed_going_concern_120d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_going_concern_120d2",
+    "pf_filed_going_concern_120d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_going_concern_120d3",
+    "pf_filed_going_concern_120d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_going_concern_120d4",
+    "pf_filed_going_concern_120d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_going_concern_120d5",
+    "pf_filed_going_concern_120d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_going_concern_120d6",
+    "pf_filed_going_concern_120d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_going_concern_120d7"
+   ]
+  },
+  {
+   "id": "pf_filed_item402_240d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_filed_item402_240d",
+   "column": "filed_item402_240d",
+   "panel": "features_with_edgar_events_sharadar_pit.parquet",
+   "null": [
+    "pf_filed_item402_240d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_item402_240d0",
+    "pf_filed_item402_240d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_item402_240d1",
+    "pf_filed_item402_240d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_item402_240d2",
+    "pf_filed_item402_240d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_item402_240d3",
+    "pf_filed_item402_240d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_item402_240d4",
+    "pf_filed_item402_240d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_item402_240d5",
+    "pf_filed_item402_240d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_item402_240d6",
+    "pf_filed_item402_240d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_item402_240d7"
+   ]
+  },
+  {
+   "id": "pf_filed_item502_60d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_filed_item502_60d",
+   "column": "filed_item502_60d",
+   "panel": "features_with_edgar_events_sharadar_pit.parquet",
+   "null": [
+    "pf_filed_item502_60d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_item502_60d0",
+    "pf_filed_item502_60d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_item502_60d1",
+    "pf_filed_item502_60d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_item502_60d2",
+    "pf_filed_item502_60d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_item502_60d3",
+    "pf_filed_item502_60d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_item502_60d4",
+    "pf_filed_item502_60d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_item502_60d5",
+    "pf_filed_item502_60d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_item502_60d6",
+    "pf_filed_item502_60d_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shuffiled_item502_60d7"
+   ]
+  },
+  {
+   "id": "pf_gross_margin_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_gross_margin_delta",
+   "column": "gross_margin_delta",
+   "panel": "features_with_events_sharadar_pit.parquet",
+   "null": [
+    "pf_gross_margin_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufgross_margin_delta0",
+    "pf_gross_margin_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufgross_margin_delta1",
+    "pf_gross_margin_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufgross_margin_delta2",
+    "pf_gross_margin_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufgross_margin_delta3",
+    "pf_gross_margin_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufgross_margin_delta4",
+    "pf_gross_margin_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufgross_margin_delta5",
+    "pf_gross_margin_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufgross_margin_delta6",
+    "pf_gross_margin_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufgross_margin_delta7"
+   ]
+  },
+  {
+   "id": "pf_momentum_120_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_momentum_120_ind_rel",
+   "column": "momentum_120_ind_rel",
+   "panel": "features_with_sector_neutral_sharadar_pit.parquet",
+   "null": [
+    "pf_momentum_120_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_120_ind_rel0",
+    "pf_momentum_120_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_120_ind_rel1",
+    "pf_momentum_120_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_120_ind_rel2",
+    "pf_momentum_120_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_120_ind_rel3",
+    "pf_momentum_120_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_120_ind_rel4",
+    "pf_momentum_120_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_120_ind_rel5",
+    "pf_momentum_120_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_120_ind_rel6",
+    "pf_momentum_120_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_120_ind_rel7"
+   ]
+  },
+  {
+   "id": "pf_momentum_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_momentum_20_ind_rel",
+   "column": "momentum_20_ind_rel",
+   "panel": "features_with_sector_neutral_sharadar_pit.parquet",
+   "null": [
+    "pf_momentum_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_20_ind_rel0",
+    "pf_momentum_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_20_ind_rel1",
+    "pf_momentum_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_20_ind_rel2",
+    "pf_momentum_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_20_ind_rel3",
+    "pf_momentum_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_20_ind_rel4",
+    "pf_momentum_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_20_ind_rel5",
+    "pf_momentum_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_20_ind_rel6",
+    "pf_momentum_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_20_ind_rel7"
+   ]
+  },
+  {
+   "id": "pf_momentum_5_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_momentum_5_ind_rel",
+   "column": "momentum_5_ind_rel",
+   "panel": "features_with_sector_neutral_sharadar_pit.parquet",
+   "null": [
+    "pf_momentum_5_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_5_ind_rel0",
+    "pf_momentum_5_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_5_ind_rel1",
+    "pf_momentum_5_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_5_ind_rel2",
+    "pf_momentum_5_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_5_ind_rel3",
+    "pf_momentum_5_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_5_ind_rel4",
+    "pf_momentum_5_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_5_ind_rel5",
+    "pf_momentum_5_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_5_ind_rel6",
+    "pf_momentum_5_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_5_ind_rel7"
+   ]
+  },
+  {
+   "id": "pf_momentum_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_momentum_60_ind_rel",
+   "column": "momentum_60_ind_rel",
+   "panel": "features_with_sector_neutral_sharadar_pit.parquet",
+   "null": [
+    "pf_momentum_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_60_ind_rel0",
+    "pf_momentum_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_60_ind_rel1",
+    "pf_momentum_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_60_ind_rel2",
+    "pf_momentum_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_60_ind_rel3",
+    "pf_momentum_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_60_ind_rel4",
+    "pf_momentum_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_60_ind_rel5",
+    "pf_momentum_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_60_ind_rel6",
+    "pf_momentum_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufmomentum_60_ind_rel7"
+   ]
+  },
+  {
+   "id": "pf_net_issuance_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_net_issuance_pct",
+   "column": "net_issuance_pct",
+   "panel": "features_with_issuance_sharadar_pit.parquet",
+   "null": [
+    "pf_net_issuance_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufnet_issuance_pct0",
+    "pf_net_issuance_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufnet_issuance_pct1",
+    "pf_net_issuance_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufnet_issuance_pct2",
+    "pf_net_issuance_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufnet_issuance_pct3",
+    "pf_net_issuance_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufnet_issuance_pct4",
+    "pf_net_issuance_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufnet_issuance_pct5",
+    "pf_net_issuance_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufnet_issuance_pct6",
+    "pf_net_issuance_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufnet_issuance_pct7"
+   ]
+  },
+  {
+   "id": "pf_pct_from_high_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_pct_from_high_252_ind_rel",
+   "column": "pct_from_high_252_ind_rel",
+   "panel": "features_with_sector_neutral_sharadar_pit.parquet",
+   "null": [
+    "pf_pct_from_high_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufpct_from_high_252_ind_rel0",
+    "pf_pct_from_high_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufpct_from_high_252_ind_rel1",
+    "pf_pct_from_high_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufpct_from_high_252_ind_rel2",
+    "pf_pct_from_high_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufpct_from_high_252_ind_rel3",
+    "pf_pct_from_high_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufpct_from_high_252_ind_rel4",
+    "pf_pct_from_high_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufpct_from_high_252_ind_rel5",
+    "pf_pct_from_high_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufpct_from_high_252_ind_rel6",
+    "pf_pct_from_high_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufpct_from_high_252_ind_rel7"
+   ]
+  },
+  {
+   "id": "pf_pct_from_low_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_pct_from_low_252_ind_rel",
+   "column": "pct_from_low_252_ind_rel",
+   "panel": "features_with_sector_neutral_sharadar_pit.parquet",
+   "null": [
+    "pf_pct_from_low_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufpct_from_low_252_ind_rel0",
+    "pf_pct_from_low_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufpct_from_low_252_ind_rel1",
+    "pf_pct_from_low_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufpct_from_low_252_ind_rel2",
+    "pf_pct_from_low_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufpct_from_low_252_ind_rel3",
+    "pf_pct_from_low_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufpct_from_low_252_ind_rel4",
+    "pf_pct_from_low_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufpct_from_low_252_ind_rel5",
+    "pf_pct_from_low_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufpct_from_low_252_ind_rel6",
+    "pf_pct_from_low_252_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufpct_from_low_252_ind_rel7"
+   ]
+  },
+  {
+   "id": "pf_rate_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_rate_beta_120",
+   "column": "rate_beta_120",
+   "panel": "features_with_rates_sharadar_pit.parquet",
+   "null": [
+    "pf_rate_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_1200",
+    "pf_rate_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_1201",
+    "pf_rate_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_1202",
+    "pf_rate_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_1203",
+    "pf_rate_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_1204",
+    "pf_rate_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_1205",
+    "pf_rate_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_1206",
+    "pf_rate_beta_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_1207"
+   ]
+  },
+  {
+   "id": "pf_rate_beta_250_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_rate_beta_250",
+   "column": "rate_beta_250",
+   "panel": "features_with_rates_sharadar_pit.parquet",
+   "null": [
+    "pf_rate_beta_250_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_2500",
+    "pf_rate_beta_250_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_2501",
+    "pf_rate_beta_250_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_2502",
+    "pf_rate_beta_250_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_2503",
+    "pf_rate_beta_250_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_2504",
+    "pf_rate_beta_250_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_2505",
+    "pf_rate_beta_250_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_2506",
+    "pf_rate_beta_250_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_2507"
+   ]
+  },
+  {
+   "id": "pf_rate_beta_x_move_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_rate_beta_x_move",
+   "column": "rate_beta_x_move",
+   "panel": "features_with_rates_sharadar_pit.parquet",
+   "null": [
+    "pf_rate_beta_x_move_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_x_move0",
+    "pf_rate_beta_x_move_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_x_move1",
+    "pf_rate_beta_x_move_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_x_move2",
+    "pf_rate_beta_x_move_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_x_move3",
+    "pf_rate_beta_x_move_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_x_move4",
+    "pf_rate_beta_x_move_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_x_move5",
+    "pf_rate_beta_x_move_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_x_move6",
+    "pf_rate_beta_x_move_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrate_beta_x_move7"
+   ]
+  },
+  {
+   "id": "pf_realized_skew_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_realized_skew_120",
+   "column": "realized_skew_120",
+   "panel": "features_with_events_sharadar_pit.parquet",
+   "null": [
+    "pf_realized_skew_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrealized_skew_1200",
+    "pf_realized_skew_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrealized_skew_1201",
+    "pf_realized_skew_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrealized_skew_1202",
+    "pf_realized_skew_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrealized_skew_1203",
+    "pf_realized_skew_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrealized_skew_1204",
+    "pf_realized_skew_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrealized_skew_1205",
+    "pf_realized_skew_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrealized_skew_1206",
+    "pf_realized_skew_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrealized_skew_1207"
+   ]
+  },
+  {
+   "id": "pf_relative_strength_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_relative_strength_20_ind_rel",
+   "column": "relative_strength_20_ind_rel",
+   "panel": "features_with_sector_neutral_sharadar_pit.parquet",
+   "null": [
+    "pf_relative_strength_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrelative_strength_20_ind_rel0",
+    "pf_relative_strength_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrelative_strength_20_ind_rel1",
+    "pf_relative_strength_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrelative_strength_20_ind_rel2",
+    "pf_relative_strength_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrelative_strength_20_ind_rel3",
+    "pf_relative_strength_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrelative_strength_20_ind_rel4",
+    "pf_relative_strength_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrelative_strength_20_ind_rel5",
+    "pf_relative_strength_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrelative_strength_20_ind_rel6",
+    "pf_relative_strength_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrelative_strength_20_ind_rel7"
+   ]
+  },
+  {
+   "id": "pf_revenue_growth_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_revenue_growth_delta",
+   "column": "revenue_growth_delta",
+   "panel": "features_with_events_sharadar_pit.parquet",
+   "null": [
+    "pf_revenue_growth_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrevenue_growth_delta0",
+    "pf_revenue_growth_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrevenue_growth_delta1",
+    "pf_revenue_growth_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrevenue_growth_delta2",
+    "pf_revenue_growth_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrevenue_growth_delta3",
+    "pf_revenue_growth_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrevenue_growth_delta4",
+    "pf_revenue_growth_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrevenue_growth_delta5",
+    "pf_revenue_growth_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrevenue_growth_delta6",
+    "pf_revenue_growth_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufrevenue_growth_delta7"
+   ]
+  },
+  {
+   "id": "pf_roe_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_roe_delta",
+   "column": "roe_delta",
+   "panel": "features_with_events_sharadar_pit.parquet",
+   "null": [
+    "pf_roe_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufroe_delta0",
+    "pf_roe_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufroe_delta1",
+    "pf_roe_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufroe_delta2",
+    "pf_roe_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufroe_delta3",
+    "pf_roe_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufroe_delta4",
+    "pf_roe_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufroe_delta5",
+    "pf_roe_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufroe_delta6",
+    "pf_roe_delta_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufroe_delta7"
+   ]
+  },
+  {
+   "id": "pf_upside_vol_ratio_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_upside_vol_ratio_120",
+   "column": "upside_vol_ratio_120",
+   "panel": "features_with_events_sharadar_pit.parquet",
+   "null": [
+    "pf_upside_vol_ratio_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufupside_vol_ratio_1200",
+    "pf_upside_vol_ratio_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufupside_vol_ratio_1201",
+    "pf_upside_vol_ratio_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufupside_vol_ratio_1202",
+    "pf_upside_vol_ratio_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufupside_vol_ratio_1203",
+    "pf_upside_vol_ratio_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufupside_vol_ratio_1204",
+    "pf_upside_vol_ratio_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufupside_vol_ratio_1205",
+    "pf_upside_vol_ratio_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufupside_vol_ratio_1206",
+    "pf_upside_vol_ratio_120_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufupside_vol_ratio_1207"
+   ]
+  },
+  {
+   "id": "pf_volatility_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_volatility_20_ind_rel",
+   "column": "volatility_20_ind_rel",
+   "panel": "features_with_sector_neutral_sharadar_pit.parquet",
+   "null": [
+    "pf_volatility_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufvolatility_20_ind_rel0",
+    "pf_volatility_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufvolatility_20_ind_rel1",
+    "pf_volatility_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufvolatility_20_ind_rel2",
+    "pf_volatility_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufvolatility_20_ind_rel3",
+    "pf_volatility_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufvolatility_20_ind_rel4",
+    "pf_volatility_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufvolatility_20_ind_rel5",
+    "pf_volatility_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufvolatility_20_ind_rel6",
+    "pf_volatility_20_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufvolatility_20_ind_rel7"
+   ]
+  },
+  {
+   "id": "pf_volatility_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_volatility_60_ind_rel",
+   "column": "volatility_60_ind_rel",
+   "panel": "features_with_sector_neutral_sharadar_pit.parquet",
+   "null": [
+    "pf_volatility_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufvolatility_60_ind_rel0",
+    "pf_volatility_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufvolatility_60_ind_rel1",
+    "pf_volatility_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufvolatility_60_ind_rel2",
+    "pf_volatility_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufvolatility_60_ind_rel3",
+    "pf_volatility_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufvolatility_60_ind_rel4",
+    "pf_volatility_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufvolatility_60_ind_rel5",
+    "pf_volatility_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufvolatility_60_ind_rel6",
+    "pf_volatility_60_ind_rel_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufvolatility_60_ind_rel7"
+   ]
+  }
+ ],
+ "baseline": "price_fund_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+ "draws": 8,
+ "design": "per-candidate null, pooled variance"
+}
