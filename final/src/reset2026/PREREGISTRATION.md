@@ -238,3 +238,59 @@ the honest 1,152 gave 0.791).
 
 The hold-out run happens exactly once, for exactly that one configuration.
 Nothing here waits on the currently-running `sweep/` backlog job.
+
+## Nomination-era result and the named selection (added after the nominate-era
+run completed, before any hold-out score was computed)
+
+Full results: `out/reset2026/REPORT_nominate.md`. Headline, all 40 offsets,
+2007-2019, net of the turnover-aware 15bp cost:
+
+| cell | decile_volq excess vs SPY | vs USMV | null pctile | offsets positive |
+|---|---|---|---|---|
+| cap2000_raw | +1.09%/yr | -0.10%/yr | 100% | 37/40 |
+| cap2000_neutral | -0.32%/yr | -1.94%/yr | 91% | 8/40 |
+| cap500_raw | +3.03%/yr | +1.22%/yr | 100% | 40/40 |
+| cap500_neutral | +2.63%/yr | +1.22%/yr | 100% | 40/40 |
+| **cap150_raw** | **+3.75%/yr** | **+1.86%/yr** | **100%** | **40/40** |
+| cap150_neutral | +3.47%/yr | +2.36%/yr | 100% | 40/40 |
+
+Three findings that make this readable, not just a big number:
+
+1. **Monotonic in down-cap.** cap2000 (today's $2B floor, the universe every
+   prior round in this project measured) is flat-to-negative once
+   neutralized — consistent with everything Rounds 12-19 already found on
+   that universe. The edge appears and grows as the floor comes down. This is
+   what "down-cap is where the breadth ceiling was" predicts, not an
+   assumption.
+2. **Survives sector-neutralization.** cap150_raw -> cap150_neutral costs
+   0.3pp (3.75% -> 3.47%), not the near-total collapse Round 13 found on the
+   deployed model (2.80x -> 0.77x, to the exact centre of its own null). This
+   is the discriminator PREREGISTRATION.md section 3 named as load-bearing,
+   and it comes back the opposite way from every previous round's headline
+   number.
+3. **Survives leave-one-year-out.** No single dropped year takes the 13-year
+   mean below +2.1%/yr (worst case: dropping 2008, the largest single-year
+   contributor at +11.78%, still leaves +2.96%/yr). 2019 -- the year that
+   was 45% of Round 14's now-rejected `rate_beta_x_move` effect -- is a DRAG
+   here (-9.52%), not the driver. See `out/reset2026/` LOYO check output
+   (reproducible via the per-offset `yearly` field already in every
+   checkpoint JSON).
+
+**Named selection: `cap150_raw`, `decile_volq` portfolio construction.**
+Highest nomination-era `decile_volq_excess` of the 12 pre-registered
+configurations, passes Gate A (PIT joins verified, outcome cache verified
+against `execution.realize_position` on 300 direct samples, 0 mismatches),
+passes LOYO. `topn_ew` on the same cell is reported alongside as the
+already-included secondary construction, not a second search.
+
+Confirming now, once:
+
+    python3 run_backtest.py --era holdout --only cap150_raw --i-am-confirming
+
+Selection trials = 12 (the full nomination-era search space named in section
+8) is recorded here for the record. This package does not implement a
+Deflated-Sharpe-style formal deflation against that count -- the DECISION
+BAR philosophy this project adopted 2026-09-12 does not require one to act
+-- but the number is written down now, before the hold-out score exists, so
+anyone who wants to compute one later is not reconstructing it after the
+fact.
