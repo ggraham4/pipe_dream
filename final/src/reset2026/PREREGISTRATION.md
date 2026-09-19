@@ -329,3 +329,90 @@ Per standing rule 9 (gates do not move after seeing a result): this verdict
 is written directly into this document rather than softened, and no further
 hold-out draw is taken to try to resolve it -- 2020-2026 is spent again,
 this time for real, for this pipeline.
+
+## Future avenues (roadmap discussed with Gabe, 2026-09-19)
+
+Not implemented beyond the first item below. Recorded so a future session
+doesn't have to reconstruct the reasoning.
+
+**The "meta model" framing.** Gabe's framing: this composite should end up
+as ONE INPUT among several into a higher-level model, not necessarily the
+final answer on its own -- the higher level could be a gated blend, an
+RNN, an XGBoost combiner, or something else. Three tiers emerged, ordered
+by how much fitting each needs and how much this project's own history
+already warns against jumping straight to the top of that order:
+
+1. **Zero-fit blend of composite + q75** (DONE, this section). Rank-
+   average the two scores 50/50, same `decile_volq` construction as the
+   rest of this package, no new fitted parameters -- the cheapest possible
+   version of "combine disagreeing signals." Motivated directly by the
+   q75-comparison finding (section on comparison against q75, main
+   write-up): rank correlation -0.225, negative in every sector -- two
+   genuinely different views of the market, and combining forecasts that
+   disagree is one of the more robust results in the forecasting
+   literature (Bates & Granger 1969) independent of whether either view is
+   individually strong.
+
+   **Result** (`blend_q75.py`, `out/reset2026/blend_q75_report.json`):
+   run on a SINGLE grid (q75's score cache has only one cadence --
+   confirmed identical to this package's offset 0; scoring q75 at the
+   other 39 offsets means retraining XGBoost 39 more times, which defeats
+   the point of a cheap test), on the cap2000 universe (q75's own,
+   not the composite's strongest cap150 tier), with q75 and the composite
+   BOTH forced through `decile_volq` so the comparison isolates the blend
+   effect rather than a construction difference:
+
+   | | excess vs SPY/yr | nominate-only | holdout-only |
+   |---|---|---|---|
+   | q75 alone | +0.35% | +2.35% | -3.55% |
+   | composite alone (cap2000) | +0.54% | +1.18% | -0.71% |
+   | blend (50/50) | **+1.54%** | +2.52% | **-0.36%** |
+
+   Blend beats both components, especially on hold-out, and beats its own
+   matched null on 100/100 draws. **The genuinely encouraging part**: LOYO
+   on the blend drops 2020 (still the largest single contributor) and the
+   mean per-window excess goes from +0.24% to +0.06% -- it stays
+   POSITIVE. This is a real difference from the cap150 composite-alone
+   result, which flipped to -2.05%/yr when 2020 was dropped (main write-up
+   section 3.2). The blend looks more stable, not just bigger.
+
+   **Caveats, all real**: single grid (not the 40-offset average every
+   other number in this package gets); q75 and composite here are NOT
+   measured with their own headline constructions (q75's deployed book is
+   5 concentrated single-best-per-quintile picks, not a ~160-name
+   decile_volq book -- these numbers say nothing about the deployed app's
+   actual performance); hold-out excess is still negative for all three
+   in absolute terms, the blend is least-bad, not a confirmed winner.
+   Treat as a promising lead consistent with the theory, not a second
+   confirmed result at the same evidentiary bar as section 3.
+
+2. **Low-dimensional, pre-specified regime gate** (bull/bear, or a
+   trailing-vol threshold) -- NOT STARTED. Cheap in the same sense as the
+   blend (no real fitting, just a threshold), but this project already
+   ran a bull/bear-style regime gate once (the 2-state HMM on SPY returns
+   blending the price-only and fundamentals-augmented models,
+   `regime_signals_beta.py`) and it was retired on Gabe's explicit
+   instruction ("we are no longer using the HMM"). The specific reasoning
+   beyond that line isn't recorded here -- **check with Gabe why it was
+   dropped before reusing the concept**, so this doesn't rebuild something
+   already found wanting for a reason not visible in this document.
+
+3. **Sparse, heterogeneous-effect events** (Fed surprises, geopolitical
+   shocks, market-moving news/tweets) -- NOT STARTED, and structurally
+   different from tiers 1-2. A per-stock factor or a smooth market-wide
+   gate can't express "this event helps sector A and hurts sector B,"
+   which is what these events actually do -- that needs something with
+   real capacity, like a small neural net. The data-scarcity trap that
+   motivated this whole reset applies here in a sharper form (a handful
+   of major Fed surprises across the whole backtest is a much smaller
+   sample than the breadth problem already documented) UNLESS the problem
+   is reframed: pool across STOCKS reacting to each event, not across
+   events themselves -- one FOMC decision is ~2,000 stock-level reactions
+   with their own characteristics (sector, rate-sensitivity, existing
+   factor scores) as inputs, turning "40-80 events" into tens of thousands
+   of event x stock observations, a normal supervised-learning sample
+   size. Alpha Vantage's `NEWS_SENTIMENT` endpoint is already connected in
+   this environment and is the concrete starting point if this gets
+   picked up -- build a per-stock, per-day sentiment/event-exposure
+   feature first, joined onto the existing panel, before any learned
+   stock-conditional-reaction model.
