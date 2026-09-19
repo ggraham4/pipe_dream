@@ -1,0 +1,30 @@
+{
+  "as_of_date": "2026-09-08",
+  "tier": "cap150",
+  "neutral": false,
+  "n_eligible_universe": 2214,
+  "n_picks": 220,
+  "construction": "decile_volq: top decile by composite score within each of 5 trailing-volatility quintiles, inverse-vol weighted, 40-trading-day hold, no stop-loss",
+  "factors": {
+    "momentum_12_1": 1,
+    "pct_from_high_252": 1,
+    "volatility_60": -1,
+    "gross_profitability": 1,
+    "accruals": -1,
+    "asset_growth": -1,
+    "net_issuance_pct": -1,
+    "days_to_next_filing_seasonal": -1,
+    "short_interest_days_to_cover": -1
+  },
+  "backtest_summary": {
+    "nominate_excess_cagr_pct": 3.75,
+    "nominate_offsets_positive": "40/40",
+    "holdout_excess_cagr_pct": 1.85,
+    "holdout_offsets_positive": "39/40",
+    "holdout_loyo_status": "FAILS -- only 2 of 7 hold-out years (2020, 2022) are positive; dropping 2020 alone flips the mean to -2.05%/yr. See the write-up before trusting the headline number above."
+  },
+  "writeup": "final/models/2026-09-19-factor-composite-reset.md",
+  "preregistration": "final/src/reset2026/PREREGISTRATION.md",
+  "role": "candidate",
+  "note": "TRACKED, NOT ACTED ON AS A VALIDATED EDGE. Passes nomination-era leave-one-year-out; FAILS it on the 2020-2026 hold-out (2 of 7 years carry the whole result). See the write-up."
+}

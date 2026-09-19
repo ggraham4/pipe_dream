@@ -1,21 +1,32 @@
 """
-Dashboard-facing wrapper around the PIT (point-in-time / survivorship-bias-
-corrected) buy signal in final/src/current_signal_pit.py -- the augmented
-+ stop-loss model, promoted to PRIMARY at Gabe's explicit request
-(2026-09-02): "we are no longer using the HMM, augmented stoploss should
-be the primary model displayed in the app." Replaces
-lib/regime_gate_model.py (the HMM-gated blend) as the app's "Today's
-Picks" model. See backtest/survivorship-bias-correction-results.md,
-Round 7 (point-in-time mid-cap+ eligibility floor) and Round 8 (stop-loss
-percentage optimization -> 15%), for the full backtest history and
-caveats behind this model.
+Dashboard-facing wrapper around the live buy signals in
+final/src/current_signal_pit.py.
 
-Same design principle as lib/stock_model.py / lib/regime_gate_model.py:
-this module doesn't reimplement the modeling logic. It reads whatever
-current_signal_pit.py last wrote to out/, and can trigger a fresh run of
-that script (plus its upstream feature-build steps) as a background job,
-using the same run_step_sequence machinery as every other retrain button
-in this app.
+ROUND 18 (2026-09-16). This module now serves TWO signals, at Gabe's request,
+so the app can show a pick alongside a second opinion:
+
+    q75    PRIMARY    the deployed configuration
+    xrank  CANDIDATE  tracked and displayed, explicitly NOT acted on
+
+The candidate exists on the page because Round 17b found that switching the
+training target to a within-date percentile rank flipped every feature family's
+model-level IC positive -- and Round 18 then put it on the 2020-2026 hold-out,
+where it returned -4.28%/yr excess (0.771x SPY) against the deployed model's
++7.33%/yr (1.526x). It is shown so its disagreements with the deployed model
+are visible in real time, not as an alternative to follow. Anything in this
+module that renders the candidate must carry that number with it.
+
+Design principle, unchanged from lib/stock_model.py: this module does not
+reimplement any modelling logic. It reads whatever current_signal_pit.py and
+build_app_benchmarks.py last wrote to out/, and can trigger a fresh run of
+those scripts as a background job through the same run_step_sequence machinery
+every other retrain button in this app uses.
+
+REMOVED in this rewrite: get_backtest_tables()'s stop-loss sweep artifacts.
+The deployed configuration holds to the 40-day horizon with NO stop-loss, so
+a page built around optimizing the stop level was describing a model the app
+does not run. The 15% level is still reported per name as risk guidance and is
+labelled as guidance everywhere it appears.
 """
 from __future__ import annotations
 
@@ -30,18 +41,89 @@ from . import paths
 
 paths.ensure_src_on_path()
 
-SIGNAL_CSV = paths.OUT_DIR / "current_signal_pit.csv"
-SIGNAL_META = paths.OUT_DIR / "current_signal_pit_meta.json"
-FUND_PIT_PARQUET = paths.OUT_DIR / "features_with_fundamentals_pit.parquet"
-MODEL_PATH = paths.STOCK_MODELS_DIR / "xgb_pit_augmented_model.json"
+# --------------------------------------------------------------------------
+# The two signals.
+#
+# Mirrors VARIANTS in final/src/current_signal_pit.py, duplicated here for the
+# same reason _augmented_feature_cols() duplicates its feature list: that file
+# is a script entry point that imports xgboost and the full walk-forward module
+# at import time, and the dashboard must not pay for that on every rerun. The
+# per-signal meta JSON is authoritative at render time -- everything below is
+# only what the app shows BEFORE a first run has produced one.
+# --------------------------------------------------------------------------
+VARIANTS = [
+    {
+        "key": "q75",
+        "role": "primary",
+        "display_name": "Deployed (q75 / classifier)",
+        "short_name": "Deployed",
+        "cell_id": "price_fund_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+        "signal_csv": "current_signal_pit.csv",
+        "signal_meta": "current_signal_pit_meta.json",
+        "model_file": "xgb_pit_augmented_model.json",
+        "model_kind": "classifier",
+        "score_label": "buy_proba",
+    },
+    {
+        "key": "xrank",
+        "role": "candidate",
+        "display_name": "Candidate (xrank / regressor)",
+        "short_name": "Candidate",
+        "cell_id": "price_fund_h40_xrank_trd_xgb_reg_d3e01r100_expanding_cap500k_pit_s40",
+        "signal_csv": "current_signal_pit_xrank.csv",
+        "signal_meta": "current_signal_pit_xrank_meta.json",
+        "model_file": "xgb_pit_xrank_model.json",
+        "model_kind": "regressor",
+        "score_label": "predicted rank",
+    },
+]
 
-BUY_PERCENTILE_THRESHOLD = 0.25  # top quartile -> BUY, same convention as every other model in this app
+PRIMARY = "q75"
+CANDIDATE = "xrank"
+
+
+def variant(key: str) -> dict:
+    for v in VARIANTS:
+        if v["key"] == key:
+            return v
+    raise KeyError(key)
+
+
+def variant_keys() -> list[str]:
+    return [v["key"] for v in VARIANTS]
+
+
+# --------------------------------------------------------------------------
+# paths
+# --------------------------------------------------------------------------
+FUND_PIT_PARQUET = paths.OUT_DIR / "features_with_fundamentals_sharadar_pit.parquet"
+COMPARISON_JSON = paths.OUT_DIR / "app_model_comparison.json"
+AGREEMENT_JSON = paths.OUT_DIR / "current_signal_compare.json"
+
+BUY_PERCENTILE_THRESHOLD = 0.25   # top quartile -> BUY, the convention used everywhere in this app
 
 CONTEXT_COLS = [
     "close", "momentum_20", "momentum_60", "momentum_120",
     "relative_strength_20", "pct_from_high_252", "pct_from_low_252", "volatility_20",
+    # volatility_60 is not here for display. It is the variable the five
+    # selection buckets are cut on, so the sector view needs it to rebuild the
+    # construction-matched null for the enrichment test -- without it the test
+    # would score a one-per-quintile selection against an unstratified draw.
+    "volatility_60",
     "market_cap",
 ]
+
+
+def signal_csv(key: str) -> Path:
+    return paths.OUT_DIR / variant(key)["signal_csv"]
+
+
+def signal_meta_path(key: str) -> Path:
+    return paths.OUT_DIR / variant(key)["signal_meta"]
+
+
+def model_path(key: str) -> Path:
+    return paths.STOCK_MODELS_DIR / variant(key)["model_file"]
 
 
 def _mtime(p: Path) -> float:
@@ -51,43 +133,65 @@ def _mtime(p: Path) -> float:
         return -1.0
 
 
-def get_signal() -> tuple[pd.DataFrame | None, dict | None]:
-    """Reads the already-computed picks + metadata sidecar -- no computation
-    happens here, mirrors stock_model.get_current_top / regime_gate_model.
-    get_gated_signal. current_signal_pit.py writes both files atomically
-    (temp file + os.replace), but this still wraps the read in try/except
-    as a second line of defense against a concurrent-read race."""
+# --------------------------------------------------------------------------
+# saved picks
+# --------------------------------------------------------------------------
+def get_signal(key: str = PRIMARY) -> tuple[pd.DataFrame | None, dict | None]:
+    """The already-computed picks + metadata sidecar for one variant. No
+    computation happens here. current_signal_pit.py writes both files
+    atomically (temp file + os.replace), but the reads are still wrapped as a
+    second line of defense against a concurrent-read race while a background
+    retrain is mid-write."""
     df = None
-    if SIGNAL_CSV.exists():
+    p = signal_csv(key)
+    if p.exists():
         try:
-            df = pd.read_csv(SIGNAL_CSV)
+            df = pd.read_csv(p)
         except Exception:
             df = None
     meta = None
-    if SIGNAL_META.exists():
+    m = signal_meta_path(key)
+    if m.exists():
         try:
-            meta = json.loads(SIGNAL_META.read_text())
+            meta = json.loads(m.read_text())
         except Exception:
             meta = None
     return df, meta
+
+
+def get_all_signals() -> dict:
+    return {v["key"]: get_signal(v["key"]) for v in VARIANTS}
+
+
+def get_agreement() -> dict | None:
+    """current_signal_compare.json -- which names the two models share today.
+
+    Read the `caveat` field before showing overlap as reassurance. The two
+    share features, hyperparameters and construction and differ only in the
+    training target, so their errors are correlated by design; agreement is
+    close to a foregone conclusion and is not independent confirmation."""
+    if not AGREEMENT_JSON.exists():
+        return None
+    try:
+        return json.loads(AGREEMENT_JSON.read_text())
+    except Exception:
+        return None
 
 
 def fundamentals_pit_panel_exists() -> bool:
     return FUND_PIT_PARQUET.exists()
 
 
+# --------------------------------------------------------------------------
+# freshness
+# --------------------------------------------------------------------------
 @st.cache_data(show_spinner=False)
 def _pit_universe_counts(_mtime_key: float) -> dict:
-    """Total distinct tickers in the PIT panel (current-universe + valid
-    point-in-time gap tickers), split out from the plain current-universe
-    count -- a cheap single-column read (just "ticker"), cached on the
-    panel's mtime. Added 2026-09-02: the Overview tab was showing the
-    OLD, non-PIT features.parquet ticker count (~1,652 -- unchanged,
-    since the underlying current-universe screen didn't change) for a
-    card that's now backed by the PIT model, which was confusing next to
-    the PIT pipeline's own printed universe size (~1,910). This gives the
-    Overview tab a number that actually reflects what the primary model
-    can see."""
+    """Distinct tickers in the PIT panel, split into current-universe and
+    point-in-time gap tickers. A cheap single-column read, cached on the
+    panel's mtime. The Overview card used to show the OLD non-PIT
+    features.parquet count, which did not match the universe the primary model
+    can actually see."""
     from continuous_walkforward_pit import load_gap_ticker_set
     tickers = pd.read_parquet(FUND_PIT_PARQUET, columns=["ticker"])["ticker"]
     total = int(tickers.nunique())
@@ -105,39 +209,44 @@ def universe_counts() -> dict | None:
     return _pit_universe_counts(_mtime(FUND_PIT_PARQUET))
 
 
-def signal_status() -> dict:
-    """Freshness check: is the saved signal as-of the latest date the
-    PIT fundamentals panel actually has data for."""
-    _, meta = get_signal()
+def _latest_data_date() -> str | None:
+    if not FUND_PIT_PARQUET.exists():
+        return None
+    try:
+        # NOT features.latest_complete_date() -- that needs 90% of ALL tickers
+        # in the panel to have a row on a date, and this panel carries
+        # thousands of permanently-delisted names that never will. Same fix as
+        # current_signal_pit.latest_complete_date_pit().
+        from current_signal_pit import latest_complete_date_pit
+        from continuous_walkforward_pit import load_gap_ticker_set
+        feat = pd.read_parquet(FUND_PIT_PARQUET, columns=["date", "ticker"])
+        gap_tickers = load_gap_ticker_set()
+        return str(latest_complete_date_pit(feat, gap_tickers).date())
+    except Exception:
+        # mid-write, or otherwise unreadable this rerun -- skip the check
+        return None
+
+
+def signal_status(key: str = PRIMARY) -> dict:
+    """Is this variant's saved signal as-of the latest date the panel has."""
+    _, meta = get_signal(key)
     if meta is None:
-        return {"exists": False, "as_of_date": None, "stale": True, "latest_data_date": None}
-    latest = None
-    if FUND_PIT_PARQUET.exists():
-        try:
-            # NOT features.latest_complete_date() -- that requires 90% of ALL
-            # tickers in the panel to have a row on a date, and this panel
-            # also carries ~260+ permanently-delisted point-in-time gap
-            # tickers that never will. Same fix as current_signal_pit.py's
-            # latest_complete_date_pit() -- current-universe tickers only.
-            from current_signal_pit import latest_complete_date_pit
-            from continuous_walkforward_pit import load_gap_ticker_set
-            feat = pd.read_parquet(FUND_PIT_PARQUET, columns=["date", "ticker"])
-            gap_tickers = load_gap_ticker_set()
-            latest = str(latest_complete_date_pit(feat, gap_tickers).date())
-        except Exception:
-            latest = None  # mid-write or otherwise unreadable right now -- skip the staleness check this rerun
+        return {"exists": False, "as_of_date": None, "stale": True,
+                "latest_data_date": None}
+    latest = _latest_data_date()
     as_of = meta.get("as_of_date")
-    return {
-        "exists": True, "as_of_date": as_of,
-        "stale": latest is not None and as_of != latest,
-        "latest_data_date": latest,
-    }
+    return {"exists": True, "as_of_date": as_of,
+            "stale": latest is not None and as_of != latest,
+            "latest_data_date": latest}
+
+
+def all_signal_status() -> dict:
+    return {v["key"]: signal_status(v["key"]) for v in VARIANTS}
 
 
 # --------------------------------------------------------------------------
-# Per-ticker query against the saved checkpoint (fast path -- no retraining)
+# per-ticker query against the saved checkpoints (fast path -- no retraining)
 # --------------------------------------------------------------------------
-
 @st.cache_data(show_spinner=False)
 def _load_fundamentals_pit_features(_mtime_key: float) -> pd.DataFrame:
     feat = pd.read_parquet(FUND_PIT_PARQUET)
@@ -151,176 +260,281 @@ def get_fundamentals_pit_features() -> pd.DataFrame | None:
 
 
 def _augmented_feature_cols() -> list[str]:
-    """Exactly matches AUGMENTED_FEATURE_COLS in
-    final/src/current_signal_pit.py -- duplicated here rather than imported
-    for the same reason regime_gate_model.py duplicates it: that script is a
-    script entry point, not a lightweight import."""
+    """Exactly AUGMENTED_FEATURE_COLS in final/src/current_signal_pit.py --
+    duplicated rather than imported because that script is an entry point, not
+    a lightweight import. Verified identical to the backtested cell's
+    feature_cols (24 columns, same order)."""
     from features import FEATURE_COLS
     from fundamentals_features_beta import FUNDAMENTAL_FEATURE_COLS
     no_stale = [c for c in FUNDAMENTAL_FEATURE_COLS if c != "fundamentals_age_days"]
     return FEATURE_COLS + no_stale
 
 
-def _min_market_cap_and_price() -> tuple[float, float]:
-    """Reads the point-in-time mid-cap+ eligibility floor constants straight
-    from continuous_walkforward_pit.py (the backtest that validated this
-    model) rather than duplicating the numbers here, so a future change to
-    the floor doesn't silently desync the dashboard from what was actually
-    backtested."""
-    from continuous_walkforward_pit import MIN_MARKET_CAP, MIN_PRICE
-    return MIN_MARKET_CAP, MIN_PRICE
-
-
 @st.cache_resource(show_spinner=False)
-def _load_cached_pit_model(_mtime_key: float):
-    from xgboost import XGBClassifier
-    model = XGBClassifier()
-    model.load_model(str(MODEL_PATH))
+def _load_cached_model(key: str, _mtime_key: float):
+    """Returns None rather than raising if the checkpoint will not load.
+
+    A checkpoint can be present but unreadable -- half-written by a retrain
+    that is still running, or saved by a different xgboost major version. The
+    caller checking .exists() is not enough, and before Round 18 a bad file
+    here took the whole page down with a traceback instead of one tab with a
+    message. Streamlit caches the None too, so a failed load is retried when
+    the file's mtime changes, i.e. when the retrain finishes."""
+    from xgboost import XGBClassifier, XGBRegressor
+    v = variant(key)
+    model = XGBClassifier() if v["model_kind"] == "classifier" else XGBRegressor()
+    try:
+        model.load_model(str(model_path(key)))
+    except Exception:
+        return None
     return model
 
 
-def score_universe_cached(gfeat: pd.DataFrame) -> tuple[pd.DataFrame | None, dict | None]:
-    """Scores the full ELIGIBLE universe (point-in-time mid-cap+ floor
-    applied) on the saved xgb_pit_augmented_model.json checkpoint at the
-    as-of date recorded in current_signal_pit_meta.json, so any ticker's
-    rank/percentile can be looked up instantly. `gfeat` is
-    features_with_fundamentals_pit.parquet (already loaded by the caller so
-    it's only read once per session). Ineligible tickers (below the
-    mid-cap+ floor) are NOT dropped here -- they're scored too and flagged
-    via an `eligible_today` column, so query_tickers() can tell "the model
-    doesn't like it" apart from "it's not actually pickable today."""
-    if not MODEL_PATH.exists():
+def _eligible_mask(rows: pd.DataFrame, as_of: pd.Timestamp) -> pd.Series:
+    """Today's eligibility, taken from the SAME screen current_signal_pit.py
+    applies -- membership in that date's point-in-time universe.
+
+    Before Round 18 this function re-derived eligibility from the panel's own
+    market_cap (= close x sharesbas) and split-adjusted close. Those are not
+    the quantities pit_universe.parquet was built from (daily.marketcap and
+    closeunadj), so the query tab could call a name ineligible that the picks
+    tab had just bought. The mid-cap+ floor below is only the fallback for the
+    pre-Round-11 `expanded` universe path, where no PIT universe file exists."""
+    try:
+        from continuous_walkforward_pit import load_pit_universe
+        day = load_pit_universe().get(str(pd.Timestamp(as_of).date()))
+        if day:
+            return rows["ticker"].isin(day)
+    except Exception:
+        pass
+    from continuous_walkforward_pit import MIN_MARKET_CAP, MIN_PRICE
+    return (rows["close"] > MIN_PRICE) & (rows["market_cap"] >= MIN_MARKET_CAP)
+
+
+def _score_universe(key: str, gfeat: pd.DataFrame) -> tuple[pd.DataFrame | None, dict | None]:
+    """Scores the eligible universe on one variant's saved checkpoint at the
+    as-of date in its meta sidecar, so any ticker's rank can be looked up
+    instantly.
+
+    Ineligible tickers are NOT dropped -- they are scored and flagged via
+    `eligible_today`, so the query can tell "the model doesn't like it" apart
+    from "it isn't pickable today".
+
+    Note the deliberate absence of a dropna on FEATURE_COLS. Round 18 aligned
+    the live candidate pool to the backtest, which scores every name in the
+    day's point-in-time universe and lets XGBoost handle missing features
+    natively. Reintroducing a dropna here would make this query disagree with
+    the picks on the Today's Picks tab."""
+    if not model_path(key).exists():
         return None, None
-    _, meta = get_signal()
+    _, meta = get_signal(key)
     if meta is None:
         return None, None
-    from features import FEATURE_COLS
     feature_cols = _augmented_feature_cols()
-    min_cap, min_price = _min_market_cap_and_price()
 
-    model = _load_cached_pit_model(_mtime(MODEL_PATH))
+    model = _load_cached_model(key, _mtime(model_path(key)))
+    if model is None:
+        return None, meta
     as_of = pd.Timestamp(meta["as_of_date"])
-    rows = gfeat[gfeat["date"] == as_of].dropna(subset=FEATURE_COLS).copy()
+    rows = gfeat[gfeat["date"] == as_of].copy()
     if rows.empty:
         return None, meta
-    rows["buy_proba"] = model.predict_proba(rows[feature_cols])[:, 1]
-    rows["eligible_today"] = (rows["close"] > min_price) & (rows["market_cap"] >= min_cap)
 
-    eligible_rows = rows[rows["eligible_today"]].copy()
-    eligible_rows["rank"] = eligible_rows["buy_proba"].rank(ascending=False, method="min").astype(int)
-    eligible_rows["percentile"] = eligible_rows["rank"] / len(eligible_rows) if len(eligible_rows) else None
-    rows = rows.merge(eligible_rows[["ticker", "rank", "percentile"]], on="ticker", how="left")
+    X = rows[feature_cols]
+    v = variant(key)
+    rows["score"] = (model.predict_proba(X)[:, 1] if v["model_kind"] == "classifier"
+                     else model.predict(X))
+    rows["eligible_today"] = _eligible_mask(rows, as_of)
 
-    cols = ["ticker", "buy_proba", "rank", "percentile", "eligible_today"] + CONTEXT_COLS
-    return rows[cols].sort_values("buy_proba", ascending=False).reset_index(drop=True), meta
+    elig = rows[rows["eligible_today"]].copy()
+    elig["rank"] = elig["score"].rank(ascending=False, method="min").astype(int)
+    elig["percentile"] = elig["rank"] / len(elig) if len(elig) else None
+    rows = rows.merge(elig[["ticker", "rank", "percentile"]], on="ticker", how="left")
+
+    cols = ["ticker", "score", "rank", "percentile", "eligible_today"] + CONTEXT_COLS
+    return rows[cols].sort_values("score", ascending=False).reset_index(drop=True), meta
+
+
+def scored_universe(key: str = PRIMARY):
+    """(DataFrame, meta) for the WHOLE eligible universe on the as-of date.
+
+    Public wrapper over _score_universe so the sector view can show every name
+    the model considered in a group, not only the five it bought. Shares the
+    cached panel read and the cached checkpoint with the ticker query, so the
+    first call is slow (the panel is ~2.3GB) and every later one is free."""
+    gfeat = get_fundamentals_pit_features()
+    if gfeat is None:
+        return None, None
+    return _score_universe(key, gfeat)
 
 
 def query_tickers(tickers: list[str]) -> dict:
-    """The dashboard's 'query a specific ticker' feature for the primary
-    model. Uses the cached checkpoint (fast, no retraining) and reports a
-    BUY / NO BUY / INELIGIBLE / N/A verdict per ticker -- INELIGIBLE means
-    the model may like it, but it fails the point-in-time mid-cap+
-    eligibility floor today (e.g. market cap fell below $2B, or price fell
-    below $10) so it isn't actually a live pick, distinct from a plain
-    NO BUY (eligible, model just doesn't rank it highly enough)."""
+    """BUY / NO BUY / INELIGIBLE / N/A per ticker, from BOTH models.
+
+    INELIGIBLE means the model may like it but it fails the point-in-time
+    mid-cap+ floor today (market cap < $2B or price < $10), so it is not a live
+    pick regardless -- distinct from a plain NO BUY.
+
+    The candidate's verdict is returned in its own columns and must be rendered
+    as a second opinion, never blended with the primary's. It lost to SPY on
+    the hold-out; averaging it into the deployed signal would be acting on a
+    result that has already failed once."""
     gfeat = get_fundamentals_pit_features()
     if gfeat is None:
-        return {"error": "features_with_fundamentals_pit.parquet not found -- "
+        return {"error": "features_with_fundamentals_sharadar_pit.parquet not found -- "
                           "run a retrain first (Today's Picks tab)."}
 
     tickers = [t.strip().upper() for t in tickers if t.strip()]
-    df, meta = score_universe_cached(gfeat)
+    scored = {v["key"]: _score_universe(v["key"], gfeat) for v in VARIANTS}
 
     rows = []
     for t in tickers:
         row = {"ticker": t}
-        if df is not None:
+        ctx_done = False
+        for v in VARIANTS:
+            k = v["key"]
+            df, _ = scored[k]
+            pre = "" if k == PRIMARY else "candidate_"
+            if df is None:
+                row[f"{pre}verdict"] = "N/A (no saved model)"
+                continue
             m = df[df["ticker"] == t]
-            if not m.empty:
-                r = m.iloc[0]
-                if not bool(r["eligible_today"]):
-                    row["verdict"] = "INELIGIBLE (below mid-cap+ floor today)"
-                elif r["percentile"] is not None and r["percentile"] <= BUY_PERCENTILE_THRESHOLD:
-                    row["verdict"] = "BUY"
-                else:
-                    row["verdict"] = "NO BUY"
-                row["buy_proba"] = round(float(r["buy_proba"]), 4)
-                if pd.notna(r["rank"]):
-                    n_eligible = int(df["eligible_today"].sum())
-                    row["rank"] = f"{int(r['rank'])}/{n_eligible}"
-                    row["percentile"] = round(float(r["percentile"]), 4)
+            if m.empty:
+                row[f"{pre}verdict"] = "N/A (no data)"
+                continue
+            r = m.iloc[0]
+            if not bool(r["eligible_today"]):
+                row[f"{pre}verdict"] = "INELIGIBLE (below mid-cap+ floor today)"
+            elif r["percentile"] is not None and pd.notna(r["percentile"]) \
+                    and r["percentile"] <= BUY_PERCENTILE_THRESHOLD:
+                row[f"{pre}verdict"] = "BUY"
+            else:
+                row[f"{pre}verdict"] = "NO BUY"
+            row[f"{pre}score"] = round(float(r["score"]), 4)
+            if pd.notna(r["rank"]):
+                n_elig = int(df["eligible_today"].sum())
+                row[f"{pre}rank"] = f"{int(r['rank'])}/{n_elig}"
+            if not ctx_done:
                 for c in CONTEXT_COLS:
                     row[c] = r.get(c)
-            else:
-                row["verdict"] = "N/A (no data)"
-        else:
-            row["verdict"] = "N/A (no saved model)"
+                ctx_done = True
         rows.append(row)
 
+    metas = {k: (scored[k][1] or {}) for k in scored}
     return {
-        "as_of_date": meta["as_of_date"] if meta else None,
-        "stop_loss_pct": meta.get("stop_loss_pct") if meta else None,
+        "as_of_date": metas.get(PRIMARY, {}).get("as_of_date"),
+        "candidate_as_of_date": metas.get(CANDIDATE, {}).get("as_of_date"),
+        "stop_loss_pct": metas.get(PRIMARY, {}).get("stop_loss_pct"),
         "rows": rows,
     }
 
 
 # --------------------------------------------------------------------------
-# Model weights + backtest (mirrors stock_model.py / regime_gate_model.py's
-# get_feature_importances() / get_backtest_tables() pattern)
+# model weights
 # --------------------------------------------------------------------------
+def get_feature_importances(key: str = PRIMARY) -> dict | None:
+    """Gain-based feature importances straight off one variant's saved
+    checkpoint. Returns None if that model has not been trained yet.
 
-def get_feature_importances() -> pd.DataFrame | None:
-    """Feature importances straight off the saved xgb_pit_augmented_model.json
-    checkpoint (same gain-based feature_importances_ property every other
-    model in this app uses). Returns None if the model hasn't been trained
-    yet."""
-    if not MODEL_PATH.exists():
+    Worth keeping in view while reading the chart: Round 13 showed that every
+    fundamental feature that looked significant is a sector bet, and Round 17
+    showed that the ranking these importances describe does not survive the
+    pipeline -- a raw feature with t = +3.40 came out of the model at t =
+    -0.65. A high importance means the tree split on it often, not that it
+    carries forward-predictive information."""
+    if not model_path(key).exists():
         return None
     aug_cols = _augmented_feature_cols()
-    model = _load_cached_pit_model(_mtime(MODEL_PATH))
+    model = _load_cached_model(key, _mtime(model_path(key)))
+    if model is None:
+        return None
     imp = (pd.DataFrame({"feature": aug_cols, "importance": model.feature_importances_})
            .sort_values("importance", ascending=False).reset_index(drop=True))
     from features import FEATURE_COLS
     fundamentals_cols = set(aug_cols) - set(FEATURE_COLS)
     imp["is_fundamentals_feature"] = imp["feature"].isin(fundamentals_cols)
-    fundamentals_share = float(imp.loc[imp["is_fundamentals_feature"], "importance"].sum())
-    return {"importances": imp, "fundamentals_share": fundamentals_share}
+    share = float(imp.loc[imp["is_fundamentals_feature"], "importance"].sum())
+    return {"importances": imp, "fundamentals_share": share}
 
 
-def get_backtest_tables() -> dict:
-    """Backtest artifacts for the PIT augmented+stoploss model -- the
-    continuous/rolling walk-forward in backtest/survivorship-bias-
-    correction-results.md, Round 7 (point-in-time mid-cap+ eligibility
-    floor) and Round 8 (stop-loss percentage optimization). Any file not
-    present yet is simply omitted rather than raising."""
-    result = {}
-    p = paths.OUT_DIR / "continuous_walkforward_pit_summary_stop15.json"
-    if p.exists():
-        result["continuous_walkforward_summary"] = json.loads(p.read_text())
-    p = paths.OUT_DIR / "continuous_walkforward_pit_augmented_stoploss_sweep.json"
-    if p.exists():
-        result["stop_pct_sweep"] = json.loads(p.read_text())
-    return result
+# --------------------------------------------------------------------------
+# backtest + benchmarks
+# --------------------------------------------------------------------------
+def get_comparison() -> dict | None:
+    """out/app_model_comparison.json -- window-by-window equity curves and
+    summary statistics for both models against SPY and USMV, over both the
+    2007-2019 selection era and the 2020-2026 hold-out.
+
+    Built by final/src/build_app_benchmarks.py. Returns None if that has not
+    been run yet. The `noise_scale` block, when present, is the most important
+    thing on the page: it is the spread of ten same-idea variants of the
+    deployed cell (-8.01 to +9.15 %/yr, sd 5.03), which is the yardstick any
+    gap between two curves has to be read against."""
+    if not COMPARISON_JSON.exists():
+        return None
+    try:
+        return json.loads(COMPARISON_JSON.read_text())
+    except Exception:
+        return None
+
+
+def comparison_frame(era: str = "holdout") -> pd.DataFrame | None:
+    """One era's curves as a wide DataFrame indexed by window date, ready for
+    st.line_chart. Series that do not span the whole era (USMV before its 2011
+    inception) are left as NaN rather than back-filled."""
+    comp = get_comparison()
+    if comp is None or era not in comp.get("eras", {}):
+        return None
+    curves = comp["eras"][era]["curves"]
+    labels = {}
+    for k, v in comp.get("cells", {}).items():
+        labels[k] = v["display_name"]
+    for k, v in comp.get("benchmarks", {}).items():
+        labels[k] = v["display_name"]
+    frame = {labels.get(k, k): {row["timepoint"]: row["value"] for row in c}
+             for k, c in curves.items() if c}
+    if not frame:
+        return None
+    df = pd.DataFrame(frame)
+    df.index = pd.to_datetime(df.index)
+    return df.sort_index()
+
+
+# --------------------------------------------------------------------------
+# retrain
+# --------------------------------------------------------------------------
+PIT_STEP_LABELS = [
+    "Top up the Sharadar price/marketcap panel (needs SHARADAR_API_KEY)",
+    "Rebuild the point-in-time universe",
+    "Rebuild price features",
+    "Rebuild fundamental features",
+    "Export per-ticker OHLCV for execution",
+    "Retrain BOTH signals + compute today's picks",
+    "Rebuild the benchmark comparison (SPY / USMV curves)",
+]
 
 
 def retrain_commands() -> list[list[str]]:
-    """The exact commands a PIT-model refresh runs, in order: rebuild the
-    base price panel, apply the PIT correction (gap tickers + the
-    price-discontinuity fix), merge PIT fundamentals onto it, then train
-    the model fresh and recompute today's picks. Mirrors stock_model.
-    retrain_commands() / regime_gate_model.retrain_commands()'s pattern.
+    """The exact commands a refresh runs, in order: top up the Sharadar panel,
+    rebuild the point-in-time universe, rebuild price then fundamental
+    features, export OHLCV for execution, retrain both signals and recompute
+    today's picks, then rebuild the app's comparison chart.
 
-    Note, flagged rather than silently glossed over: this does NOT refresh
-    scripts/fundamentals_raw/ (current-universe SEC EDGAR fundamentals) or
-    scripts/fundamentals_raw_delisted/ (Sharadar gap-ticker data) -- those
-    are their own, much less frequent, separate pulls (see AGENTS.md /
-    backtest/survivorship-bias-correction-results.md), same as the
-    regime-gated model's retrain never refreshed its own raw fundamentals
-    pull either."""
+    Flagged rather than glossed over: this does NOT refresh
+    scripts/fundamentals_raw/ (current-universe SEC EDGAR) or
+    scripts/fundamentals_raw_delisted/ (Sharadar gap-ticker data). Those are
+    separate, much less frequent pulls -- see AGENTS.md.
+
+    The last step needs network access the first time it runs, to pull USMV.
+    If it cannot reach the network the run still succeeds; the comparison
+    chart is simply drawn without the USMV line and says why."""
     py = sys.executable
     return [
-        [py, str(paths.SRC_DIR / "features.py")],
-        [py, str(paths.SRC_DIR / "features_pit.py")],
-        [py, str(paths.SRC_DIR / "fundamentals_features_pit.py")],
+        [py, str(paths.SRC_DIR / "sharadar_pull_pit_panel.py")],
+        [py, str(paths.SRC_DIR / "build_pit_universe.py")],
+        [py, str(paths.SRC_DIR / "build_features_sharadar.py")],
+        [py, str(paths.SRC_DIR / "build_features_fundamentals_sharadar.py")],
+        [py, str(paths.SRC_DIR / "export_sharadar_ohlc.py")],
         [py, str(paths.SRC_DIR / "current_signal_pit.py")],
+        [py, str(paths.SRC_DIR / "build_app_benchmarks.py")],
     ]
