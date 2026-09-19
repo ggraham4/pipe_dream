@@ -294,3 +294,38 @@ BAR philosophy this project adopted 2026-09-12 does not require one to act
 -- but the number is written down now, before the hold-out score exists, so
 anyone who wants to compute one later is not reconstructing it after the
 fact.
+
+## Hold-out result -- read `out/reset2026/REPORT_holdout.md` in full before
+## acting on this
+
+Confirmed once, `cap150_raw`/`decile_volq`, 2020-2026: **+1.85%/yr excess vs
+SPY (15bp), 39/40 offsets positive, 98th percentile vs its own matched
+null.** By the letter of this package's own gates (Gate A, decision bar,
+null percentile) this passes.
+
+**It fails leave-one-year-out, the one check this project's standing
+procedure (RUNBOOK section 5, since Round 14) does not relax for a passing
+gate elsewhere.** Two of seven hold-out years (2020, 2022) are positive; the
+other five are all negative; dropping 2020 alone flips the seven-year mean
+to -2.05%, and dropping both 2020 and 2022 gives -4.86%. This is the same
+failure mode that already killed `rate_beta_x_move` in Round 14, arguably
+worse here (2/7 years carrying it vs that finding's 1/13).
+
+The nomination-era result (13 years, LOYO-clean, worst single-year drop
+still +2.96%/yr) is NOT overturned by this -- a 7-year hold-out is a much
+higher-variance LOYO test than a 13-year one, and 2020/2022 are exactly the
+dislocation/factor-rotation years this composite's construction (quality,
+low-vol, value-ish tilts) has a real economic reason to concentrate in. But
+this package does not get to call the hold-out "confirmed" while failing its
+own project's concentration standard. The honest status, carried forward:
+**a real, monotonic-in-cap, sector-neutral-robust nomination-era signal that
+has not yet demonstrated year-to-year robustness out of sample**, plus a
+second open question (the `topn_ew` divergence: identical composite scores,
+same dates, -4.80%/yr instead of +1.85%/yr on the SAME hold-out from a
+portfolio-construction change alone) about how much of this lives in the
+9 factors versus in the vol-quintile-bucketed construction specifically.
+
+Per standing rule 9 (gates do not move after seeing a result): this verdict
+is written directly into this document rather than softened, and no further
+hold-out draw is taken to try to resolve it -- 2020-2026 is spent again,
+this time for real, for this pipeline.
