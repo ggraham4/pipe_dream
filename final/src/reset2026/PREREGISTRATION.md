@@ -508,3 +508,31 @@ conclude).
 
 Output: `final/out/reset2026/correction_variants_report.json` and
 `final/models/2026-09-22-composite-model-corrections.md`.
+
+## Second hold-out spend (2026-09-22, part 3) — explicit, at Gabe's request
+
+2020-2026 was already spent once for this pipeline (see the hold-out
+result section above: `cap150_raw`/`decile_volq` confirmed +1.85%/yr,
+passed its pre-registered gates, then failed leave-one-year-out). Every
+section since has said, correctly, that nothing new gets confirmed on it
+again. Gabe asked directly, after being told exactly that caveat, to see
+the hold-out numbers for `asset_growth_dropped` anyway. That is his call
+to make (`AGENTS.md`: modeling decisions are his), and it is recorded
+here as a second, deliberate spend rather than a quiet one.
+
+**Scope, to keep this one number rather than a second search:** only
+`asset_growth_dropped` is run on 2020-2026 — not `decile1_volq`,
+`exclude_bottom_decile`, or a fresh confirmation of the baseline (already
+on file in `REPORT_holdout.md`). Running all four would turn a requested
+number into a four-cell hold-out search, which is a different and much
+weaker statistic than the one asked for.
+
+**This is descriptive, not a confirmation.** Nothing about
+`asset_growth_dropped`'s hold-out result changes its status: it remains
+an unadopted recommendation, scored once on data it was never
+pre-registered against, reported beside the baseline's own hold-out
+result (+1.85%/yr, 39/40 offsets positive, 98th percentile, but 2/7 years
+positive and LOYO-negative on dropping 2020) with the same leave-one-year
+-out check applied, not a bare aggregate number.
+
+Output: `final/out/reset2026/holdout_asset_growth_dropped_report.json`.

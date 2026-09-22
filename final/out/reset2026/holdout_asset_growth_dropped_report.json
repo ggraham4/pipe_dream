@@ -1,0 +1,54 @@
+{
+  "generated": "2026-09-22T11:48:50.192210",
+  "era": "holdout_2020_2026",
+  "variant": "asset_growth_dropped",
+  "n_offsets": 40,
+  "mean_excess_cagr_vs_spy": 0.02617994776992779,
+  "std_excess_cagr_vs_spy": 0.009806554501593606,
+  "min": 0.0026874730543974875,
+  "max": 0.04377979913723286,
+  "n_offsets_positive": 40,
+  "mean_null_percentile": 0.9894999999999999,
+  "yearly_pooled_across_offsets": {
+    "2020": {
+      "mean_excess": 0.307187481654596,
+      "n_windows": 40
+    },
+    "2021": {
+      "mean_excess": -0.08136096528062296,
+      "n_windows": 40
+    },
+    "2022": {
+      "mean_excess": 0.09642324978897586,
+      "n_windows": 40
+    },
+    "2023": {
+      "mean_excess": -0.07233948303076922,
+      "n_windows": 40
+    },
+    "2024": {
+      "mean_excess": -0.01074254075033369,
+      "n_windows": 40
+    },
+    "2025": {
+      "mean_excess": -0.06683007003612285,
+      "n_windows": 40
+    },
+    "2026": {
+      "mean_excess": 0.016466991799129964,
+      "n_windows": 40
+    }
+  },
+  "years_positive": 3,
+  "n_years": 7,
+  "leave_one_year_out_mean_excess_per_window": {
+    "2020": -0.01973046958495715,
+    "2021": 0.04502760490424602,
+    "2022": 0.01539690239264621,
+    "2023": 0.043524024529270386,
+    "2024": 0.03325786748253113,
+    "2025": 0.042605789030162655,
+    "2026": 0.028722945390953856
+  },
+  "note": "Second hold-out spend for this pipeline, explicit, at Gabe's request. asset_growth_dropped only -- descriptive, not a confirmation. Window count per offset is small (~1/offset over 7 years, per PREREGISTRATION.md's caveat) -- sd across offsets here is not comparable to the nomination era's 82-window-per-offset sd."
+}

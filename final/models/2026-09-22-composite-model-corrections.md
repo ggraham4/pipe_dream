@@ -259,6 +259,73 @@ or a real-but-uncertain-comparison positive (exclude-bottom-decile) that
 needs the no-exclusion control before it means anything more than "the
 score isn't garbage."
 
+## 6b. Second hold-out spend (explicit, at Gabe's request) — the aggregate
+## number and the LOYO check disagree
+
+Gabe asked to see `asset_growth_dropped` on 2020-2026 anyway, having
+already been told 2020-2026 is spent for this pipeline. That is his call;
+recorded as a second, deliberate spend in `PREREGISTRATION.md`, scoped to
+this one variant only (not the other three, which would turn one
+requested number into a four-cell hold-out search). Descriptive, not a
+confirmation — this does not change `asset_growth_dropped`'s status as an
+unadopted recommendation either way.
+
+| | confirmed baseline (`decile_volq`, 9(8) factors) | `asset_growth_dropped` |
+|---|---:|---:|
+| mean excess CAGR vs SPY | +1.85%/yr | **+2.62%/yr** |
+| offsets positive | 39/40 | **40/40** |
+| mean null percentile | 98% | 99% |
+
+**On the aggregate alone, the ablation looks better on hold-out too.**
+Year by year (pooled across all 40 offsets per year, not a single-offset
+read):
+
+| year | baseline excess | `asset_growth_dropped` excess |
+|---|---:|---:|
+| 2020 | +23.98% | **+30.72%** |
+| 2021 | −5.60% | −8.14% |
+| 2022 | +11.98% | +9.64% |
+| 2023 | −9.91% | −7.23% |
+| 2024 | −4.39% | −1.07% |
+| 2025 | −7.32% | −6.68% |
+| 2026 (partial) | +2.94% | +1.65% |
+
+**The ablation's hold-out result is carried by 2020 to the same degree
+the baseline's was, not less.** Leave-one-year-out, computed the same way
+as the baseline's own check (pooling every offset's per-year excess,
+dropping one calendar year, re-averaging the rest):
+
+```
+drop 2020  ->  mean excess flips to -1.97%/yr   (baseline: -2.05%/yr)
+drop 2021  ->  +4.50%/yr
+drop 2022  ->  +1.54%/yr
+drop 2023  ->  +4.35%/yr
+drop 2024  ->  +3.33%/yr
+drop 2025  ->  +4.26%/yr
+drop 2026  ->  +2.87%/yr
+```
+
+**This is essentially the identical failure mode, at essentially the
+identical magnitude.** A +0.77pp/yr bigger headline number
+(+2.62% vs +1.85%) is not a more robust one — dropping 2020 flips both to
+almost exactly the same small negative number (-1.97% vs -2.05%). The
+ablation that improved the nomination-era result (section 3) does not fix
+the thing that actually failed in the original hold-out confirmation: a
+7-year hold-out dominated by one COVID-recovery year is not made
+more trustworthy by a factor change that also happens to do slightly
+better in that same year (+30.72% vs +23.98% — `asset_growth_dropped`'s
+2020 is bigger, not smaller, than the baseline's).
+
+**Reading this correctly**: the nomination-era ablation result (section 3,
+LOYO-clean there, worst single-year drop still positive) stands on its own
+un-touched by this. What this section adds is narrower and more
+deflating: whatever hold-out improvement the ablation shows is not
+evidence the ablation fixed the hold-out's known fragility — it's the
+same fragility, slightly bigger in both directions.
+
+Reproduction: `python3 holdout_check_asset_growth_dropped.py` →
+`holdout_asset_growth_dropped_report.json`. ~75 seconds.
+
 ## 7. Reproduction
 
 ```bash
