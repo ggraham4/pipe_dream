@@ -10,7 +10,9 @@ repo**, same rule as `SHARADAR_API_KEY`). Raw sample: `av_probe/coverage_sample.
 ## Headline
 
 **`HISTORICAL_OPTIONS` is the only AV endpoint that is survivorship-safe, and it
-is very good.** Every fundamentals-style endpoint (EARNINGS, EARNINGS_ESTIMATES,
+is very good** — provided each name is queried under the symbol it traded
+as on the date (with that mapping, dead-name coverage matches live-name
+coverage within sampling noise). Every fundamentals-style endpoint (EARNINGS, EARNINGS_ESTIMATES,
 SHARES_OUTSTANDING, INSIDER_TRANSACTIONS, NEWS_SENTIMENT) maps to *today's*
 issuer and returns nothing for dead companies — usable live, never as a
 backtest feature.
@@ -28,36 +30,50 @@ backtest feature.
   known gap "options universe built from today's roster" for 2008-onward.**
 - **Unadjusted strikes** (AAPL 2008 ATM ≈ $200) — same convention as DoltHub, so
   the existing `build02c_v3_properrescale.py` split-rescale logic applies.
-- **Quotes agree exactly with DoltHub where both exist**: MSFT 2023-03-08,
-  152/152 overlapping contracts identical bid *and* ask. Same underlying feed;
-  DoltHub just stores ~7% of the strikes (162 vs 2,188) and no volume/OI.
-- **Open-interest timing looks point-in-time safe**: for TXG, ΔOI(d→d+1)
-  correlates 0.96–0.99 with volume on *d* and ~0 with volume on d+1, i.e.
-  OI(d) is the prior-close OCC figure, knowable at d. (AAPL's huge chain is too
-  noisy for this test, 0.08–0.27 either way; one TXG pair was negative. Treat as
-  consistent with PIT-safe, not proven — re-check on a larger sample before a
-  feature depends on it.)
+- **Same feed as DoltHub**: on 4 ticker-days both hold (MSFT 2023-03-08, AAPL
+  2022-06-10, AMD 2022-06-10, ETSY 2022-08-08), 98–100% of overlapping
+  contracts have identical bid *and* ask (538 contracts). DoltHub just stores
+  ~7% of the strikes (e.g. 162 vs 2,188) and no volume/OI. Note this shows a
+  shared source, not correct quotes — the stale-quote problem found in the
+  puts diagnosis carries over (see cleaning caveat below).
+- **Open interest is point-in-time safe (tested, not assumed).** OI changes
+  only through trades (plus exercise — the 2021-06-18 expiry was dropped), so
+  |OI(d+1) − OI(d)| must be ≤ the volume of whichever day lies between the two
+  snapshots. Against volume on **d**: 0.6–1.4% violations (AAPL, ~900
+  changed contracts per pair), 0% (TXG). Against volume on d+1: 27–71%
+  violations. So the row dated d carries the **prior-close** OI, knowable at
+  d's open; `volume` on row d is day d's own volume (EOD).
+  Script: `av_probe/av_oi_timing_and_overlap.py`.
 
 ### Coverage over the down-cap universe (300 random name-dates, ≥2008)
 
 Stratified 50 per (tier × Sharadar `isdelisted`), random eligible date per name.
 
-| tier | alive: has chain | dead: has chain |
-|---|---|---|
-| cap2000 | 88% | 64% |
-| cap500  | 74% | 56% |
-| cap150  | 54% | 34% |
+| tier | alive, Sharadar ticker | alive, as-traded symbol | dead, Sharadar ticker | dead, as-traded symbol |
+|---|---|---|---|---|
+| cap2000 | 88% | **96%** | 64% | **94%** |
+| cap500  | 74% | **82%** | 56% | **74%** |
+| cap150  | 54% | **56%** | 34% | **48%** |
 
-- **Issuer identity**: put-call-parity spot within 10% of Sharadar `closeunadj`
-  on **181/185** covered name-dates. Misses: GOLD 2021 (Sharadar/AV disagree on
-  which issuer), NNDM, PRLD, GFIG — small, spot-checkable.
-- **Dead-name coverage is understated by a symbol-mapping problem**: Sharadar
-  stores a dead company under its *final* ticker (e.g. `ANRZQ`), AV under the
-  symbol it traded as on that date (`ANR`). A real pull must map through
-  `data/sharadar/actions.csv` ticker changes before querying.
-- **cap150 × 2016–2020 is a hole** (10% covered vs 50%+ in other eras, small n).
-  Some misses are expected (SPACs, no listed options), some look like real gaps
-  (VRNS 2015, PPC 2009). Worth a targeted re-probe before relying on that slice.
+- **The raw dead-vs-alive gap (~20 pts in every tier) was a symbol-mapping
+  artifact, not AV coverage.** Sharadar stores a company under its *final*
+  ticker (`NVTAQ`, `WFTIQ`, `APC1`, `CZR2`, `TGNA` for Gannett-as-GCI…); AV
+  indexes by the symbol it traded as on that date. Re-querying every miss under
+  its `tickers_master.relatedtickers` / `actions.csv` ticker-change symbols
+  recovered **40 name-dates, all identity-checked** (parity spot within 10% of
+  Sharadar `closeunadj`). Remaining dead/alive differences (2, 8, 8 pts) are
+  inside the ~7-pt sampling noise at n=50 per cell. Many remaining cap150
+  misses are SPACs (price ≈ $10, typically no listed options).
+  Script: `av_probe/av_symbol_remap.py`, results `av_probe/remap_sample.csv`.
+- **A real pull must query the as-traded symbol**, resolved from
+  `relatedtickers` + `actions.csv` and verified per name with the parity-spot
+  check. The check matters: first-candidate mapping picked the wrong issuer 3
+  times in 43 hits (VIA2→VIA, OCSL→FSC, HK1→HK on an old date).
+- **Issuer identity on raw hits**: 181/185 parity-spot matches. Misses: GOLD
+  2021 (Sharadar/AV disagree on which issuer), NNDM, PRLD, GFIG.
+- cap150 coverage by era (as-traded): 69% / 50% / 20% / 50% for
+  2008–12 / 13–16 / 17–20 / 21–26 — the 2017–20 cell is n=10, not a finding
+  yet.
 - **Liquidity, among covered name-dates (median)**:
 
   | tier | contracts | day volume | total OI | quoted spread (of mid) | zero-bid share |
@@ -92,8 +108,14 @@ pacing. cap150 is ~3,000 names at any date; 2008-01 → 2026-08.
 | C. Weekly, cap500-and-below only (~1,500 names) | ~1.5M | ~17 days |
 | Full daily chains, whole universe | ~15–20M | impossible on this plan |
 
-Recommend **B** (covers A, leaves ~3 weeks of headroom for re-pulls/fixes) —
-but it is a multi-day spend of the subscription window, so it is not started.
+**Grid-offset constraint (AGENTS.md):** any feature must pass
+`check_grid_offset.py` before promotion, and a single snapshot grid (A, or B's
+one date per month) cannot. Weekly sampling gives several offsets. A hybrid —
+**weekly for cap500-and-below, monthly for cap2000** (~1.2M calls, ~14 days) —
+buys offsets where the thin-liquidity hypothesis lives. B (~8 days) is the
+cheaper choice if a single grid is acceptable for a first read.
+It is a multi-day spend of the subscription window, so nothing is started —
+Gabe's call.
 Data size: ~100–1,000 contracts × ~670k snapshots → store as partitioned
 parquet, not CSV.
 
@@ -123,10 +145,12 @@ a causal estimator on surviving names — e.g. how well the Round 16
 
 ## Next steps (in order)
 
-1. Gabe: pick an options pull option (A/B/C). Pull script = this probe's
-   `chain()` + Sharadar→as-traded symbol mapping via `actions.csv` + burst
-   handling + partitioned parquet, run on Gabe's machine.
-2. Targeted re-probe of cap150 2016–2020 and the ANR-style renamed dead names
-   once symbol mapping exists, to get true dead-name coverage.
+1. Gabe: pick a pull (B, or the weekly-down-cap/monthly-large-cap hybrid).
+   Pull script = the probe's `chain()` + as-traded symbol resolution
+   (`av_symbol_remap.py`'s `relatedtickers`/`actions.csv` logic) + per-name
+   parity-spot identity check + burst-reply detection + partitioned parquet,
+   run on Gabe's machine with `ALPHAVANTAGE_API_KEY` set.
+2. Recompute IV/greeks from mids; apply stale-quote cleaning before any
+   backtest.
 3. Extend `edgar_8k_events_pull.py` to keep Item 2.02 (free, not AV).
 4. `LISTING_STATUS` cross-check against `identity_map_v2.csv` ambiguities.
