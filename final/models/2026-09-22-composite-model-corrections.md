@@ -116,6 +116,50 @@ this specific construction should replace `decile_volq` — that would
 require the missing no-exclusion control and a risk-matched comparison,
 both flagged as follow-ups.
 
+### 2a. The no-exclusion control (2026-09-22, per Gabe's request) — mostly
+### universe beta, not selection
+
+`no_exclusion_control.py`: same vol-quintile bucketing, same inverse-vol
+weighting, **zero score input** — every eligible cap150 name is held,
+nothing excluded. Nomination era, cap150, 15bp, all 40 offsets:
+
+```
+mean excess CAGR vs SPY:  +2.40%/yr   (exclude_bottom_decile: +2.79%/yr)
+sd across offsets:         0.20%      (exclude_bottom_decile: 0.20%)
+offsets positive:          40/40      (exclude_bottom_decile: 40/40)
+mean years won:            8.1/13.0   (exclude_bottom_decile: 8.2/13.0)
+```
+
+**This resolves the open question, and not in `exclude_bottom_decile`'s
+favor.** A construction that uses the composite score for literally
+nothing gets +2.40%/yr — 86% of `exclude_bottom_decile`'s +2.79%/yr, with
+matching dispersion and years-won. Knowing which decile to exclude adds
+about +0.39pp/yr on top of simply being long the down-cap,
+survivorship-corrected universe, inverse-vol weighted. That +0.39pp/yr
+may still be real (it's the right sign, and consistent with the
+composite's own measured full-universe IC), but it is a small increment
+on a large, construction-driven base, not evidence that "avoid the
+bottom decile" is itself a strong standalone strategy.
+
+**Read together with `decile_volq`'s own number, this is informative
+about where the confirmed construction's edge actually comes from.**
+The three constructions, same scores, same universe, same dates:
+
+| construction | book size | mean excess/yr |
+|---|---|---:|
+| `decile_volq` (confirmed, adopted) | ~10% | **+4.32%** |
+| `exclude_bottom_decile` | ~90% | +2.79% |
+| no exclusion at all | 100% | +2.40% |
+
+Concentrating into the top decile roughly **doubles** the excess return
+of holding the broad universe or excluding only the worst decile. Most
+of the "broad" constructions' edge is universe beta; most of
+`decile_volq`'s incremental edge over that beta is genuine top-decile
+selection — the opposite conclusion the audit's decile table (section 6
+of the physics doc) originally pointed toward, and the reason
+`decile1_volq` (§1 above) failed outright. The confirmed construction's
+concentration is doing real, measurable work.
+
 ## 3. `asset_growth_dropped` — the one variant that improved on the
 ## confirmed baseline
 
@@ -536,3 +580,24 @@ flagged. This is the check that should have run automatically before
 section 6c's claim was ever written down by hand -- from here forward,
 call it on every new backtest's picks before reporting a headline number,
 not only when a year looks suspiciously good.
+
+**A real bug in this metric, found immediately on first use against the
+nomination era, fixed before it shipped.** The original `top_ticker_share`
+(contribution / the period's NET total) reported `DADE` as "-85% of
+2007" -- DADE's actual 2007 picks were an unremarkable handful of small
+positive contributions; 2007's NET total merely happened to sit close to
+zero, and dividing anything by a near-zero denominator produces
+meaningless, sign-flipping percentages. Fixed by gating the flag on
+`top_ticker_share_of_gross` (contribution / sum of |contributions|,
+always positive, immune to this) instead; the net-total share is still
+reported for context but never gates a flag. Documented in the module's
+own `FLAG_THRESHOLD` comment so the failure mode doesn't get silently
+reintroduced.
+
+**Run against the now-confirmed, now-adopted composite's nomination-era
+picks** (`concentration_check_nominate.py`) — **not flagged in any of the
+13 years.** Max single-year gross share: 2.6% (`KDP`, 2018), well under
+the 10% threshold. This is genuinely reassuring: the fragility found in
+the hold-out (GME, LCID) is a hold-out-specific property of a short,
+regime-concentrated window, not a standing weakness of the confirmed
+nomination-era result.

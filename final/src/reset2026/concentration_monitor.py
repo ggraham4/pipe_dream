@@ -40,6 +40,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 # and its false-positive rate on ordinary years is known.
 FLAG_THRESHOLD = 0.10
 
+# Found running this against the confirmed nomination-era result (2026-09-22):
+# `top_ticker_share` (a ticker's contribution / the period's NET total) blows
+# up into a meaningless, sign-flipping number whenever the net total is small
+# -- e.g. DADE, an ordinary handful of small positive picks in 2007, reported
+# as "-85% of the year" purely because 2007's net total happened to be close
+# to zero. The flag now gates on `top_ticker_share_of_gross` (contribution /
+# sum of ABSOLUTE contributions, always positive, immune to this) instead;
+# the net-total share is still reported for context but never gates a flag.
+
 
 def concentration_report(records, group_by="year", contribution_col=None):
     """
@@ -66,19 +75,25 @@ def concentration_report(records, group_by="year", contribution_col=None):
     out = {}
     for grp, g in df.groupby("_group"):
         total = g[contribution_col].sum()
-        by_ticker = g.groupby("ticker")[contribution_col].sum().sort_values(ascending=False)
-        if total == 0 or len(by_ticker) == 0:
+        by_ticker_abs = g.groupby("ticker")[contribution_col].apply(lambda s: s.sum())
+        gross_total = g[contribution_col].abs().sum()  # sum of |contribution|, always > 0, immune
+                                                        # to the net total's sign/near-zero blowup
+        by_ticker = by_ticker_abs.reindex(by_ticker_abs.abs().sort_values(ascending=False).index)
+        if len(by_ticker) == 0 or gross_total == 0:
             continue
         top_ticker = by_ticker.index[0]
-        top_share = by_ticker.iloc[0] / total if total != 0 else np.nan
-        top5_share = by_ticker.iloc[:5].sum() / total if total != 0 else np.nan
+        top_of_gross = by_ticker.iloc[0] / gross_total
+        top5_of_gross = by_ticker.iloc[:5].abs().sum() / gross_total
+        top_share_of_net = by_ticker.iloc[0] / total if total != 0 else np.nan
         out[str(grp)] = {
             "total_contribution": float(total),
+            "gross_total_contribution": float(gross_total),
             "n_distinct_tickers": int(by_ticker.shape[0]),
             "top_ticker": str(top_ticker),
-            "top_ticker_share": float(top_share),
-            "top5_share": float(top5_share),
-            "flagged": bool(abs(top_share) >= FLAG_THRESHOLD),
+            "top_ticker_share_of_gross": float(top_of_gross),
+            "top5_share_of_gross": float(top5_of_gross),
+            "top_ticker_share_of_net_total": float(top_share_of_net),
+            "flagged": bool(abs(top_of_gross) >= FLAG_THRESHOLD),
         }
     return out
 
@@ -87,8 +102,9 @@ def print_report(report):
     for grp, r in sorted(report.items()):
         flag = " <== FLAGGED, review before trusting this period" if r["flagged"] else ""
         print(f"  {grp}: top ticker {r['top_ticker']:8s} "
-              f"share={r['top_ticker_share']*100:+.1f}%  "
-              f"top5_share={r['top5_share']*100:+.1f}%  "
+              f"gross_share={r['top_ticker_share_of_gross']*100:+.1f}%  "
+              f"top5_gross_share={r['top5_share_of_gross']*100:+.1f}%  "
+              f"(net_total_share={r['top_ticker_share_of_net_total']*100:+.1f}%)  "
               f"n_tickers={r['n_distinct_tickers']}{flag}")
 
 

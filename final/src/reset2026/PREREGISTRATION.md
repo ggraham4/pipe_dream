@@ -536,3 +536,40 @@ positive and LOYO-negative on dropping 2020) with the same leave-one-year
 -out check applied, not a bare aggregate number.
 
 Output: `final/out/reset2026/holdout_asset_growth_dropped_report.json`.
+
+## Factor-set decision (2026-09-22) — Gabe's call, made
+
+`asset_growth_dropped` is adopted. `composite.py`'s `FACTOR_SIGNS` no
+longer includes `asset_growth` as of this commit. This is a modeling
+decision (`AGENTS.md`: those are Gabe's), made after seeing:
+
+- The wrong-sign finding (`asset_growth` IC +0.0105 vs. assigned -1,
+  stable across both halves of the nomination era —
+  `2026-09-22-composite-model-physics.md` section 3).
+- The single pre-registered ablation testing exactly this (drop, never
+  flip): +3.75%/yr -> +4.32%/yr excess vs SPY on the confirmed
+  `cap150_raw`/`decile_volq` cell, LOYO-clean, 40/40 offsets positive,
+  harness-verified against `run_backtest.py` on the unmodified 9(8)-factor
+  cell before trusting the delta (`2026-09-22-composite-model-
+  corrections.md` sections 3 and 6a).
+- The disclosed cost: offset-to-offset dispersion rose (sd 0.55% vs.
+  0.37%), and the hold-out comparison is uninformative either way (both
+  the baseline's and this variant's hold-out results are dominated by
+  single-ticker concentration in 2020 — GME real, LCID real, see sections
+  6c/6d of the same document — not evidence for or against this specific
+  change).
+
+**What this does NOT do**: it does not re-confirm anything on 2020-2026
+(still spent), and it does not re-run the 40-offset/100-null nomination
+sweep under the NEW 8(7)-factor definition — `REPORT_nominate.md` and
+`REPORT_holdout.md` still describe the prior 9(8)-factor composite and
+are stale as of this commit. `correction_variants_report.json`'s
+`asset_growth_dropped` entry is, from this point on, simply *the*
+confirmed nomination-era number for `cap150_raw`/`decile_volq`, not a
+variant beside a different baseline. Regenerating the full six-cell
+report under the new factor set (`run_backtest.py --era nominate` +
+`aggregate_report.py`, ~33 min) is a reasonable next step if a clean,
+canonical `REPORT_nominate.md` matching the new `FACTOR_SIGNS` is wanted,
+but is not required to treat this decision as in effect — the ablation's
+own dedicated 40-offset run already is that confirmation, run on the
+exact same construction and cost assumptions the six-cell report uses.
