@@ -329,3 +329,84 @@ Per standing rule 9 (gates do not move after seeing a result): this verdict
 is written directly into this document rather than softened, and no further
 hold-out draw is taken to try to resolve it -- 2020-2026 is spent again,
 this time for real, for this pipeline.
+
+**Note (2026-09-22):** this file's committed HEAD ends here. The main
+checkout's working tree (uncommitted) carries a further "Future avenues"
+section recording the zero-fit q75 blend result (`blend_q75.py`,
+`project-meta-model-roadmap` memory) -- not reproduced in this worktree
+since worktrees only check out tracked content. The section below is
+appended after this file's committed content and does not depend on that
+uncommitted section; reconcile ordering on merge.
+
+## Model-audit pre-registration (2026-09-22)
+
+Written before `model_audit.py` runs, per Gabe's request to treat this
+composite the way a physicist treats a theoretical model: state the
+predictions, check the signs/coefficients against data, name missing
+variables, and score fit across the WHOLE cross-section (not just the
+traded book). This is a **descriptive audit of the already-confirmed
+nomination-era model**, not a new backtest and not a search for a better
+config -- like the sector-enrichment work (`AGENTS.md`, 2026-09-16), it
+reports what the existing composite does, it does not select anything, so
+the hold-out rule does not bind for the audit itself. It touches
+**2007-2019 (nomination era) only** -- 2020-2026 is spent for this
+pipeline (see above) and nothing below reopens it.
+
+**Exactly two candidate variables are tested as an extension**, both built
+from columns already on disk (no new data pull): `log(market_cap)` as a
+continuous factor (distinct from its existing use as a step-function
+universe floor) and 1-month reversal `momentum_1_1` (the return the
+existing `momentum_12_1` explicitly skips). These are nominations, not
+promotions -- scored for IC/sign only, never added to `FACTOR_SIGNS`, never
+backtested as a portfolio. Trial count for this addition: 2.
+
+**Quantities computed, all on `forward_return_tradable_40` (never the
+non-tradable label -- Round 18's divergence #1), pooled across ALL trading
+days in 2007-2019 (not one 40-day grid offset -- the grid-offset problem
+applies to non-overlapping-window sampling, not to a pooled-day IC), with
+Newey-West standard errors at lag 39 to account for the serial correlation
+40-day-overlapping forward returns induce:**
+
+1. Per-factor pooled Spearman IC + NW t-stat, on the `cap150` eligible
+   universe, for each of the 9 signed factors plus the 2 candidates --
+   compared against `FACTOR_SIGNS` to flag any measured-vs-assigned sign
+   mismatch.
+2. The same, split by `coverage` (number of the 9 factors a name has data
+   for that day): high (>=8) vs low (<=4) -- tests whether the pooled
+   score's tails are populated by low-coverage names with mechanically
+   higher score variance and no matching return edge (the averaging-fewer-
+   terms effect: a k-factor mean of iid-ish signed ranks has variance
+   ~1/(12k), so k=2 is ~4.5x noisier than k=9).
+3. Composite IC (raw and sector-neutral) on `cap150` and `cap2000`, full
+   universe and by score decile -- extends the existing full-vs-top-decile
+   comparison in the main write-up (section 3.5) to all 10 deciles, to see
+   exactly where monotonicity breaks rather than only that it does.
+4. IC -> IR consistency check: given Round 15's measured effective breadth
+   (~16 at cap2000; cap150's own breadth has not been measured by this
+   audit and is estimated from the same active-correlation method if cheap,
+   else flagged as unmeasured), does `IR = IC x sqrt(breadth)` predict the
+   realized portfolio IR in `REPORT_nominate.md`? A realized IR well above
+   what IC supports implies the excess is construction (vol-bucketing /
+   inverse-vol weighting cutting variance drag), not selection.
+5. 9x9 factor-vs-factor pooled rank-correlation matrix (cap150, nomination
+   era) and a comparison of equal weighting against the Grinold-Kahn
+   IC-implied optimum (Sigma^-1 . IC) -- diagnostic only, per the
+   package's own no-fitted-parameters design; the reported output is
+   whether equal-weight sits within the estimation noise of the IC-implied
+   weights, not a refit.
+6. Fama-MacBeth cross-sectional regression of `forward_return_tradable_40`
+   on the composite score, one regression per day, averaged: mean slope
+   (NW t) and mean R^2, for cap150 raw, cap150 neutral, and cap2000 raw --
+   reported alongside IC, not instead of it (a 0.1-1% cross-sectional R^2
+   is the normal size for a real equity signal and should not be read as
+   "explains nothing").
+7. Sign-flip robustness for all 9 factors using the existing
+   `check_grid_offset.py`-style approach (40 offsets) is NOT rerun in this
+   audit (that machinery lives in `sweep/`, keyed to the old panel's
+   column names, and porting it is out of scope for a descriptive pass) --
+   instead, split-half stability is used as a cheaper proxy: pooled IC
+   computed separately on odd/even calendar years of the nomination era,
+   reported alongside the full-period IC for each factor.
+
+Output: `final/out/reset2026/model_audit_report.json` (all numbers) and
+`final/models/2026-09-22-composite-model-physics.md` (the write-up).
