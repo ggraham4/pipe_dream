@@ -326,6 +326,66 @@ same fragility, slightly bigger in both directions.
 Reproduction: `python3 holdout_check_asset_growth_dropped.py` →
 `holdout_asset_growth_dropped_report.json`. ~75 seconds.
 
+## 6c. A real data bug found chasing 2020, per Gabe's own suspicion of the
+## 2020 numbers
+
+Investigated directly (`investigate_2020.py`) rather than accepted: which
+tickers actually drove 2020's +30.72% excess. Two names dominate the tail
+of 55,191 (offset, date, ticker) picks that year.
+
+**`GME` (GameStop) — real, checked against the public record, not a bug.**
+Picked in late Nov/early Dec 2020 (price ~$3.7-4.2, low weight ~0.1% —
+correctly bucketed as a small, unremarkable position at entry); a 40-day
+hold from those dates lands squarely in the real, well-documented January
+2021 short-squeeze window. Returns of +452% to +1,970% on this position
+are consistent with GME's actual public trading history. This is a real,
+extraordinary, one-off event the model could not have predicted and
+should not be expected to repeat — luck of calendar timing, not signal.
+
+**`LCID` — a real data bug, not checked out before this, and it is the
+single largest contributor to the whole year.** `LCID` (5 picks, Dec
+2020, weight ~3% each — the HEAVIEST weight of any 2020 pick, because the
+pipeline's series shows it as extremely low-volatility) contributes
+**+2.09 (weight x return) of the year's 18.76 total — more than the
+next 4 tickers combined**, on returns of +427% to +482%.
+
+Checked against the real, public trading history of the security this
+ticker actually was in Dec 2020-Feb 2021 (`LCID` = Lucid Group's ticker
+only from July 2021 onward; before that it was Churchill Capital Corp IV,
+"CCIV," the SPAC that later merged with Lucid — one of the most
+well-documented SPAC squeezes of that period): **the pipeline's series
+shows $573.70 on 2021-02-22; CCIV's real, publicly documented close that
+day was $64.86** — off by ~8.85x. Whatever this pipeline's Sharadar-
+sourced `LCID.csv` holds for 2020-07-30 through mid-2021, it does not
+match the real security's trading history at anywhere near the right
+scale. Root cause not chased further here (ticker-history mapping error
+of the kind Round 11 already found and fixed 41 instances of; a units-
+vs-shares or split-factor scaling error; or something else) — flagged as
+an open, unresolved data-quality bug, not fixed in place.
+
+**Quantified impact** (`lcid_impact_check.py`, LCID excluded from the
+eligible universe entirely, full 40-offset re-run): 2020's excess drops
+from +30.72% to **+24.28%** (LCID alone: +6.44pp of that one year), and
+the **full 7-year headline drops from +2.62%/yr to +1.80%/yr** —
+**statistically indistinguishable from the original baseline's own
++1.85%/yr.** The entire nominal hold-out "improvement" this section
+opened with (section 6b: +2.62% vs the baseline's +1.85%) does not
+survive removing one bad ticker. Whether the baseline's own +1.85%/yr is
+similarly inflated by the same `LCID` contamination was not checked here
+(same construction, same dates, so plausibly yes) — a clean same-basis
+comparison would need to exclude `LCID` from the baseline's own hold-out
+run too, not done in this pass.
+
+**This does not touch anything already reported as confirmed.** `LCID`'s
+price data in this pipeline starts 2020-07-30 — it has zero effect on the
+2007-2019 nomination-era result (section 3's `asset_growth_dropped`
+result, and everything in `2026-09-22-composite-model-physics.md`) either
+way.
+
+Reproduction: `python3 investigate_2020.py` (diagnostic, prints
+concentration/top-contributor tables) and `python3 lcid_impact_check.py`
+(quantifies the exclusion). ~3-4 minutes combined.
+
 ## 7. Reproduction
 
 ```bash
