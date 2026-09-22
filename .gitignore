@@ -67,3 +67,10 @@ final/src/_patch_*.py
 # as of Round 11, kept on disk only for reproducing pre-Round-11 results. ---
 final/scripts/td_data_delisted_repaired/
 final/scripts/td_data_delisted_repaired_causal/
+
+# --- 2026-09-22 Alpha Vantage options pull + unified chain + Sharadar 1998 backfill.
+# Reproduce: final/scripts/av_options_run_pull.sh, final/src/build_option_chain_unified.py,
+# final/scripts/sharadar_backfill_1998.sh (see final/models/2026-09-22-alpha-vantage-spin.md).
+final/data/alphavantage/
+final/data/options_unified/
+final/data/sharadar_backfill/
