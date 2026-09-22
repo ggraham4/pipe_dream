@@ -497,26 +497,30 @@ growing another copy of the arithmetic. `src/resimulate_corrected.py` and
 
 ## Known gaps — read before assuming something "just works"
 
-- **`final/scripts/td_data_sharadar/LCID.csv` (the reset2026 composite's
-  price source) does not match `LCID`'s real trading history and has not
-  been root-caused** — found 2026-09-22 chasing a suspiciously large 2020
-  hold-out contribution. `LCID` only became Lucid Group's ticker in July
-  2021; before that it was Churchill Capital Corp IV ("CCIV"), one of the
-  more famous SPAC squeezes of that period. This pipeline's series shows
-  $573.70 on 2021-02-22; CCIV's real, documented close that day was
-  $64.86 — off by ~8.85x. Effect quantified: this one ticker alone
-  contributes +0.82pp/yr of the `asset_growth_dropped` correction
-  variant's 2020-2026 hold-out excess (+2.62%/yr with it in the universe,
-  +1.80%/yr without — the "improvement" over the original baseline's own
-  +1.85%/yr hold-out result does not survive excluding it). Only affects
-  2020-2026 (the ticker's data starts 2020-07-30) — the 2007-2019
-  nomination era is untouched. Not fixed here; root cause (ticker-history
-  mapping, a units/shares scaling error, or something else) not chased
-  further. Full write-up: `models/2026-09-22-composite-model-
-  corrections.md` section 6c. Worth a targeted check of the rest of
-  `td_data_sharadar/` for the same pattern before trusting any other
-  hold-out-era number this pipeline produces involving a SPAC-derived or
-  recently-renamed ticker.
+- **RETRACTED 2026-09-22, same day: `LCID` was never a data bug.** An
+  earlier version of this entry claimed `td_data_sharadar/LCID.csv`
+  didn't match `LCID`'s real trading history (pipeline showing $573.70 on
+  2021-02-22 vs. a recalled real CCIV close of $64.86). That comparison
+  was invalid — it compared an *adjusted* price against a *raw* recalled
+  figure without accounting for a later split rescaling all history. A
+  web search confirmed Lucid Group completed a real, SEC-filed 1-for-10
+  reverse split effective 2025-09-02 (shares outstanding 3,072.6M ->
+  307.3M) that fully explains the gap. **No bug. Full retraction and the
+  general safeguards built while chasing this down:
+  `models/2026-09-22-composite-model-corrections.md` sections 6c
+  (the original, wrong claim, kept for the record) and 6d (the
+  correction).** Two reusable tools came out of this:
+  `final/src/reset2026/price_adjustment_scanner.py` (validates a
+  close-vs-closeunadj ratio jump against the real-split signature —
+  raw price jumps, adjusted price stays smooth — checked against AAPL's
+  2020 split and LCID's 2025 split; reduces the ~4,011-ticker universe to
+  a 91-event manual-review shortlist, most of which look like real
+  spin-offs/distributions, NOT a finished bug list) and
+  `final/src/reset2026/concentration_monitor.py` (flags when one ticker
+  dominates a backtest period's return, regardless of whether the cause
+  turns out to be real or a bug — the check that should have run before
+  this entry was ever written the first time). Run both before trusting
+  any future reset2026 hold-out-era number that leans on a single name.
 - **`final/models/final_model_calls.pkl` and `final_model_puts.pkl` still
   have no DIRECT reproduction script** — the original round-1/round-2 model
   comparison and hyperparameter search that produced them was run ad-hoc in

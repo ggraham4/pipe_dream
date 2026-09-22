@@ -386,6 +386,69 @@ Reproduction: `python3 investigate_2020.py` (diagnostic, prints
 concentration/top-contributor tables) and `python3 lcid_impact_check.py`
 (quantifies the exclusion). ~3-4 minutes combined.
 
+## 6d. RETRACTION: LCID was not a bug. It was a real, SEC-filed reverse
+## split, and this section 6c is wrong about the root cause
+
+Section 6c's core claim — that `LCID`'s price series doesn't match reality
+— does not survive a second look, kept here rather than deleted because
+the mistake and how it was caught are as useful as the correct answer.
+
+**What broke the original comparison.** Section 6c compared the
+pipeline's *adjusted* `close` on 2021-02-22 ($573.70) against a *raw*,
+unadjusted historical price recalled from memory (CCIV's real close that
+day, ~$64.86) and called the ~8.85x gap a bug. That comparison is invalid
+on its face once you know the adjusted series gets *retroactively
+rescaled* every time a later split happens — the two numbers are not on
+the same basis, and the gap says nothing by itself.
+
+**What actually happened, built while validating a general safeguard, not
+by re-litigating LCID specifically** (`price_adjustment_scanner.py`, built
+in response to Gabe's request to safeguard future experiments): a genuine
+stock split has a specific, checkable signature — the RAW price
+(`closeunadj`) shows a real, same-day jump matching the split ratio, while
+the adjusted price (`close`) stays smooth, because staying smooth across
+real splits is the entire point of adjusting. Checked against AAPL's
+undisputed 2020-08-31 4-for-1 split first to validate the logic (raw
+499.23 -> 129.04, a real ~3.9x drop; adjusted 124.808 -> 129.04, ordinary
+— signature confirmed), then applied to LCID: **`closeunadj` jumps from
+$1.98 to $17.66 (~8.9x) on 2025-09-02, while `close` moves smoothly
+($19.80 -> $17.66) that same day — the identical real-split signature.**
+
+**Verified against the public record** (web search, not a project script —
+the network restriction in `AGENTS.md` is about this pipeline's own
+data-pull scripts, not about fact-checking a public corporate action):
+Lucid Group filed an 8-K and completed a real 1-for-10 reverse stock
+split effective 2025-09-02, shares outstanding reduced from
+~3,072.6 million to ~307.3 million
+([SEC 8-K](https://www.sec.gov/Archives/edgar/data/1811210/000181121025000022/lcid-20250829.htm),
+[Lucid IR](https://ir.lucidmotors.com/news-releases/news-release-details/lucid-group-inc-announces-effective-date-reverse-stock-split)).
+This is a real corporate action, filed and dated within a day of the
+exact transition this pipeline's data shows. There is no bug.
+
+**What this means for section 6c's numbers.** LCID is real, in the same
+sense GME is real — an extraordinary, non-repeatable, correctly-priced
+event that a low-vol-bucketed, inverse-vol-weighted construction happened
+to pick right before it moved. The **quantified impact stands as a
+concentration finding, not a data-quality finding**: excluding LCID still
+drops the full hold-out headline from +2.62%/yr to +1.80%/yr, and that
+number is still the right one to look at when asking "how much of this
+result rests on one ticker" — it just isn't evidence of a corrupted price
+file. `AGENTS.md`'s Known Gaps entry for this is corrected alongside this
+section, not left standing.
+
+**The actually useful output of chasing this down**: `price_adjustment_
+scanner.py` (validated on two real cases, reduces a naive close-vs-
+closeunadj scan from 710 false positives — mostly ordinary splits missing
+from an incomplete reference table — down to a 91-event shortlist most of
+which are very likely real spin-offs/special distributions the split-ratio
+arithmetic doesn't model, not confirmed bugs either) and
+`concentration_monitor.py` (flags when one ticker dominates a period's
+return regardless of whether the cause is real or a bug — the check that
+should have run automatically before section 6c's claim was ever written
+down). Both described in full in section 8 below, both meant to run
+before trusting a future number, neither meant to auto-classify a flag as
+"confirmed bad" the way section 6c did.
+
 ## 7. Reproduction
 
 ```bash
@@ -400,3 +463,76 @@ python3 harness_check.py   # optional -- the section 3 cross-check above
 ~10 minutes (3 backtest variants x 40 offsets x 50 matched nulls, plus one
 IC screen). Requires `composite_panel.parquet` and `outcome_cache.parquet`
 already built. Touches 2007-2019 only.
+
+## 8. Two standing safeguards, built chasing 2020, meant to run before
+## trusting the next report
+
+Per Gabe's request to clean up the data and safeguard future experiments,
+built and validated while working through sections 6c/6d above. Neither
+is a one-time fix -- both are meant to be reusable, run again on the next
+suspicious number rather than something only this session benefits from.
+
+### 8.1 `price_adjustment_scanner.py` -- a triage tool, not a bug classifier
+
+Scans every ticker's `close` vs `closeunadj` (`data/sharadar/panel/
+stocks/*.parquet`) for ratio jumps and checks each one against the
+validated signature of a real stock split: `closeunadj` shows a real,
+same-day jump matching the ratio change; `close` stays smooth, because
+staying smooth is what adjustment is for.
+
+**Two earlier versions of this check were built and both failed, kept in
+the script's own docstring rather than silently replaced:**
+1. Cross-referencing `sharadar_splits_raw.csv` (a 660-ticker table built
+   for the options workstream) flagged 710 "anomalies" -- almost all
+   ordinary real splits simply outside that table's coverage.
+2. Cross-referencing `sf1_shares.csv` flagged AAPL's own famous 2014 and
+   2020 splits as unexplained -- `sharesbas` turns out to already be
+   split-continuity-restated (AAPL's filed share count sits flat straight
+   through its 2020 split), so it can't discriminate a real split from a
+   bug either way.
+
+**The version that works** is validated against two real, checked cases
+(AAPL's 2020 split: correctly clears; LCID's 2025 reverse split: also
+now correctly clears, after the arithmetic bug in an earlier draft of
+this same check briefly flagged it too -- see the script's own history).
+Run against the full ~4,011-ticker universe: reduces 1,203 raw ratio
+jumps to a **91-event shortlist across 81 tickers**
+(`out/reset2026/price_adjustment_scan_report.json`). Most of the
+remainder look like real spin-offs and special distributions (HLT/Hilton
+2017, MSI/Motorola 2011, LDOS/Leidos 2013, EXPE/Expedia 2011 all appear,
+and all are real, documented corporate separations) that the pure
+split-ratio arithmetic doesn't model correctly, rather than confirmed
+bugs. **Treat the output as a manual-review shortlist, not a finished
+bug list** -- the LCID episode is the direct demonstration of why: this
+project got the classification wrong once already on stronger-seeming
+evidence than a bare scanner flag.
+
+Usage: `python3 price_adjustment_scanner.py` (~10s, no new data). Run it
+whenever a backtest number looks unusually good, or periodically as a
+standing check, and web-search-verify (as done for LCID) or check
+`AGENTS.md`'s existing corporate-action documentation for any name that
+lands in a future concentration flag (8.2) before spending time treating
+it as a bug.
+
+### 8.2 `concentration_monitor.py` -- always run this one
+
+Flags when a single ticker accounts for more than 10% (`FLAG_THRESHOLD`,
+untuned -- a starting point) of a period's total (weight x return)
+contribution. Deliberately agnostic about WHY a name concentrates --
+GME (real) and the LCID false alarm (also real, it turns out) would both
+have been flagged by this exact check, and both deserved a human look
+before the number that depended on them got quoted, regardless of which
+one turned out to be a bug.
+
+```python
+from concentration_monitor import concentration_report, print_report
+report = concentration_report(records)   # records: the same per-pick
+print_report(report)                     # dicts run_offset() already produces
+```
+
+Self-test (`python3 concentration_monitor.py`) reproduces this session's
+2020 finding: top ticker LCID, 11.1% share of 2020's total contribution,
+flagged. This is the check that should have run automatically before
+section 6c's claim was ever written down by hand -- from here forward,
+call it on every new backtest's picks before reporting a headline number,
+not only when a year looks suspiciously good.
