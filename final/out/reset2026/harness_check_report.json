@@ -1,0 +1,10 @@
+{
+  "n_offsets": 40,
+  "mean_excess_cagr_vs_spy": 0.0375116648994999,
+  "std_excess_cagr_vs_spy": 0.0037223336686044626,
+  "min": 0.030261430015315713,
+  "max": 0.0445249261665621,
+  "n_offsets_positive": 40,
+  "mean_years_won": 10.775,
+  "mean_n_years": 13.0
+}

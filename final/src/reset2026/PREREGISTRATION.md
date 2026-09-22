@@ -85,7 +85,26 @@ dollar volume, not today's.
 | 9 | `short_interest_days_to_cover` | − | existing (`sweep/short_interest.py`) | Boehmer, Jones, Zhang 2008 |
 
 Nine factors, nine literature-backed signs, zero fitted parameters at the
-combination step. `insider_cluster_recent` and the `opt_*` options-implied
+combination step.
+
+**Correction (2026-09-22, model-audit section below):** `#9
+short_interest_days_to_cover` has **zero non-null coverage anywhere in the
+2007-2019 nomination era** (`model_audit_report.json`'s
+`factor_availability`: first non-null date 2020-04-27). Every confirmed
+nomination-era number in this document — including the named selection
+below and the +3.75%/yr headline — was produced by an **8-factor**
+composite, not nine; the 9th factor is real, correctly wired, and active
+only in the hold-out period and the live signal, where it has never been
+evaluated (evaluating it would require the 2020-2026 hold-out, which is
+spent). Read every "9 factors" claim in this document as "8 factors,
+2007-2019; a 9th active from 2020" until this is corrected at the source.
+Also disclosed: `#6 asset_growth` measures `IC = +0.0105` (t = +1.47,
+stable sign across both halves of the sample) against its assigned `-1` —
+the opposite of its citation's prediction in this specific universe. Not
+acted on here (see the model-audit section's ablation, tested and
+reported beside the baseline, not substituted for it).
+
+`insider_cluster_recent` and the `opt_*` options-implied
 columns exist on disk but are declared OUT of the pre-registered composite —
 insider data was flagged by Gabe as needing a source re-check
 (`project-data-sourcing-priorities`), and the options columns cover a
@@ -410,3 +429,82 @@ Newey-West standard errors at lag 39 to account for the serial correlation
 
 Output: `final/out/reset2026/model_audit_report.json` (all numbers) and
 `final/models/2026-09-22-composite-model-physics.md` (the write-up).
+
+## Correction-round pre-registration (2026-09-22, part 2)
+
+Written before `correction_variants.py` runs, after an advisor review of
+the model-audit findings above talked one candidate correction back out
+of scope before it ran (recorded here for the record, not softened):
+**dropping every factor with pooled |t| < 1 was considered and
+rejected.** `volatility_60` and `pct_from_high_252` — two of the
+candidates that rule would have dropped — are the exact two factors
+`AGENTS.md`'s grid-offset section records as 0/40 sign flips in the old
+panel, the most stable measurements this project has produced, and
+section 8 of the physics write-up attributes most of the realized
+portfolio edge to a low-vol/quality tilt. A t-stat computed on 13 years of
+this data was also just shown (the odd/even split-half check) to not
+reliably order factors by true IC. A post-hoc threshold chosen after
+seeing the t-stats, applied to the same data used to compute them, and
+then evaluated once more on that same nomination era, is exactly the
+27%-of-zero-signal-configs-beat-the-market failure mode Round 12 already
+calibrated. **`FACTOR_SIGNS` is not touched by this correction round.**
+Every test below is a variant reported beside the confirmed 8-factor
+baseline (`cap150_raw`, `decile_volq`, already in `REPORT_nominate.md` —
+not rerun), matching how every other alternate view in this project is
+handled (`topn_ew` beside `decile_volq`, `xrank` beside `q75`,
+`blend_q75.py` as its own script) — never a replacement computed in
+place.
+
+**Trial count: 3 backtest variants + 1 factor screen (not a backtest).**
+Written down before any of the four run.
+
+1. **`decile1_volq`** — identical construction to the confirmed
+   `decile_volq` (top decile within each of 5 trailing-vol quintiles,
+   inverse-vol weighted) except it selects **decile 1** (the second-from-
+   bottom decile) instead of decile 9 (the top). Directly tests section
+   6's finding that decile 1's pooled mean forward return (+1.92%) was
+   numerically above decile 9's (+1.78%) on the exact same scores — same
+   book size, same weighting, same universe, same dates; only which
+   decile is selected changes.
+2. **`exclude_bottom_decile`** — within each vol quintile, hold every
+   name EXCEPT the bottom composite-score decile (inverse-vol weighted
+   across the remaining ~90%). Tests section 6's other reading directly
+   ("the model's information is in what to avoid, not what to buy").
+   **Disclosed as not apples-to-apples on book size or turnover** — this
+   holds roughly 9x the names the confirmed construction does, which by
+   itself changes variance-drag and diversification characteristics
+   (Round 15/18's own finding for the old model) independent of any
+   selection effect. Reported with that caveat attached, not as a clean
+   isolation of scores from construction.
+3. **`asset_growth_dropped`** — the confirmed 8-factor composite minus
+   `asset_growth` (7 real factors), same `decile_volq` (top-decile)
+   construction as the baseline. A drop, never a sign flip — flipping
+   would fit the sign to the exact data used to validate it; dropping
+   only removes a term whose measured sign contradicts its own citation
+   in this universe, without asserting a new sign in its place.
+4. **`book_to_market` factor screen, IC only, no portfolio.** Built from
+   `sf1_fundamentals.parquet`'s existing `equity` (book value, ARQ/ARY,
+   filed-date keyed, same as `assets` in `quality_factors.py`) divided by
+   the panel's own point-in-time `market_cap` — zero new data pull, same
+   merge_asof-with-row-position-assertion pattern
+   `quality_factors._asof_value` already uses. Screened for pooled
+   Spearman IC + NW t + split-half stability on cap150, 2007-2019, the
+   same measurement `model_audit.py` already applies to every other
+   factor. **Not added to any composite, not backtested as a portfolio,
+   not promoted** — Novy-Marx 2013's own framing (already cited for
+   `gross_profitability`) motivates checking it, and this is the cheapest
+   possible check, but promoting a 9th (10th) real factor into a traded
+   composite is a modeling decision `AGENTS.md` reserves for Gabe.
+
+All four run on cap150 (the confirmed tier), raw (not sector-neutral, to
+match the named selection), nomination era only (2007-2019 — 2020-2026
+remains spent), 15bp round-trip cost, 40 grid offsets, using the
+already-verified `outcome_cache.parquet`. Matched-null draws reduced from
+100 to 50 per cell for the three backtest variants (a runtime concession
+for a diagnostic pass, not a methodology change — the null's role here is
+a sanity floor, not a formal significance claim, so halving the draw
+count does not change what any of these three tests can or can't
+conclude).
+
+Output: `final/out/reset2026/correction_variants_report.json` and
+`final/models/2026-09-22-composite-model-corrections.md`.
