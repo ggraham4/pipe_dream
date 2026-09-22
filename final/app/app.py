@@ -578,8 +578,9 @@ def render_data_updates():
         "re-pulling full history, and runs an options history update — all from your own network, so "
         "this should finish in a few minutes even across the full universe. \"Retrain all models\" "
         "rebuilds every feature panel (including the point-in-time price/fundamentals panels), retrains "
-        "**both** stock signals — the deployed q75 model and the tracked xrank candidate — and rebuilds "
-        "the SPY/USMV comparison chart. The options Tweedie GLM "
+        "q75 (whose checkpoint the primary blend scores off of), rebuilds the SPY/USMV comparison "
+        "chart, and rescoring the blend itself — so this one button is what actually refreshes "
+        "Today's Picks end to end. The options Tweedie GLM "
         "needs no separate retrain step — it refits automatically next time it's used, off whatever "
         "training data is newest on disk. Run the data update first, then retrain, if you want a fully "
         "current read in one sitting. Note: neither button refreshes scripts/fundamentals_raw/ (SEC "
@@ -637,9 +638,21 @@ def render_data_updates():
             # with the models they fed -- they trained on the pre-Round-11
             # universe, so rerunning them only refreshed numbers nothing on
             # this page should be compared against.
-            cmds = [[py, str(paths.SRC_DIR / "features.py")]] + pm.retrain_commands()
-            labels = ["Rebuild price features.parquet (sidebar + Universe tab)"] \
-                + pm.PIT_STEP_LABELS
+            #
+            # 2026-09-22: bm.retrain_commands() appended so this button
+            # actually refreshes what's now the primary signal. Before this,
+            # a full retrain left current_signal_blend.csv stale -- q75's
+            # checkpoint and the fundamentals panel would update, but
+            # Today's Picks would keep showing whatever the last standalone
+            # blend refresh produced. Must run AFTER pm.retrain_commands():
+            # the blend scores q75's freshly-retrained checkpoint and reads
+            # the freshly-rebuilt fundamentals panel, not the other way round.
+            cmds = ([[py, str(paths.SRC_DIR / "features.py")]] + pm.retrain_commands()
+                    + bm.retrain_commands())
+            labels = (["Rebuild price features.parquet (sidebar + Universe tab)"]
+                     + pm.PIT_STEP_LABELS
+                     + ["Down-cap universe (blend)", "Quality factors (blend)",
+                        "Composite panel (blend)", "Score today's blend"])
             dr.run_step_sequence("retrain_all_models", cmds, labels, cwd=paths.SRC_DIR)
             st.rerun()
         _job_status_block("retrain_all_models")
