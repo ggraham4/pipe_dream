@@ -14,6 +14,7 @@ from . import paths
 
 SIGNAL_CSV = paths.OUT_DIR / "current_signal_blend.csv"
 SIGNAL_META = paths.OUT_DIR / "current_signal_blend_meta.json"
+SIGNAL_FULL_CSV = paths.OUT_DIR / "current_signal_blend_full.csv"
 
 
 def _mtime(p):
@@ -52,34 +53,78 @@ def retrain_commands() -> list[list[str]]:
     ]
 
 
+def get_full_universe():
+    """Every name scanned on the as-of date, not just the picks -- see
+    current_signal_blend.py's OUTPUT docstring for the `status` values.
+    Returns None if not yet generated (older signal run, or first checkout
+    before a re-run)."""
+    if not SIGNAL_FULL_CSV.exists():
+        return None
+    return pd.read_csv(SIGNAL_FULL_CSV)
+
+
 def query_tickers(tickers: list[str]) -> dict:
-    """Per-ticker lookup against the full scored universe this run produced.
-    NOTE: current_signal_blend.py only writes the ~165 actual picks to disk,
-    not the full 1,665-name scored universe -- so a ticker not in the picks
-    reads as 'not currently a pick', not 'the model doesn't like it', since
-    we don't have its score persisted. See the caveat in the app tab."""
-    df, meta = get_signal()
+    """Per-ticker lookup against the full scanned universe (PICK /
+    ELIGIBLE_NOT_PICKED / ELIGIBLE_NOT_SCORED / INELIGIBLE_TODAY), so 'not a
+    pick' always comes with a reason, not a shrug."""
+    full = get_full_universe()
     out = {}
-    if df is None:
+    if full is None:
+        # Fall back to the picks-only file so old runs don't crash outright,
+        # but say plainly that the detailed answer isn't available yet.
+        df, _ = get_signal()
+        if df is None:
+            for t in tickers:
+                out[t] = {"status": "NO SIGNAL", "detail": "Blend has not been generated yet."}
+            return out
+        picked = set(df["ticker"])
         for t in tickers:
-            out[t] = {"status": "NO SIGNAL", "detail": "Blend has not been generated yet."}
+            t = t.upper().strip()
+            out[t] = ({"status": "PICK"} if t in picked else
+                      {"status": "UNKNOWN", "detail": "current_signal_blend_full.csv not found "
+                                                       "(re-run the signal to get a real answer "
+                                                       "for non-picks) -- only pick/not-pick is "
+                                                       "known from the older file."})
         return out
-    picked = set(df["ticker"])
-    by_ticker = df.set_index("ticker").to_dict("index")
+
+    by_ticker = full.set_index("ticker").to_dict("index")
     for t in tickers:
         t = t.upper().strip()
-        if t in picked:
-            row = by_ticker[t]
-            out[t] = {"status": "PICK", "weight_pct": round(row["weight"] * 100, 2),
-                      "blend_score": round(row["blend_score"], 4),
-                      "composite_score": round(row["composite_score"], 4),
-                      "q75_score": round(row["q75_score"], 4),
-                      "sector": row["sector"]}
-        else:
-            out[t] = {"status": "NOT A CURRENT PICK",
-                      "detail": "Either not in the day's ~1,665-name cap2000 eligible "
-                                "universe, or eligible but outside the top decile-per-"
-                                "vol-quintile the blend selected. Full-universe scores "
-                                "for every eligible name are not yet persisted -- only "
-                                "the picks themselves."}
+        if t not in by_ticker:
+            out[t] = {"status": "NOT SCANNED",
+                      "detail": "Not in today's full scanned base panel at all -- likely "
+                                "delisted, a symbol change, or not covered by this project's "
+                                "price data."}
+            continue
+        row = by_ticker[t]
+        status = row["status"]
+        entry = {"status": status, "sector": row.get("sector"), "close": row.get("close"),
+                 "market_cap": row.get("market_cap")}
+        if status == "PICK":
+            entry.update({"weight_pct": round(row["weight"] * 100, 2),
+                          "blend_score": round(row["blend_score"], 4),
+                          "composite_score": round(row["composite_score"], 4),
+                          "q75_score": round(row["q75_score"], 4),
+                          "vol_quintile": int(row["vol_quintile"]),
+                          "rank_in_quintile": f"{int(row['rank_in_quintile'])} of {int(row['n_in_quintile'])} "
+                                              f"(top {int(row['quintile_cutoff_rank'])} picked)"})
+        elif status == "ELIGIBLE_NOT_PICKED":
+            entry.update({"blend_score": round(row["blend_score"], 4),
+                          "composite_score": round(row["composite_score"], 4),
+                          "q75_score": round(row["q75_score"], 4),
+                          "vol_quintile": int(row["vol_quintile"]),
+                          "rank_in_quintile": f"{int(row['rank_in_quintile'])} of {int(row['n_in_quintile'])} "
+                                              f"in its volatility quintile -- needed top "
+                                              f"{int(row['quintile_cutoff_rank'])} to be picked",
+                          "detail": "Eligible and scored, but ranked outside the top decile "
+                                    "of its own trailing-volatility quintile."})
+        elif status == "ELIGIBLE_NOT_SCORED":
+            entry["detail"] = ("In today's cap2000 eligible universe, but missing a score from "
+                               "q75 and/or the composite (e.g. incomplete features) -- excluded "
+                               "from ranking, not ranked low.")
+        else:  # INELIGIBLE_TODAY
+            entry["detail"] = ("Not in today's point-in-time cap2000 universe (market cap < $2B, "
+                               "price < $10, or not domestic common stock as of today) -- not "
+                               "considered at all, regardless of what either model would score it.")
+        out[t] = entry
     return out

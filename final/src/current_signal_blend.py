@@ -28,8 +28,14 @@ CONSTRUCTION (matches blend_q75.py's tested configuration exactly)
         trailing-volatility quintiles, inverse-vol weighted).
 
 OUTPUT
-    final/out/current_signal_blend.csv
-    final/out/current_signal_blend_meta.json
+    final/out/current_signal_blend.csv        the ~165 actual picks
+    final/out/current_signal_blend_meta.json  construction + backtest caveats
+    final/out/current_signal_blend_full.csv   EVERY name scanned today (not just
+        picks), with a `status` column (PICK / ELIGIBLE_NOT_PICKED /
+        ELIGIBLE_NOT_SCORED / INELIGIBLE_TODAY) plus, for anything eligible,
+        its exact blend score, volatility quintile and rank within that
+        quintile -- this is what makes "why isn't X a pick" an answerable
+        query instead of a shrug.
 """
 import json
 import sys
@@ -54,6 +60,9 @@ COMPOSITE_PANEL = MAIN_ROOT / "out" / "reset2026" / "composite_panel.parquet"
 Q75_MODEL = MAIN_ROOT / "out" / "models" / "xgb_pit_augmented_model.json"
 OUT_CSV = MAIN_ROOT / "out" / "current_signal_blend.csv"
 OUT_META = MAIN_ROOT / "out" / "current_signal_blend_meta.json"
+OUT_FULL_CSV = MAIN_ROOT / "out" / "current_signal_blend_full.csv"
+N_VOL_QUINTILES = 5
+BOOK_FRAC = 0.10
 
 TIER = "cap2000"
 
@@ -117,18 +126,73 @@ def main():
     blend = pd.concat([q75_rank, comp_rank], axis=1).mean(axis=1, skipna=True)
     blend[q75_rank.isna() & comp_rank.isna()] = np.nan
     scored = pd.DataFrame({"ticker": merged["ticker"].to_numpy(), "composite": blend.to_numpy()})
+    merged["blend_score"] = blend.to_numpy()
 
     elig_for_pick = merged.rename(columns={"volatility_60": "volatility_60"})
     picks = C.pick_decile_volq(elig_for_pick, scored)
     if not picks:
         raise SystemExit("pick_decile_volq returned no picks -- check inputs.")
-
     weights = {t: w for t, w in picks}
+
+    # Bucket/rank EVERY scored name, not just the picks, so a query for a
+    # non-pick can say WHY -- not eligible at all, vs eligible and scored but
+    # ranked outside the top decile of its own volatility quintile. Mirrors
+    # composite.pick_decile_volq's own bucketing exactly (same qcut call on
+    # the same valid mask) rather than approximating it.
+    vol = merged["volatility_60"].to_numpy(np.float64)
+    valid = np.isfinite(vol) & np.isfinite(merged["blend_score"].to_numpy(np.float64))
+    merged["vol_quintile"] = np.nan
+    merged["rank_in_quintile"] = np.nan
+    merged["n_in_quintile"] = np.nan
+    merged["quintile_cutoff_rank"] = np.nan
+    if valid.sum() >= N_VOL_QUINTILES * 4:
+        idx = np.flatnonzero(valid)
+        vol_v = vol[idx]
+        q = pd.qcut(vol_v, N_VOL_QUINTILES, labels=False, duplicates="drop")
+        comp_v = merged["blend_score"].to_numpy(np.float64)[idx]
+        for bucket in np.unique(q):
+            bmask = q == bucket
+            n_bucket = int(bmask.sum())
+            k = max(1, int(round(n_bucket * BOOK_FRAC)))
+            b_idx = idx[bmask]
+            order = np.argsort(-comp_v[bmask])
+            ranks = np.empty(len(order), dtype=int)
+            ranks[order] = np.arange(1, len(order) + 1)
+            merged.loc[merged.index[b_idx], "vol_quintile"] = int(bucket)
+            merged.loc[merged.index[b_idx], "rank_in_quintile"] = ranks
+            merged.loc[merged.index[b_idx], "n_in_quintile"] = n_bucket
+            merged.loc[merged.index[b_idx], "quintile_cutoff_rank"] = k
+
+    merged["is_pick"] = merged["ticker"].isin(weights)
+    merged["weight"] = merged["ticker"].map(weights)
+
+    # Full scanned universe today, INCLUDING names that failed the cap2000
+    # eligibility screen entirely -- a query needs to distinguish "not
+    # eligible today" from "eligible but not picked", and only having the
+    # eligible+scored subset can't do that.
+    full = today[["ticker", "close", "market_cap", "eligible_today"]].merge(
+        merged[["ticker", "sector", "volatility_60", "q75_score", "composite", "blend_score",
+                "vol_quintile", "rank_in_quintile", "n_in_quintile", "quintile_cutoff_rank",
+                "is_pick", "weight"]],
+        on="ticker", how="left"
+    ).rename(columns={"composite": "composite_score"})
+    full["status"] = np.select(
+        [full["is_pick"] == True, full["eligible_today"] & full["blend_score"].notna(),
+         full["eligible_today"]],
+        ["PICK", "ELIGIBLE_NOT_PICKED", "ELIGIBLE_NOT_SCORED"],
+        default="INELIGIBLE_TODAY",
+    )
+    full.to_csv(OUT_FULL_CSV, index=False)
+    print(f"  full universe: {len(full):,} names scanned, "
+          f"{(full['status'] == 'PICK').sum()} picks, "
+          f"{(full['status'] == 'ELIGIBLE_NOT_PICKED').sum()} eligible-not-picked, "
+          f"{(full['status'] == 'INELIGIBLE_TODAY').sum()} ineligible today")
+
     out = merged[merged["ticker"].isin(weights)][
         ["ticker", "sector", "close", "market_cap", "volatility_60", "q75_score"]
     ].copy()
     out["composite_score"] = out["ticker"].map(dict(zip(merged["ticker"], merged["composite"])))
-    out["blend_score"] = out["ticker"].map(dict(zip(scored["ticker"], scored["composite"])))
+    out["blend_score"] = out["ticker"].map(dict(zip(merged["ticker"], merged["blend_score"])))
     out["weight"] = out["ticker"].map(weights)
     out = out.sort_values("weight", ascending=False).reset_index(drop=True)
     out.to_csv(OUT_CSV, index=False)
@@ -155,7 +219,7 @@ def main():
     OUT_META.write_text(json.dumps(meta, indent=2))
     print(f"\nas of {as_of.date()}: {len(out)} picks from {len(merged)} scored names")
     print(out.head(10).to_string(index=False))
-    print(f"\n-> {OUT_CSV}\n-> {OUT_META}")
+    print(f"\n-> {OUT_CSV}\n-> {OUT_META}\n-> {OUT_FULL_CSV}")
 
 
 if __name__ == "__main__":

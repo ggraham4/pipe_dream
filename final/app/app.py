@@ -272,12 +272,13 @@ def render_stock_pit():
 
 def render_stock_query():
     st.caption(
-        "Looks a ticker up against the blend's current picks (`current_signal_"
-        "blend.csv`) — instant, no rescoring. A ticker not listed here isn't "
-        "necessarily disliked by the model: only the ~165 actual picks are "
-        "persisted to disk, not the full ~1,665-name scored universe, so "
-        "'not a current pick' can mean either 'scored lower' or 'not in "
-        "today's point-in-time cap2000 universe at all.'"
+        "Looks a ticker up against today's full scanned universe "
+        "(`current_signal_blend_full.csv`) — instant, no rescoring. Every "
+        "ticker gets one of four answers: **PICK**, **ELIGIBLE_NOT_PICKED** "
+        "(scored, with its exact blend score and rank within its volatility "
+        "quintile), **ELIGIBLE_NOT_SCORED** (in the universe but missing a "
+        "score), or **INELIGIBLE_TODAY** (fails the point-in-time cap2000 "
+        "screen — not considered at all)."
     )
     raw = st.text_input("Ticker(s), comma or space separated", placeholder="AAPL, MSFT, NVDA")
     if st.button("Look up", key="stock_query_btn") and raw.strip():
