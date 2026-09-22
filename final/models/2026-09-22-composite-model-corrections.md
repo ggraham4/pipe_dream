@@ -601,3 +601,125 @@ the 10% threshold. This is genuinely reassuring: the fragility found in
 the hold-out (GME, LCID) is a hold-out-specific property of a short,
 regime-concentrated window, not a standing weakness of the confirmed
 nomination-era result.
+
+## 9. Theoretical model extension #1: a mechanical market-beta term
+
+Per Gabe's direction to extend the theoretical model with logic-derived,
+not fitted, terms — reasoning: "a theoretical model that makes
+predictions and can be tested... based in logic not fitted values, like a
+physical model." Two structural gaps were identified; this section covers
+the one to build now (a market-beta term). The other (a jump/catalyst
+term distinct from the smooth-drift factors) is addressed in section 9c
+below as an explicit, accepted theoretical limitation, not built.
+
+### 9a. The gap and the fix
+
+The composite has never had a term for the single largest mechanical
+driver of any 40-day stock return: exposure to the market itself. Every
+IC and backtest number in this project measures a within-date
+cross-sectional rank correlation, which nets out the *average* market
+move that day — but it does NOT net out the *dispersion* in exposure that
+comes from stocks having different betas. Two stocks with identical
+composite scores but different betas will realize different returns on a
+day the market moves, for reasons that have nothing to do with the
+composite's information.
+
+`build_beta_feature.py`: `beta_i,t = Cov(r_i, r_mkt) / Var(r_mkt)`,
+trailing 252 trading days, causal, via SPY as the market proxy. This is
+the identical definition from Sharpe (1964) and the market-model
+methodology of Fama, Fisher, Jensen & Roll (1969) — a mechanical
+estimate, not a fitted parameter. 252 days and SPY are the standard,
+off-the-shelf choices; nothing here was tuned against this project's own
+backtest. Coverage 91.8% of the full panel; distribution (median 1.07,
+p10 0.55, p90 1.75) matches textbook expectations for individual-stock
+betas.
+
+### 9b. Diagnostic result: the composite is already a strong beta bet, and
+### removing it sharpens the signal
+
+`beta_diagnostic.py`, nomination era, cap150, adopted (`asset_growth_
+dropped`) composite:
+
+```
+corr(composite score, beta_252):        -0.2933   t=-17.12   (n=3272 dates)
+
+IC vs RAW forward_return_tradable_40:   +0.0317   t=+2.53
+IC vs BETA-ADJUSTED (market-model
+  abnormal) return:                     +0.0450   t=+4.25
+```
+
+**Two findings, both real.** First, the composite's own already-diagnosed
+"low-volatility tilt" (physics doc section 8) is, more precisely, a
+**strong low-beta bet** — a -0.29 correlation is not a subtle effect.
+Second, and more useful: scoring against beta-adjusted returns instead of
+raw returns **sharpens** the measured IC (t goes from 2.53 to 4.25,
+point estimate up 42%) rather than weakening it. This says the raw-return
+IC was carrying real noise, not signal — on days the market moved a lot,
+the composite's mechanical beta tilt pushed its raw-return IC around
+(down on up days, up on down days) independent of whatever genuine
+stock-specific information it has. Removing that noise makes the model's
+actual selection skill easier to see, not harder. This is exactly the
+kind of result a logic-first addition should produce: a mechanical
+correction, no fitting, and it improves the read rather than being
+selected because it improved the read.
+
+### 9c. Theoretical model changes made
+
+`prediction_ledger.py`'s point forecast is now calibrated on beta-adjusted
+(market-model abnormal) returns rather than raw returns, per 9b. The
+already-committed v1 ledger entry (`prediction_ledger.csv`, panel_date
+2026-09-08, recorded under the pre-beta spec) is **frozen and untouched**
+— a live commitment doesn't get retroactively upgraded. All predictions
+from this point forward go into `prediction_ledger_v2.csv` (new schema:
+adds `beta_252` per name, renames the point-forecast column to
+`predicted_idiosyncratic_return_40d`, and `score()` now reports both the
+raw-return test and the beta-adjusted test side by side, since the raw
+number is what you'd have actually made and the beta-adjusted number is
+the cleaner read on whether the composite itself is working). A new
+blind entry was recorded for the same panel_date (2026-09-08, 2,214
+names) under the new spec, immediately after `selftest` validated the
+updated scoring arithmetic against known nomination-era dates (including
+catching and fixing a real NaN-propagation bug in the beta-adjusted
+calibration: `beta_252` coverage is ~98%, not 100%, and the few missing
+rows were poisoning the whole regression before being explicitly dropped).
+
+**Illustrative, not new evidence** (this date is inside the already-spent
+2020-2026 window): re-scoring the one already-matured recent date from
+earlier in this session (2026-07-13, previously reported as a miss:
+raw rank IC -0.058) under the new beta-adjusted lens gives IC -0.018 —
+still slightly negative, but much closer to neutral. A meaningful chunk
+of that "miss" was market-direction noise, not a genuinely bad set of
+picks. This is a concrete illustration of 9b's point, not a new finding.
+
+### 9d. Structural gap #2 (jump/catalyst risk): accepted as a theoretical
+### limitation, not modeled
+
+Per Gabe's explicit direction: **not built.** Stated here formally as a
+limitation of this theory, not a silent omission.
+
+GME and LCID (sections 6c/6d) are both, in different ways, instances of a
+real, mechanism-backed phenomenon this linear model structurally cannot
+express: **discrete, catalyst-driven repricing events (short squeezes,
+merger-rumor pops) that are mechanistically MORE likely for exactly the
+population (thin float, high short interest, compressed trailing
+volatility) that a low-beta/low-vol composite is most likely to select
+and weight heavily.** The existing `short_interest_days_to_cover` factor
+already identifies this population — it just treats it as a linear,
+negative expected-return signal (Boehmer-Jones-Zhang), which is a
+different, both-real claim from "this variable also raises the
+probability of an extreme positive tail event." A linear model can
+express a variable's effect on the mean; it cannot simultaneously express
+a second, opposite-signed claim about that variable's effect on the
+tail.
+
+**Explicitly not attempted**: a jump-probability sub-model, an
+options-implied-volatility-based catalyst flag, or any other predictive
+treatment of this population. The theory, as it stands, treats these
+events as **irreducible idiosyncratic tail risk** — real, mechanism-
+backed, and outside what a sign-constrained linear composite can
+describe. This is the honest boundary of the current theory's scope, not
+a gap to be quietly patched over. Any future attempt at this (Gabe's
+originally-proposed item 2, tier 3 of the "meta model" roadmap —
+`project-meta-model-roadmap` memory) needs real model capacity (a small
+NN, or an explicit two-state jump-diffusion treatment) and its own
+pre-registration; this document does not open that work.

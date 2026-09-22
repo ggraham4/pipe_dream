@@ -622,3 +622,19 @@ read as a confirmation on fewer than several independently-scored dates
 each future rebalance (roughly every 40 trading days, or opportunistically
 whenever fresh data lands) to keep building the track record; run `score`
 any time after to catch up whichever dates have matured.
+
+## Ledger versioned (2026-09-22, same day) — market-beta term added
+
+Superseded within hours by the model's first structural extension (see
+`2026-09-22-composite-model-corrections.md` section 9). The point forecast
+above was calibrated on raw returns; `beta_diagnostic.py` then showed
+scoring against beta-adjusted (market-model abnormal) returns sharpens
+the measured IC (t 2.53 -> 4.25) rather than weakening it, so the
+calibration changed to match. **The v1 ledger entry above
+(`prediction_ledger.csv`, panel_date 2026-09-08) is frozen, not
+retroactively edited** — a live commitment doesn't get upgraded after
+the fact. A new entry for the same panel_date, same 2,214 names, under
+the new beta-adjusted spec, was written to `prediction_ledger_v2.csv`
+immediately after. Every `record`/`score` invocation from here forward
+targets v2. See the corrections doc section 9 for the full diagnostic
+evidence and the exact schema change.

@@ -67,14 +67,34 @@ import composite as C  # noqa: E402
 
 MAIN_ROOT = Path("/Users/ggraham/pipe_dream/final")
 PANEL_PATH = MAIN_ROOT / "out" / "reset2026" / "composite_panel.parquet"
+BETA_PATH = MAIN_ROOT / "out" / "reset2026" / "beta_feature.parquet"
+OUTCOME_PATH = MAIN_ROOT / "out" / "reset2026" / "outcome_cache.parquet"
 OUT_DIR = MAIN_ROOT / "out" / "reset2026"
-LEDGER_CSV = OUT_DIR / "prediction_ledger.csv"
-SCORES_CSV = OUT_DIR / "prediction_ledger_scores.csv"
+# v1 (`prediction_ledger.csv`, panel_date=2026-09-08, MODEL_VERSION
+# "asset_growth_dropped_2026-09-22") is FROZEN -- an immutable commitment
+# already made under the pre-beta scoring spec, never rewritten. The beta
+# addition changes the ledger schema (adds beta_252, renames the point-
+# forecast column), so it gets its own file rather than corrupting v1's
+# header by appending mismatched columns. Score v1 with the version of
+# this script from before this commit if picking it up later; v2 is the
+# live one for everything from here forward.
+LEDGER_CSV = OUT_DIR / "prediction_ledger_v2.csv"
+SCORES_CSV = OUT_DIR / "prediction_ledger_v2_scores.csv"
 
 NOMINATE_START = pd.Timestamp("2007-01-02")
 NOMINATE_END = pd.Timestamp("2019-12-31")
 LABEL = "forward_return_tradable_40"
-MODEL_VERSION = "asset_growth_dropped_2026-09-22"  # composite.FACTOR_SIGNS as of this commit
+# "asset_growth_dropped" -> "beta_adjusted" 2026-09-22: theoretical model
+# addition #1 (Gabe's direction). See beta_diagnostic.py -- the composite
+# correlates -0.293 (t=-17.1) with mechanically-estimated beta_252, and
+# scoring against beta-adjusted (market-model abnormal) returns instead of
+# raw returns SHARPENS the measured IC (+0.032 t=2.53 -> +0.045 t=4.25):
+# removing each stock's beta-driven component removes noise the raw-return
+# IC was carrying, not signal. The point forecast below is now calibrated
+# on abnormal returns for this reason -- not a fitted improvement, a
+# mechanical decomposition (Sharpe 1964 / Fama-Fisher-Jensen-Roll 1969's
+# market-model methodology, no different parameterization chosen for fit).
+MODEL_VERSION = "beta_adjusted_2026-09-22"
 
 
 def log(msg):
@@ -88,27 +108,44 @@ def load_panel(columns):
     return df
 
 
+def _load_beta_and_market():
+    beta = pd.read_parquet(BETA_PATH, columns=["ticker", "date", "beta_252"])
+    beta["date"] = pd.to_datetime(beta["date"])
+    beta["ticker"] = beta["ticker"].astype(str)
+    outcomes = pd.read_parquet(OUTCOME_PATH, columns=["ticker", "date", "gross_return_40"])
+    outcomes["date"] = pd.to_datetime(outcomes["date"])
+    spy = outcomes[outcomes["ticker"] == "SPY"].set_index("date")["gross_return_40"]
+    return beta, spy
+
+
 def fama_macbeth_slope_nomination():
-    """Causal calibration: the average cross-sectional slope of realized
-    return on composite score, nomination era only. Never touches 2020+."""
+    """Causal calibration: the average cross-sectional slope of BETA-
+    ADJUSTED (market-model abnormal) return on composite score, nomination
+    era only. Never touches 2020+. See MODEL_VERSION's comment above for
+    why abnormal return, not raw return, is the calibration target."""
     need = list(dict.fromkeys(["ticker", "date", "sector", "volatility_60",
                                 "eligible_cap150", LABEL] + C.FACTOR_COLS))
     df = load_panel(need)
+    beta, spy = _load_beta_and_market()
+    df = df.merge(beta, on=["ticker", "date"], how="left")
+    df["spy_fwd_40"] = df["date"].map(spy)
+    df["abnormal_return"] = df[LABEL] - df["beta_252"] * df["spy_fwd_40"]
+
     nom = df[(df["date"] >= NOMINATE_START) & (df["date"] <= NOMINATE_END) & df["eligible_cap150"]]
     slopes = []
     for d, g in nom.groupby("date"):
         gg = g.reset_index(drop=True)
         scored = C.compute_composite(gg, neutral=False)
         x = scored["composite"].to_numpy(np.float64)
-        y = g[LABEL].to_numpy(np.float64)
+        y = g["abnormal_return"].to_numpy(np.float64)
         mask = np.isfinite(x) & np.isfinite(y)
         if mask.sum() < 30:
             continue
         X = np.column_stack([np.ones(mask.sum()), x[mask]])
-        beta, *_ = np.linalg.lstsq(X, y[mask], rcond=None)
-        slopes.append(beta[1])
+        beta_coef, *_ = np.linalg.lstsq(X, y[mask], rcond=None)
+        slopes.append(beta_coef[1])
     slope = float(np.mean(slopes))
-    log(f"Fama-MacBeth slope (nomination era, adopted composite): {slope:.5f} (n={len(slopes)} dates)")
+    log(f"Fama-MacBeth slope on BETA-ADJUSTED returns (nomination era): {slope:.5f} (n={len(slopes)} dates)")
     return slope
 
 
@@ -125,13 +162,19 @@ def record():
         raise SystemExit(f"REFUSING: {n_matured} names on {latest_date.date()} already have a realized "
                           f"outcome -- this date is not blind. Pick a more recent panel refresh.")
 
+    beta, _spy = _load_beta_and_market()
+    cross = cross.merge(beta[beta["date"] == latest_date][["ticker", "beta_252"]], on="ticker", how="left")
+    log(f"beta_252 coverage on this cross-section: {cross['beta_252'].notna().mean():.1%}")
+
     slope = fama_macbeth_slope_nomination()
     scored = C.compute_composite(cross, neutral=False)
     s = scored["composite"].to_numpy(np.float64)
     valid = np.isfinite(s)
     rank_pct = pd.Series(s).rank(pct=True, na_option="keep").to_numpy()
     s_mean = np.nanmean(s)
-    predicted_relative_return = slope * (s - s_mean)
+    # The idiosyncratic (beta-adjusted) prediction -- what the composite
+    # claims about a name's return NET of its mechanical market exposure.
+    predicted_idiosyncratic_return = slope * (s - s_mean)
 
     out = pd.DataFrame({
         "panel_date": latest_date.date().isoformat(),
@@ -140,9 +183,11 @@ def record():
         "ticker": cross["ticker"],
         "composite_score": s,
         "rank_pct": rank_pct,
-        "predicted_relative_return_40d": predicted_relative_return,
+        "beta_252": cross["beta_252"].to_numpy(),
+        "predicted_idiosyncratic_return_40d": predicted_idiosyncratic_return,
         "fm_slope_used": slope,
-        "realized_return_40d": np.nan,   # filled in later by `score`
+        "realized_return_40d": np.nan,      # raw, filled in later by `score`
+        "realized_abnormal_return_40d": np.nan,  # beta-adjusted, also filled in later
         "scored_at": "",
     })
     out = out[valid].reset_index(drop=True)
@@ -154,39 +199,67 @@ def record():
         f"(blind -- outcome does not exist yet)")
 
 
-def _score_frame(cross_ids, ledger_rows, label_lookup):
-    """Shared scoring logic between `score` and `selftest`."""
+def _score_frame(cross_ids, ledger_rows, label_lookup, spy_fwd_40=None):
+    """Shared scoring logic between `score` and `selftest`. Reports BOTH
+    the raw-return test (what you would have actually made) and the
+    beta-adjusted test (isolates genuine stock-selection skill from
+    market-direction luck) -- see beta_diagnostic.py for why both matter:
+    the raw number is the real-world one, the abnormal number is the
+    cleaner read on whether the composite itself is working."""
     merged = ledger_rows.copy()
     merged["realized_return_40d"] = merged["ticker"].map(label_lookup)
     merged = merged.dropna(subset=["realized_return_40d"])
     if len(merged) < 20:
         return None
-    ic = merged["composite_score"].corr(merged["realized_return_40d"], method="spearman")
-    excess_pred = merged["predicted_relative_return_40d"]
-    excess_real = merged["realized_return_40d"] - merged["realized_return_40d"].mean()
-    X = np.column_stack([np.ones(len(merged)), excess_pred.to_numpy()])
-    beta, *_ = np.linalg.lstsq(X, excess_real.to_numpy(), rcond=None)
-    yhat = X @ beta
-    ss_res = np.sum((excess_real.to_numpy() - yhat) ** 2)
-    ss_tot = np.sum((excess_real.to_numpy() - excess_real.mean()) ** 2)
-    r2 = 1 - ss_res / ss_tot if ss_tot > 0 else np.nan
+
+    def _calib(excess_pred, excess_real):
+        X = np.column_stack([np.ones(len(excess_real)), excess_pred])
+        b, *_ = np.linalg.lstsq(X, excess_real, rcond=None)
+        yhat = X @ b
+        ss_res = np.sum((excess_real - yhat) ** 2)
+        ss_tot = np.sum((excess_real - excess_real.mean()) ** 2)
+        r2 = 1 - ss_res / ss_tot if ss_tot > 0 else np.nan
+        return float(b[1]), float(b[0]), float(r2)
+
+    rank_ic_raw = merged["composite_score"].corr(merged["realized_return_40d"], method="spearman")
+    excess_real_raw = merged["realized_return_40d"].to_numpy() - merged["realized_return_40d"].mean()
+    slope_raw, intercept_raw, r2_raw = _calib(merged["predicted_idiosyncratic_return_40d"].to_numpy(),
+                                               excess_real_raw)
+
+    result = {
+        "n_names": int(len(merged)),
+        "rank_ic_raw": float(rank_ic_raw),
+        "magnitude_calibration_slope_raw": slope_raw,
+        "magnitude_r2_raw": r2_raw,
+    }
+
+    if spy_fwd_40 is not None and pd.notna(spy_fwd_40) and "beta_252" in merged.columns:
+        merged["abnormal_return"] = merged["realized_return_40d"] - merged["beta_252"] * spy_fwd_40
+        ab = merged.dropna(subset=["abnormal_return"])  # beta_252 coverage is ~98%, not 100%
+        if len(ab) >= 20:
+            rank_ic_ab = ab["composite_score"].corr(ab["abnormal_return"], method="spearman")
+            excess_real_ab = ab["abnormal_return"].to_numpy() - ab["abnormal_return"].mean()
+            slope_ab, intercept_ab, r2_ab = _calib(ab["predicted_idiosyncratic_return_40d"].to_numpy(),
+                                                    excess_real_ab)
+            result.update({
+                "rank_ic_beta_adjusted": float(rank_ic_ab),
+                "magnitude_calibration_slope_beta_adjusted": slope_ab,
+                "magnitude_r2_beta_adjusted": r2_ab,
+            })
+
     top_decile = merged.nlargest(max(1, len(merged) // 10), "composite_score")["realized_return_40d"].mean()
     bottom_decile = merged.nsmallest(max(1, len(merged) // 10), "composite_score")["realized_return_40d"].mean()
-    return {
-        "n_names": int(len(merged)),
-        "rank_ic": float(ic),
-        "magnitude_calibration_slope": float(beta[1]),
-        "magnitude_calibration_intercept": float(beta[0]),
-        "magnitude_r2": float(r2),
+    result.update({
         "top_decile_mean_return": float(top_decile),
         "bottom_decile_mean_return": float(bottom_decile),
         "top_minus_bottom_decile_spread": float(top_decile - bottom_decile),
-    }
+    })
+    return result
 
 
 def score():
     if not LEDGER_CSV.exists():
-        raise SystemExit("No prediction_ledger.csv yet -- run `record` first.")
+        raise SystemExit(f"No {LEDGER_CSV.name} yet -- run `record` first.")
     ledger = pd.read_csv(LEDGER_CSV, parse_dates=["panel_date"])
     pending = ledger[ledger["realized_return_40d"].isna()]
     if pending.empty:
@@ -194,6 +267,7 @@ def score():
         return
 
     panel = load_panel(["ticker", "date", LABEL])
+    _beta, spy = _load_beta_and_market()
     results = []
     for panel_date, rows in pending.groupby("panel_date"):
         outcomes = panel[panel["date"] == pd.Timestamp(panel_date)]
@@ -201,7 +275,8 @@ def score():
             log(f"{panel_date.date()}: still blind, {len(rows)} rows not yet scoreable")
             continue
         label_lookup = dict(zip(outcomes["ticker"], outcomes[LABEL]))
-        stats = _score_frame(None, rows, label_lookup)
+        spy_fwd_40 = spy.get(pd.Timestamp(panel_date), np.nan)
+        stats = _score_frame(None, rows, label_lookup, spy_fwd_40=spy_fwd_40)
         if stats is None:
             log(f"{panel_date.date()}: too few matured names to score yet")
             continue
@@ -209,17 +284,19 @@ def score():
         stats["scored_at"] = pd.Timestamp.now().isoformat()
         stats["model_version"] = rows["model_version"].iloc[0]
         results.append(stats)
-        log(f"{panel_date.date()}: n={stats['n_names']} rank_IC={stats['rank_ic']:+.4f} "
-            f"mag_slope={stats['magnitude_calibration_slope']:+.4f} mag_R2={stats['magnitude_r2']:.4f} "
+        log(f"{panel_date.date()}: n={stats['n_names']} "
+            f"rank_IC raw={stats['rank_ic_raw']:+.4f} beta-adj={stats.get('rank_ic_beta_adjusted', float('nan')):+.4f}  "
+            f"mag_R2 raw={stats['magnitude_r2_raw']:.4f} beta-adj={stats.get('magnitude_r2_beta_adjusted', float('nan')):.4f}  "
             f"top-bottom decile spread={stats['top_minus_bottom_decile_spread']*100:+.2f}%")
 
-        # Fill the realized outcomes back into the ledger (idempotent -- only
-        # touches rows for this now-matured panel_date).
         idx = ledger[ledger["panel_date"] == panel_date].index
         for i in idx:
             t = ledger.at[i, "ticker"]
             if t in label_lookup:
                 ledger.at[i, "realized_return_40d"] = label_lookup[t]
+                if pd.notna(spy_fwd_40) and "beta_252" in ledger.columns and pd.notna(ledger.at[i, "beta_252"]):
+                    ledger.at[i, "realized_abnormal_return_40d"] = (
+                        label_lookup[t] - ledger.at[i, "beta_252"] * spy_fwd_40)
                 ledger.at[i, "scored_at"] = pd.Timestamp.now().isoformat()
 
     if results:
@@ -241,6 +318,8 @@ def selftest():
     cross = df[(df["date"] == test_date) & df["eligible_cap150"]].reset_index(drop=True)
     if cross.empty:
         raise SystemExit(f"No eligible cross-section on {test_date.date()} -- pick another self-test date.")
+    beta, spy = _load_beta_and_market()
+    cross = cross.merge(beta[beta["date"] == test_date][["ticker", "beta_252"]], on="ticker", how="left")
     slope = fama_macbeth_slope_nomination()
     scored = C.compute_composite(cross, neutral=False)
     s = scored["composite"].to_numpy(np.float64)
@@ -249,10 +328,12 @@ def selftest():
     rows = pd.DataFrame({
         "ticker": cross["ticker"][valid].to_numpy(),
         "composite_score": s[valid],
-        "predicted_relative_return_40d": (slope * (s - s_mean))[valid],
+        "beta_252": cross["beta_252"].to_numpy()[valid],
+        "predicted_idiosyncratic_return_40d": (slope * (s - s_mean))[valid],
     })
     label_lookup = dict(zip(cross["ticker"], cross[LABEL]))
-    stats = _score_frame(None, rows, label_lookup)
+    spy_fwd_40 = spy.get(test_date, np.nan)
+    stats = _score_frame(None, rows, label_lookup, spy_fwd_40=spy_fwd_40)
     log(f"SELF-TEST on {test_date.date()} (already-known nomination-era data, "
         f"validates scoring code only): {stats}")
 
