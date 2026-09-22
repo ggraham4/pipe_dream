@@ -573,3 +573,52 @@ canonical `REPORT_nominate.md` matching the new `FACTOR_SIGNS` is wanted,
 but is not required to treat this decision as in effect — the ablation's
 own dedicated 40-offset run already is that confirmation, run on the
 exact same construction and cost assumptions the six-cell report uses.
+
+## Live forward-prediction ledger (started 2026-09-22) — pre-registered
+## before any outcome exists
+
+Per Gabe's request for a theoretical model whose predictions can actually
+be tested, without spending 2020-2026 again: every day in that window has
+already been analyzed multiple times today, so there is no unspent day
+left inside it. The only genuinely clean test is real calendar time that
+has not happened yet.
+
+`prediction_ledger.py record`, run 2026-09-22, committed predictions for
+**every eligible cap150 name** (2,214 tickers, not one — a single
+ticker's outcome has no statistical power) on the panel's most recent
+cross-section, **2026-09-08**, verified beforehand to have 0% realized
+`forward_return_tradable_40` coverage (the 40-trading-day-forward outcome
+does not exist in the data at all yet — confirmed for every date after
+late July 2026). Two predictions per name, per Gabe's steer that ranking
+matters more than a noisy point estimate but both are worth having:
+
+1. **Rank / percentile** by composite score (`asset_growth_dropped`,
+   `composite.FACTOR_SIGNS` as of this commit) — the primary, robust
+   prediction.
+2. **A calibrated relative-return forecast**, `slope x (S_i - mean(S))`,
+   using the Fama-MacBeth slope estimated on nomination-era data only
+   (0.00433, 3,272 dates, causal, never touches 2020+). Deliberately
+   de-meaned — the model has no view on the market's absolute return
+   (the physics audit's own finding: IC is a within-date, market-neutral
+   quantity), so the point forecast is scoped to what the model actually
+   claims to know.
+
+Written to `out/reset2026/prediction_ledger.csv`, one immutable row per
+ticker, with both the panel date and the real wall-clock timestamp this
+was recorded — the record that proves this was committed before the
+outcome existed. `prediction_ledger.py selftest` validates the scoring
+arithmetic against already-known nomination-era dates first (single-date
+IC ranges from -0.11 to +0.27 across 5 arbitrary dates picked for this
+check — noisy, not buggy, and itself a demonstration of why one date
+proves nothing and the ledger needs to accumulate many).
+
+**Gate, stated now, before any score exists**: `prediction_ledger.py
+score` becomes meaningful only once ~40 trading days have passed AND
+Gabe has pulled fresh price data past 2026-09-08 (this sandbox cannot
+refresh `td_data_sharadar`/`composite_panel.parquet` itself — see
+`AGENTS.md`'s reproduction table). No number from this ledger is to be
+read as a confirmation on fewer than several independently-scored dates
+— the single-date noise range above is the reason. Re-run `record` at
+each future rebalance (roughly every 40 trading days, or opportunistically
+whenever fresh data lands) to keep building the track record; run `score`
+any time after to catch up whichever dates have matured.
