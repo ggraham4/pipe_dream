@@ -115,9 +115,38 @@ def write_atomic(df: pd.DataFrame, out: Path):
     os.replace(tmp, out)
 
 
+# ------------------------------------------------------------ AV identity
+# The pull accepts a chain when put-call-parity spot is within 15% of Sharadar
+# closeunadj. That is too loose for symbol collisions: on 2008-01-02 "CB" was
+# Chubb Corp (Sharadar CB1) while Sharadar CB (today's Chubb Ltd) traded as ACE
+# -- prices ~8% apart, so both tickers were handed Chubb Corp's chain. Same for
+# RBC (Regal Beloit's old symbol vs RBC Bearings), BBT, DD, ES, PLD, TT ...
+# Here, from the pull log:
+#   verified   -> keep if |parity/closeunadj - 1| < STRICT_TOL
+#   unverified -> (no two-sided quotes to check) keep only if the AV symbol is
+#                 the Sharadar ticker itself (no remap)
+#   and when several Sharadar tickers still claim the same (date, symbol),
+#   keep only the one whose closeunadj is closest to the parity spot.
+STRICT_TOL = 0.05
+
+
+def av_keep(log: pd.DataFrame) -> set:
+    L = log[log.status == "ok"].copy()
+    L["err"] = (L.spot_parity / L.closeunadj - 1).abs()
+    ver = (L.identity == "verified") & (L.err < STRICT_TOL)
+    unv = (L.identity == "unverified") & (L.symbol == L.ticker)
+    L = L[ver | unv].copy()
+    L["err"] = L.err.fillna(1.0)  # unverified loses any tie to a verified claim
+    L = L.sort_values("err").drop_duplicates(["date", "symbol"], keep="first")
+    return set(zip(L.ticker, L.symbol))
+
+
 # ------------------------------------------------------------ AV
-def convert_av(src: Path, d: pd.Timestamp, r: float) -> pd.DataFrame:
+def convert_av(src: Path, d: pd.Timestamp, r: float, keep: set | None = None) -> pd.DataFrame:
     a = pd.read_parquet(src)
+    if keep is not None:
+        k = pd.Series(list(zip(a.sharadar_ticker, a.av_symbol))).isin(keep).to_numpy()
+        a = a[k]
     out = pd.DataFrame({
         "date": d.date(), "act_symbol": a.av_symbol, "sharadar_ticker": a.sharadar_ticker,
         "expiration": pd.to_datetime(a.expiration).dt.date, "strike": a.strike,
@@ -166,13 +195,17 @@ def main():
     # ---- AV partitions
     av_dates: dict = {}
     n = 0
+    import sqlite3
+    log = pd.read_sql("SELECT pass, date, ticker, status, symbol, identity, spot_parity, closeunadj FROM calls",
+                      sqlite3.connect(data / "alphavantage" / "pull_log.sqlite"))
     for pas in ["monthly", "weekly"]:
         for src in sorted((data / "alphavantage" / "options" / pas).glob("date=*.parquet")):
             d = pd.Timestamp(src.stem.split("=")[1])
             dst = out_root / f"source=av_{pas}" / f"date={d.date()}.parquet"
-            av_dates.setdefault(d.date(), []).append(src)
+            av_dates.setdefault(d.date(), []).append(dst)
             if newer(src, dst):
-                df = convert_av(src, d, rate_on(rates, d))
+                keep = av_keep(log[(log["pass"] == pas) & (log.date == str(d.date()))])
+                df = convert_av(src, d, rate_on(rates, d), keep)
                 write_atomic(df.drop(columns=["date"]), dst)
                 solved = df.vol.notna().mean()
                 print(f"av_{pas} {d.date()}: {len(df):,} rows, {df.act_symbol.nunique()} syms, "
@@ -202,7 +235,7 @@ def main():
             continue
         t = dh.to_table(filter=ds_.field("date") == d).to_pandas()
         if srcs:
-            have = set(pd.concat([pd.read_parquet(s, columns=["av_symbol"]) for s in srcs]).av_symbol)
+            have = set(pd.concat([pd.read_parquet(s, columns=["act_symbol"]) for s in srcs]).act_symbol)
             t = t[~t.act_symbol.isin(have)]
         spot = ubd.get(d)
         t["sharadar_ticker"] = np.where(t.act_symbol.isin(spot.index), t.act_symbol, None) if spot is not None else None
