@@ -52,11 +52,17 @@ recording *his* decisions, not a spec to freely deviate from.
    (feature set, horizon, universe) are the only reasonable ones — they're
    this project's choices, arrived at empirically and documented as such
    throughout, not a claim that they're optimal in general.
-5. **Never run `git add`/`git commit`/`git push` yourself.** Deliver
-   changed files to Gabe (via whatever file-transfer mechanism your
-   session has) and give him the commands to run himself — this has held
-   throughout the project and combines with constraint #1: nothing reaches
-   the live app without Gabe personally reviewing and running it.
+5. **`git add`/`git commit`/`git push` are fine to run yourself, on your
+   own judgment (changed 2026-09-17, per Gabe — previously this required
+   handing files to him to run manually).** This does NOT loosen anything
+   else: constraint #1 (never push/redeploy the *live app*) and constraint
+   #2 (no destructive ops — force-push, `reset --hard`, history rewrites —
+   without explicit request) both still stand exactly as before, including
+   pushing/merging to `main`, which still needs Gabe's in-the-moment
+   go-ahead like any other main-branch or deploy action. Keep `.gitignore`
+   doing its job — don't commit large/regenerable files (see the
+   reproduction table below); everything currently gitignored should stay
+   that way unless there's a specific reason to change it.
 6. **Never store live API keys/secrets in any file that lives inside this
    git repo** (`SHARADAR_API_KEY` included) — those belong only in
    whatever out-of-repo secrets store this project's owner uses (e.g. the
