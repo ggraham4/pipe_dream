@@ -639,6 +639,255 @@ immediately after. Every `record`/`score` invocation from here forward
 targets v2. See the corrections doc section 9 for the full diagnostic
 evidence and the exact schema change.
 
+## Two more pre-registrations (2026-09-22), before running either
+
+Per Gabe's "go ahead" (Amihud) and "I agree, continue" (regime
+conditioning) on the two remaining structural-gap proposals.
+
+**Amihud illiquidity (`build_amihud_feature.py`).**
+`amihud_20 = trailing-20-day mean(|daily return| / (closeunadj*volume))`,
+same window/basis convention `downcap_universe.py` already uses for its
+liquidity floor. Hypothesized sign **+1** (illiquidity premium, Amihud
+2002) — a candidate, screened for pooled Spearman IC (cap150, nomination
+era, same methodology as every other candidate this session) before any
+promotion decision. One trial. Not added to `FACTOR_SIGNS` regardless of
+sign unless the measured direction matches the hypothesis and the
+decision is made explicitly, matching how every other promotion this
+session was handled (drop-only for wrong-signed factors, never flip).
+
+**Regime-conditioning diagnostic (staged, per Gabe's explicit steer not
+to repeat the HMM's fitted-parameter mistake).** Regime variable: trailing
+60-day realized SPY volatility (reusing the existing `volatility_60`
+window convention). Split rule: **causal expanding-window median** of
+that series — a parameter-free split (no percentile chosen by looking at
+results; the median is the least-arbitrary binary threshold available).
+Two hypotheses, both already cited in the physics audit, both directional
+and pre-specified before measurement:
+
+1. `momentum_12_1`'s IC should be weaker (or negative) in the high-vol
+   half (Daniel-Moskowitz momentum-crash mechanism).
+2. `volatility_60`'s IC should be stronger (more negative, i.e. the
+   low-vol premium more pronounced) in the high-vol half (flight-to-
+   quality / institutional-constraint literature).
+
+**Staged, not a single leap to a new traded variant**: first, screen both
+factors' pooled IC separately in the high-vol and low-vol halves
+(zero new parameters — a split-sample measurement, not a new rule). Only
+if BOTH hypotheses hold in the predicted direction does this proceed to
+step 2: a single, pre-registered conditional-composite variant (exclude
+`momentum_12_1` from the composite when in the high-vol regime, binary
+on/off, no continuous scaling parameter to avoid inventing a tunable
+magnitude) backtested once, nomination era, cap150, same construction as
+the confirmed baseline. If either hypothesis fails, stop at the
+diagnostic stage and report the negative — consistent with this
+project's standing practice of reporting well-powered negatives as
+real results, not silently dropping them.
+
+Output: `out/reset2026/amihud_feature.parquet`,
+`out/reset2026/regime_diagnostic_report.json`.
+
+## IC-shrinkage weighting (2026-09-22) — pre-registered before running,
+## per advisor consult
+
+Per Gabe's reframe: the objective is rank prediction, not return
+magnitude, which makes pooled IC the objective itself, not a diagnostic.
+An advisor consult before implementing pointed at the one lever already
+measured and left unpulled this session: equal weighting sits at cosine
+similarity 0.47 from the IC-implied (Grinold-Kahn) optimum
+(physics doc section 4), and `gross_profitability` alone (IC +0.041,
+t 5.58) outscores the full equal-weighted composite (IC +0.026-0.032) —
+dilution has a measured, non-trivial cost.
+
+**Exactly one rule, written down before any result exists:**
+
+```
+w_k_raw = max(FLOOR, |t_k| - 1)     FLOOR = 0.1 (no factor goes to exactly
+                                     zero -- shrinkage, not hard selection)
+w_k     = sign_k * w_k_raw / sum_j(w_j_raw)
+```
+
+`t_k` is each factor's pooled Spearman-IC Newey-West t-stat, computed the
+identical way `model_audit.py` already does it. `short_interest_days_to_
+cover` (zero nomination-era coverage) gets the floor weight by
+definition (undefined `t`), same as any other minimally-supported factor
+— not specially excluded. This is a **measurement-informed shrinkage
+weight, not a fitted parameter** in the sense this project has
+disqualified before: it is not a grid search over weight vectors chosen
+to maximize a backtest, it is one pre-specified functional form of one
+already-measured statistic, applied once.
+
+**The honest caveat, stated before running**: fitting weights on
+nomination-era IC and measuring IC on the same nomination-era data is
+in-sample by construction and would only show "how much signal dilution
+costs," not "the new weights forecast better." To get a genuine
+out-of-sample read, **weights are fit on odd calendar years and IC is
+measured on even years, and vice versa** (the same odd/even split this
+package already uses for factor-stability checks) — two genuinely
+held-out results, not one in-sample number.
+
+**Metrics**: pooled Spearman IC (existing machinery) AND Kendall tau,
+both with Newey-West t, on both raw (`forward_return_tradable_40`) and
+beta-adjusted returns (reusing `beta_feature.parquet` — the beta work
+already showed this sharpens the read, t 2.53->4.25 on the equal-weight
+composite). Portfolio CAGR is not computed here — per Gabe's explicit
+reframe, rank accuracy is the target this round, not dollars.
+
+**Ruled out before running, per the advisor's explicit caution**: no
+re-opening of Amihud/regime/value (all three produced clean negatives
+this session); no new candidate factors before this question is settled;
+no comparison of multiple weighting rules against each other (one rule,
+one run). `FACTOR_SIGNS` and the confirmed `compute_composite` are NOT
+modified — this is scored as a side-by-side variant
+(`compute_composite_ic_weighted`), same pattern as every other
+comparison this session.
+
+Output: `out/reset2026/ic_weighted_composite_report.json`.
+
+A bug was found and fixed in `compute_weighted_score` after the first
+results existed (missing renormalization by available weight when a
+factor is absent for a given row) — the whole script was re-run to
+confirm the fix before trusting any number; every value moved by less
+than 0.0003. See corrections doc section 12 for the full account.
+
+## Ledger versioned again (2026-09-22) — IC-weighted model added
+
+v1 and v2 (panel_date 2026-09-08 each) stay frozen. The IC-weighted
+model's score/rank is added as new columns (`ic_weighted_score`,
+`ic_weighted_rank_pct`) alongside the existing equal-weight ones, so a
+new file (`prediction_ledger_v3.csv`) starts rather than corrupting v2's
+header. A new blind entry was recorded for the same panel_date
+(2026-09-08, 2,214 names) with both models' predictions in one row per
+ticker. Going forward, this schema is meant to be **extensible** — a
+future model addition should add columns here, not trigger another
+version bump, unless it changes what an existing column means.
+
+## Trial-count ledger and next round (2026-09-22), per advisor consult
+## before running
+
+**Running trial count against the nomination era, written down before
+this round runs, per the advisor's explicit flag**: `asset_growth`
+ablation (1) + `decile1_volq` (1) + `exclude_bottom_decile` (1) +
+`log_market_cap` screen (1) + `momentum_1_1` screen (1) + `book_to_
+market` screen (1) + Amihud screen (1) + regime diagnostic (1, stopped
+before a backtest) + IC-shrinkage weighting (1) = **9 trials before this
+round**. This round adds up to 4 more (3 factor screens + 1 exponent
+variant) = **13 total**. Written here so the count exists before results
+do, not reconstructed after.
+
+**Exponent transform (technical correction from advisor, important
+enough to restate): Spearman rho is invariant to any monotonic transform
+of the FINAL composite score** — raising the finished score to a power
+changes nothing about its rank correlation, by construction. The only
+place an exponent can matter is applied to EACH FACTOR'S signed rank
+BEFORE the weighted sum, where it changes how factors trade off against
+each other and can therefore reorder the composite. Rule, fixed in
+advance: `signed_rank_k -> sign(r) * |r|^p`, **p = 2, one value, no
+sweep**, applied per-factor, then combined with the existing IC-shrinkage
+weights exactly as now. Justification is a prior finding, not a search:
+the decile table (physics doc section 6) showed the composite's
+information concentrated at the bottom of the score range with a flat
+middle; p > 1 is the transform that lets extreme factor values dominate
+the weighted sum instead of being averaged against an uninformative
+middle.
+
+**Three new candidate factors, one screen each, IC only, split-half
+(odd/even years) exactly as `book_to_market`/`log_market_cap` were
+tested** — all built from columns already in `sf1_fundamentals.parquet`
+(no new data pull):
+
+| factor | formula | sign | citation |
+|---|---|---:|---|
+| `fcf_yield` | `(ncfo + capex) / market_cap` (capex already negative in this data, confirmed 88.8% of ARY rows) | **+1** | Novy-Marx/value literature: cash generation predicts returns |
+| `leverage` | `debtnc / assets` (both stock/level concepts, backward asof, same pattern as `assets` in `quality_factors.py`) | **-1** | Campbell, Hilscher & Szilagyi 2008 (distress risk anomaly: high-distress firms earn LOWER, not higher, returns) |
+| `profitability_trend` | YoY change in `opinc/revenue` (same 365-day-lookback pattern as `asset_growth`) | **+1** | fundamental/margin momentum literature |
+
+`rnd_intensity` is explicitly NOT re-added — Round 13 already established
+it dies under sector-neutralization (a sector bet), and this project's
+own standing rule is not to relitigate closed methodology calls.
+
+**Expectation, stated before running, per the advisor's explicit
+caution**: rho 0.03-0.05 at a 40-day horizon in liquid equities is close
+to what published cross-sectional signals typically achieve, not a
+limitation of this factor set specifically. Three more fundamentals
+ratios added to a composite already dominated by `gross_profitability`
+should be expected to move rho by low single-digit thousandths, if at
+all — a null result here is not a surprising one.
+
+**Also requested, to run after the above**: a portfolio-return-vs-SPY
+breakdown by market regime, for the confirmed IC-weighted composite.
+Framed by Gabe as lower-risk than a fitted model's equivalent check
+("purely theoretical, not based on fitted values") — a fair distinction
+(no parameter search over this data occurred; the weights are a fixed
+function of a measured statistic) but not a different rule about
+*which era* to look at. **Regimes defined externally, not chosen after
+seeing results**: (a) each nomination-era calendar year classified by
+SPY's OWN realized return that year (up >+10%, down <-10%, flat
+between) — a fact about SPY, not chosen by inspecting the composite's
+performance; (b) high/low realized-volatility regime, reusing the exact
+causal expanding-median split already built for the regime diagnostic
+above (`amihud_and_regime_diagnostic.py`), not a new threshold. Both
+computed on the **nomination era only** — this does not reopen or
+re-spend 2020-2026.
+
+Output: `out/reset2026/new_factor_screens_report.json`,
+`out/reset2026/exponent_variant_report.json`,
+`out/reset2026/regime_backtest_report.json`.
+
+## Turnover realism + third hold-out spend (2026-09-22), pre-registered
+## before running
+
+Per Gabe's caveat review: (1) scoping out factor-concentration/risk-model
+concerns as out of interest (theoretical validity only, not investor
+safety) -- caveats 1 and 3 from the corrections doc's caveat review are
+not pursued further; (2) a direct request to test the IC-weighted model
+on 2020-2026, on the correct grounds that frozen (non-refit) weights make
+that test closer to honest than a fresh search would be; (3) two
+turnover-realism constructions.
+
+**Third hold-out spend, scope stated before running**: `IC-weighted
+composite`, `decile_volq`, cap150, 15bp, 2020-2026, **purpose is data-
+quality/generalization robustness, not discovery** -- this model's
+weights are frozen from nomination-era measurement and are not being
+re-fit to whatever this shows. Leave-one-year-out applied immediately on
+the result, same standing check as every other hold-out number in this
+package (the 2020-concentration failure is the most likely outcome and
+is checked for explicitly, not only reported if it appears favorable).
+
+**Two turnover constructions, tested separately, both using the
+IC-weighted score, cap150, nomination era**:
+
+1. **Laddered/staggered**: 5 cohorts at offsets 0/8/16/24/32 (evenly
+   spaced across the 40-day cycle), 20% of capital each, blended by
+   summing each cohort's own independently-compounding terminal wealth.
+   **Prediction, stated before running**: smooths offset-to-offset timing
+   luck and reduces the variance/concentration risk this session already
+   found (2020, GME/LCID), but should NOT reduce total annual dollar
+   turnover -- the whole book still rotates once per 40-day cycle either
+   way, just staggered in time.
+2. **Buffer/hysteresis band**: a name already held stays unless it falls
+   out of the top 20% (by IC-weighted score, within its own vol quintile)
+   rather than being re-picked from a strict top-decile cutoff every
+   window; new entries still require top-decile. **20%/10% is one fixed,
+   asymmetric, round-number choice, declared here, not swept.** Requires
+   sequential (state-carrying) simulation, single offset (0), since this
+   construction is path-dependent in a way the ladder isn't.
+
+**Beta remedy**: replace the flat 252-day rolling-window beta with an
+EWMA (RiskMetrics-convention 0.94 daily decay) covariance/variance
+estimate -- a standard, off-the-shelf convention (same status as the
+252-day window itself), not a parameter fit to this backtest. Re-run the
+beta diagnostic (composite-vs-beta correlation, raw vs. beta-adjusted IC)
+to check whether this changes the picture.
+
+**Explicitly deferred, per effort triage**: the shrinkage-constant
+sensitivity check (floor/offset robustness) is the least likely of the
+five items this round to change any conclusion and is not run this
+round.
+
+Output: `out/reset2026/holdout_ic_weighted_report.json`,
+`out/reset2026/turnover_realism_report.json`,
+`out/reset2026/ewma_beta_diagnostic_report.json`.
+
 ## Era-transfer + AV option factors (2026-09-22, alpha-vantage-spin branch) — pre-registered before any result exists
 
 Gabe's request: integrate the new data, then "use the older data as training

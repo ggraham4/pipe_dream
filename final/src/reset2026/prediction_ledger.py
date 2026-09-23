@@ -64,22 +64,23 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import composite as C  # noqa: E402
+import ic_weighted_composite as ICW  # noqa: E402
 
 MAIN_ROOT = Path("/Users/ggraham/pipe_dream/final")
 PANEL_PATH = MAIN_ROOT / "out" / "reset2026" / "composite_panel.parquet"
 BETA_PATH = MAIN_ROOT / "out" / "reset2026" / "beta_feature.parquet"
 OUTCOME_PATH = MAIN_ROOT / "out" / "reset2026" / "outcome_cache.parquet"
 OUT_DIR = MAIN_ROOT / "out" / "reset2026"
-# v1 (`prediction_ledger.csv`, panel_date=2026-09-08, MODEL_VERSION
-# "asset_growth_dropped_2026-09-22") is FROZEN -- an immutable commitment
-# already made under the pre-beta scoring spec, never rewritten. The beta
-# addition changes the ledger schema (adds beta_252, renames the point-
-# forecast column), so it gets its own file rather than corrupting v1's
-# header by appending mismatched columns. Score v1 with the version of
-# this script from before this commit if picking it up later; v2 is the
-# live one for everything from here forward.
-LEDGER_CSV = OUT_DIR / "prediction_ledger_v2.csv"
-SCORES_CSV = OUT_DIR / "prediction_ledger_v2_scores.csv"
+# v1 (`prediction_ledger.csv`) and v2 (`prediction_ledger_v2.csv`, both
+# panel_date=2026-09-08) are FROZEN -- immutable commitments already made
+# under their own scoring specs, never rewritten. v3 adds the IC-weighted
+# model's score/rank alongside the existing equal-weight ones (schema
+# change again, same reason as v1->v2), but going forward this schema is
+# meant to be EXTENSIBLE -- add a new model's columns here rather than
+# versioning the whole ledger again for every future variant, unless a
+# change also alters the meaning of an existing column.
+LEDGER_CSV = OUT_DIR / "prediction_ledger_v3.csv"
+SCORES_CSV = OUT_DIR / "prediction_ledger_v3_scores.csv"
 
 NOMINATE_START = pd.Timestamp("2007-01-02")
 NOMINATE_END = pd.Timestamp("2019-12-31")
@@ -176,6 +177,15 @@ def record():
     # claims about a name's return NET of its mechanical market exposure.
     predicted_idiosyncratic_return = slope * (s - s_mean)
 
+    # IC-shrinkage-weighted model (2026-09-22, corrections doc section 12)
+    # -- a second, independent prediction on the SAME cross-section, using
+    # the frozen production weights. Recorded alongside, not instead of,
+    # the equal-weight model, so the live ledger can compare them going
+    # forward on genuinely new data (the one test neither has had yet).
+    scored_icw = ICW.compute_composite_ic_weighted(cross)
+    s_icw = scored_icw["composite"].to_numpy(np.float64)
+    rank_pct_icw = pd.Series(s_icw).rank(pct=True, na_option="keep").to_numpy()
+
     out = pd.DataFrame({
         "panel_date": latest_date.date().isoformat(),
         "recorded_at": pd.Timestamp.now().isoformat(),
@@ -186,6 +196,8 @@ def record():
         "beta_252": cross["beta_252"].to_numpy(),
         "predicted_idiosyncratic_return_40d": predicted_idiosyncratic_return,
         "fm_slope_used": slope,
+        "ic_weighted_score": s_icw,
+        "ic_weighted_rank_pct": rank_pct_icw,
         "realized_return_40d": np.nan,      # raw, filled in later by `score`
         "realized_abnormal_return_40d": np.nan,  # beta-adjusted, also filled in later
         "scored_at": "",
@@ -232,6 +244,15 @@ def _score_frame(cross_ids, ledger_rows, label_lookup, spy_fwd_40=None):
         "magnitude_calibration_slope_raw": slope_raw,
         "magnitude_r2_raw": r2_raw,
     }
+
+    # Second model (2026-09-22 addition): the IC-shrinkage-weighted score,
+    # same cross-section, same date -- directly comparable rank IC, the
+    # actual test of the out-of-sample claim in corrections doc section 12.
+    if "ic_weighted_score" in merged.columns:
+        icw_valid = merged.dropna(subset=["ic_weighted_score"])
+        if len(icw_valid) >= 20:
+            result["rank_ic_raw_ic_weighted"] = float(
+                icw_valid["ic_weighted_score"].corr(icw_valid["realized_return_40d"], method="spearman"))
 
     if spy_fwd_40 is not None and pd.notna(spy_fwd_40) and "beta_252" in merged.columns:
         merged["abnormal_return"] = merged["realized_return_40d"] - merged["beta_252"] * spy_fwd_40
@@ -285,7 +306,9 @@ def score():
         stats["model_version"] = rows["model_version"].iloc[0]
         results.append(stats)
         log(f"{panel_date.date()}: n={stats['n_names']} "
-            f"rank_IC raw={stats['rank_ic_raw']:+.4f} beta-adj={stats.get('rank_ic_beta_adjusted', float('nan')):+.4f}  "
+            f"rank_IC equal-weight={stats['rank_ic_raw']:+.4f} "
+            f"IC-weighted={stats.get('rank_ic_raw_ic_weighted', float('nan')):+.4f}  "
+            f"beta-adj={stats.get('rank_ic_beta_adjusted', float('nan')):+.4f}  "
             f"mag_R2 raw={stats['magnitude_r2_raw']:.4f} beta-adj={stats.get('magnitude_r2_beta_adjusted', float('nan')):.4f}  "
             f"top-bottom decile spread={stats['top_minus_bottom_decile_spread']*100:+.2f}%")
 
@@ -325,11 +348,14 @@ def selftest():
     s = scored["composite"].to_numpy(np.float64)
     valid = np.isfinite(s)
     s_mean = np.nanmean(s)
+    scored_icw = ICW.compute_composite_ic_weighted(cross)
+    s_icw = scored_icw["composite"].to_numpy(np.float64)
     rows = pd.DataFrame({
         "ticker": cross["ticker"][valid].to_numpy(),
         "composite_score": s[valid],
         "beta_252": cross["beta_252"].to_numpy()[valid],
         "predicted_idiosyncratic_return_40d": (slope * (s - s_mean))[valid],
+        "ic_weighted_score": s_icw[valid],
     })
     label_lookup = dict(zip(cross["ticker"], cross[LABEL]))
     spy_fwd_40 = spy.get(test_date, np.nan)
