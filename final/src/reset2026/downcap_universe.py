@@ -29,6 +29,7 @@ OUTPUT
         convention), eligible_cap2000, eligible_cap500, eligible_cap150 (bool)
     <MAIN_ROOT>/data/sharadar/downcap_universe_report.txt
 """
+import os
 import sys
 import time
 from pathlib import Path
@@ -41,8 +42,11 @@ import pyarrow.parquet as pq
 MAIN_ROOT = Path("/Users/ggraham/pipe_dream/final")
 SHARADAR = MAIN_ROOT / "data" / "sharadar"
 PANEL = SHARADAR / "panel"
-OUT = SHARADAR / "downcap_universe.parquet"
-REPORT = SHARADAR / "downcap_universe_report.txt"
+# DOWNCAP_OUT_NAME writes a side-by-side file (e.g. downcap_universe_v2) so a
+# rebuild never silently replaces what app/lib/blend_model.py reads.
+_NAME = os.environ.get("DOWNCAP_OUT_NAME", "downcap_universe")
+OUT = SHARADAR / f"{_NAME}.parquet"
+REPORT = SHARADAR / f"{_NAME}_report.txt"
 
 DOMESTIC = {
     "Domestic Common Stock",

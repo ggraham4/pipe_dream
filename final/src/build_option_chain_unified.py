@@ -8,8 +8,9 @@ Incremental and re-runnable while final/scripts/av_options_pull.py is still
 landing data: an output partition is rebuilt only when its source is newer.
 
 OUTPUT  <data-dir>/options_unified/source=<av_monthly|av_weekly|dolthub>/date=YYYY-MM-DD.parquet
-        (hive-partitioned; read with pyarrow.dataset or duckdb
-         read_parquet('.../**/*.parquet', hive_partitioning=1))
+        `source` is a hive directory partition; `date` is a column in every
+        file. Read with pyarrow.dataset.dataset(root, partitioning="hive") or
+        duckdb read_parquet('.../**/*.parquet', hive_partitioning=1).
 
 SCHEMA (one row per contract per date)
   date, act_symbol (as-traded), sharadar_ticker, expiration, strike,
@@ -108,7 +109,19 @@ def newer(src: Path, dst: Path) -> bool:
     return (not dst.exists()) or src.stat().st_mtime > dst.stat().st_mtime
 
 
+FLOAT_COLS = ["strike", "bid", "ask", "vol", "delta", "gamma", "theta", "vega", "rho",
+              "volume", "open_interest", "bid_size", "ask_size", "last", "mark", "spot"]
+
+
 def write_atomic(df: pd.DataFrame, out: Path):
+    # One schema across sources: `date` stays IN the file (hive partitioning
+    # reads directories, not file names) and every numeric column is float64
+    # (AV volume/OI are ints, DoltHub's are all-NaN).
+    df = df.copy()
+    df["date"] = pd.to_datetime(df["date"]).dt.date
+    for c in FLOAT_COLS:
+        df[c] = pd.to_numeric(df[c], errors="coerce").astype("float64")
+    df["sharadar_ticker"] = df["sharadar_ticker"].astype("object")
     out.parent.mkdir(parents=True, exist_ok=True)
     tmp = out.with_suffix(".tmp")
     df.to_parquet(tmp, index=False)
@@ -206,7 +219,7 @@ def main():
             if newer(src, dst):
                 keep = av_keep(log[(log["pass"] == pas) & (log.date == str(d.date()))])
                 df = convert_av(src, d, rate_on(rates, d), keep)
-                write_atomic(df.drop(columns=["date"]), dst)
+                write_atomic(df, dst)
                 solved = df.vol.notna().mean()
                 print(f"av_{pas} {d.date()}: {len(df):,} rows, {df.act_symbol.nunique()} syms, "
                       f"IV solved {solved:.0%}", flush=True)
@@ -219,7 +232,7 @@ def main():
 
     # ---- DoltHub partitions (dedup against AV on the same date)
     dh_path = data / "options_raw" / "expanded" / "option_chain_expanded_merged.parquet"
-    u = pd.read_parquet(data / "sharadar" / "downcap_universe.parquet",
+    u = pd.read_parquet(data / "sharadar" / "downcap_universe_v2.parquet",
                         columns=["date", "ticker", "closeunadj"])
     u["date"] = pd.to_datetime(u["date"]).dt.date
     u = u[u.date >= pd.Timestamp("2019-01-01").date()]
@@ -243,7 +256,7 @@ def main():
         for c in ["volume", "open_interest", "bid_size", "ask_size", "last", "mark"]:
             t[c] = np.nan
         t["iv_source"] = "dolthub"
-        write_atomic(t[COLS].drop(columns=["date"]), dst)
+        write_atomic(t[COLS], dst)
         n += 1
         if n % 100 == 0:
             print(f"dolthub {d}: {n} partitions written ({time.time()-t0:.0f}s)", flush=True)

@@ -227,6 +227,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--data-root", type=Path, default=DEFAULT_ROOT)
     ap.add_argument("--sharadar-dir", type=Path, default=DEFAULT_SHARADAR)
+    # v2 = split-basis-corrected liquidity floor (reset2026/downcap_universe.py,
+    # 2026-09-22): the v1 file dropped ~1,144 later-reverse-splitting names.
+    ap.add_argument("--universe", default="downcap_universe_v2.parquet")
     ap.add_argument("--passes", default="monthly,weekly")
     ap.add_argument("--only-dates", default="")
     ap.add_argument("--max-names", type=int, default=0)
@@ -242,7 +245,7 @@ def main():
     if not key:
         sys.exit("set ALPHAVANTAGE_API_KEY in the environment")
 
-    u = pd.read_parquet(a.sharadar_dir / "downcap_universe.parquet",
+    u = pd.read_parquet(a.sharadar_dir / a.universe,
                         columns=["date", "ticker", "closeunadj", "eligible_cap2000", "eligible_cap150"])
     u["date"] = pd.to_datetime(u["date"])
     u = u[u.eligible_cap150 & (u.date >= FIRST_DATE)]
