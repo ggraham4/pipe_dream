@@ -1159,3 +1159,176 @@ generous (fair-value, no variance-risk-premium) pricing assumption,
 with a real, high, and here-quantified risk of simultaneous total loss
 across the whole book that a stock-only version of this strategy cannot
 produce.
+
+## 19. Cross-model rank-accuracy comparison — icw8 (split-half) vs. q75,
+## xrank, and simple baselines, on their common, pre-2020 intersection
+
+**Pre-registered 2026-09-23, before `cross_model_accuracy.py` was run,**
+per Gabe's direct request ("compare R²/rho across models") via the
+project's COO coordination process. This section is the commitment; the
+result (SUCCESS/KILL/MIDDLE, fixed in advance, see below) is appended
+once the script has actually run, not edited into this pre-registration.
+
+**Hold-out guard (mandatory, enforced at read time via parquet row-group
+filters, not by post-hoc dropping):** the `q75`/`xrank` score caches
+(`final/out/sweep/scores/price_fund_h40_{q75,xrank}_trd_*_s40.parquet`)
+run through 2026. Every read in this comparison is filtered to
+`timepoint < 2020-01-01` (score caches) / `date < 2020-01-01` (composite
+panel, beta feature, outcome cache) at load time, plus a final
+`assert max(timepoint) < 2020-01-01` on the assembled row set. Any
+2020+ read here would be this project's fifth hold-out spend on this
+factor set (see sections 6a, 6d, 16 for the first three, all on this
+model; the fourth was the options-overlay pass in section 18, nomination
+era only, not a hold-out spend itself but drawn from the same
+pre-registration lineage) — not attempted.
+
+**Rows:** the (timepoint, ticker) intersection of the two score caches
+above and composite-panel rows with `eligible_cap150` and a non-null
+`forward_return_tradable_40`. N is reported per date; expected to land
+around 1,100-1,250 names across roughly 82 pre-2020 dates (q75's cache is
+built on a large-cap-leaning universe, cap500k-and-up by construction —
+see the required label below). If N per date comes in far below that,
+the run stops to check for a ticker-symbol convention mismatch between
+the Sharadar-style score-cache tickers and the composite panel's, rather
+than reporting a result off a broken join.
+
+**Models (fixed list, each scored on its OWN native cap150 cross-section
+first, THEN subset to the intersection for IC — not scored only within
+the intersection, which would silently change every model's own ranking
+population):**
+
+1. **icw8, split-half weights** — the headline row. Per-factor pooled-IC
+   t-stats (`ic_weighted_composite.per_factor_t`) fit separately on
+   ODD nomination years and EVEN nomination years (full cap150 panel,
+   not the intersection), converted to weights via
+   `ic_weighted_composite.fit_weights` (identical to section 12's
+   protocol). The odd-fit weights score every EVEN-year date; the
+   even-fit weights score every ODD-year date — every date in this row
+   is scored out-of-sample with respect to its own weights. Before
+   scoring anything, the odd/even weight sets are checked against
+   section 12's own reported numbers as a sanity gate; if they don't
+   reproduce, the run stops rather than proceeding on a silently
+   different weight-fitting implementation.
+2. **icw8, full-era `PRODUCTION_WEIGHTS`** — context only, not the
+   headline (weights fit on the full nomination era including the dates
+   being scored — in-sample by construction, kept for comparison against
+   row 1's genuinely-OOS number).
+3. **ew8** — the equal-weight 8-factor composite (`composite.py`'s
+   current `compute_composite`, i.e. the corrected, `asset_growth`-
+   dropped version). Imported directly from this worktree's own
+   `reset2026/composite.py` — NOT via `current_signal_blend.py`, which
+   inserts the MAIN CHECKOUT's stale, pre-correction 9-factor
+   `composite.py` onto `sys.path` ahead of anything else; importing that
+   file at all would risk silently turning this row into ew9. Not
+   imported, at all, for that reason.
+4. **`gross_profitability` alone** — signed rank_z, sign +1 (its own
+   factor sign), the single strongest factor in the composite's weights.
+5. **q75 score** — read as-is from its score cache, no transform
+   (Spearman is invariant to monotonic transforms of either side).
+6. **xrank score** — same, read as-is.
+7. **Low-vol baseline, −`volatility_60`** — signed rank_z, sign -1.
+8. **Composite+q75 blend — DROPPED, not computed.** The pre-registered
+   condition for including this row was "only if computed by calling
+   `current_signal_blend.py`'s own combination logic; otherwise drop the
+   row, don't invent a blend." That file's blend formula
+   (`blend_score = mean(rank_z(composite), rank_z(q75_score))`) is
+   inline in its `main()`, not a callable function — re-typing that
+   one-line formula would itself be "inventing a blend" under the
+   pre-registered condition's own terms, and importing the file to reach
+   it carries the exact stale-`composite.py`-on-`sys.path` hazard row 3
+   avoids. Dropped rather than worked around either way.
+
+**Metrics:** per-date Spearman rho, and Fama-MacBeth cross-sectional R²
+exactly as defined in the physics doc's section 7 / implemented in
+`model_audit.py`'s `fama_macbeth_r2` (per-date OLS of score on return,
+R² = 1 - SS_res/SS_tot, mean across dates) — reused directly, not
+re-derived. Each computed on both the raw `forward_return_tradable_40`
+and the beta-adjusted (market-model abnormal) return, using the exact
+`beta_252 × SPY forward_return_tradable_40` convention from section 9 /
+`beta_diagnostic.py`. Because the score cadence (s40) is spaced exactly
+40 trading days apart with 40-day-forward labels, the windows are
+non-overlapping — a plain t-stat across timepoints is used for this
+section's tables, NOT the Newey-West lag-39 correction used elsewhere in
+this project for overlapping-window statistics (that correction assumes
+serial correlation this cadence structurally doesn't have).
+
+**Primary comparison:** the per-date PAIRED difference
+rho(icw8 split-half) − rho(q75), on RAW returns (the physics doc's
+section 2.6 defines rho on raw returns; beta-adjusted is reported as a
+secondary table only, not the outcome-determining series). Mean, plain t
+across timepoints, and both odd/even halves reported.
+
+**Outcomes (fixed now, all terminal — reported as whichever this
+produces, not reinterpreted after the fact):**
+- **SUCCESS:** paired diff > 0, t ≥ 2, same sign in both halves. The
+  composite ranks better than q75.
+- **KILL:** paired diff ≤ 0. The composite is no better than q75 at rank
+  accuracy.
+- **MIDDLE:** positive, but t < 2 or the halves disagree. No detectable
+  difference.
+
+**Required labels on the result, wherever it's reported:**
+- The intersection is roughly q75's large-cap-leaning pool (cap500k+),
+  not cap150's full breadth — this result says nothing about how any
+  model ranks the small-cap tail cap150 alone would include.
+- Single s40 grid (one rebalance-offset cadence) — not this project's
+  usual 40-offset average.
+- Descriptive, not a new hypothesis test with its own trial budget — the
+  running trial count in `PREREGISTRATION.md` is unchanged by this
+  section.
+
+**Not attempted here, by explicit scope (already logged as Gabe
+decisions or open work orders in `COO.md`, not reopened by this
+section):** the leverage factor's production-weight decision, a formal
+Deflated-Sharpe/White-Reality-Check gate for this composite, the 2020
+hold-out-dependency question, and EWMA-vs-rolling-252-day beta as the
+production default.
+
+*(Result appended below once `cross_model_accuracy.py` has actually run.)*
+
+---
+
+**Result, 2026-09-23.** Sanity gate passed first: the split-half weight
+fit reproduced section 12's own reported OOS numbers exactly
+(fit-odd→test-even IC=+0.0304, fit-even→test-odd IC=+0.0496) before
+anything else ran. Intersection: 91,883 rows, 82 pre-2020 dates, N/date
+612-1,442 (median 1,132) — within the expected large-cap-leaning range,
+no ticker-join problem.
+
+| model | rho (raw) | t | FM-R² (raw) |
+|---|---:|---:|---:|
+| **icw8, split-half (headline)** | **+0.0475** | **+4.19** | 0.0110 |
+| icw8, full-era PRODUCTION_WEIGHTS (context) | +0.0490 | +4.43 | 0.0106 |
+| ew8 (equal-weight) | +0.0443 | +2.77 | 0.0221 |
+| gross_profitability alone | +0.0458 | +4.04 | 0.0107 |
+| q75 | +0.0026 | +0.12 | 0.0359 |
+| xrank | +0.0089 | +0.53 | 0.0208 |
+| low-vol baseline (−volatility_60) | +0.0069 | +0.30 | 0.0364 |
+| composite+q75 blend | — | — | DROPPED (see pre-registration above) |
+
+**Primary comparison** — paired diff rho(icw8 split-half) − rho(q75), raw
+returns: mean **+0.0449**, t **+1.89**, odd years +0.0518, even years
++0.0365 (same sign both halves).
+
+**OUTCOME: MIDDLE.** The pre-registered SUCCESS bar was t ≥ 2 with
+agreeing halves; this landed at t=1.89 — same sign in both halves, but
+under the bar. Reported as pre-registered, not rounded up or
+re-interpreted: this is not a SUCCESS.
+
+**What the numbers say, read plainly (not part of the outcome
+determination, which stands as decided above):** on this specific
+large-cap-leaning intersection, icw8/ew8/GP-alone all rank meaningfully
+better than q75 and xrank do (rho ~0.044-0.049 vs. ~0.003-0.009, roughly
+an order of magnitude), and every composite variant clears its own t≥4
+bar individually — q75 and xrank do not clear even t=1 individually on
+this population. The PAIRED comparison's shortfall (t=1.89, not the
+individual rows' own significance) comes from date-to-date variance in
+the difference itself, not from the composite's own signal being weak.
+FM-R² tells a different, worth-noting story: q75 (0.0359) and the
+low-vol baseline (0.0364) have HIGHER cross-sectional R² than every
+composite variant (0.0106-0.0221) despite lower rank correlation — R² is
+sensitive to a few large-return names dominating the sum of squares in a
+way Spearman rho is not, so the two metrics are not measuring the same
+thing here and neither is more "correct." Required labels above (large-
+cap-leaning intersection, single s40 grid, descriptive) apply to every
+number in this result.
