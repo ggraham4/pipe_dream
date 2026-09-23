@@ -723,3 +723,439 @@ originally-proposed item 2, tier 3 of the "meta model" roadmap —
 `project-meta-model-roadmap` memory) needs real model capacity (a small
 NN, or an explicit two-state jump-diffusion treatment) and its own
 pre-registration; this document does not open that work.
+
+## 10. Amihud illiquidity — screened, not promoted
+
+Per Gabe's "go ahead." `build_amihud_feature.py`: trailing-20-day mean of
+`|daily return| / (closeunadj x volume)`, same window/basis convention
+`downcap_universe.py` already uses. Hypothesized sign +1 (illiquidity
+premium, Amihud 2002).
+
+```
+pooled IC = +0.0009   t = +0.10   (n=3,272 dates)
+odd-years IC  = -0.0100   t = -0.81
+even-years IC = +0.0137   t = +0.98
+```
+
+**Essentially zero, and the split-half doesn't even agree on sign.** A
+clean, well-powered negative — not a near-miss, not marginal. **Not added
+to `FACTOR_SIGNS`.** Down-cap illiquidity, at least measured this way, is
+not a source of return premium in this universe over this period.
+
+## 11. Regime-conditioning diagnostic — one hypothesis holds, one fails,
+## stopped per the pre-registered staging rule
+
+Per Gabe's "I agree, continue." `amihud_and_regime_diagnostic.py`:
+causal expanding-median split of trailing 60-day realized SPY volatility
+(a parameter-free threshold — no percentile chosen after seeing results),
+1,375 high-vol-regime days vs. 1,897 low-vol-regime days in the
+nomination era.
+
+```
+momentum_12_1 IC:    high-vol regime -0.0242 (t=-1.02)   low-vol regime +0.0495 (t=+3.76)
+  -> Hypothesis 1 (momentum weaker in high-vol, Daniel-Moskowitz): HOLDS
+
+volatility_60 IC:    high-vol regime +0.0150 (t=+0.58)   low-vol regime -0.0168 (t=-0.87)
+  -> Hypothesis 2 (low-vol premium stronger in high-vol, flight-to-quality): FAILS
+```
+
+**Hypothesis 1 is a real, substantial, correctly-directioned effect** —
+momentum doesn't just weaken in high-vol regimes, it flips sign entirely
+(+0.050 to -0.024), consistent with the momentum-crash mechanism this
+project already cites (physics doc section 10). **Hypothesis 2 fails
+outright, and not narrowly** — `volatility_60`'s IC is not just weaker
+but wrong-signed (+0.015) in the high-vol regime, the opposite of the
+flight-to-quality prediction.
+
+**Per the pre-registration's explicit staging rule, this stops here.**
+Both hypotheses were required to hold before proceeding to an actual
+conditional-composite backtest (excluding `momentum_12_1` in high-vol
+regimes). Only one did. Building the conditional variant anyway — keeping
+the momentum-exclusion rule because it looks good and quietly dropping
+the low-vol-strengthening half — would be exactly the selective,
+post-hoc pattern-chasing this project's own culture treats as a red flag
+(the "27% of zero-signal configs beat the market" calibration exists
+because partial, cherry-picked confirmation is how false positives get
+manufactured). **No conditional-composite variant is built. `FACTOR_SIGNS`
+is unchanged.**
+
+**What this is still worth**, honestly stated: hypothesis 1's result is
+real and could motivate a *narrower*, separately pre-registered test
+later (e.g., a momentum-only conditional rule, not bundled with a second
+hypothesis that already failed) — but that is a new trial, not a
+continuation of this one, and isn't opened here.
+
+## 12. IC-shrinkage weighting — the first genuinely out-of-sample win
+## this composite has produced
+
+Per Gabe's explicit reframe: the objective is rank prediction, not
+return magnitude, which makes pooled IC the target metric directly. An
+advisor consult pointed at the one lever this session had already
+measured and left unpulled: equal weighting sits at cosine similarity
+0.47 from the IC-implied optimum (physics doc section 4), and
+`gross_profitability` alone (IC +0.041) already outscores the full
+equal-weighted composite (IC +0.026-0.032).
+
+**Rule, pre-registered before running** (`ic_weighted_composite.py`):
+`w_k = sign_k * max(0.1, |t_k| - 1) / normalizer`, `t_k` the factor's own
+pooled-IC Newey-West t-stat. One rule, one run, no comparison of
+alternatives.
+
+**Genuinely out-of-sample** (weights fit on one half's years, IC measured
+on the OTHER half only — never fit and measured on the same data):
+
+| test | metric | weighted | equal-weight | 
+|---|---|---:|---:|
+| fit odd → test even | IC (raw) | **+0.0302** (t=+2.80) | +0.0183 (t=+1.12) |
+| fit odd → test even | IC (beta-adj.) | **+0.0300** (t=+2.60) | +0.0254 (t=+1.84) |
+| fit even → test odd | IC (raw) | **+0.0494** (t=+5.54) | +0.0434 (t=+2.35) |
+| fit even → test odd | IC (beta-adj.) | +0.0501 (t=+5.62) | **+0.0622** (t=+4.08) |
+
+**On raw returns, the weighted composite wins cleanly in both directions**
+— higher point estimate AND higher t-stat, every time. **On beta-adjusted
+returns it's more nuanced**: it wins the first split clearly, but in the
+second split equal-weight has a higher point estimate (0.062 vs 0.050)
+even though the weighted version still posts a higher t-stat (5.62 vs
+4.08) — a smaller but more stable effect. Reported exactly as measured,
+not rounded up to a clean sweep.
+
+**In-sample** (full-period fit, full-period test — context only, this is
+"how much dilution costs," not a forecasting claim): IC (raw) +0.0418
+(t=+5.78) weighted vs +0.0318 (t=+2.51) equal; IC (beta-adj.) +0.0420
+(t=+5.63) weighted vs +0.0452 (t=+4.26) equal — same pattern as the
+out-of-sample splits.
+
+**Production weights** (fit on the full nomination era — the most
+data-rich estimate, used going forward since the split-half check above
+already validated the *rule*, not this specific fit):
+
+```
+gross_profitability             +0.596   (vs +0.125 equal)
+accruals                        -0.163   (vs -0.125 equal)
+net_issuance_pct                -0.140   (vs -0.125 equal)
+momentum_12_1                   +0.050   (vs +0.125 equal)
+pct_from_high_252, volatility_60,
+  days_to_next_filing_seasonal,
+  short_interest_days_to_cover   +/-0.013 each (floor weight, vs +/-0.125 equal)
+```
+
+`gross_profitability` goes from 1/8 of the vote to essentially the
+majority of it — a direct, disciplined correction of the dilution
+documented in the physics audit, not a new discovery.
+
+**What this is and isn't.** It IS a genuine, out-of-sample improvement in
+rank prediction on the metric the project now cares about most (IC),
+using a pre-registered, non-fitted functional form of an already-measured
+statistic. It is NOT a portfolio backtest — no CAGR was computed here,
+deliberately, per the reframe. Before this becomes the traded model,
+someone needs to decide whether "reasonably predicts rank" is sufficient
+on its own or whether a portfolio-level check is still wanted eventually;
+that decision is not made here.
+
+**A real bug found and fixed before trusting the numbers above.** The
+first version of `compute_weighted_score` summed weighted terms without
+renormalizing by how much |weight| was actually available per row — a
+name missing `gross_profitability` (~60% of the total weight) would have
+been scored off the remaining ~40% only, silently compressing its score
+toward zero relative to fully-covered peers on the same date. Fixed to
+renormalize by available weight (the weighted analog of how
+`compute_composite`'s `.mean(skipna=True)` already handles equal-weight
+missingness), then **re-ran the entire script to confirm the fix actually
+mattered**: every number above moved by less than 0.0003 (e.g. fit-odd/
+test-even IC_raw: 0.0302 -> 0.0304) — negligible, because the dominant
+missing factor (`short_interest_days_to_cover`, absent for 100% of
+nomination-era rows) is missing *uniformly*, which is a rank-preserving
+scale change, not a rank-distorting one. The table above already
+reflects the corrected numbers.
+
+**Implemented**: `ic_weighted_composite.py` exposes
+`compute_composite_ic_weighted()` with the full-period production
+weights above as a reusable scoring function, parallel to (not
+replacing) `composite.compute_composite()`. `prediction_ledger.py`'s
+`record()` now computes and stores BOTH the equal-weight rank/score
+(existing) and the IC-weighted rank/score (new columns
+`ic_weighted_score`, `ic_weighted_rank_pct`) for every future blind
+prediction, so the live forward ledger will independently track whether
+the out-of-sample improvement above holds up on real, never-before-seen
+dates going forward — the only test of this that hasn't already been
+run.
+
+## 13. Pushing further: three more factors, one exponent transform, per
+## an advisor-guided 30,000ft pass — one real win, two clean negatives,
+## the exponent idea correctly ruled out by math before it ran
+
+Trial count against the nomination era, written into `PREREGISTRATION.md`
+before this round ran: 9 prior trials + up to 4 more here = 13. All four
+built from `sf1_fundamentals.parquet` columns already on disk — no new
+data pull.
+
+**Technical correction, worth restating precisely because it changes what
+"try a power law" can even mean**: Spearman rho is invariant to any
+monotonic transform of the FINAL composite score — raising the finished
+score to a power moves rho by exactly zero, not approximately zero. The
+only place an exponent can matter is applied to each factor's signed rank
+*before* the weighted sum, where it changes how factors trade off against
+each other. Tested that version, `p=2` fixed in advance (motivated by the
+physics doc's own decile finding: information concentrated at the bottom
+of the score range, flat middle — a transform that should, in principle,
+let extreme values dominate more than the middle).
+
+```
+                          p=2 (exponent)      p=1 (baseline, current)
+fit-odd -> test-even:    IC=+0.0302 t=+2.85   IC=+0.0304 t=+2.84
+fit-even -> test-odd:    IC=+0.0466 t=+5.35   IC=+0.0496 t=+5.63
+```
+
+**No improvement — if anything, very slightly worse in both splits.**
+Not adopted. `p=1` (the existing linear rank transform) stays.
+
+**Three new fundamentals-based candidates, IC screen only, split-half:**
+
+| factor | pooled IC | t | odd/even | sign |
+|---|---:|---:|---|:---:|
+| `fcf_yield` | +0.0059 | +0.81 | +0.0059 / +0.0059 | matches (+1), not significant |
+| `leverage` | **-0.0161** | **-2.44** | -0.0206 / -0.0107 | **matches (-1), stable, significant** |
+| `profitability_trend` | -0.0091 | -1.70 | -0.0101 / -0.0079 | **wrong sign** (assigned +1) |
+
+**`leverage` (debtnc/assets) is a real, well-powered result** —
+significant, correctly signed against the distress-risk-anomaly citation
+(Campbell, Hilscher & Szilagyi 2008: high-distress firms earn *lower*
+returns), and stable in sign across both halves of the sample. This is
+the same evidentiary bar `asset_growth_dropped` cleared before being
+adopted. **Not added to `FACTOR_SIGNS` in this pass** — flagged as a
+ready, tested candidate for an explicit promotion decision, not adopted
+unilaterally, since every other factor-set change this session went
+through that same checkpoint. `fcf_yield` is a clean, unremarkable
+negative. `profitability_trend` is wrong-signed and, per this project's
+standing practice with `asset_growth`, would be a drop-candidate, not a
+flip-candidate, if it mattered enough to act on — it doesn't clear
+significance either way.
+
+**Expectation set before running, now confirmed**: three more
+fundamentals ratios moved measured rho by low single digits of a
+thousandth at most, and the one real find (`leverage`) is exactly the
+kind of result more data of the *same type* (more balance-sheet ratios,
+same filings) was expected to produce — a modest, independent addition,
+not a ceiling-breaker. Per the advisor's explicit framing: the realistic
+ways rho's ceiling moves are a shorter horizon (more independent
+observations), a wider universe (Round 15's breadth logic), or a
+genuinely orthogonal data source — not more ratios off the same 10-Ks.
+
+## 14. Returns vs SPY by market regime — confirmed IC-weighted composite,
+## nomination era
+
+Per Gabe's request, framed as lower-risk than the equivalent check on a
+fitted model since no parameter search over this data occurred (a fair
+distinction — the weights are a fixed function of an already-measured
+statistic — but not a different rule about which era to look at; this
+stays on the nomination era, 2020-2026 is not reopened). Construction:
+`decile_volq` (the confirmed construction), IC-weighted composite score,
+cap150, 15bp, all 40 offsets — identical methodology to every other
+number in this package. Both regimes defined externally (SPY's own
+realized return; the already-built causal vol split), not chosen after
+seeing results.
+
+**Regime A — SPY's own realized calendar-year return:**
+
+| regime | years | n windows | mean excess/yr | sd | offsets positive |
+|---|---|---:|---:|---:|---:|
+| down (SPY < -10%) | 2008, 2022 | 253 | **+18.76%** | 8.24% | 40/40 |
+| flat (-10% to +10%) | 2007, 2011, 2015, 2018 | 1,006 | +3.23% | 6.65% | 40/40 |
+| up (SPY > +10%) | most years | 2,013 | +4.56% | 6.35% | 40/40 |
+
+**Regime B — high/low realized-volatility regime** (causal expanding-
+median split, reused from section 11's diagnostic):
+
+| regime | n windows | mean excess/yr | sd |
+|---|---:|---:|---:|
+| high-vol | 1,375 | +7.21% | 8.37% |
+| low-vol | 1,897 | +3.83% | 5.30% |
+
+**Positive in every single regime bucket, 40/40 offsets positive in
+every regime tested** — genuinely broad robustness, not concentrated in
+one kind of market. **The model does best specifically in down markets
+and high-vol regimes** — consistent with, and not a new discovery beyond,
+everything already established this session about its low-beta
+(section 9b: -0.29 correlation with mechanical beta) and quality tilt:
+a defensive bet should be expected to look relatively best exactly when
+markets are stressed, and it does.
+
+**One real caveat, stated plainly**: the "down" bucket is **two calendar
+years** (2008, 2022) — the same order of thinness that already burned
+this project once this session (the 2020-dominance finding in the
+hold-out). +18.76% could plausibly be carried disproportionately by one
+of the two rather than reflecting broad-based down-market performance.
+Not further decomposed here (would need re-running with per-window
+records saved, not done in this pass) — flagged rather than asserted as
+clean, matching how every other thin-sample result in this document has
+been handled.
+
+## 15. Turnover realism — one of the two mechanisms works, one doesn't,
+## exactly as predicted before either ran
+
+Per Gabe's steer that no real trader mechanically replaces the whole book
+every 40 days. Two constructions, IC-weighted composite, cap150,
+nomination era, tested separately because they do different things.
+
+**Laddered/staggered (5 cohorts, offsets 0/8/16/24/32, 20% capital each,
+blended by summing independently-compounding terminal wealth):**
+
+```
+single-offset legs:  ann_excess range +4.81% to +5.51%  (sd 0.23pp)
+ladder (blended):     ann_excess +5.18%, mean_f_new 19.1%
+```
+
+**Confirmed exactly as predicted**: the ladder smooths offset-to-offset
+dispersion (the timing-luck problem behind the 2020/GME/LCID fragility)
+but its per-window turnover (`f_new` = 19.1%) is statistically identical
+to any single offset's own (~19%). Staggering does not reduce turnover —
+it only reduces which specific window's luck you're exposed to.
+
+**Buffer/hysteresis band (hold unless a name falls out of the top 20% —
+vs. strict top-decile re-picking every window; 20%/10% fixed, not swept):**
+
+```
+                 ann_excess    mean turnover (f_new)
+baseline:        +5.09%        19.3%
+buffered:        +5.43%        6.3%
+```
+
+**This is the mechanism that actually works** — turnover cut ~3x, and
+the return did not suffer (it's marginally higher, though not claimed as
+significant on its own). At 50bp cost (vs. 15bp): baseline loses 0.44pp
+to the higher cost, buffered only loses 0.14pp — the cost drag shrank by
+almost exactly the same ~3x the turnover did.
+
+**Verdict on the hypothesis: half confirmed, half not, exactly split
+along the line predicted before either ran.** Laddering addresses
+variance/timing-luck; buffering addresses turnover and cost. They're not
+substitutes for each other, and the honest answer to "will costs be less
+of a concern" is: yes, but only because of the buffer, not because of
+staggering the schedule.
+
+## 16. Third hold-out spend: IC-weighted composite on 2020-2026 —
+## the same fragility appears a third time
+
+Per Gabe's request, on the correct grounds that frozen (non-refit)
+weights make this closer to honest than a fresh search — logged as an
+explicit third spend, purpose stated as data-quality/generalization
+robustness, not discovery.
+
+```
+mean excess CAGR vs SPY (40 offsets): +2.44%/yr, 40/40 offsets positive
+2020: +41.54%   2021: -7.17%   2022: +7.57%   2023: -7.76%
+2024: -5.66%    2025: -13.60%  2026: +2.91%
+drop 2020 -> mean flips to -3.95%/yr
+```
+
+**This is now the third time this exact pattern has appeared** — the
+original baseline hold-out, `asset_growth_dropped`'s hold-out, and now
+the IC-weighted composite's hold-out all show a strong, uniform,
+40/40-offsets-positive aggregate that fails leave-one-year-out on the
+identical year. That consistency is itself informative: this is not a
+property of any one factor-weighting choice — it is a property of the
+STRATEGY TYPE (down-cap, low-beta, quality-tilted) meeting one
+extraordinary, largely non-repeatable market event (the COVID crash and
+V-shaped recovery). Correcting caveat 4's framing directly: "no fitted
+parameters" is exactly why this test was worth running (it isn't
+contaminated by re-fitting to what it found), but it does not, and
+cannot, immunize the result against a hold-out window that is short and
+concentrated in one dominant regime. The result is the same finding
+restated a third time with different weights, not three independent
+confirmations.
+
+## 17. Beta remedy: EWMA tested, found not broken, found genuinely more
+## reactive than useful improvement — a disclosed, honest negative
+
+RiskMetrics-convention EWMA (lambda=0.94 daily, ~11-trading-day effective
+half-life) built as a remedy for the flat 252-day window's staleness. A
+first implementation (cumulative lam^-t power weighting) threw a
+numerical warning and produced AAPL beta collapsing toward zero and
+flipping sign near the end of its ~5,000-day history — investigated
+directly rather than dismissed. Re-implemented via pandas' own `.ewm()`
+(a numerically stable recursive filter) and got **the identical values**
+— confirming the original implementation was not algorithmically wrong.
+Checked AAPL's actual daily returns against SPY in that window directly:
+genuine, real divergence (e.g. 2026-08-18: AAPL +1.5%, SPY -0.7%) — not
+corrupted data, just an ~11-day-memory estimate reacting to real
+short-term idiosyncratic noise faster than a monthly-rebalance strategy
+needs.
+
+**Empirical comparison, same methodology as the original beta diagnostic:**
+
+```
+IC vs raw return:                +0.0317
+IC vs beta_252-adjusted return:  +0.0450
+IC vs beta_EWMA-adjusted return: +0.0462
+```
+
+EWMA is marginally better than the 252-day version, not worse — so the
+"too reactive" concern doesn't show up as a practical cost in this
+specific measurement. **Honest conclusion: a real, disclosed remedy
+attempt that produced a small, not clearly significant improvement, not
+a clean fix.** The standard RiskMetrics convention is not obviously
+wrong for this use, but it also isn't obviously the right memory length
+for a 40-day-hold strategy — a properly chosen (and pre-registered, not
+swept) longer-memory decay might do better, but that is a new,
+not-yet-run trial, not concluded here.
+
+## 18. Options overlay: top-5 IC-weighted picks, 40-day ATM calls,
+## Black-Scholes fair value — a direct empirical test of the already-
+## disclosed "no jump/catalyst capability" limitation
+
+Per Gabe's direct request. **No real option-chain data is loaded in this
+environment** (that lives in the separate, 26GB DoltHub-sourced options-
+premium-model workstream) — this uses Black-Scholes FAIR VALUE with
+trailing realized volatility (`volatility_60`, corrected here to
+annualized scale: the panel stores a raw daily std dev, median 0.0216,
+confirmed by comparison to the normal 15-45% annualized range for
+equities) as the implied-vol proxy, and the real point-in-time 3-month
+Treasury yield (`data/rates/treasury_yields.csv`) as the risk-free rate.
+**This is a theoretical ceiling, not a tradable estimate** — real market
+IV is well-documented to sit above trailing realized vol on average (the
+variance risk premium), which would raise true entry cost above what's
+computed here.
+
+Construction: top-5 by IC-weighted score each rebalance (single offset,
+cap150, nomination era, 82 windows, 325 total option positions), strike
+= entry close rounded to nearest $5, 40 trading days to expiry, held to
+expiration.
+
+```
+Individual option contracts (n=325):
+  mean return:    +23.4%      median return:    -79.8%
+  47.1% expire completely worthless (return = -100%)
+  23.4% gain more than 100%; max single-contract gain: +1,301%
+
+Per-window basket (5 contracts, equal-weighted, n=82 windows):
+  arithmetic mean:  +23.6%/window     median: +8.3%/window
+  13 of 82 windows (15.9%): ALL 5 picks expire worthless simultaneously
+
+Naive full-reinvestment compounding: terminal wealth -> $0 (ruin) --
+  a single all-5-worthless window, compounded, permanently zeros a
+  strategy that reinvests its whole book every cycle. Verified by
+  inspecting the 13 individual wipeout windows directly, not assumed.
+```
+
+**Read this correctly: the compounded "-100%" and the arithmetic "+23.6%
+per window" are both true, and both matter.** The option payoff structure
+(lottery-shaped: mostly small/total losses, occasionally very large gains)
+is a direct, real consequence of turning a *small, relative* signal (rho
+0.03-0.05, decile spreads of a few percent) into a bet that requires a
+*large, absolute* move to pay off at all. This is exactly the gap the
+theory itself already named in §9d: this composite has no mechanism for
+predicting discrete, large moves, only relative outperformance — asking
+it to price options is asking it to do something it was never built to
+do, and the ~16% total-wipeout rate is what that mismatch looks like in
+practice, not a flaw specific to this options exercise.
+
+**Not a recommendation either way.** A real trader would never run this
+at 100% reinvestment (that's what produces the ruin number) — real
+position sizing for a lottery-shaped payoff is its own separate problem
+(Kelly-style sizing, already explored for a different purpose in this
+project's options-premium-model workstream) that this pass does not
+attempt. The honest summary: modestly positive in expectation under a
+generous (fair-value, no variance-risk-premium) pricing assumption,
+with a real, high, and here-quantified risk of simultaneous total loss
+across the whole book that a stock-only version of this strategy cannot
+produce.
