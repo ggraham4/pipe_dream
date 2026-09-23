@@ -14,5 +14,5 @@ mkdir -p "$ROOT/bin"
 cp "${0:A:h}/av_options_pull.py" "$ROOT/bin/av_options_pull.py"
 cd "$ROOT"
 nohup caffeinate -i "$PY" "$ROOT/bin/av_options_pull.py" --data-root "$ROOT" \
-    --sharadar-dir /Users/ggraham/pipe_dream/final/data/sharadar >> "$ROOT/pull.out" 2>&1 &
+    --sharadar-dir /Users/ggraham/pipe_dream/final/data/sharadar ${=AV_PULL_ARGS} >> "$ROOT/pull.out" 2>&1 &
 echo "launched pid $!"

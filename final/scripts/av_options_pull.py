@@ -234,6 +234,11 @@ def main():
     ap.add_argument("--only-dates", default="")
     ap.add_argument("--max-names", type=int, default=0)
     ap.add_argument("--only-tickers", default="")
+    # Tier priority (2026-09-23): cap150/cap500 research is blocked on the
+    # down-cap feature-grid rebuild, so run --only-tier cap2000 first across
+    # every date; a later run without it fills in the rest (resume skips
+    # what is already logged, so nothing is pulled twice).
+    ap.add_argument("--only-tier", choices=["cap2000"], default=None)
     ap.add_argument("--status", action="store_true")
     a = ap.parse_args()
     a.data_root.mkdir(parents=True, exist_ok=True)
@@ -280,6 +285,8 @@ def main():
         if pas == "weekly":
             g = g[~g.eligible_cap2000]
         g = g.sort_values("ticker")
+        if a.only_tier == "cap2000":
+            g = g[g.eligible_cap2000]
         if a.only_tickers:
             g = g[g.ticker.isin(a.only_tickers.split(","))]
         if a.max_names:
