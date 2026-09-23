@@ -29,7 +29,7 @@ import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lib import (paths, stock_model as sm, options_model as om, data_refresh as dr,
-                 pit_model as pm, composite_model as cm)
+                 pit_model as pm, composite_model as cm, blend_model as bm)
 
 st.set_page_config(page_title="pipe_dream — Model Dashboard", layout="wide", page_icon="📈")
 
@@ -1104,25 +1104,59 @@ def render_stock_universe():
 
 
 def render_stock_composite():
-    """The factor-composite reset (2026-09-19) -- a TRACKED CANDIDATE, kept
-    fully separate from the q75/xrank signals above (different universe,
-    different construction, no trained model). Same honesty convention as
-    the xrank candidate: shown so its picks can be watched in real time, not
-    presented as a validated replacement for the deployed signal."""
+    """The factor-composite reset -- a TRACKED CANDIDATE, kept fully separate
+    from the q75/xrank signals above (different universe, different
+    construction, no trained model). Same honesty convention as the xrank
+    candidate: shown so its picks can be watched in real time, not presented
+    as a validated replacement for the deployed signal.
+
+    UPDATED 2026-09-22 to the model's current, corrected state: the factor
+    composite was treated as a physics-style theoretical model (formalized,
+    audited, corrected) -- asset_growth dropped (measured wrong-signed), and
+    scoring moved from equal-weight to IC-shrinkage weighted. See
+    final/models/2026-09-22-composite-model-full-specification.md for the
+    current spec; final/models/2026-09-19-factor-composite-reset.md covers
+    the original, now-superseded version this tab used to show."""
     st.warning(
-        "**Candidate, not deployed.** Nomination era (2007-2019): +3.75%/yr "
-        "excess vs SPY, survives sector-neutralization and leave-one-year-out "
-        "cleanly. Hold-out (2020-2026), confirmed once: +1.85%/yr excess vs "
-        "SPY, but **fails leave-one-year-out** -- only 2 of 7 hold-out years "
-        "(2020, 2022) are positive, and dropping 2020 alone flips the 7-year "
-        "mean to -2.05%/yr. Full write-up: "
-        "`final/models/2026-09-19-factor-composite-reset.md`."
+        "**Candidate, not deployed.** Nomination era (2007-2019, genuinely "
+        "out-of-sample odd/even split-half for the weights): pooled Spearman "
+        "IC +0.03 to +0.05, t-stats 2.8-5.6. Hold-out (2020-2026), now "
+        "confirmed a THIRD time across three model versions (equal-weight, "
+        "asset_growth-dropped, IC-weighted): +2.44%/yr excess vs SPY, 40/40 "
+        "offsets positive -- but **fails leave-one-year-out** every time: "
+        "dropping 2020 alone flips the mean to -3.95%/yr. Full write-up: "
+        "`final/models/2026-09-22-composite-model-full-specification.md`."
     )
     df, meta = cm.get_signal()
+    if st.button("🔁 Refresh the theoretical model's picks", key="retrain_composite"):
+        dr.run_step_sequence("stock_retrain_composite", cm.retrain_commands(),
+                             ["score theoretical model", "rebuild backtest equity curve"],
+                             cwd=paths.SRC_DIR)
+        st.rerun()
+    st.caption(
+        "This only RESCORES today's picks off the composite panel -- it does "
+        "not rebuild that panel. If the panel itself is stale, use \"Retrain "
+        "ALL models\" in Data & Updates, which refreshes everything including "
+        "this model."
+    )
+
+    state = dr.refresh_status("stock_retrain_composite")
+    if state.status == "running":
+        st.info("Refreshing... this page keeps updating.")
+        with st.expander("Log", expanded=True):
+            st.code(dr.tail_log("stock_retrain_composite"))
+        time.sleep(2)
+        st.rerun()
+    elif state.status in ("done", "failed"):
+        (st.success if state.status == "done" else st.error)(
+            f"Last refresh {state.status} at {state.finished_at}.")
+        with st.expander("Log"):
+            st.code(dr.tail_log("stock_retrain_composite"))
+
     if df is None:
         st.info("No picks generated yet. Run `python3 src/current_signal_composite.py` "
                "(after `src/reset2026/downcap_universe.py`, `quality_factors.py` and "
-               "`build_panel.py` are up to date).")
+               "`build_panel.py` are up to date), or hit Refresh above.")
         return
 
     c1, c2, c3 = st.columns(3)
@@ -1131,8 +1165,10 @@ def render_stock_composite():
     c3.metric("Eligible universe (cap150 tier)", f"{meta['n_eligible_universe']:,}")
 
     st.write("**Construction:** " + meta["construction"])
-    with st.expander("The 9 factors and their signs (zero fitted parameters)"):
-        st.json(meta["factors"])
+    with st.expander("The 8 factors: signs and IC-shrinkage weights"):
+        st.json({"factor_signs": meta["factor_signs"], "factor_weights": meta["factor_weights"]})
+    with st.expander("Backtest summary"):
+        st.json(meta["backtest_summary"])
 
     st.dataframe(
         df[["ticker", "sector", "close", "market_cap", "volatility_60",
@@ -1141,6 +1177,105 @@ def render_stock_composite():
                           "volatility_60": "{:.2%}", "composite_score": "{:.3f}",
                           "weight": "{:.2%}"}),
         use_container_width=True, height=420,
+    )
+    st.caption(meta["note"])
+
+    st.divider()
+    st.subheader("Full backtest history: theoretical model vs SPY (2007–2026)")
+    st.caption(
+        "Nomination era (2007-2019) and hold-out era (2020-2026) stitched "
+        "into one continuous compounding curve -- IC-weighted composite, "
+        "decile_volq construction, single offset, net of 15bp turnover cost. "
+        "NOT a new hold-out spend: every number here reproduces an "
+        "already-reported cell (see build_backtest_equity_curve.py's "
+        "docstring). Read the failed leave-one-year-out result above before "
+        "reading too much into this curve -- most of the hold-out-era gain "
+        "concentrates in a single year (2020)."
+    )
+    curve = cm.get_equity_curve()
+    if curve is None:
+        st.info("No backtest_equity_curve.csv yet — run build_backtest_equity_curve.py "
+                "(final/src/reset2026/) or hit Refresh above.")
+    else:
+        chart_df = curve.set_index("date")[["composite_net_cum", "spy_cum"]].rename(
+            columns={"composite_net_cum": "Theoretical model (net of costs)", "spy_cum": "SPY"})
+        st.line_chart(chart_df)
+        boundary = curve[curve["era"] == "holdout"]["date"].min()
+        if pd.notna(boundary):
+            st.caption(f"Hold-out era begins {boundary.date()}.")
+        term = curve.iloc[-1]
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Terminal wealth (composite, net)", f"{term['composite_net_cum']:.2f}x")
+        c2.metric("Terminal wealth (SPY)", f"{term['spy_cum']:.2f}x")
+        c3.metric("Windows", f"{len(curve)}")
+
+
+def render_stock_blend():
+    """The composite+q75 blend -- a second, independent candidate, kept
+    separate from both the deployed q75/xrank signals and the standalone
+    composite tab. Added 2026-09-22: this candidate was built and backtested
+    on a different branch than the one carrying the corrected composite
+    model, so its own composite half is DELIBERATELY FROZEN to the original
+    9-factor equal-weight version it was actually promoted/backtested
+    against -- see current_signal_blend.py's module docstring. It does NOT
+    pick up the corrected 8-factor/IC-weighted composite shown in the tab
+    beside this one; that is a real, open re-promotion decision, not
+    something that should happen as a side effect of this merge."""
+    st.warning(
+        "**Candidate, not deployed.** Single-grid backtest (q75's score "
+        "cache has only one cadence, not this project's usual 40-offset "
+        "average): -0.36% excess vs SPY in absolute terms on the 2020-2026 "
+        "hold-out -- the least-bad of three constructions tested, not a "
+        "winner. Promoted on this branch 2026-09-19 anyway per explicit "
+        "instruction, to be tracked in real time. Full detail: "
+        "`final/models/2026-09-19-factor-composite-reset.md`."
+    )
+    df, meta = bm.get_signal()
+    if st.button("🔁 Refresh the blend's picks", key="retrain_blend"):
+        dr.run_step_sequence("stock_retrain_blend", bm.retrain_commands(),
+                             ["down-cap universe", "quality factors", "build panel", "score blend"],
+                             cwd=paths.SRC_DIR)
+        st.rerun()
+
+    state = dr.refresh_status("stock_retrain_blend")
+    if state.status == "running":
+        st.info("Refreshing... this page keeps updating.")
+        with st.expander("Log", expanded=True):
+            st.code(dr.tail_log("stock_retrain_blend"))
+        time.sleep(2)
+        st.rerun()
+    elif state.status in ("done", "failed"):
+        (st.success if state.status == "done" else st.error)(
+            f"Last refresh {state.status} at {state.finished_at}.")
+        with st.expander("Log"):
+            st.code(dr.tail_log("stock_retrain_blend"))
+
+    if df is None:
+        st.info("No current_signal_blend.csv yet — hit Refresh above. "
+               "(Needs features_with_fundamentals_sharadar_pit.parquet and "
+               "out/models/xgb_pit_augmented_model.json to already exist -- "
+               "run the base Retrain in Data & Updates first if this is a "
+               "fresh checkout.)")
+        return
+
+    c1, c2, c3 = st.columns(3)
+    c1.metric("As of", meta["as_of_date"])
+    c2.metric("Positions", meta["n_picks"])
+    c3.metric("Eligible universe (cap2000 tier)", f"{meta['n_eligible_universe']:,}")
+    st.write("**Construction:** " + meta["construction"])
+    with st.expander("The 9 (frozen) composite factors, signs, and the q75/composite blend weight"):
+        st.json({"q75_weight": meta["q75_weight"], "composite_weight": meta["composite_weight"],
+                "composite_factor_signs": meta["factors"]})
+    with st.expander("Backtest summary (single grid — see the warning above)"):
+        st.json(meta["backtest_summary"])
+    st.dataframe(
+        df[["ticker", "sector", "close", "market_cap", "volatility_60",
+            "q75_score", "composite_score", "blend_score", "weight"]]
+          .style.format({"close": "${:.2f}", "market_cap": "${:,.0f}",
+                          "volatility_60": "{:.2%}", "q75_score": "{:.3f}",
+                          "composite_score": "{:.3f}", "blend_score": "{:.3f}",
+                          "weight": "{:.2%}"}),
+        use_container_width=True, height=480,
     )
     st.caption(meta["note"])
 
@@ -1350,6 +1485,9 @@ def render_data_updates():
         ("Deployed picks (current_signal_pit.csv)", pm.signal_csv(pm.PRIMARY), False),
         ("Candidate picks (current_signal_pit_xrank.csv)", pm.signal_csv(pm.CANDIDATE), False),
         ("Benchmark comparison (app_model_comparison.json)", pm.COMPARISON_JSON, False),
+        ("Theoretical model picks (current_signal_composite.csv)", cm.SIGNAL_CSV, False),
+        ("Theoretical model backtest curve (backtest_equity_curve.csv)", cm.EQUITY_CURVE_CSV, False),
+        ("Blend picks (current_signal_blend.csv)", bm.SIGNAL_CSV, False),
         ("Options raw (option_chain)", paths.OPTION_CHAIN_SP500, False),
         ("Options raw (volatility_history)", paths.VOLATILITY_HISTORY_SP500, False),
         ("Options calls training table", paths.OPTIONS_CALLS_TRAINING, False),
@@ -1434,9 +1572,21 @@ def render_data_updates():
             # with the models they fed -- they trained on the pre-Round-11
             # universe, so rerunning them only refreshed numbers nothing on
             # this page should be compared against.
-            cmds = [[py, str(paths.SRC_DIR / "features.py")]] + pm.retrain_commands()
-            labels = ["Rebuild price features.parquet (sidebar + Universe tab)"] \
-                + pm.PIT_STEP_LABELS
+            #
+            # 2026-09-22: bm.retrain_commands() (rebuilds the shared composite
+            # panel + scores the blend) and cm.retrain_commands() (rescores
+            # the standalone theoretical-model tab off that same panel, then
+            # re-extends its backtest-history plot) appended so this button
+            # refreshes the two new candidate tabs too. cm runs AFTER bm since
+            # it depends on the panel bm just rebuilt, not the other way round.
+            cmds = ([[py, str(paths.SRC_DIR / "features.py")]] + pm.retrain_commands()
+                    + bm.retrain_commands() + cm.retrain_commands())
+            labels = (["Rebuild price features.parquet (sidebar + Universe tab)"]
+                     + pm.PIT_STEP_LABELS
+                     + ["Down-cap universe (blend)", "Quality factors (blend)",
+                        "Composite panel (blend)", "Score today's blend"]
+                     + ["Score today's theoretical model (composite alone)",
+                        "Rebuild theoretical model's backtest-history plot"])
             dr.run_step_sequence("retrain_all_models", cmds, labels, cwd=paths.SRC_DIR)
             st.rerun()
         _job_status_block("retrain_all_models")
@@ -1525,9 +1675,10 @@ with tab_stock:
     # they produced is measured on data now known to be defective. Keeping them
     # beside point-in-time picks invited a comparison that was not valid in
     # either direction. The two models shown now differ ONLY in training label.
-    t1, t2, t3, t4, t5, t6, t7 = st.tabs(
+    t1, t2, t3, t4, t5, t6, t7, t8 = st.tabs(
         ["Today's Picks", "Query a Ticker", "Sector Bets", "Model Weights",
-         "Backtest & History", "Universe", "Small-Cap Composite (Candidate)"]
+         "Backtest & History", "Universe", "Small-Cap Composite (Candidate)",
+         "Composite+q75 Blend (Candidate)"]
     )
     with t1:
         render_stock_pit()
@@ -1543,8 +1694,8 @@ with tab_stock:
         render_stock_universe()
     with t7:
         render_stock_composite()
-    with t6:
-        render_stock_universe()
+    with t8:
+        render_stock_blend()
 
 with tab_options:
     t1, t2, t3, t4, t5 = st.tabs(["Today's Picks", "Query a Ticker", "Model Weights", "Backtest & History", "Universe"])
