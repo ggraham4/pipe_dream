@@ -140,11 +140,16 @@ def main():
     # which the concat/merge_asof round trip above does not guarantee.
     panel = panel.sort_values(["ticker", "date"]).reset_index(drop=True)
 
-    # Trailing 20-trading-day MEDIAN dollar volume, in $M, on closeunadj*volume
-    # (actual dollars traded, immune to split-adjustment). Per-ticker rolling,
+    # Trailing 20-trading-day MEDIAN dollar volume, in $M. Sharadar SEP
+    # `volume` is SPLIT-ADJUSTED, so actual dollars traded = close (also
+    # split-adjusted) * volume. The original closeunadj * volume mixed bases:
+    # for any name that split LATER it overstated past dollar volume by the
+    # split ratio (AAPL 2008: 28x), letting future splitters -- future winners
+    # -- clear the cap500/cap150 liquidity floor early (look-ahead; 4,990
+    # cap500 / 26,518 cap150 rows, fixed 2026-09-22). Per-ticker rolling,
     # computed on the full history so day 1 of a name's eligibility window
     # already reflects real trailing liquidity, not a partial window.
-    px = panel["closeunadj"].fillna(panel["close"])
+    px = panel["close"].fillna(panel["closeunadj"])
     panel["_dollar_vol_raw"] = px * panel["volume"].astype(np.float64) / 1e6
     panel["dollar_vol_20d"] = (
         panel.groupby("ticker")["_dollar_vol_raw"]
