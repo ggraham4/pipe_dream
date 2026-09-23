@@ -1332,3 +1332,29 @@ way Spearman rho is not, so the two metrics are not measuring the same
 thing here and neither is more "correct." Required labels above (large-
 cap-leaning intersection, single s40 grid, descriptive) apply to every
 number in this result.
+
+**R² inversion, explained (added on COO review):** Fama-MacBeth R² here
+is UNSIGNED — a per-date OLS fit's R² is high whenever score and return
+are tightly related in EITHER direction, even if the sign of that
+relationship flips from date to date. A score whose slope sign is
+unstable across dates can still collect a large mean R² despite carrying
+no consistent directional information at all. That is almost certainly
+what's happening with q75 (rho≈0.003, essentially no rank signal, yet
+the highest R² in the table) and the low-vol baseline (rho≈0.007, same
+pattern) — high per-date fit, no consistent direction. Rho is this
+comparison's directional-accuracy metric and the one the primary
+comparison and outcome are built on; R² is reported only as a magnitude
+cross-check and should not be read as contradicting the rho-based
+result.
+
+**One factor, not eight (added on COO review):** `gross_profitability`
+alone (rho +0.0458, t +4.04) is nearly indistinguishable from the full
+icw8 split-half composite (rho +0.0475, t +4.19) — a difference of
+0.0017 against differences of 0.02-0.04 between either of them and
+q75/xrank. On this comparison, the composite's rank accuracy is
+essentially carried by one factor, not a genuine eight-factor blend. This
+is consistent with `PRODUCTION_WEIGHTS` already assigning
+`gross_profitability` ~60% of total weight (section 12) — this result
+is a second, independent confirmation of that concentration, not a new
+finding, but worth stating plainly here since the headline number could
+otherwise be read as "eight factors combine to beat q75."
