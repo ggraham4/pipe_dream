@@ -1,6 +1,8 @@
 # pipe_dream: current state of the project
 
-**Consolidated 2026-09-23 by `pipe-dream-readme-manager`, first full sweep.**
+**Consolidated 2026-09-23 by `pipe-dream-readme-manager`** (first full sweep,
+then refreshed the same evening after the audit and insider-signals branches
+landed, integration `c8bba77`).
 This is the one current-state document. It merges every branch's docs, the
 coordination ledger, handoffs and project memory, and the newest source wins
 where two disagree. Everything that lost is listed in [Superseded](#superseded)
@@ -8,7 +10,7 @@ at the bottom.
 
 How to read the tags:
 
-- **landed** means the claim is on `integration` (29eb67b).
+- **landed** means the claim is on `integration` (c8bba77).
 - **in flight** means it comes from an unlanded branch or from uncommitted files
   in a worktree. In-flight claims never describe current state. They live in
   [In flight](#5-in-flight).
@@ -66,11 +68,15 @@ built from published anomalies, and moved down-cap. That composite shows a real
 nomination-era signal (2007-2019). On the 2020-2026 hold-out, **every version
 fails leave-one-year-out on 2020**. Since 2026-09-22, every down-cap (cap150 /
 cap500) number is also **unreadable**, because the feature grid it ran on is
-survivorship-selected. The app keeps q75 as the displayed primary, and the
-composite and the composite+q75 blend appear as **Candidate** tabs. Gabe set
-this as the baseline on 2026-09-23. Active new work: the Alpha Vantage options
-pull (running), and the insider and congressional signals (just
-pre-registered).
+survivorship-selected. On rank accuracy the IC-weighted composite beats q75 by
+a margin that is **not detectable** at 82 dates (§19, MIDDLE), and its rank
+signal is essentially one factor, `gross_profitability`. The app keeps q75 as
+the displayed primary, and the composite and the composite+q75 blend appear as
+**Candidate** tabs. Gabe set this as the baseline on 2026-09-23. Insider buy/sell
+counts are a certified dead end (2026-09-23), with one weak lead (opportunistic
+buyers). Congress is forward-only. The Alpha Vantage options pull **crashed**
+on 2026-09-23 at 18:09 and is not running. Active new work: two COO-supervised
+workers (forward-ledger columns, and the earnings announcement premium via 8-K).
 
 ### 3.2 What the app shows: the baseline Gabe fixed on 2026-09-23 (landed, `bca3f7c`)
 
@@ -124,14 +130,26 @@ See [Open conflicts](#6-open-conflicts-and-decisions-for-gabe).
 | IC is retired as a *feature-admission* gate. The gate is now a within-date shuffle null at the 80th percentile | landed | 2026-09-16 | [`final/src/sweep/RUNBOOK.md`](final/src/sweep/RUNBOOK.md) §9 |
 | Factor composite, nomination era, cap150: **+3.75%/yr** excess vs SPY, 40/40 offsets (9(8)-factor original) | landed. **Unreadable**: survivorship-selected grid | 2026-09-19 | [`final/out/reset2026/REPORT_nominate.md`](final/out/reset2026/REPORT_nominate.md), [reset doc](final/models/2026-09-19-factor-composite-reset.md) §3.1 |
 | `asset_growth` dropped (Gabe's call): nomination **+4.32%/yr**, sd 0.55%. `FACTOR_SIGNS` is now 8 factors | landed. Unreadable: same grid | 2026-09-22 | [`PREREGISTRATION.md`](final/src/reset2026/PREREGISTRATION.md) "Factor-set decision"; [corrections](final/models/2026-09-22-composite-model-corrections.md) §3 |
-| Composite hold-out (2020-2026): every version is positive in aggregate and **fails LOYO on 2020**. Original +1.85%/yr (drop 2020 → -2.05%/yr); asset_growth_dropped +2.62%/yr (→ -1.97%/yr); IC-weighted +2.44%/yr (→ -3.95%/yr) | landed (first two write-ups and the third's meta); third write-up in flight | 2026-09-19/22 | [reset doc](final/models/2026-09-19-factor-composite-reset.md) §3.2; [corrections](final/models/2026-09-22-composite-model-corrections.md) §6b; `final/out/current_signal_composite_meta.json` |
+| Composite hold-out (2020-2026): every version is positive in aggregate and **fails LOYO on 2020**. Original +1.85%/yr (drop 2020 → -2.05%/yr); asset_growth_dropped +2.62%/yr (→ -1.97%/yr); IC-weighted +2.44%/yr (→ -3.95%/yr) | landed | 2026-09-19/22 | [reset doc](final/models/2026-09-19-factor-composite-reset.md) §3.2; [corrections](final/models/2026-09-22-composite-model-corrections.md) §6b, §16 |
 | The composite is mostly universe beta. A no-score control earns +2.40%/yr against decile_volq's +4.32% | landed. Unreadable: cap150 grid | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §2a |
-| The composite is a strong low-beta bet: corr(score, beta_252) -0.2933. Beta-adjusted IC is sharper (t 2.53 → 4.25) | landed | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §9b |
+| The composite is a strong low-beta bet: corr(score, beta_252) -0.2933. Beta-adjusted IC is sharper (t 2.53 → 4.25) | landed. Measured on the cap150 grid, so the survivorship caveat applies | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §9b |
+| **IC-shrinkage weights** (each factor weighted by sign × max(0.1, abs(t) − 1) of its own pooled-IC t, pre-registered, one run) beat equal weight out of sample on raw-return IC in both split-halves: fit-odd→test-even, weighted +0.0304 vs equal +0.0183; fit-even→test-odd, weighted +0.0496 vs equal +0.0434. On beta-adjusted IC the second split favours equal weight on the point estimate. No portfolio CAGR was computed for this step | landed. cap150 grid, nomination era | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §12 (OOS figures as reproduced in §19's sanity gate) |
+| **Cross-model rank accuracy (§19): MIDDLE.** Paired rho(icw8 split-half) − rho(q75) mean **+0.0449**, t **+1.89** (bar t ≥ 2), same sign in both halves. icw8 alone +0.0475 (t +4.19); q75 +0.0026 (t +0.12); `gross_profitability` alone +0.0458, so the composite's rank accuracy is **essentially one factor, not eight**. FM-R² ranks the other way because it is unsigned. Required labels: q75's large-cap-leaning (cap500k+) intersection, single s40 grid, pre-2020 only, descriptive (no trial spent) | landed; COO verdict: MIDDLE, no detectable difference | 2026-09-23 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §19; `final/out/reset2026/cross_model_accuracy_report.json` |
+| Composite extensions screened on the nomination era, none adopted: Amihud IC +0.0009 (t = +0.10); regime conditioning stopped (momentum flips in high-vol, the low-vol hypothesis fails); exponent p=2 no better; `fcf_yield` null; `profitability_trend` wrong-signed; EWMA beta marginal (IC +0.0462 vs +0.0450). `leverage` IC -0.0161, t -2.44, right sign, **not in the weights** (see §4.1 for its status) | landed. cap150 grid | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §10, §11, §13, §17 |
+| Turnover: a buffer band (hold unless out of the top 20%) cuts turnover 19.3% → 6.3% at +5.43% vs +5.09% excess. Laddering smooths offset dispersion but does not cut turnover. Buffer is a tested refinement, **not the confirmed default** | landed. cap150 grid, nomination era | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §15; [full spec](final/models/2026-09-22-composite-model-full-specification.md) §2.3 |
+| Options overlay (top-5 picks, 40-day ATM calls at Black-Scholes fair value, no real chain data): 47.1% of contracts expire worthless, all 5 worthless in 13 of 82 windows, full reinvestment compounds to ruin. A theoretical ceiling, not a recommendation | landed. cap150, nomination era | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §18 |
+| **Insider buy/sell counts are a certified dead end** as composite factors (cap150, h=40). Registered k=2: `ins_buyers_90` raw IC −0.0006 (t −0.16), halves disagree in sign; `ins_sellers_90` wrong-signed. The book gain is **gross, costs not applied**: ew9+buyers +4.94% vs the ew8 baseline +4.82%, against a shuffle-null p80 of +4.86%. The sector-neutral t of +3.10 is an artefact; with factor and return both sector-demeaned, IC +0.0018, **t 0.65**. Do not re-screen 30/180-day windows | landed; COO certified dead end | 2026-09-23 | [insider results](final/models/2026-09-23-insider-congress-results.md) §2-3, §7; [prereg](final/models/2026-09-23-insider-congress-preregistration.md) |
+| **Lead, not a result:** *opportunistic* insider purchases (Cohen, Malloy & Pomorski 2012), **+0.71% sector-demeaned 40-day return (Newey-West t 1.92, n = 10,419 events)**; routine purchases −0.70%. Post-hoc and below t = 2. Its "small-cap" tercile is mostly fallen large-caps | landed. Survivorship-selected cap150 grid | 2026-09-23 | [insider results](final/models/2026-09-23-insider-congress-results.md) §6 |
+| **Congress trades are untestable in-era.** AV House coverage starts mid-2018 and 2020+ is spent. Forward-only. The premise that insider and congress data only record the execution date was wrong: SEC Form 345 has `FILING_DATE` (median lag 2 days) and AV congress has `filed_date` (median 28 days) | landed; COO: forward-only | 2026-09-23 | [insider results](final/models/2026-09-23-insider-congress-results.md) §1, §7 |
 | **The reset2026 cap500/cap150 grid is survivorship-selected.** 52% of cap150-only rows are future winners, and 4,598 real tickers are missing. Every down-cap result is unreadable until it's rebuilt | landed | 2026-09-22 | [AV spin doc](final/models/2026-09-22-alpha-vantage-spin.md) §A |
 | `downcap_universe.py` split-basis bug is fixed; corrected universe written as `downcap_universe_v2.parquet` (v1 kept because `blend_model.py` reads it) | landed | 2026-09-22 | [AV spin doc](final/models/2026-09-22-alpha-vantage-spin.md) §B |
 | AV `HISTORICAL_OPTIONS` is the only survivorship-safe AV endpoint (dead names, 2008+, raw volume/OI, PIT-safe OI). EARNINGS/ESTIMATES/INSIDER/NEWS are live-only | landed | 2026-09-22 | [AV spin doc](final/models/2026-09-22-alpha-vantage-spin.md) §1-2 |
 | The one positive result from the XGBoost era: `days_to_next_filing` (the earnings announcement premium), h=20 IC -0.0153, t -4.17, and it gains strength under sector neutralisation. `_seasonal` is the tradeable, provably causal version (t -2.18). `_actual`/`_known` are **excluded from every training feature set** | landed (code); in the composite as `days_to_next_filing_seasonal` | 2026-09-12 | `round18-app-two-models:AGENTS.md` "Round 16" |
 | LCID was **not** a data bug. It was a real 1-for-10 reverse split on 2025-09-02 | landed | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §6d |
+
+"cap150 grid" in the status column means the survivorship caveat in the row
+on the reset2026 grid applies: the number is measured on a universe of tickers
+that were cap2000 at some point, so it is not a true small-cap result.
 
 The certified dead ends list is owned by the COO (`~/.claude/pipe_dream-coordination/COO.md`,
 2026-09-23) and is reproduced in §8.3.
@@ -146,21 +164,30 @@ The certified dead ends list is owned by the COO (`~/.claude/pipe_dream-coordina
   1. 2026-09-19: `cap150_raw`/`decile_volq`, the one pre-registered shot.
   2. 2026-09-22: `asset_growth_dropped`, the "Second hold-out spend" in
      PREREGISTRATION.md.
-  3. 2026-09-22: IC-weighted. Its write-up (corrections §16) and its
-     PREREGISTRATION entry are **in flight** (audit worktree, uncommitted).
-     Its number is already in the landed composite meta.
+  3. 2026-09-22: IC-weighted, +2.44%/yr, drop 2020 → -3.95%/yr
+     (corrections §16, landed 2026-09-23).
 
-  The composite+q75 blend was also read once (-0.36%, reset branch).
+  The composite+q75 blend was also read once (-0.36%, reset branch). COO.md
+  counts all four as hold-out reads; the full-spec doc §5 counts the three
+  composite versions only. Both are right about what they count.
 - **The only unspent test surface is the live forward ledger**
   (`prediction_ledger.py`), started 2026-09-22 on panel date 2026-09-08.
-  Landed as v1/v2. The v3 IC-weighted ledger is in flight. Any further
-  hold-out look needs Gabe's explicit OK (COO.md).
+  `prediction_ledger_v3.csv` (IC-weighted and equal-weight columns) landed
+  2026-09-23. First maturity is about 2026-11-03, and the COO wants at least
+  6 non-overlapping matured dates before any conclusion (COO.md WO-1). Any
+  further hold-out look needs Gabe's explicit OK (COO.md).
 
 ---
 
 ## 4. Workstreams
 
-### 4.1 Factor composite (reset2026): active, landed through 2026-09-22 §9
+### 4.1 Factor composite (reset2026): active, landed through corrections §19 (2026-09-23)
+
+**Start with the [full specification](final/models/2026-09-22-composite-model-full-specification.md)**
+(2026-09-22, landed): the equation, factor table, weights, universe, eras and
+reproduction in one place. Its §6 points to "AGENTS.md's reproduction table",
+which now lives in §7 below.
+
 
 - **Model:** a rank-transform of each factor, a fixed sign, then an average.
   Top decile within 5 trailing-vol quintiles, inverse-vol weighted, 40-day hold,
@@ -172,11 +199,10 @@ The certified dead ends list is owned by the COO (`~/.claude/pipe_dream-coordina
   `short_interest_days_to_cover` −. The last one has **zero coverage before
   2020-04-27**, so every nomination number is effectively from 7 factors.
 - **Weights:** equal-weight in `composite.py`. The live candidate uses
-  IC-shrinkage `PRODUCTION_WEIGHTS` (`gross_profitability` 0.5956,
-  `accruals` -0.1627, `net_issuance_pct` -0.1399, `momentum_12_1` 0.0497,
-  the rest ±0.013, per the landed composite meta). The module defining those
-  weights (`ic_weighted_composite.py`) is **not committed**. See the open
-  conflicts.
+  IC-shrinkage `PRODUCTION_WEIGHTS` from `ic_weighted_composite.py` (landed
+  2026-09-23): `gross_profitability` 0.5956, `accruals` -0.1627,
+  `net_issuance_pct` -0.1399, `momentum_12_1` 0.0497, the rest ±0.013 (per
+  the landed composite meta). Frozen, fit once on the nomination era.
 - **Physics audit (landed 2026-09-22).** Signs mostly right. Equal weights sit
   at cosine similarity 0.47 from the IC-optimal weights. Most of the edge is
   unlikely to be stock selection.
@@ -185,10 +211,20 @@ The certified dead ends list is owned by the COO (`~/.claude/pipe_dream-coordina
   Book-to-market wrong-signed (IC -0.0240). `asset_growth` dropped. Beta term
   added. `price_adjustment_scanner.py` and `concentration_monitor.py` built.
   [`2026-09-22-composite-model-corrections.md`](final/models/2026-09-22-composite-model-corrections.md).
-- **Latest in-flight results** (§10-18: IC weighting, leverage, buffer,
-  options overlay): see [In flight](#5-in-flight).
-- **Next (COO / reset doc §6):** rebuild the down-cap grid (needs Sharadar SF1
-  for ~4.6k more names), laddered rebalancing, buffer construction.
+- **Corrections §10-19 (landed 2026-09-23):** IC-shrinkage weighting, the
+  extension screens, regime buckets, turnover, the third hold-out spend, EWMA
+  beta, the options overlay and the §19 cross-model comparison. Verdicts are
+  in §3.3.
+- **`leverage`:** corrections §13 (2026-09-22) called it a ready candidate for
+  a promotion decision. The newer COO position (COO.md WO-2, 2026-09-23) is
+  that its t −2.44 was already measured in-era, so an in-era test can only
+  nominate. Confirmation is forward-only, as an icw9 column in the prediction
+  ledger. That is being built now (see [In flight](#5-in-flight)).
+- **Next (COO.md, 2026-09-23):** rebuild the down-cap grid (decision #2,
+  needs Sharadar SF1 for ~4,600 more names); score the forward ledger from
+  about 2026-11-03 (WO-1). Laddered rebalancing was **not launched**: it
+  only changes variance and can't fix the 2020 concentration (COO.md;
+  corrections §15). Open composite questions for Gabe are COO decision #7.
 
 ### 4.2 Old XGBoost stock model (q75 / xrank): displayed, no validated edge
 
@@ -218,8 +254,12 @@ The certified dead ends list is owned by the COO (`~/.claude/pipe_dream-coordina
 
 ### 4.4 Options
 
-- **AV options bulk pull: running** (landed code). `final/scripts/av_options_pull.py`,
-  data in `final/data/alphavantage/`. It can move to a Windows box:
+- **AV options bulk pull: crashed 2026-09-23 18:09, not running** (landed
+  code). `http.client.IncompleteRead` is not in the retry tuple at
+  `final/scripts/av_options_pull.py:151`. It stopped at monthly 2010-08-18:
+  32 of 225 monthly dates, 0 of 750 weekly (COO.md; `final/data/alphavantage/pull.out`
+  ends in that traceback, mtime 18:09). Restarting it is Gabe's call. Data
+  in `final/data/alphavantage/`. It can move to a Windows box:
   [`final/scripts/AV_PULL_WINDOWS.md`](final/scripts/AV_PULL_WINDOWS.md).
   A unified AV+DoltHub chain and option features are built
   (`build_option_chain_unified.py`, `build_av_options_features.py`).
@@ -243,12 +283,35 @@ The certified dead ends list is owned by the COO (`~/.claude/pipe_dream-coordina
   on: `pit_universe.parquet` 6,888,686 rows, 4,011 tickers. Reproduction and
   acceptance tests: [`DATA-PIPELINE-HANDOFF.md`](DATA-PIPELINE-HANDOFF.md).
 - Approved data-sourcing order (Gabe, 2026-09-17): sector-neutral features →
-  net issuance (done, Round 20) → insider buys (**EDGAR**, not AV; now in flight)
-  → options liquidity bucketing (AV pull running) → earnings revisions.
+  net issuance (done, Round 20) → insider buys (**done 2026-09-23**, SEC Form
+  345, plain counts a dead end, see §4.6) → options liquidity bucketing (AV
+  pull crashed, see §4.4) → earnings revisions.
   [`2026-09-17-new-data-sourcing-research.md`](final/models/2026-09-17-new-data-sourcing-research.md).
 - Architecture research (2026-09-17): hold the architecture and put effort
   into data. The reset then chose a linear composite.
   [`2026-09-17-model-architecture-research.md`](final/models/2026-09-17-model-architecture-research.md).
+
+### 4.6 Insider and congressional trading: done 2026-09-23 (landed)
+
+- **Data:** SEC Insider Transactions Data Sets (structured Form 3/4/5,
+  2006Q1-2026Q1, 868 MB, gitignored in `final/data/edgar/form345/`),
+  keyed on `FILING_DATE` and joined by issuer CIK, officers and directors
+  only. AV `INSIDER_TRANSACTIONS` is unusable (no filing date, no P/S code,
+  today's issuer only).
+- **Result:** plain buyer/seller counts are a certified dead end. Nearly all
+  the cross-sectional structure is a sector bet: insiders buy most in
+  Financials, Energy and Real Estate, which then underperform. Verdicts in
+  §3.3.
+- **Lead:** opportunistic buyers. The COO wants it confirmed on forward data
+  only, with no 2007-2019 reruns (COO.md WO-3; worker in flight), or on
+  true small caps once the down-cap grid is rebuilt (WO-4, blocked on COO
+  decision #2).
+- **Congress:** forward-only. `final/scripts/av_congress_pull.py` needs the
+  premium AV key and is **untested** against the REST response.
+- Code: `final/src/insider/` (`build_insider_panel.py`, `screen_insider.py`,
+  `posthoc_insider.py`). Small reports are committed in `final/out/insider/`.
+  [Results](final/models/2026-09-23-insider-congress-results.md),
+  [pre-registration](final/models/2026-09-23-insider-congress-preregistration.md).
 
 ---
 
@@ -258,10 +321,10 @@ Nothing below is current state until it lands.
 
 | branch / worktree | what it will change | state | source |
 |---|---|---|---|
-| `worktree-factor-composite-audit` (uncommitted files) | Corrections §10-18: Amihud null (t +0.10); regime diagnostic (momentum flips in high-vol, low-vol hypothesis fails, stopped); **IC-shrinkage weights** (OOS IC gain in both split-halves on raw returns); leverage candidate (IC -0.0161, t -2.44, not promoted); buffer band cuts turnover 19.3% → 6.3%; third hold-out spend; EWMA beta (marginal); options overlay (47.1% of contracts expire worthless). Also the full-spec doc, `ic_weighted_composite.py`, `prediction_ledger_v3.csv`, ~10 reset2026 scripts, and PREREGISTRATION appends | uncommitted. The session's commit was blocked twice by its Bash classifier. Needs Gabe or the integrator | `worktree-factor-composite-audit:final/models/2026-09-22-composite-model-corrections.md` §10-18; `...:final/models/2026-09-22-composite-model-full-specification.md`; `HANDOFF-worktree-factor-composite-audit.md` |
 | `worktree-factor-composite-reset` (5 commits) | "Merge whole branch, nothing dropped" (Gabe, 2026-09-23): the Retrain-ALL speedup (`build_features_fundamentals_sharadar.py`, 2:42 → 59s, verify-pass), the `blend_q75.py` backtest and report, and `current_signal_blend_full.csv` (per-ticker query statuses). **Its app.py UI reorg is superseded** by the 09-23 baseline, and its `current_signal_blend.py` must not be taken (it drops the frozen-factor guard) | blocked on app.lock contention and app-manager reconciliation | `worktree-factor-composite-reset:final/models/2026-09-22-session-handoff.md`; LEDGER landing queue #2; APP.md |
-| `worktree-insider-signals` (uncommitted) | Insider (SEC Form 3/4/5 bulk, `FILING_DATE`-keyed) and congressional signals vs the composite. Pre-registered k=2 (`ins_buyers_90` +, `ins_sellers_90` −). Congress is recorded as untestable under the era rules (forward-only) | pre-registered 2026-09-23, no results | `worktree-insider-signals:final/models/2026-09-23-insider-congress-preregistration.md` |
-| `app` | = `bca3f7c`, content-identical to integration's `final/app/**`. It needs a fast-forward to integration | awaiting a fast-forward | `HANDOFF-app.md` |
+| `worktree-agent-a3b6234523542c444` (COO WO-2+3) | Forward side-ledger columns: an icw9 score with `leverage` (sign −1), and the opportunistic-buyer factor, plus a Form 4 refresh. Touches `final/src/reset2026/prediction_ledger.py`; nobody else should touch that file until it lands | started 2026-09-23 evening. On disk it sits at `e94cfe0` (origin/main) with no changes yet; the ledger says it's waiting to base on integration | COO.md "In flight"; LEDGER |
+| `worktree-agent-abcd4cb45e7df1ecd` (COO WO-5) | Earnings announcement premium via EDGAR 8-K Item 2.02 (`final/src/eap/`, a new dated doc). Trial 6 of the earnings-timing family: pooled NW \|t\| ≥ 2.64 plus the other gates in COO.md | started 2026-09-23 evening. On disk it's at `e94cfe0` with no changes, although the ledger says "basing on origin/integration (c8bba77)" | COO.md WO-5; LEDGER |
+| `app` | = `bca3f7c`, content-identical to integration's `final/app/**`. It should `git merge integration` (c8bba77) | awaiting the merge | `HANDOFF-app.md`; LEDGER landing log |
 | `worktree-papermoney-order-sheet` | paper-broker order sheet | **not to land** (Gabe, 2026-09-23) | LEDGER |
 | `round18-app-two-models` | superseded. Its AGENTS.md Rounds 9-19 narrative is absorbed into this README | not merged. The merge-abort still needs confirming (LEDGER queue #0) | LEDGER |
 
@@ -278,37 +341,53 @@ Nothing below is current state until it lands.
    and #5 in AGENTS.md, or confirm the out-of-repo rules take precedence?**
    `final/src/sweep/RUNBOOK.md` §10 still carries the pre-2026-09-17 "never
    commit" wording.
-2. **Landed code depends on an uncommitted file.** Integration's
-   `final/src/current_signal_composite.py` does `import ic_weighted_composite`,
-   which exists on **no branch** (it's untracked in the audit worktree). A fresh
-   checkout of `integration` can't run the composite tab's retrain. Its meta
-   also cites the uncommitted full-spec doc. **For the integrator:** land the
-   audit worktree's non-app files (Gabe runs the commit, or grants a Bash
-   permission rule).
+2. ~~Landed code depends on an uncommitted file (`ic_weighted_composite`).~~
+   **Resolved 2026-09-23** by f680f94 (audit landed; the integrator verified
+   `import current_signal_composite` on integration).
 3. **Down-cap survivorship vs the composite's live role.** The AV doc (landed
-   2026-09-22) says every cap150/cap500 result is unreadable. The audit's
-   full-spec doc (uncommitted, same day) and the landed composite meta quote
-   cap150 numbers without that caveat. The live composite candidate and the
+   2026-09-22) says every cap150/cap500 result is unreadable. The full-spec
+   doc (landed 2026-09-23; §4 "~4,011 tickers ever eligible") and the landed
+   composite meta quote cap150 numbers without that caveat. The insider
+   results doc does carry it. The live composite candidate and the
    forward ledger both use cap150. **Gabe / COO decision #2:** fund the SF1
    pull for ~4.6k names and rebuild, or move the candidate to cap2000.
 4. **IC's role (methodology, for the COO).** Round 19 (2026-09-16) retired IC as
    a feature-admission gate (rank correlation with earnings +0.019). Gabe's
    2026-09-22 reframe made pooled IC the composite's *target metric*, and the
-   in-flight IC-weighting and leverage results are judged on IC. The insider
-   pre-registration (2026-09-23) uses both an IC screen and the shuffle null.
-   The two standards need an explicit reconciliation.
+   IC-weighting, leverage and §19 cross-model results are judged on IC/rho.
+   The insider round (2026-09-23) used both an IC screen and the shuffle
+   null, and they disagreed: sellers are wrong-signed on IC but beat the
+   shuffle null on the book. The two standards need an explicit
+   reconciliation.
 5. **App-owned inconsistencies (for `pipe-dream-app-manager`).**
    `final/app/README.md` (2026-09-18) describes the six-tab, q75/xrank-only
    layout. `current_signal_blend.py` and `current_signal_blend_meta.json` say
    `"role": "primary"` and mention a "Theoretical Model tab". The 09-23
    baseline has the blend as a Candidate tab.
-6. **Stale coordination entries (for their owners).** COO.md lists the blend as
-   "app primary" and counts one composite hold-out spend. The ledger's AV row
-   says new commits need landing, but `de4fdb5` is already in integration.
+6. **Stale coordination entries (for their owners).** COO.md's Active bets
+   row still calls the blend "app primary", and its q75 dead-end note says
+   "half of the app's primary blend". Both contradict the 09-23 baseline
+   (blend is a Candidate tab). COO decision #4 (push the audit branch) is
+   moot, because it was pushed and landed (f680f94). The ledger's AV row says
+   new commits need landing, but `de4fdb5` is already in integration. Project
+   memory (`project_thin_liquidity_options_edge_idea.md`) still says the AV
+   bulk pull is RUNNING, but it crashed at 18:09.
 7. **Earlier decisions still pending** (COO.md): why the HMM regime gate was
    retired; whether to renew AV premium (around 2026-10-22); whether the
    integrator may fast-forward `main` to `integration` (`main` 7898b52 is far
-   behind).
+   behind); the composite open questions (COO decision #7: is 2020 regime or
+   luck, adopt `leverage`, a Deflated-Sharpe/Reality-Check gate, EWMA beta).
+8. **`neutralize_on_sector` convention (COO decision #6, methodology, for
+   Gabe).** It demeans the factor within sector but not the return. The
+   insider round showed that this turns a sector-timing effect into a fake
+   within-sector t (+3.10 → 0.65 when both sides are demeaned). The same
+   function produced the physics doc §7 `*_neutral` rows and the reset's
+   neutral cells. The COO recommends reporting the both-sides number next to
+   it as standard, without changing past numbers. Not yet decided.
+9. **COO worker worktrees vs the ledger (for the integrator and COO).** Both
+   COO-launched worktrees (WO-2+3, WO-5) sit at `e94cfe0` (origin/main) on
+   disk, not integration. The ledger says WO-5 is basing on c8bba77. Under
+   Rule 0 the integrator does the basing (`git switch -C … integration`).
 
 ---
 
@@ -323,7 +402,7 @@ pipe_dream/
 │   ├── src/                      pipeline
 │   │   ├── reset2026/            factor composite (2026-09-18 onward), PREREGISTRATION.md
 │   │   ├── sweep/                XGBoost-era sweep harness, Rounds 12-20; RUNBOOK.md
-│   │   ├── insider/              (in flight) insider/congress signals
+│   │   ├── insider/              insider (SEC Form 345) signals, 2026-09-23
 │   │   ├── current_signal_pit.py        q75 + xrank live signal
 │   │   ├── current_signal_composite.py  composite candidate
 │   │   ├── current_signal_blend.py      blend candidate (frozen 9-factor composite)
@@ -351,6 +430,8 @@ unreachable from agent sandboxes, and keys (`SHARADAR_API_KEY`,
 | Factor composite: universe, factors, panel, outcome cache, backtest, reports | `downcap_universe.py` → `quality_factors.py` → `build_panel.py` → `build_outcome_cache.py` → `run_backtest.py` → `aggregate_report.py` | [reset doc](final/models/2026-09-19-factor-composite-reset.md) §7 |
 | Composite corrections / audit | `model_audit.py`, `correction_variants.py`, `harness_check.py` | [physics](final/models/2026-09-22-composite-model-physics.md) §12, [corrections](final/models/2026-09-22-composite-model-corrections.md) §7 |
 | Sweep harness (XGBoost era) | `python3 -m sweep.cli …` | [`final/src/sweep/RUNBOOK.md`](final/src/sweep/RUNBOOK.md) |
+| Insider panel, screen, post-hoc (download 81 SEC quarterly zips first) | `build_insider_panel.py` → `screen_insider.py` → `posthoc_insider.py` | [insider results](final/models/2026-09-23-insider-congress-results.md) "Reproduction" |
+| Composite, current spec (universe → factors → panel → outcomes → beta, then `ic_weighted_composite.py`, `prediction_ledger.py record/score`) | per the spec | [full spec](final/models/2026-09-22-composite-model-full-specification.md) §6 |
 | AV options pull + unified chain + features | `av_options_pull.py`, `build_option_chain_unified.py`, `build_av_options_features.py` | [AV spin doc](final/models/2026-09-22-alpha-vantage-spin.md) §C-E |
 | Live signals | `current_signal_pit.py`, `current_signal_composite.py`, `current_signal_blend.py` (the app's "Retrain ALL" runs them) | `final/app/README.md` |
 | Older gitignored paths (yfinance `td_data_local/`, EDGAR `fundamentals_raw/`, DoltHub options exports, GARCH, pre-Round-11 panels) | per-path commands | `git show integration:AGENTS.md` at 29eb67b, "Reproducing every gitignored path" (historical copy, see §Superseded) |
@@ -395,7 +476,9 @@ not superseded by anything newer):
 | "Candidate pool" fix, **retracted** (R18) | admitted NaN-vol names, and `_bucket_idx` filed them in the lowest-vol bucket | Gabe reading the picks | same; APP.md |
 | `downcap_universe.py` `closeunadj × split-adjusted volume` | inflated past dollar volume for later splitters | AAPL 2008 $162B/day | AV spin doc §B |
 | Survivorship-selected down-cap grid | 52% of cap150-only rows are future winners | pool-integrity check, 62.85% | AV spin doc §A |
-| IC-weighted score without renormalising | missing-factor rows compressed | re-run after the fix | corrections §12 (in flight) |
+| IC-weighted score without renormalising | missing-factor rows compressed | re-run after the fix | corrections §12 |
+| Sector-neutral t from demeaning the factor only | insider buyers t +3.10 "within sector"; both sides demeaned gives 0.65 | fire rate vs sector return, corr −0.79 | insider results §3 |
+| AV pull `IncompleteRead` not retried | bulk pull died at 2010-08-18 | `pull.out` traceback | COO.md; `final/scripts/av_options_pull.py:151` |
 | LCID "bug", **retracted** | adjusted vs raw price compared | split-signature scanner | corrections §6d |
 
 **Standing rule** (Round 16/17): verify by naming what should be there, with
@@ -418,6 +501,14 @@ permuted row.
   `price_adjustment_scanner.py` before calling a price series a bug.
 - **Live script = backtest cell, field by field.** Trace a backtest's data to
   where it is *loaded*, not where it is used.
+- **`current_signal_blend.py` hardcodes `MAIN_ROOT` to the main checkout**
+  and puts its `src/` and `reset2026/` on `sys.path` first. Importing it from a
+  worktree can silently pick up the main checkout's stale `composite.py`
+  (corrections §19 row 3; ledger landing log). Don't import it for analysis.
+- **Sector-neutral numbers:** `neutralize_on_sector` demeans only the
+  factor. When a factor's sector concentration tracks sector returns, the
+  result looks like within-sector skill but isn't (insider round). Whether
+  to report both-sides numbers as standard is pending (Open conflicts #8).
 - **Never admit NaN-feature names to a scored pool.** `_bucket_idx` sends NaN
   vol to the lowest-vol bucket. The fix touches `simulate()`, so it's Gabe's
   call.
@@ -443,9 +534,12 @@ path-order / `accel_20` (R19; an 8th trial is not allowed) · IC as a feature
 gate · the old HMM gate (until Gabe says why it was dropped) · earnings
 proximity as a stage-2 rule · composite `decile1_volq` · options: long calls,
 long puts, buy/no-buy gate + ATM, 60-day, ~2-day/0DTE, LEAPS, GAM hurdle · AV
-EARNINGS/ESTIMATES/INSIDER/NEWS as backtest features. In flight (not yet
-certified): Amihud illiquidity, book-to-market (wrong-signed), exponent
-transform.
+EARNINGS/ESTIMATES/INSIDER/NEWS as backtest features · **insider plain
+counts** (`ins_buyers_90`/`ins_sellers_90`, cap150, h=40; no 30/180-day
+variants) · **congress as a backtest factor** (forward-only). Screened
+negative but not certified by the COO: Amihud illiquidity, book-to-market
+(wrong-signed), exponent transform, `fcf_yield`, `profitability_trend`,
+regime conditioning (stopped by its own staging rule).
 
 ---
 
@@ -465,12 +559,13 @@ the file is on `integration`.
 | [`final/src/reset2026/PREREGISTRATION.md`](final/src/reset2026/PREREGISTRATION.md) | 2026-09-18 → 09-22 | landed, protected | append-only record of every composite decision and spend |
 | [`final/out/reset2026/REPORT_nominate.md`](final/out/reset2026/REPORT_nominate.md), [`REPORT_holdout.md`](final/out/reset2026/REPORT_holdout.md) | 2026-09-19 | landed; **stale** (9(8)-factor, pre-`asset_growth` drop, pre-survivorship finding) | offset-averaged headline tables |
 | [`final/models/2026-09-22-composite-model-physics.md`](final/models/2026-09-22-composite-model-physics.md) | 2026-09-22 | landed | physics-style audit of the composite (§6 recommendation refuted by corrections §1) |
-| [`final/models/2026-09-22-composite-model-corrections.md`](final/models/2026-09-22-composite-model-corrections.md) | 2026-09-22 | landed §0-9; §10-18 in flight | corrections, LCID retraction, beta term, safeguards |
-| `worktree-factor-composite-audit:final/models/2026-09-22-composite-model-full-specification.md` | 2026-09-22 | in flight (uncommitted) | clean spec of the IC-weighted 8-factor composite |
+| [`final/models/2026-09-22-composite-model-corrections.md`](final/models/2026-09-22-composite-model-corrections.md) | 2026-09-22 → 09-23 | landed (§0-19) | corrections, LCID retraction, beta term, safeguards, IC weighting, extensions, turnover, third hold-out spend, options overlay, §19 cross-model MIDDLE |
+| [`final/models/2026-09-22-composite-model-full-specification.md`](final/models/2026-09-22-composite-model-full-specification.md) | 2026-09-22 | landed | clean spec of the IC-weighted 8-factor composite: start here (§4 lacks the survivorship caveat; §6 points to the old AGENTS.md table) |
 | [`final/models/2026-09-22-alpha-vantage-spin.md`](final/models/2026-09-22-alpha-vantage-spin.md) | 2026-09-22 | landed | AV coverage, options pull, **down-cap survivorship finding** |
 | [`final/scripts/AV_PULL_WINDOWS.md`](final/scripts/AV_PULL_WINDOWS.md) | 2026-09-23 | landed | moving the AV pull to Windows |
 | `worktree-factor-composite-reset:final/models/2026-09-22-session-handoff.md` | 2026-09-22 | in flight | blend promotion (UI part superseded), query fix, retrain speedup |
-| `worktree-insider-signals:final/models/2026-09-23-insider-congress-preregistration.md` | 2026-09-23 | in flight (uncommitted) | insider/congress pre-registration |
+| [`final/models/2026-09-23-insider-congress-preregistration.md`](final/models/2026-09-23-insider-congress-preregistration.md) | 2026-09-23 | landed | insider k=2 trials, congress ruled untestable before any return |
+| [`final/models/2026-09-23-insider-congress-results.md`](final/models/2026-09-23-insider-congress-results.md) | 2026-09-23 | landed | insider counts fail; sector-neutral artefact; opportunistic-buyer lead; congress forward-only |
 | [`final/app/README.md`](final/app/README.md) | 2026-09-18 | landed; stale vs app.py (app-manager) | how to run the app, tab guide |
 | [`final/models/pit_integration/README.md`](final/models/pit_integration/README.md) | 2026-09-02 | landed | options PIT-integration reproduction |
 | [`final/models/hyperparameter_retune/README.md`](final/models/hyperparameter_retune/README.md) | 2026-09-02 | landed | options Tweedie/GAM retune |
@@ -505,8 +600,16 @@ Old claim, its source and date → what replaced it, with source and date.
 - Composite and blend branch "not merged to main; Gabe merges" (session-handoff, 2026-09-22) → all landing goes through the integrator onto `integration` (LEDGER / Rule 0, 2026-09-23).
 - Standing constraint #5 "Never run git add/commit/push yourself" (origin/main AGENTS.md; sweep RUNBOOK §10) → "fine to run yourself" (AGENTS.md #5, 2026-09-17). Further narrowed by Rule 0 (2026-09-23; see Open conflicts #1).
 - AV options are blocked, with no volume/OI field (memory, 2026-09-17) → unblocked, AV premium bought, bulk pull running (AV spin doc / memory, 2026-09-22).
-- Insider data source "TBD / AV" (data-sourcing research, 2026-09-17) → EDGAR Form 4 (session-handoff, 2026-09-22) → SEC Form 3/4/5 bulk data sets (insider prereg, 2026-09-23, in flight).
+- Insider data source "TBD / AV" (data-sourcing research, 2026-09-17) → EDGAR Form 4 (session-handoff, 2026-09-22) → SEC Form 3/4/5 bulk data sets (insider prereg and results, 2026-09-23, landed).
 - AV `HISTORICAL_VOLUME_OPEN_INTEREST_RATIO` gives only a ratio (session-handoff §5, 2026-09-22) → `HISTORICAL_OPTIONS` has raw volume and OI (AV spin doc §1, 2026-09-22).
 - Stop-loss 15% adopted (AGENTS.md Round 8) → no stop; Round 13 holds to horizon (AGENTS.md note, 2026-09-11; reset doc §5).
 - AGENTS.md sections "Current state (as of 2026-09-02)", "Known gaps", "Future plans", "Where the fuller history lives" → history only. Read them at `git show 29eb67b:AGENTS.md`. Their live content (reproduction table, options gaps, dead ends) is carried in §4, §7 and §8 above.
 - `Claude outputs/RUNBOOK.md` (Round 12, 2026-09-09) → `final/src/sweep/RUNBOOK.md` (self-labelled superseded).
+- `current_signal_composite.py` fails at import on integration (README Open conflicts #2, 2026-09-23 first sweep) → resolved, audit landed with `ic_weighted_composite.py` (LEDGER landing log, f680f94, 2026-09-23).
+- Corrections §10-18, the full-spec doc, `ic_weighted_composite.py` and `prediction_ledger_v3.csv` are uncommitted in the audit worktree (README §5, 2026-09-23 first sweep; COO decision #4) → pushed and landed at 736a424 / f680f94 (LEDGER, 2026-09-23).
+- Insider/congress pre-registered, no results (README §5, 2026-09-23 12:28 prereg) → results landed, counts a dead end, congress forward-only (insider results doc; COO.md; c8bba77, 2026-09-23).
+- Insider and congress data only record the execution date (the premise the insider session started from, 2026-09-23) → SEC Form 345 has `FILING_DATE` and AV congress has `filed_date` (insider results §1, 2026-09-23).
+- AV options bulk pull running (AV spin doc / memory, 2026-09-22) → crashed on `IncompleteRead` at 18:09 (COO.md, `pull.out`, 2026-09-23).
+- `leverage` is a ready candidate for an explicit promotion decision (corrections §13, 2026-09-22) → contaminated in-era; confirmation only via a forward-ledger icw9 column (COO.md WO-2, 2026-09-23).
+- Laddered rebalancing as a next step for the composite (reset doc §6 / COO leads, 2026-09-22) → smooths dispersion but doesn't cut turnover (corrections §15), and the COO did not launch it (COO.md, 2026-09-23).
+- Corrections §12 OOS table: fit-odd→test-even IC +0.0302 (corrections §12 table, 2026-09-22) → +0.0304 after the renormalisation fix (same section's text; §19 sanity gate, 2026-09-23).
