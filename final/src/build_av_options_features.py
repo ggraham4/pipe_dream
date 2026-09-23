@@ -90,7 +90,8 @@ def name_features(g: pd.DataFrame, d: pd.Timestamp) -> dict:
     # Cremers-Weinbaum: all expiries, matched strikes, OI-weighted
     m = g.pivot_table(index=["expiration", "strike"], columns="call_put",
                       values=["vol", "open_interest"], aggfunc="first")
-    if ("vol", "Call") in m and ("vol", "Put") in m:
+    if (("vol", "Call") in m and ("vol", "Put") in m
+            and ("open_interest", "Call") in m and ("open_interest", "Put") in m):
         sp = (m[("vol", "Call")] - m[("vol", "Put")])
         w = m[("open_interest", "Call")].fillna(0) + m[("open_interest", "Put")].fillna(0)
         ok = sp.notna() & (w > 0)
@@ -149,12 +150,18 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--data-dir", type=Path, default=FINAL / "data")
     ap.add_argument("--out-dir", type=Path, default=FINAL / "out")
+    ap.add_argument("--include-dolthub", action="store_true",
+                    help="also featurise the 2019+ DoltHub daily chain (slow; the "
+                         "pre-registered model uses av_monthly only)")
     a = ap.parse_args()
     uni = a.data_dir / "options_unified"
     cache = a.data_dir / "options_features"
     t0 = time.time()
     n = 0
-    for src in sorted(uni.glob("source=*/date=*.parquet")):
+    srcs = sorted(uni.glob("source=*/date=*.parquet"))
+    if not a.include_dolthub:
+        srcs = [x for x in srcs if x.parent.name != "source=dolthub"]
+    for src in srcs:
         dst = cache / src.parent.name / src.name
         if dst.exists() and dst.stat().st_mtime >= src.stat().st_mtime:
             continue
@@ -165,6 +172,8 @@ def main():
         if n % 20 == 0:
             print(f"  {n} partitions ({time.time()-t0:.0f}s)", flush=True)
     parts = sorted(cache.glob("source=*/date=*.parquet"))
+    if not a.include_dolthub:
+        parts = [x for x in parts if x.parent.name != "source=dolthub"]
     if not parts:
         print("no partitions yet"); return
     F = pd.concat([pd.read_parquet(p) for p in parts], ignore_index=True)

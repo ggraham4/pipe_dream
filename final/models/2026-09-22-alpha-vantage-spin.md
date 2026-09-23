@@ -7,7 +7,91 @@ against the purchased key. Probe script: `final/models/av_probe/av_coverage_prob
 (reads `ALPHAVANTAGE_API_KEY` from the environment — **keep the key out of the
 repo**, same rule as `SHARADAR_API_KEY`). Raw sample: `av_probe/coverage_sample.csv`.
 
-## Headline
+## Update — integration round (same day, later). Read this first.
+
+### A. Survivorship selection in the reset2026 down-cap tiers (found while integrating)
+`out/reset2026/composite_panel.parquet` gets its rows from
+`features_*_sharadar_pit.parquet`, which exists only for the **4,011 tickers
+that were cap2000-eligible at some date in 2005-2026**. So a small company is
+in the cap500/cap150 tiers only if it was, or LATER became, a $2B company.
+Measured (prices only, monthly samples, SPACs excluded):
+
+| | |
+|---|---|
+| cap150-only panel rows belonging to names that reach $2B only later | **52%** (2.41M rows) |
+| v2 cap150-only rows absent from the grid | 5.09M (1.2% SPAC), **4,598 real tickers**, spread evenly 2005-2026 |
+| 40d forward return, in-grid minus out-of-grid (cap150-only) | **+3.03%/window (~+19%/yr)**, positive 92% of 256 months, t 17 |
+| delisted within 40 days | out-of-grid 1.31% vs in-grid 0.31% |
+| v2 cap150 pool integrity of the panel | **62.85%** (cap2000: 100.00%) |
+
+The future-winner share rises as the cap floor falls (zero at $2B), which
+produces "monotonic in cap" by construction. **Unreadable until re-run on a
+complete grid:** every reset2026 cap500/cap150 result (incl. the cap150 LOYO
+flip), the audit worktree's cap150 IC-weighted hold-out (+2.4%/yr), and the
+"monotonic in cap" claim. **Unaffected:** the cap2000 tier and the live blend
+(cap2000). The audit session's forward ledger uses cap150 on this grid: no
+look-ahead in today's predictions, but its universe omits ~37% of today's
+small caps (never-large names) and its weights were fit on the selected
+sample. Nothing in the audit worktree was touched; rerunning is Gabe's call.
+
+**Fix:** rebuild the feature grid over the union of v2 cap150 tickers. Prices /
+price factors come from `data/sharadar/panel/stocks` (no key); issuance is
+covered (`sf1_shares` has 13,861 tickers); gross profitability, accruals and
+filing timing need SF1 for ~4.6k more tickers — **the same Sharadar key as the
+1998 backfill**.
+
+### B. Split-basis bug in `downcap_universe.py` (fixed, side-by-side v2)
+The liquidity floor used `closeunadj x volume`, but SEP `volume` is
+split-adjusted. Both directions favoured future winners: later-splitters got
+inflated past dollar volume (AAPL Jan-2008: $162B/day instead of $5.8-9.4B),
+and 1,144 later-reverse-splitters (FuelCell, Curis, YRC...) were deflated out
+of cap150/cap500. v2 (`close x volume`): cap500 -5,016 / +177,235 rows,
+cap150 -26,688 / +526,788 rows; cap2000 unchanged. Written to
+`downcap_universe_v2.parquet` via `DOWNCAP_OUT_NAME`; v1 is untouched
+because `app/lib/blend_model.py` reads it. The AV pull and all new code use v2.
+
+### C. What is integrated
+| piece | where | status |
+|---|---|---|
+| AV options bulk pull | `final/scripts/av_options_pull.py`, detached, `final/data/alphavantage/` | running; 3/225 monthly dates at time of writing (~45 min/date awake) |
+| unified chain AV + DoltHub | `final/src/build_option_chain_unified.py` -> `final/data/options_unified/` | built: 91.9M rows; DoltHub 2019-02..2026-08 (93.7% mapped to Sharadar tickers), AV from 2008-01-02; incremental |
+| option features | `final/src/build_av_options_features.py` -> `final/out/av_options_features.parquet` | built for landed dates; acceptance checks pass (rr25>0 93%, put/call vol median 0.39) |
+| identity filter | unified builder, from pull log | 5% parity + collision dedup (drops ~1%: CB/ACE, DD, RBC, PLD, BBT...) |
+| Sharadar 1998-12..2004-12 | `final/scripts/sharadar_backfill_1998.sh` | **blocked: SHARADAR_API_KEY not set** |
+| model harness | `final/src/reset2026/era_transfer.py` | smoke-tested (named asserts pass, pool guard works); **no metrics computed** |
+
+Horizon: options cannot go before 2008-01-02 (AV returns "Date parameter out
+of range" for 2007-12-31 and earlier). Equities can go to 1998-12 (Sharadar
+DAILY start) once the key is set. FINRA short interest starts 2020-04, so that
+factor stays NaN pre-2020 regardless.
+
+### D. The model experiments (pre-registered in `reset2026/PREREGISTRATION.md`, not yet run)
+- **A — train old, test newer:** IC-shrinkage weights (the audit session's
+  rule, reused verbatim) fit on 1998-12..2006-12, frozen, tested on
+  2007..2026 against equal weights. Adopt only if the per-date IC gain has NW
+  t >= 2 and is positive in >= 2/3 of test years. Needs the backfill. 2007-2019
+  is where the design was chosen, so this validates weights, not design.
+- **B — AV option factors:** Cremers-Weinbaum spread (+), 25d risk reversal
+  (-), option/stock volume (-), put/call volume (-), IV-minus-RV (-); nominate
+  2008-2018, confirm 2019-2026 once. cap2000 only (Amendment 1).
+- Run when ready:
+  `python3 final/src/build_option_chain_unified.py && python3 final/src/build_av_options_features.py`
+  then `python3 final/src/reset2026/era_transfer.py --exp B --stage screen`
+  (refuses until >= 120 nominate-era monthly dates have landed — ~5 days of
+  awake pull time), later `--stage confirm` (one shot), and `--exp A` after
+  the backfill.
+
+### E. Operational
+- The pull loses time whenever the MacBook sleeps: on battery with the lid
+  closed, `caffeinate` cannot prevent it (date 3 took 108 min instead of 45).
+  Keep it on mains power, lid open. Progress:
+  `python3 final/scripts/av_options_pull.py --data-root final/data/alphavantage --status`.
+- Git: the worktree's committed AGENTS.md still carries the old "never commit"
+  rule; the newer main-checkout AGENTS.md and the project memory record that
+  Gabe lifted it on 2026-09-17, which is why this branch is committed/pushed.
+  Nothing touches `main` or the live app.
+
+## Headline (first spin)
 
 **`HISTORICAL_OPTIONS` is the only AV endpoint that is survivorship-safe, and it
 is very good** — provided each name is queried under the symbol it traded
