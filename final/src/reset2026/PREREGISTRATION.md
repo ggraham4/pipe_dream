@@ -638,3 +638,94 @@ the new beta-adjusted spec, was written to `prediction_ledger_v2.csv`
 immediately after. Every `record`/`score` invocation from here forward
 targets v2. See the corrections doc section 9 for the full diagnostic
 evidence and the exact schema change.
+
+## Era-transfer + AV option factors (2026-09-22, alpha-vantage-spin branch) — pre-registered before any result exists
+
+Gabe's request: integrate the new data, then "use the older data as training
+data and the former training data as test data", and "integrate the new data
+into the model". Written before `era_transfer.py` has produced a single
+number; the smoke test on the first 3 landed dates reports plumbing only.
+
+**Relationship to the factor-composite-audit worktree.** That session's
+IC-shrinkage rule (`w_k = sign_k * max(0.1, |t_k| - 1) / Σ`, `t_k` = pooled
+Spearman-IC Newey-West t, lag 39) and its 8-factor set (`asset_growth`
+dropped) are reused verbatim. Nothing here re-opens its conclusions. The
+2007-2019 era is where the factor list and construction were chosen, so a
+test there validates the transferred WEIGHTS, not the design — stated once,
+not argued.
+
+**Universe.** `downcap_universe_v2.parquet`: the v1 liquidity floor multiplied
+split-adjusted volume by unadjusted price, which (a) admitted later-splitting
+names early and (b) excluded 1,144 later-reverse-splitting names (+527k
+cap150 rows). All v1 cap500/cap150 results in this package carry that
+look-ahead; whether to re-run them is Gabe's call. Named check: AAPL Jan-2008
+20d median $ volume = $5.8-9.4B/day (v2), vs $162B (v1).
+
+### Experiment A — weight transfer (train old, test newer)
+- TRAIN: 1998-12 .. 2006-12 (needs the Sharadar backfill; blocked on
+  SHARADAR_API_KEY). Until it lands, only 2005-2006 exists — too short
+  (~12 non-overlapping windows); A does not run on it.
+- Fit `t_k` on TRAIN, freeze `w`. TEST: 2007-01 .. 2026-08, all 40 offsets.
+- Compared, on identical TEST name-dates: equal weights; TRAIN-fit weights.
+  (PRODUCTION_WEIGHTS were fit on 2007-2019 and are in-sample there; they are
+  reported only on 2020-2026, where both are out of sample.)
+- **Adoption rule, fixed now:** TRAIN-fit weights replace equal weights only
+  if the per-date IC difference (TRAIN-fit minus equal) has NW t >= 2.0 on
+  TEST and is positive in >= 2/3 of TEST years (LOYO-style). Otherwise equal
+  weights stand. `short_interest_days_to_cover` has no pre-2020 data and gets
+  the floor weight, as in the audit rule.
+
+### Experiment B — AV option factors
+Nominate 2008-01 .. 2018-12 (all new AV data), confirm 2019-01 .. 2026-08.
+Only `av_monthly` rows are used (weekly = down-cap only; DoltHub = different
+IV source starting exactly at the split — either would confound).
+Candidates and signs, fixed now, each from a published anomaly:
+
+| factor | definition | sign | source |
+|---|---|---:|---|
+| `opt_cw_spread` | OI-weighted call-minus-put IV, matched strikes | +1 | Cremers & Weinbaum 2010 |
+| `opt_rr25` | IV(-25d put) - IV(+25d call), ~56 DTE | -1 | Xing, Zhang & Zhao 2010 |
+| `opt_os_ratio` | 100 * option volume / 20d median share volume | -1 | Johnson & So 2012 |
+| `opt_pc_vol_ratio` | put / (put+call) volume (proxy; P-P used open-buy volume) | -1 | Pan & Poteshman 2006 |
+| `opt_vrp` | ATM IV - volatility_60 * sqrt(252) | -1 | Bali & Hovakimian 2009 |
+
+k = 5. Liquidity columns (`opt_log_oi`, `opt_log_vol`, `opt_spread_atm`) are
+NOT factors — conditioning/cost inputs for the thin-liquidity test only.
+- **Screen (nominate era):** pooled Spearman IC, NW t, sector-neutral and raw,
+  on matched name-dates (rows with the option factor present). Holm-corrected
+  at 0.05 across k=5 on the sector-neutral t, AND sign must match the table.
+- **Admission (nominate era):** composite+factor vs composite on the SAME
+  optionable name-dates; improvement in pooled IC must beat the 80th
+  percentile of a within-date shuffle null of the candidate (20 draws).
+  Every monthly date is used (no 40-day subsampling), so the grid-offset
+  problem does not arise; stated so it is not assumed.
+- **Confirmation:** admitted factors only, frozen, on 2019-01 .. 2026-08: IC
+  difference positive with NW t >= 1.5 and LOYO no sign flip. One shot.
+
+### Amendment 1 (same day, before any Experiment A/B number exists): tier
+**The cap500/cap150 panel is a survivorship-selected sample.**
+`composite_panel.parquet`'s feature grid is `features_*_sharadar_pit.parquet`,
+built only for the 4,011 tickers that were cap2000-eligible at SOME date in
+2005-2026. So a small company is in the cap150 tier only if it was, or later
+became, a $2B company. Measured (descriptive, prices only, monthly samples,
+SPACs excluded):
+- 52% of cap150-only panel rows belong to names that reach cap2000 only LATER
+  (future winners); 894k rows are fallen angels; names that were never large
+  are absent entirely.
+- v2 cap150-only rows outside the grid: 5.09M rows, 1.2% SPAC; 4,598 non-SPAC
+  tickers, spread evenly over 2005-2026.
+- 40-day forward return, cap150-only, in-grid minus out-of-grid: +3.03% per
+  window (~+19%/yr), positive in 92% of 256 months, t 17.0. Out-of-grid names
+  delist within 40 days at 4x the rate (1.31% vs 0.31%).
+The share of future-winner rows rises as the cap floor falls (0 at cap2000),
+which reproduces the "monotonic in cap" pattern by construction. Every
+cap500/cap150 result in this package, and the audit worktree's cap150
+IC-weighted hold-out, is conditioned on future success and unreadable until
+re-run on a complete grid. cap2000 is clean: every cap2000-eligible
+name-date is inside the grid.
+
+**Therefore: Experiment B's primary tier is cap2000.** cap500/cap150 wait for
+a rebuilt grid (union of v2 cap150 tickers; prices from panel/stocks, no key;
+SF1-based factors need the Sharadar key). `era_transfer.py` refuses any tier
+where < 99% of v2-eligible rows are present in the panel. The cap2000 run
+does NOT test the thin-liquidity hypothesis. All other thresholds unchanged.

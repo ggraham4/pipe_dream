@@ -29,6 +29,7 @@ OUTPUT
         convention), eligible_cap2000, eligible_cap500, eligible_cap150 (bool)
     <MAIN_ROOT>/data/sharadar/downcap_universe_report.txt
 """
+import os
 import sys
 import time
 from pathlib import Path
@@ -41,8 +42,11 @@ import pyarrow.parquet as pq
 MAIN_ROOT = Path("/Users/ggraham/pipe_dream/final")
 SHARADAR = MAIN_ROOT / "data" / "sharadar"
 PANEL = SHARADAR / "panel"
-OUT = SHARADAR / "downcap_universe.parquet"
-REPORT = SHARADAR / "downcap_universe_report.txt"
+# DOWNCAP_OUT_NAME writes a side-by-side file (e.g. downcap_universe_v2) so a
+# rebuild never silently replaces what app/lib/blend_model.py reads.
+_NAME = os.environ.get("DOWNCAP_OUT_NAME", "downcap_universe")
+OUT = SHARADAR / f"{_NAME}.parquet"
+REPORT = SHARADAR / f"{_NAME}_report.txt"
 
 DOMESTIC = {
     "Domestic Common Stock",
@@ -140,11 +144,16 @@ def main():
     # which the concat/merge_asof round trip above does not guarantee.
     panel = panel.sort_values(["ticker", "date"]).reset_index(drop=True)
 
-    # Trailing 20-trading-day MEDIAN dollar volume, in $M, on closeunadj*volume
-    # (actual dollars traded, immune to split-adjustment). Per-ticker rolling,
+    # Trailing 20-trading-day MEDIAN dollar volume, in $M. Sharadar SEP
+    # `volume` is SPLIT-ADJUSTED, so actual dollars traded = close (also
+    # split-adjusted) * volume. The original closeunadj * volume mixed bases:
+    # for any name that split LATER it overstated past dollar volume by the
+    # split ratio (AAPL 2008: 28x), letting future splitters -- future winners
+    # -- clear the cap500/cap150 liquidity floor early (look-ahead; 4,990
+    # cap500 / 26,518 cap150 rows, fixed 2026-09-22). Per-ticker rolling,
     # computed on the full history so day 1 of a name's eligibility window
     # already reflects real trailing liquidity, not a partial window.
-    px = panel["closeunadj"].fillna(panel["close"])
+    px = panel["close"].fillna(panel["closeunadj"])
     panel["_dollar_vol_raw"] = px * panel["volume"].astype(np.float64) / 1e6
     panel["dollar_vol_20d"] = (
         panel.groupby("ticker")["_dollar_vol_raw"]
