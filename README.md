@@ -56,7 +56,7 @@ Two newer rules live outside the repo and interact with them. See
 
 ---
 
-## 3. Current state (as of 2026-09-23)
+## 3. Current state (as of 2026-09-24)
 
 ### 3.1 The one-paragraph version
 
@@ -75,8 +75,11 @@ the displayed primary, and the composite and the composite+q75 blend appear as
 **Candidate** tabs. Gabe set this as the baseline on 2026-09-23. Insider buy/sell
 counts are a certified dead end (2026-09-23), with one weak lead (opportunistic
 buyers). Congress is forward-only. The Alpha Vantage options pull **crashed**
-on 2026-09-23 at 18:09 and is not running. Active new work: two COO-supervised
-workers (forward-ledger columns, and the earnings announcement premium via 8-K).
+on 2026-09-23 at 18:09 and is not running. The earnings-timing family is
+closed (8-K announcement-date test DEAD, 2026-09-23). Two forward-only bets
+(`icw9` leverage, opportunistic insider buyers) are now recorded blind in a side
+ledger from panel date 2026-09-08 (landed 2026-09-24). Active new work: the
+COO's WO-6 survivorship-safe down-cap grid rebuild (in flight).
 
 ### 3.2 What the app shows: the baseline Gabe fixed on 2026-09-23 (landed, `bca3f7c`)
 
@@ -144,7 +147,9 @@ See [Open conflicts](#6-open-conflicts-and-decisions-for-gabe).
 | **The reset2026 cap500/cap150 grid is survivorship-selected.** 52% of cap150-only rows are future winners, and 4,598 real tickers are missing. Every down-cap result is unreadable until it's rebuilt | landed | 2026-09-22 | [AV spin doc](final/models/2026-09-22-alpha-vantage-spin.md) §A |
 | `downcap_universe.py` split-basis bug is fixed; corrected universe written as `downcap_universe_v2.parquet` (v1 kept because `blend_model.py` reads it) | landed | 2026-09-22 | [AV spin doc](final/models/2026-09-22-alpha-vantage-spin.md) §B |
 | AV `HISTORICAL_OPTIONS` is the only survivorship-safe AV endpoint (dead names, 2008+, raw volume/OI, PIT-safe OI). EARNINGS/ESTIMATES/INSIDER/NEWS are live-only | landed | 2026-09-22 | [AV spin doc](final/models/2026-09-22-alpha-vantage-spin.md) §1-2 |
-| The one positive result from the XGBoost era: `days_to_next_filing` (the earnings announcement premium), h=20 IC -0.0153, t -4.17, and it gains strength under sector neutralisation. `_seasonal` is the tradeable, provably causal version (t -2.18). `_actual`/`_known` are **excluded from every training feature set** | landed (code); in the composite as `days_to_next_filing_seasonal` | 2026-09-12 | `round18-app-two-models:AGENTS.md` "Round 16" |
+| The one positive result from the XGBoost era: `days_to_next_filing` (the earnings announcement premium), h=20 IC -0.0153, t -4.17, and it gains strength under sector neutralisation. `_seasonal` is the tradeable, provably causal version (t -2.18). `_actual`/`_known` are **excluded from every training feature set** | landed (code); in the composite as `days_to_next_filing_seasonal`. The family is now closed (see the 8-K row) | 2026-09-12 | `round18-app-two-models:AGENTS.md` "Round 16" |
+| **Earnings announcement premium via 8-K Item 2.02 is DEAD** under its pre-registered rule (trial 6 of 6): pooled raw IC −0.0065, **NW t −1.71 vs a 2.64 bar**, and **2015 = 48.5%** of the effect (limit 45%). Passed: both halves negative, both-sides sector-neutral t −1.82, 0/40 grid flips. **The earnings-timing family (6 trials) is a COO-certified dead end.** Reopen only with a point-in-time source of *announced* dates, tested forward. COO ruling: the doc's Part 2 sentence on moving a portfolio is struck, because the icw9−icw8 book gap is +0.10%/yr on in-sample weights | landed; COO certified dead end | 2026-09-23 | [EAP 8-K doc](final/models/2026-09-23-earnings-announcement-premium-8k.md) Part 2; COO.md dead-end table |
+| **Two forward-only bets pre-registered and recording** (WO-2+3): `icw9` (the frozen icw8 rule plus `leverage`, sign −1, weight −0.1582) vs icw8, and CMP-2012 opportunistic insider buyers (`opp_buyers_90`, with the plain count as control). First blind record: panel date **2026-09-08**, 2,214 rows. Decision after **6 non-overlapping matured dates**; the first matures around **2026-11-03**. No backtest was run. Record cadence is Gabe's call | landed | 2026-09-23/24 | [forward ledger doc](final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md) §1-5 |
 | LCID was **not** a data bug. It was a real 1-for-10 reverse split on 2025-09-02 | landed | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §6d |
 
 "cap150 grid" in the status column means the survivorship caveat in the row
@@ -175,7 +180,9 @@ The certified dead ends list is owned by the COO (`~/.claude/pipe_dream-coordina
   `prediction_ledger_v3.csv` (IC-weighted and equal-weight columns) landed
   2026-09-23. First maturity is about 2026-11-03, and the COO wants at least
   6 non-overlapping matured dates before any conclusion (COO.md WO-1). Any
-  further hold-out look needs Gabe's explicit OK (COO.md).
+  further hold-out look needs Gabe's explicit OK (COO.md). A side ledger,
+  `prediction_ledger_ext.csv` (icw9 leverage + opportunistic buyers), landed
+  2026-09-24 on the same first date and decision rule (§3.3).
 
 ---
 
@@ -219,7 +226,9 @@ which now lives in §7 below.
   a promotion decision. The newer COO position (COO.md WO-2, 2026-09-23) is
   that its t −2.44 was already measured in-era, so an in-era test can only
   nominate. Confirmation is forward-only, as an icw9 column in the prediction
-  ledger. That is being built now (see [In flight](#5-in-flight)).
+  ledger. **Recording since panel date 2026-09-08** (landed 2026-09-24; frozen
+  weights and the kill/success rule in the
+  [forward ledger doc](final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md) §1a, §4).
 - **Next (COO.md, 2026-09-23):** rebuild the down-cap grid (decision #2,
   needs Sharadar SF1 for ~4,600 more names); score the forward ledger from
   about 2026-11-03 (WO-1). Laddered rebalancing was **not launched**: it
@@ -302,10 +311,16 @@ which now lives in §7 below.
   the cross-sectional structure is a sector bet: insiders buy most in
   Financials, Energy and Real Estate, which then underperform. Verdicts in
   §3.3.
-- **Lead:** opportunistic buyers. The COO wants it confirmed on forward data
-  only, with no 2007-2019 reruns (COO.md WO-3; worker in flight), or on
-  true small caps once the down-cap grid is rebuilt (WO-4, blocked on COO
-  decision #2).
+- **Lead:** opportunistic buyers. Now a pre-registered forward-only bet,
+  recording since panel date 2026-09-08 (landed 2026-09-24,
+  [forward ledger doc](final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md)).
+  A live Form 4 refresh (`final/scripts/edgar_form4_refresh.py`) covers
+  2026-04-01 to 2026-09-23. No 2007-2019 reruns.
+- **Found, not fixed:** `build_insider_panel.py` takes the min of `TRANS_DATE`
+  as a `DD-MON-YYYY` string (lexicographic), so multi-date filings can get the
+  wrong transaction date. Effect on historical classification unmeasured.
+  Fixing it rebuilds the bulk events the in-era lead was measured on
+  (forward ledger doc §5c).
 - **Congress:** forward-only. `final/scripts/av_congress_pull.py` needs the
   premium AV key and is **untested** against the REST response.
 - Code: `final/src/insider/` (`build_insider_panel.py`, `screen_insider.py`,
@@ -322,8 +337,7 @@ Nothing below is current state until it lands.
 | branch / worktree | what it will change | state | source |
 |---|---|---|---|
 | `worktree-factor-composite-reset` (5 commits) | "Merge whole branch, nothing dropped" (Gabe, 2026-09-23): the Retrain-ALL speedup (`build_features_fundamentals_sharadar.py`, 2:42 → 59s, verify-pass), the `blend_q75.py` backtest and report, and `current_signal_blend_full.csv` (per-ticker query statuses). **Its app.py UI reorg is superseded** by the 09-23 baseline, and its `current_signal_blend.py` must not be taken (it drops the frozen-factor guard) | blocked on app.lock contention and app-manager reconciliation | `worktree-factor-composite-reset:final/models/2026-09-22-session-handoff.md`; LEDGER landing queue #2; APP.md |
-| `worktree-agent-a3b6234523542c444` (COO WO-2+3) | Forward side-ledger columns: an icw9 score with `leverage` (sign −1), and the opportunistic-buyer factor, plus a Form 4 refresh. Touches `final/src/reset2026/prediction_ledger.py`; nobody else should touch that file until it lands | started 2026-09-23 evening. On disk it sits at `e94cfe0` (origin/main) with no changes yet; the ledger says it's waiting to base on integration | COO.md "In flight"; LEDGER |
-| `worktree-agent-abcd4cb45e7df1ecd` (COO WO-5) | Earnings announcement premium via EDGAR 8-K Item 2.02 (`final/src/eap/`, a new dated doc). Trial 6 of the earnings-timing family: pooled NW \|t\| ≥ 2.64 plus the other gates in COO.md | started 2026-09-23 evening. On disk it's at `e94cfe0` with no changes, although the ledger says "basing on origin/integration (c8bba77)" | COO.md WO-5; LEDGER |
+| `worktree-agent-ab20b69899959cac5` (COO WO-6) | Survivorship-safe down-cap grid rebuild (COO decision #2, Gabe approved) | Phase 1 in progress; Phase 2 blocked on `SHARADAR_API_KEY` | LEDGER; COO.md log 2026-09-24 |
 | `app` | = `bca3f7c`, content-identical to integration's `final/app/**`. It should `git merge integration` (c8bba77) | awaiting the merge | `HANDOFF-app.md`; LEDGER landing log |
 | `worktree-papermoney-order-sheet` | paper-broker order sheet | **not to land** (Gabe, 2026-09-23) | LEDGER |
 | `round18-app-two-models` | superseded. Its AGENTS.md Rounds 9-19 narrative is absorbed into this README | not merged. The merge-abort still needs confirming (LEDGER queue #0) | LEDGER |
@@ -376,7 +390,9 @@ Nothing below is current state until it lands.
    retired; whether to renew AV premium (around 2026-10-22); whether the
    integrator may fast-forward `main` to `integration` (`main` 7898b52 is far
    behind); the composite open questions (COO decision #7: is 2020 regime or
-   luck, adopt `leverage`, a Deflated-Sharpe/Reality-Check gate, EWMA beta).
+   luck, adopt `leverage`, a Deflated-Sharpe/Reality-Check gate, EWMA beta);
+   the forward-ledger record cadence (every 40 trading days, monthly, or at
+   each panel refresh; forward ledger doc §5f).
 8. **`neutralize_on_sector` convention (COO decision #6, methodology, for
    Gabe).** It demeans the factor within sector but not the return. The
    insider round showed that this turns a sector-timing effect into a fake
@@ -384,10 +400,8 @@ Nothing below is current state until it lands.
    function produced the physics doc §7 `*_neutral` rows and the reset's
    neutral cells. The COO recommends reporting the both-sides number next to
    it as standard, without changing past numbers. Not yet decided.
-9. **COO worker worktrees vs the ledger (for the integrator and COO).** Both
-   COO-launched worktrees (WO-2+3, WO-5) sit at `e94cfe0` (origin/main) on
-   disk, not integration. The ledger says WO-5 is basing on c8bba77. Under
-   Rule 0 the integrator does the basing (`git switch -C … integration`).
+9. ~~COO worker worktrees on origin/main.~~ **Resolved 2026-09-24:** WO-5
+   landed at 371f2d0 and WO-2+3 at f3233bd, both via integration.
 
 ---
 
@@ -478,6 +492,7 @@ not superseded by anything newer):
 | Survivorship-selected down-cap grid | 52% of cap150-only rows are future winners | pool-integrity check, 62.85% | AV spin doc §A |
 | IC-weighted score without renormalising | missing-factor rows compressed | re-run after the fix | corrections §12 |
 | Sector-neutral t from demeaning the factor only | insider buyers t +3.10 "within sector"; both sides demeaned gives 0.65 | fire rate vs sector return, corr −0.79 | insider results §3 |
+| `build_insider_panel.py` min of `TRANS_DATE` as a string (**unfixed**) | "02-MAR-2026" sorts before "26-FEB-2026"; 17 of 320 rows mismatched | live-vs-bulk Form 4 validation | forward ledger doc §5c |
 | AV pull `IncompleteRead` not retried | bulk pull died at 2010-08-18 | `pull.out` traceback | COO.md; `final/scripts/av_options_pull.py:151` |
 | LCID "bug", **retracted** | adjusted vs raw price compared | split-signature scanner | corrections §6d |
 
@@ -536,7 +551,9 @@ proximity as a stage-2 rule · composite `decile1_volq` · options: long calls,
 long puts, buy/no-buy gate + ATM, 60-day, ~2-day/0DTE, LEAPS, GAM hurdle · AV
 EARNINGS/ESTIMATES/INSIDER/NEWS as backtest features · **insider plain
 counts** (`ins_buyers_90`/`ins_sellers_90`, cap150, h=40; no 30/180-day
-variants) · **congress as a backtest factor** (forward-only). Screened
+variants) · **congress as a backtest factor** (forward-only) · **the
+earnings-timing family** (6 trials, closed 2026-09-23 by the 8-K test; reopen
+only with point-in-time *announced* dates, tested forward). Screened
 negative but not certified by the COO: Amihud illiquidity, book-to-market
 (wrong-signed), exponent transform, `fcf_yield`, `profitability_trend`,
 regime conditioning (stopped by its own staging rule).
@@ -566,6 +583,8 @@ the file is on `integration`.
 | `worktree-factor-composite-reset:final/models/2026-09-22-session-handoff.md` | 2026-09-22 | in flight | blend promotion (UI part superseded), query fix, retrain speedup |
 | [`final/models/2026-09-23-insider-congress-preregistration.md`](final/models/2026-09-23-insider-congress-preregistration.md) | 2026-09-23 | landed | insider k=2 trials, congress ruled untestable before any return |
 | [`final/models/2026-09-23-insider-congress-results.md`](final/models/2026-09-23-insider-congress-results.md) | 2026-09-23 | landed | insider counts fail; sector-neutral artefact; opportunistic-buyer lead; congress forward-only |
+| [`final/models/2026-09-23-earnings-announcement-premium-8k.md`](final/models/2026-09-23-earnings-announcement-premium-8k.md) | 2026-09-23 | landed | WO-5: 8-K Item 2.02 EAP, DEAD; closes the earnings-timing family (Part 2 "Reading" first sentence struck by the COO) |
+| [`final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md`](final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md) | 2026-09-23/24 | landed | WO-2+3: forward pre-registration of icw9 leverage and opportunistic buyers; first blind record 2026-09-08; TRANS_DATE bug |
 | [`final/app/README.md`](final/app/README.md) | 2026-09-18 | landed; stale vs app.py (app-manager) | how to run the app, tab guide |
 | [`final/models/pit_integration/README.md`](final/models/pit_integration/README.md) | 2026-09-02 | landed | options PIT-integration reproduction |
 | [`final/models/hyperparameter_retune/README.md`](final/models/hyperparameter_retune/README.md) | 2026-09-02 | landed | options Tweedie/GAM retune |
@@ -613,3 +632,7 @@ Old claim, its source and date → what replaced it, with source and date.
 - `leverage` is a ready candidate for an explicit promotion decision (corrections §13, 2026-09-22) → contaminated in-era; confirmation only via a forward-ledger icw9 column (COO.md WO-2, 2026-09-23).
 - Laddered rebalancing as a next step for the composite (reset doc §6 / COO leads, 2026-09-22) → smooths dispersion but doesn't cut turnover (corrections §15), and the COO did not launch it (COO.md, 2026-09-23).
 - Corrections §12 OOS table: fit-odd→test-even IC +0.0302 (corrections §12 table, 2026-09-22) → +0.0304 after the renormalisation fix (same section's text; §19 sanity gate, 2026-09-23).
+- WO-2+3 and WO-5 in flight on origin/main worktrees (README §5 / Open conflicts #9, 2026-09-23) → both landed via integration: 371f2d0, f3233bd (LEDGER / COO.md, 2026-09-24).
+- Earnings announcement premium via 8-K as an open lead (COO.md leads, 2026-09-23) → DEAD, earnings-timing family closed at 6 trials (EAP 8-K doc; COO.md dead ends, 2026-09-23).
+- `leverage` / opportunistic buyers "confirmation being built" (README §4.1/§4.6, 2026-09-23) → recording forward since panel date 2026-09-08 (forward ledger doc §5e, 2026-09-24).
+- EAP 8-K doc Part 2 "Reading", first sentence (portfolio-impact claim, 2026-09-23) → struck by the COO: the icw9−icw8 gap is +0.10%/yr on in-sample weights (COO.md, 2026-09-23).
