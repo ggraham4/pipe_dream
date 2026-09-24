@@ -181,3 +181,73 @@ v3 does: `r − beta_252 · SPY_40`), one row goes to
 ---
 
 ## 5. Results log (appended after the pre-registration was committed)
+
+The pre-registration above (sections 1–4) was committed at `a98a28d` and pushed
+to `origin/worktree-wo23-forward-ledger`. That happened before any
+`prediction_ledger_ext.csv` row existed.
+
+### 5a. Selftest (`prediction_ledger.py selftest`, date 2026-09-23)
+
+All checks PASS. They check the scoring logic on nomination-era date 2015-06-15;
+nothing on 2020+ is touched.
+
+- The icw9 weights reproduce from `ICW9_T_USED` under the rule. The same rule
+  also reproduces the production icw8 `PRODUCTION_WEIGHTS`.
+- Leverage recomputed from SF1 matches `new_factors.parquet` on 100% of 2,180
+  names. Coverage is 79.1%.
+- Side-ledger icw8 rho = +0.063777. This equals v3 `_score_frame`
+  `rank_ic_raw_ic_weighted` and `scipy.stats.spearmanr` to 1e-12.
+- Canary: permuting the returns moves the rho.
+- `ins_buyers_90` from the new causal code equals
+  `insider_features.parquet`'s column on all 2,180/2,180 names (fire rate
+  17.75%). This checks the window, the CIK join and the dtypes.
+- **Hand counts** come straight from the raw 2015 SEC zip TSVs, via a separate
+  code path that does not use `insider_events.parquet` or `opportunistic.py`.
+  opp/ins/unclassifiable:
+  - ABCB (CIK 351569): 1/3/2. This one exercises the unclassifiable exclusion.
+  - MAIN (CIK 1396440): 10/13/3. Monthly buyers: in Apr 2015 an owner is
+    routine, and in May 2015 the same owner is opportunistic because they missed
+    May in one of 2012–2014.
+
+  Both equal the ledger values.
+- The one date's descriptive numbers are not evidence, just a scale reference:
+  rho icw9 +0.0504 vs icw8 +0.0638; opp fire rate 6.7% (144 names) vs
+  ins 17.9%.
+
+### 5b. Gate A: Dimon's JPM buy (filed 2016-02-11)
+
+Accession 0001225208-16-026145 records Jamie Dimon (owner CIK 1195345) buying
+JPM (CIK 19617): transaction 2016-02-11, filed 2016-02-11, $26.59M.
+**OPPORTUNISTIC.**
+- Classifiable: his first O/D purchase at JPM is a 2007-09-04 transaction,
+  late-filed 2011-07-07. Even without it, his next purchase is from 2008-10, and
+  2016 − 2008 ≥ 3.
+- Not routine: he made no February purchase in 2015, 2014 or 2013. His prior
+  purchases were Oct 2008, Jan 2009, Jul 2012 and Oct 2015.
+- On 2016-02-12, JPM had `opp_buyers_90` = 2: Dimon, plus director 1185064
+  (purchases 2016-01-15 and 2016-02-04, none in Jan/Feb 2013–2015 for either
+  month).
+
+### 5c. Live refresh validation, and a bug in the bulk events
+
+`edgar_form4_refresh.py --validate` was run on 2026-03-02, plus the part of
+2026-03-03 already fetched. That is 1,490 filings, 320 P/S owner-code rows. It
+matched the bulk 2026q1 set exactly on:
+- row set (0 rows only in live, 0 only in bulk);
+- issuer CIK, is_od, filing date: 100%;
+- value: 100% within 1%.
+
+`trans_date` matched on only 94.7%. All 17 mismatches are code S, and the live
+date is the earlier one. **The cause is a bug in `build_insider_panel.py`:** it
+takes `min` of TRANS_DATE while it is still a `DD-MON-YYYY` string, so the
+minimum is lexicographic by day-of-month. For example, "02-MAR-2026" sorts
+before "26-FEB-2026". The live parser takes the true earliest date.
+
+It only matters when a single filing's transactions span dates. For the routine
+test it matters only when they span a month boundary, and the affected rows in
+this sample were all sells. The effect on historical P classification is
+therefore expected to be small, but it is not measured. It is **not** fixed
+here: fixing it means rebuilding the bulk events, which would change the data
+the in-era lead was measured on. It is flagged for the insider workstream's
+owner. Going forward, live events use the correct date and bulk events keep the
+string-min date.

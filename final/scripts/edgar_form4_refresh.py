@@ -37,7 +37,9 @@ import json
 import re
 import socket
 import sys
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -53,7 +55,7 @@ PANEL = MAIN_ROOT / "out" / "reset2026" / "composite_panel.parquet"
 TICKERS_MASTER = MAIN_ROOT / "data" / "sharadar" / "tickers_master.csv"
 
 USER_AGENT = "pipe_dream research sirduckingtoniii@gmail.com"  # scripts/edgar_8k_events_pull.py convention
-SLEEP = 0.125
+SLEEP = 0.125  # <= 8 req/s start-to-start (SEC fair access is 10)
 RETRYABLE = (http.client.RemoteDisconnected, http.client.IncompleteRead, urllib.error.URLError,
              socket.timeout, TimeoutError, ConnectionResetError)
 
@@ -62,18 +64,38 @@ def log(msg):
     print(f"[{time.strftime('%H:%M:%S')}] {msg}", flush=True)
 
 
-def get(url, retries=6):
+_last = [0.0]
+_lock = threading.Lock()
+N_WORKERS = 4   # overlaps network latency; the shared throttle still caps the rate
+
+
+def _throttle():
+    """At most one request START per SLEEP seconds across all threads (<= 8 req/s)."""
+    with _lock:
+        wait = _last[0] + SLEEP - time.time()
+        if wait > 0:
+            time.sleep(wait)
+        _last[0] = time.time()
+
+
+def get(url, retries=6, missing_403=False):
     for attempt in range(retries):
+        _throttle()
         try:
             req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept-Encoding": "identity"})
             with urllib.request.urlopen(req, timeout=30) as r:
                 data = r.read()
-            time.sleep(SLEEP)
             return data.decode("utf-8", errors="replace")
         except urllib.error.HTTPError as e:
-            if e.code == 404:
-                time.sleep(SLEEP)
+            if e.code == 404 or (e.code == 403 and missing_403):
+                # EDGAR Archives answers 403, not 404, for a daily index that
+                # does not exist (e.g. form.20260619.idx, Juneteenth)
                 return None
+            if e.code == 403 and attempt < retries - 1:
+                # SEC's fair-access block: back off for minutes, not seconds
+                log(f"403 from SEC, backing off {120 * (attempt + 1)}s")
+                time.sleep(120 * (attempt + 1))
+                continue
             if e.code in (429, 500, 502, 503, 504) and attempt < retries - 1:
                 time.sleep(2 ** attempt * 2)
                 continue
@@ -99,7 +121,7 @@ def universe_ciks():
 def daily_index(day):
     q = (day.month - 1) // 3 + 1
     url = f"https://www.sec.gov/Archives/edgar/daily-index/{day.year}/QTR{q}/form.{day:%Y%m%d}.idx"
-    txt = get(url)
+    txt = get(url, missing_403=True)
     if txt is None:
         return None  # weekend/holiday
     rows = []
@@ -190,9 +212,9 @@ def run(start, end, out_path, state_dir):
             by_acc.setdefault(acc, {"path": r["path"], "ciks": set(), "fdate": r["fdate"]})["ciks"].add(r["cik"])
         todo = [(a, v) for a, v in by_acc.items() if v["ciks"] & ciks and a not in acc_done]
         log(f"{day.date()}: {len(by_acc)} Form 4 accessions, {len(todo)} in universe to fetch")
-        with open(rows_f, "a") as fr, open(acc_done_f, "a") as fa:
-            for a, v in todo:
-                txt = get("https://www.sec.gov/Archives/" + v["path"])
+        with open(rows_f, "a") as fr, open(acc_done_f, "a") as fa, ThreadPoolExecutor(N_WORKERS) as pool:
+            fetched = pool.map(lambda av: (av, get("https://www.sec.gov/Archives/" + av[1]["path"])), todo)
+            for (a, v), txt in fetched:
                 n_fetch += 1
                 if txt:
                     try:
@@ -233,7 +255,8 @@ def validate():
     """Parse 2026-03-02..06 from EDGAR and diff against the bulk 2026q1 set."""
     scratch = STATE_DIR.parent / "form4_refresh_validate"
     out = scratch / "validate_events.parquet"
-    run(pd.Timestamp("2026-03-02"), pd.Timestamp("2026-03-06"), out, scratch)
+    # 2026-03-02 is a full day; anything already fetched from later days is compared too
+    run(pd.Timestamp("2026-03-02"), pd.Timestamp("2026-03-02"), out, scratch)
     live = pd.read_parquet(out)
     bulk = pd.read_parquet(BULK_EVENTS)
     bulk = bulk[bulk["accession"].isin(set(live["accession"]))].copy()
