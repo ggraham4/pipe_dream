@@ -74,3 +74,7 @@ final/scripts/td_data_delisted_repaired_causal/
 final/data/alphavantage/
 final/data/options_unified/
 final/data/sharadar_backfill/
+
+# WO-6 down-cap grid v2 price CSVs (5,255 files, generated).
+# Reproduce: final/src/reset2026/build_downcap_grid_v2.py (see final/models/2026-09-24-downcap-grid-rebuild.md).
+final/scripts/td_data_sharadar_downcap_v2/
