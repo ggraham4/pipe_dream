@@ -87,15 +87,21 @@ overlap, and the options backtest win rate.
   `out/current_signal_pit.csv`, `out/current_signal_pit_xrank.csv` and
   `out/current_signal_compare.json`. A "Retrain both signals" button reruns the
   whole point-in-time sequence in the background and streams the log.
-- *Query a Ticker* — scores any ticker(s) against **both** saved checkpoints
-  (`out/models/xgb_pit_augmented_model.json` and
-  `out/models/xgb_pit_xrank_model.json`), no retraining. Shows score, rank and a
-  BUY / NO BUY / INELIGIBLE verdict per model, and calls out where the two
-  disagree. **INELIGIBLE** means the name is not in today's point-in-time
-  universe, so it is not pickable regardless of what the model thinks. **BUY**
-  means top quartile among eligible names — a lower bar than being one of the
-  five allocated positions. If a saved model is older than the panel on disk,
-  a banner suggests a retrain.
+- *Query a Ticker* — **(2026-09-24)** answers each ticker for **both** the
+  blend (Today's Picks, cap2000) and the theoretical model (composite alone,
+  cap150), one row per ticker, with a "Both models pick it" column. Blend
+  statuses come from `out/current_signal_blend_full.csv` (PICK /
+  ELIGIBLE_NOT_PICKED / ELIGIBLE_NOT_SCORED / INELIGIBLE_TODAY / NOT SCANNED).
+  The theoretical model only writes a picks file, so a non-pick there is
+  "NOT A PICK" with no reason; `lib/composite_model.py` picks up
+  `out/current_signal_composite_full.csv` automatically if a model owner ever
+  writes one (same schema as the blend's). The blend's `composite_score` is
+  never reused for the theoretical model (different universe). Both files'
+  `as_of_date` are shown, with a warning if they differ or are more than 5
+  business days old. Below the lookup, an agreement panel (`lib/model_agreement.py`)
+  counts both books, the overlap, Jaccard and weight overlap, splits
+  theoretical-only picks into structural (outside the blend's universe) vs
+  genuine disagreement, and lists the shared tickers. Descriptive only.
 - *Sector Bets* — **new in Round 19.** What the model is actually betting on,
   at every level of the industry tree, because Round 13's finding that
   essentially *all* of this model's performance is a sector bet was not visible
@@ -188,6 +194,10 @@ refresh actions (see below).
    Can take several minutes. The same sequence without the price pull is the
    "Retrain" button on the Today's Picks tab; "Retrain ALL models" (button 0)
    is this plus a `features.py` rebuild for the sidebar and Universe tab.
+   **`SHARADAR_API_KEY` must be exported in the shell that launches Streamlit**
+   (jobs inherit Streamlit's environment). Since 2026-09-24 both this button and
+   "Retrain ALL models" refuse to start, with an error, when it isn't set; the
+   app never reads the key from a file.
    The last step needs network access **the first time it runs**, to pull USMV
    into `data/benchmarks/USMV.csv`. If it cannot reach the network the run still
    succeeds — the backtest chart is simply drawn without the USMV line and says

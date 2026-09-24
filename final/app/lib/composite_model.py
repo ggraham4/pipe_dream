@@ -24,6 +24,14 @@ from . import paths
 
 SIGNAL_CSV = paths.OUT_DIR / "current_signal_composite.csv"
 SIGNAL_META = paths.OUT_DIR / "current_signal_composite_meta.json"
+# Not produced yet (2026-09-24): current_signal_composite.py writes picks only.
+# If a model owner adds it, it must use the SAME schema/status values as
+# current_signal_blend_full.csv (ticker, status in PICK / ELIGIBLE_NOT_PICKED /
+# ELIGIBLE_NOT_SCORED / INELIGIBLE_TODAY, weight, composite_score, sector,
+# vol_quintile/rank_in_quintile/n_in_quintile/quintile_cutoff_rank) but ranked
+# in the theoretical model's OWN cap150 universe. query_tickers() and
+# model_agreement pick it up automatically when it appears.
+SIGNAL_FULL_CSV = paths.OUT_DIR / "current_signal_composite_full.csv"
 EQUITY_CURVE_CSV = paths.OUT_DIR / "reset2026" / "backtest_equity_curve.csv"
 
 
@@ -79,3 +87,67 @@ def retrain_commands() -> list[list[str]]:
         [py, str(paths.SRC_DIR / "current_signal_composite.py")],
         [py, str(reset_src / "build_backtest_equity_curve.py")],
     ]
+
+
+def get_full_universe():
+    """Every name the theoretical model scanned (cap150 tier), or None --
+    which is the normal case today: only the picks file exists."""
+    if not SIGNAL_FULL_CSV.exists():
+        return None
+    return pd.read_csv(SIGNAL_FULL_CSV)
+
+
+NO_FULL_FILE_DETAIL = ("Reason not available: there is no full-universe file for the "
+                       "theoretical model yet (current_signal_composite_full.csv), so a "
+                       "non-pick can't be split into eligible-but-ranked-out vs ineligible.")
+
+
+def query_tickers(tickers: list[str]) -> dict:
+    """Per-ticker answer for the theoretical model (composite alone, cap150).
+
+    Deliberately never borrows the blend's composite_score for a non-pick:
+    that score is ranked inside the blend's cap2000 universe, not cap150, so
+    it is a different number that happens to share a column name."""
+    df, _ = get_signal()
+    out = {}
+    if df is None:
+        for t in tickers:
+            out[t.upper().strip()] = {"status": "NO SIGNAL",
+                                      "detail": "Theoretical model has not been generated yet."}
+        return out
+    full = get_full_universe()
+    if full is not None:
+        by_ticker = full.set_index("ticker").to_dict("index")
+        for t in tickers:
+            t = t.upper().strip()
+            row = by_ticker.get(t)
+            if row is None:
+                out[t] = {"status": "NOT SCANNED",
+                          "detail": "Not in the theoretical model's scanned panel."}
+                continue
+            status = row["status"]
+            entry = {"status": status, "sector": row.get("sector")}
+            if status in ("PICK", "ELIGIBLE_NOT_PICKED"):
+                entry["composite_score"] = round(row["composite_score"], 4)
+            if status == "PICK":
+                entry["weight_pct"] = round(row["weight"] * 100, 2)
+            elif status == "ELIGIBLE_NOT_PICKED":
+                entry["detail"] = ("In the cap150 universe and scored, but ranked outside the "
+                                   "picked slice of its volatility quintile.")
+            elif status == "ELIGIBLE_NOT_SCORED":
+                entry["detail"] = "In the cap150 universe but missing a composite score."
+            else:
+                entry["detail"] = "Not in today's point-in-time cap150 universe."
+            out[t] = entry
+        return out
+    picks = df.set_index("ticker")
+    for t in tickers:
+        t = t.upper().strip()
+        if t in picks.index:
+            row = picks.loc[t]
+            out[t] = {"status": "PICK", "sector": row.get("sector"),
+                      "weight_pct": round(float(row["weight"]) * 100, 2),
+                      "composite_score": round(float(row["composite_score"]), 4)}
+        else:
+            out[t] = {"status": "NOT A PICK", "detail": NO_FULL_FILE_DETAIL}
+    return out
