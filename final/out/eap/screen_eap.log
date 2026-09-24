@@ -1,0 +1,35 @@
+[23:20:29] prereg Part 1 sha256 a0c5ae02ee4f1e538015e46aafdd321ce563fb880d68d20fb72a7b1d9ed3f6ce
+[23:20:37] nomination cap150 rows 6,691,650, dates 3,272, days_to_next_announce_8k_seasonal coverage 0.951
+[23:20:43] T1 raw IC -0.0065 t -1.71 | odd -0.0091 (t -1.84) even -0.0034 (t -0.62) | beta-adj -0.0049 t -1.23
+[23:20:53] T2 both-sides t -1.82 (IC -0.0063) | factor-only t -2.48 (IC -0.0085)
+[23:20:56] T3 grid sign flips 0/40, mean range -0.0109..-0.0020
+[23:21:07] T4 common rows 6,331,837: new -0.0064 (t -1.71) old -0.0014 (t -0.50) diff t -1.21; rank corr +0.328
+[23:21:53] PRODUCTION_WEIGHTS reproduction max |dev| 0.00005
+[23:22:17] T5 fit_odd_test_even: w_new -0.1074; icw9 +0.03098 vs icw8 +0.03044 raw; +0.03009 vs +0.03049 beta-adj
+[23:22:40] T5 fit_even_test_odd: w_new -0.0320; icw9 +0.04970 vs icw8 +0.04959 raw; +0.05013 vs +0.05001 beta-adj
+[23:22:44] T6 ew8 net +0.04321 vs correction_variants +0.04321
+[23:22:48] T6 icw8 net +0.05254 | icw9 net +0.05359
+[23:22:51]   null draw 1/20: +0.05223
+[23:22:54]   null draw 2/20: +0.05144
+[23:22:57]   null draw 3/20: +0.05197
+[23:23:00]   null draw 4/20: +0.05091
+[23:23:03]   null draw 5/20: +0.05130
+[23:23:06]   null draw 6/20: +0.05126
+[23:23:09]   null draw 7/20: +0.05102
+[23:23:12]   null draw 8/20: +0.05112
+[23:23:15]   null draw 9/20: +0.05092
+[23:23:18]   null draw 10/20: +0.05163
+[23:23:22]   null draw 11/20: +0.05139
+[23:23:25]   null draw 12/20: +0.05100
+[23:23:28]   null draw 13/20: +0.05100
+[23:23:31]   null draw 14/20: +0.05176
+[23:23:34]   null draw 15/20: +0.05100
+[23:23:37]   null draw 16/20: +0.05085
+[23:23:40]   null draw 17/20: +0.05081
+[23:23:43]   null draw 18/20: +0.05166
+[23:23:46]   null draw 19/20: +0.05103
+[23:23:49]   null draw 20/20: +0.05065
+[23:23:49] T6 icw9 +0.05359 vs null p50 +0.05108 p80 +0.05163
+[23:23:49] T7 LOYO min |t| 0.95, max share 0.485
+[23:23:49] VERDICT {'t1_sign_and_t': False, 't1_both_halves_negative': True, 't2_both_sides_t_le_-1': True, 't3_zero_flips': True, 't6_beats_null_p80': True, 't6_beats_icw8': True, 't7_max_share_le_45pct': False, 'NOMINATED': False}
+[23:23:49] wrote /Users/ggraham/pipe_dream/final/out/eap/eap_screen_report.json (200s)
