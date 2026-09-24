@@ -80,7 +80,9 @@ import requests
 BASE_URL = "https://api.sharadar.com/v1.0/data"
 API_KEY = os.environ.get("SHARADAR_API_KEY")
 ROOT = Path(__file__).resolve().parent.parent
-PANEL = ROOT / "data" / "sharadar" / "panel"
+# SHARADAR_PANEL_DIR redirects output (used by the 1998-2004 backfill so it
+# never lands in the live panel dir that build_pit_universe.py globs).
+PANEL = Path(os.environ.get("SHARADAR_PANEL_DIR") or ROOT / "data" / "sharadar" / "panel")
 MANIFEST = PANEL / "_manifest.csv"
 
 PAGE = 10000
