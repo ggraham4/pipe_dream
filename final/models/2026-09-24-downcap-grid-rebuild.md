@@ -185,3 +185,78 @@ is not a new trial, and it has no kill. It replaces the unreadable +3.75%/yr.
 ## Results
 
 (appended after the build, below this line; nothing above is edited)
+
+### Results: build (2026-09-24). Verdict: BUILD SUCCESS
+
+Command: `python3 final/src/reset2026/build_downcap_grid_v2.py --all`, then
+`downcap_grid_acceptance.py`. Full JSON is in
+`out/reset2026/downcap_v2/acceptance.json`. Logs are `build*.log` in the same
+directory. The build used the data already on disk. The optional 14-ticker SF1
+top-up has not been pulled.
+
+New files (the originals are untouched):
+
+| file | rows |
+|---|---:|
+| `out/features_sharadar_pit_downcap_v2.parquet` | 22,535,814 (9,266 tickers) |
+| `out/features_with_{fundamentals,issuance,short_interest,events}_sharadar_pit_downcap_v2.parquet` | 22,535,814 |
+| `out/reset2026/quality_factors_v2.parquet` | 22,535,814 |
+| `out/reset2026/composite_panel_v2.parquet` | 22,535,814 (`eligible_cap*` = v2 flags, `eligible_cap*_v1` = v1 flags) |
+| `out/reset2026/beta_feature_v2.parquet` | 22,535,814 |
+| `out/reset2026/outcome_cache_v2.parquet` | 22,544,773 (includes SPY/USMV; 500/500 samples match `execution.realize_position`) |
+| `scripts/td_data_sharadar_downcap_v2/` | 5,255 CSVs (the added tickers only) |
+
+Fundamentals exist for 9,262 of the 9,266 tickers.
+
+The short-interest step aborted once with signal 6 (SIGABRT) partway through
+the chained run, most likely memory pressure from the full-width
+`read_parquet`. Rerun alone, it passed all of its own checks. The output
+depends only on its input, so this is noted, not a concern.
+
+**R: reproduction PASS (exact).** On the 20 dates, the old-grid tickers' rows
+taken from the full v2 build are identical to the originals:
+- `composite_panel`: row sets equal (43,743), 0 mismatches over 18 columns.
+  Those are all numeric factor/price/label columns, sector, and the v1 flags;
+  the NaN masks match too.
+- `beta_feature`: 43,743 rows, 0 mismatches.
+- `outcome_cache`: 43,775 rows, 0 mismatches.
+
+So adding 5,255 tickers perturbs nothing, and the v2 grid is the old grid
+plus new rows.
+
+**C: coverage PASS.** Row coverage of v2 cap150 non-SPAC rows is 100.0%,
+both overall and over 2007-2019. This is by construction, not a finding:
+the universe and the grid are both derived from `panel/stocks` and
+`panel/daily`. Factor coverage is the check that means something. On
+2007-2019 cap150 non-SPAC rows, new rows (2,987,605) against old rows
+(6,768,536):
+
+| factor | new | old | ratio (gate ≥ 0.90) |
+|---|---:|---:|---:|
+| momentum_12_1 | 93.9% | 96.4% | 0.975 |
+| pct_from_high_252 | 94.0% | 96.4% | 0.975 |
+| volatility_60 | 98.7% | 99.3% | 0.995 |
+| gross_profitability | 98.3% | 99.1% | 0.992 |
+| accruals | 98.2% | 99.0% | 0.991 |
+| net_issuance_pct | 94.3% | 96.6% | 0.976 |
+| days_to_next_filing_seasonal | 99.9% | 99.9% | 1.000 |
+
+The kill criterion did not fire.
+
+**A1 PASS.** ANIK, NGS, WTBA, NRIM and ACHN are all present on 2014-06-30,
+`eligible_cap150`, and not in the old grid. Their grid `market_cap` matches
+Sharadar daily `marketcap` to 0.0%. The ±30% tolerance was set expecting two
+different constructions; the exact match means both are SF1 shares × close,
+so this confirms the join, not an independent source. The independent anchor
+is still the Alpha Vantage current-cap comparison in the table above: within
+10% on the 4 live names.
+
+**A2 PASS.** ACHN, HNR and GCAP end on their `lastpricedate`. `truncated` is
+True on exactly their last 40 rows.
+
+**A3 PASS, exact.** cap150 / cap500 counts equal the v2 report: 2,953/1,993
+(2008-06-30), 3,213/2,449 (2014-06-30), 3,100/2,418 (2017-06-30).
+
+**Phase 2 is unblocked and was not run.** It needs no key: the 14-ticker SF1
+pull is optional and touches ≤0.3% of tickers. The read-out waits for the
+COO's go-ahead.
