@@ -260,3 +260,21 @@ True on exactly their last 40 rows.
 **Phase 2 is unblocked and was not run.** It needs no key: the 14-ticker SF1
 pull is optional and touches ≤0.3% of tickers. The read-out waits for the
 COO's go-ahead.
+
+### Results: SF1 top-up pull (2026-09-24, key supplied by Gabe via the host session)
+
+`sharadar_downcap_pull.py` ran 28 requests: 0 failed, 73 rows returned, 16
+empty. Output is in `data/sharadar/downcap_pull/`. Nothing in it changes the
+grid:
+- **ARQ, 11 tickers** (CCXI, COE1, GLF, MCGA, MONT, NKT, OPI, PKDC, QRR, USDE
+  and MKTSQ1): for the first ten, the rows are the same count and dates as the
+  ones already in `sf1_fundamentals.parquet`.
+- **ARY:** empty for all 14. The missing annual rows are absent at the source.
+- **MKTSQ1:** the one ticker with new rows (24 ARQ and 8 ARY). They are dated
+  1998-02 .. 2003-07, before the bulk pull's 2004 start and the panel's 2005
+  start, so no grid row can join to them.
+- **BRR, NCLX, SIC1:** Sharadar has no SF1 rows at all.
+
+The grid was not rebuilt, and the acceptance results above stand as they are.
+The key was passed only as an inline environment variable. The output
+directory was checked with grep for the key string: no matches.
