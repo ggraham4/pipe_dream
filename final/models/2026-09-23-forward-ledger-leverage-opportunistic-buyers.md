@@ -251,3 +251,99 @@ here: fixing it means rebuilding the bulk events, which would change the data
 the in-era lead was measured on. It is flagged for the insider workstream's
 owner. Going forward, live events use the correct date and bulk events keep the
 string-min date.
+
+### 5d. Live refresh coverage
+
+`edgar_form4_refresh.py` finished all 126 business-day indexes from 2026-04-01
+to 2026-09-23, with no gaps, and fetched 51,950 in-universe Form 4 filings. That
+produced 18,270 P/S owner-code rows in `out/insider/insider_events_live.parquet`,
+with filing dates 2026-04-01 to 2026-09-23.
+
+Two operational notes:
+- EDGAR answers **403, not 404**, for a daily index that does not exist. The
+  first case was form.20260619.idx, for Juneteenth. The script now treats that
+  as a holiday.
+- Throughput drops sharply while the Mac idles, so run it under `caffeinate`.
+
+### 5e. First blind ext record: panel_date 2026-09-08 (run 2026-09-24)
+
+All three blind conditions held:
+- 0 of 2,214 names had a realized 40d outcome.
+- The newest insider filing on disk is 2026-09-23, which is ≥ the panel date, so
+  the insider data is not stale. The causal cut still uses only filings dated on
+  or before 2026-09-08.
+- The v3 ledger was unchanged: 2,215 lines, md5 `84e42f49…` before and after.
+  The guard logged "NOT re-appending".
+
+Output: 2,214 rows in `prediction_ledger_ext.csv`, `ext_version`
+`ext1_icw9lev_oppbuy_2026-09-23`.
+- Leverage coverage 83.1%; icw9 score finite for 100%.
+- `insider_data_max_filing_date` 2026-09-23.
+
+**Fire rates on 2026-09-08:**
+
+| signal | fire rate | names |
+|---|---|---|
+| `opp_buyers_90` ≥ 1 | 4.83% | 107 (clears the registered minimum of 10) |
+| `ins_buyers_90` ≥ 1 | 13.6% | — |
+| `unclass_buyers_90` ≥ 1 | 9.9% | — |
+
+For comparison, `ins_buyers_90` fired 19.7% of the time in-era (17.75% on the
+2015-06-15 selftest date), and opp fired 6.7% on that date. Both are lower now.
+This is plausibly seasonal: mid-quarter blackout windows. It is not
+investigated.
+
+**Top 5 by `opp_buyers_90`.** Ties are broken by `ins_buyers_90`. All filings
+come from the live refresh.
+
+| ticker | opp | ins | unclass | opportunistic owner filings in (06-10, 09-08] |
+|---|---|---|---|---|
+| ELAN | 3 | 5 | 2 | directors 1374175 (filed 08-10), 1566340 (08-13), 1352090 (08-21, $0.94M) |
+| MTDR | 3 | 5 | 2 | 1540655 (Dir+Off; 5 filings 06-11 → 08-28), 1688490 (06-17), 1934692 (08-12) |
+| AMRC | 3 | 4 | 1 | 1496665 (Dir/Off/10%; 4 filings 08-11 → 09-01), 1496494 and 1633385 (08-26) |
+| CHCO | 3 | 4 | 1 | directors 1234850, 1880770, 1730666 (all 07-21) |
+| EMBC | 3 | 4 | 1 | 1910501, 1784562, 1910621 (all 08-13) |
+
+**Two filings hand-verified on EDGAR.** Each was fetched directly from
+`sec.gov/Archives`, and the raw XML fields were read:
+1. **ELAN**, accession 0001352090-26-000006.
+   - Filing: FILED AS OF 20260821; documentType 4; issuerCik 0001739104 (ELAN);
+     owner Kurzius Lawrence Erik (CIK 1352090); isDirector true; code P.
+   - Classification: his prior O/D purchases at ELAN are 2018-09, 2025-03 and
+     2025-12. First purchase is 2018 (≥ 3 years), so classifiable. No August
+     purchase in 2023–2025, so **opportunistic**. ✔
+2. **CHCO**, accession 0000726854-26-000155.
+   - Filing: FILED AS OF 20260721; documentType 4; issuerCik 0000726854 (CHCO);
+     owner FISHER ROBERT D (CIK 1234850); isDirector 1; code P.
+   - Classification: he is a near-quarterly buyer since 2016, with July purchases
+     in 2025 and 2023, but the 2024 purchase was in **August**. So by the
+     registered rule he is **opportunistic**. ✔ (matches the code)
+   - This is a known edge of the CMP definition: a plan-like buyer who slips one
+     month in one year reads as opportunistic. It is recorded here and not
+     changed; the rule is frozen.
+
+### 5f. Adding record dates going forward (options for Gabe; cadence is his call)
+
+The order matters. Each step feeds the next:
+1. Gabe's panel refresh, which updates `composite_panel.parquet`, the SF1
+   fundamentals and `beta_feature.parquet`.
+2. `caffeinate -i /opt/anaconda3/envs/pipe_dream/bin/python3.11 /Users/ggraham/pipe_dream/final/scripts/edgar_form4_refresh.py`
+   - Resumable and incremental. It starts from the bulk data's end and skips
+     index days it has already done.
+   - Time: about 3–5 minutes per new business day of filings.
+3. `/opt/anaconda3/envs/pipe_dream/bin/python3.11 <repo>/final/src/reset2026/prediction_ledger.py record`
+   - It refuses to record a matured date.
+   - It skips a date that is already recorded.
+   - It writes NaN insider columns if the Form 4 data is more than 7 days stale.
+4. Any time: `... prediction_ledger.py score`, to score both ledgers' matured
+   dates.
+
+Cadence options:
+- **(a) Every 40 trading days.** About 8 weeks. Every date qualifies under
+  section 4, so the 6 needed dates take about 1 year.
+- **(b) Monthly.** Only every second date qualifies. Descriptive reads are
+  denser, but the decision date doesn't move.
+- **(c) Whenever the panel is refreshed anyway.** The greedy ≥ 40-trading-day
+  selection in section 4 keeps any cadence honest.
+
+Under any option the first matured date is 2026-09-08, around 2026-11-03.
