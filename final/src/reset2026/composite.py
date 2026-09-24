@@ -37,14 +37,28 @@ STRESS_COST_BPS = 50.0
 # ---------------------------------------------------------------------------
 # Factors -- PREREGISTRATION.md section 2. Signs fixed here, once, before any
 # score in this package is ever computed.
-# ---------------------------------------------------------------------------
+#
+# `asset_growth` REMOVED 2026-09-22, per Gabe's explicit decision -- see
+# PREREGISTRATION.md's "Factor-set decision (2026-09-22)" section. Measured
+# wrong-signed against its own citation (IC +0.0105, stable across both
+# halves of the nomination era, vs. assigned -1) in the model-audit pass
+# (`models/2026-09-22-composite-model-physics.md` section 3). Dropped, not
+# flipped -- flipping would fit the sign to the exact data used to validate
+# it. The single pre-registered ablation this decision rests on
+# (`correction_variants.py`'s `asset_growth_dropped`, harness-verified
+# against `run_backtest.py`) improved the confirmed nomination-era cell from
+# +3.75%/yr to +4.32%/yr excess vs SPY, same construction, LOYO-clean, at
+# the cost of higher offset-to-offset dispersion (sd 0.55% vs 0.37%) -- see
+# `models/2026-09-22-composite-model-corrections.md` sections 3 and 6a.
+# `REPORT_nominate.md`/`REPORT_holdout.md` predate this change and describe
+# the prior 9(8)-factor composite; regenerate via `run_backtest.py` +
+# `aggregate_report.py` before treating them as current.
 FACTOR_SIGNS = {
     "momentum_12_1": +1,
     "pct_from_high_252": +1,
     "volatility_60": -1,
     "gross_profitability": +1,
     "accruals": -1,
-    "asset_growth": -1,
     "net_issuance_pct": -1,
     "days_to_next_filing_seasonal": -1,
     "short_interest_days_to_cover": -1,

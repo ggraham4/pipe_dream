@@ -86,6 +86,21 @@ Every factor is a **named, published anomaly with a citation**, not a
 home-grown transform of OHLCV data — the second of the three approved
 changes, applied literally.
 
+**Correction (2026-09-22):** `short_interest_days_to_cover` has zero
+non-null coverage anywhere in the 2007-2019 nomination era (data starts
+2020-04-27) — every nomination-era number in this document, including
+the headline +3.75%/yr and the named `cap150_raw`/`decile_volq`
+selection, was produced by the other **8** factors; the 9th is real and
+correctly wired but only ever active in the hold-out and the live signal,
+neither of which this document's confirmed numbers draw on. Read "9
+factors" throughout this document as "8 factors, 2007-2019; a 9th active
+from 2020." Also: `asset_growth` measures the opposite sign from its
+assigned `-1` in this universe (`IC = +0.0105`, stable across both halves
+of the sample) — a disclosed limitation, not corrected in place. Full
+detail, an ablation, and two portfolio-construction follow-ups:
+`2026-09-22-composite-model-physics.md` and
+`2026-09-22-composite-model-corrections.md`.
+
 ### 2.3 Combination — genuinely zero fitted parameters
 
 For each rebalance date, each factor's values across the eligible universe

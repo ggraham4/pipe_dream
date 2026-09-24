@@ -1,0 +1,577 @@
+{
+  "generated": "2026-09-22T10:42:22.492816",
+  "era": "nominate_2007_2019",
+  "label_col": "forward_return_tradable_40",
+  "factor_availability": {
+    "momentum_12_1": {
+      "first_date": "2007-01-03",
+      "last_date": "2019-12-31",
+      "coverage_frac_of_eligible_rows": 0.9638833471565309,
+      "n_nonnull": 6449970,
+      "n_total_eligible_rows": 6691650
+    },
+    "pct_from_high_252": {
+      "first_date": "2007-01-03",
+      "last_date": "2019-12-31",
+      "coverage_frac_of_eligible_rows": 0.9640348792898612,
+      "n_nonnull": 6450984,
+      "n_total_eligible_rows": 6691650
+    },
+    "volatility_60": {
+      "first_date": "2007-01-03",
+      "last_date": "2019-12-31",
+      "coverage_frac_of_eligible_rows": 0.9927358723184865,
+      "n_nonnull": 6643041,
+      "n_total_eligible_rows": 6691650
+    },
+    "gross_profitability": {
+      "first_date": "2007-01-03",
+      "last_date": "2019-12-31",
+      "coverage_frac_of_eligible_rows": 0.9910463039758505,
+      "n_nonnull": 6631735,
+      "n_total_eligible_rows": 6691650
+    },
+    "accruals": {
+      "first_date": "2007-01-03",
+      "last_date": "2019-12-31",
+      "coverage_frac_of_eligible_rows": 0.9904037120889466,
+      "n_nonnull": 6627435,
+      "n_total_eligible_rows": 6691650
+    },
+    "asset_growth": {
+      "first_date": "2007-01-03",
+      "last_date": "2019-12-31",
+      "coverage_frac_of_eligible_rows": 0.9665127434937572,
+      "n_nonnull": 6467565,
+      "n_total_eligible_rows": 6691650
+    },
+    "net_issuance_pct": {
+      "first_date": "2007-01-03",
+      "last_date": "2019-12-31",
+      "coverage_frac_of_eligible_rows": 0.9664495303848827,
+      "n_nonnull": 6467142,
+      "n_total_eligible_rows": 6691650
+    },
+    "days_to_next_filing_seasonal": {
+      "first_date": "2007-01-03",
+      "last_date": "2019-12-31",
+      "coverage_frac_of_eligible_rows": 0.9988198725277024,
+      "n_nonnull": 6683753,
+      "n_total_eligible_rows": 6691650
+    },
+    "short_interest_days_to_cover": {
+      "first_date": null,
+      "last_date": null,
+      "coverage_frac_of_eligible_rows": 0.0,
+      "n_nonnull": 0,
+      "n_total_eligible_rows": 6691650
+    },
+    "log_market_cap": {
+      "first_date": "2007-01-03",
+      "last_date": "2019-12-31",
+      "coverage_frac_of_eligible_rows": 0.9988200219676762,
+      "n_nonnull": 6683754,
+      "n_total_eligible_rows": 6691650
+    },
+    "momentum_1_1": {
+      "first_date": "2007-01-03",
+      "last_date": "2019-12-31",
+      "coverage_frac_of_eligible_rows": 0.9983306060538133,
+      "n_nonnull": 6680479,
+      "n_total_eligible_rows": 6691650
+    }
+  },
+  "factor_ic": {
+    "momentum_12_1": {
+      "is_candidate": false,
+      "assigned_sign": 1,
+      "pooled_ic": 0.018508471353702333,
+      "t": 1.3823405236334954,
+      "n_dates": 3272,
+      "measured_sign": 1,
+      "sign_matches_assigned": true,
+      "odd_years_ic": 0.02874346371895081,
+      "odd_years_t": 1.4074594583845794,
+      "even_years_ic": 0.006565387547366037,
+      "even_years_t": 0.41438735113329966,
+      "split_half_same_sign": "True"
+    },
+    "pct_from_high_252": {
+      "is_candidate": false,
+      "assigned_sign": 1,
+      "pooled_ic": 0.013359253779815741,
+      "t": 0.836261428518942,
+      "n_dates": 3272,
+      "measured_sign": 1,
+      "sign_matches_assigned": true,
+      "odd_years_ic": 0.023728195264997205,
+      "odd_years_t": 0.9852610009609819,
+      "even_years_ic": 0.0012598664308821285,
+      "even_years_t": 0.06425532340704428,
+      "split_half_same_sign": "True"
+    },
+    "volatility_60": {
+      "is_candidate": false,
+      "assigned_sign": -1,
+      "pooled_ic": -0.0034256704917825474,
+      "t": -0.2095936566027876,
+      "n_dates": 3272,
+      "measured_sign": -1,
+      "sign_matches_assigned": true,
+      "odd_years_ic": -0.0014221716479471832,
+      "odd_years_t": -0.06198819899109871,
+      "even_years_ic": -0.00576352808306593,
+      "even_years_t": -0.25103298912856664,
+      "split_half_same_sign": "True"
+    },
+    "gross_profitability": {
+      "is_candidate": false,
+      "assigned_sign": 1,
+      "pooled_ic": 0.041020791575821905,
+      "t": 5.5775328355615095,
+      "n_dates": 3272,
+      "measured_sign": 1,
+      "sign_matches_assigned": true,
+      "odd_years_ic": 0.0505951479684154,
+      "odd_years_t": 5.619202716291619,
+      "even_years_ic": 0.029848595573338625,
+      "even_years_t": 2.7047022427340326,
+      "split_half_same_sign": "True"
+    },
+    "accruals": {
+      "is_candidate": false,
+      "assigned_sign": -1,
+      "pooled_ic": -0.013469853249897563,
+      "t": -2.2508107695974884,
+      "n_dates": 3272,
+      "measured_sign": -1,
+      "sign_matches_assigned": true,
+      "odd_years_ic": -0.01120731118295418,
+      "odd_years_t": -1.4831679251230838,
+      "even_years_ic": -0.01610998511874143,
+      "even_years_t": -1.7236641891831317,
+      "split_half_same_sign": "True"
+    },
+    "asset_growth": {
+      "is_candidate": false,
+      "assigned_sign": -1,
+      "pooled_ic": 0.010494282657125166,
+      "t": 1.4729948999282054,
+      "n_dates": 3272,
+      "measured_sign": 1,
+      "sign_matches_assigned": false,
+      "odd_years_ic": 0.0233471017876591,
+      "odd_years_t": 2.502441638708795,
+      "even_years_ic": -0.004503510262080661,
+      "even_years_t": -0.4828458164340486,
+      "split_half_same_sign": "False"
+    },
+    "net_issuance_pct": {
+      "is_candidate": false,
+      "assigned_sign": -1,
+      "pooled_ic": -0.01405101983915155,
+      "t": -2.0749393150150004,
+      "n_dates": 3272,
+      "measured_sign": -1,
+      "sign_matches_assigned": true,
+      "odd_years_ic": -0.017917970341637553,
+      "odd_years_t": -2.0334372063539097,
+      "even_years_ic": -0.009538723954793707,
+      "even_years_t": -0.9602101109458537,
+      "split_half_same_sign": "True"
+    },
+    "days_to_next_filing_seasonal": {
+      "is_candidate": false,
+      "assigned_sign": -1,
+      "pooled_ic": -0.0021011236870171427,
+      "t": -0.7703417716508143,
+      "n_dates": 3272,
+      "measured_sign": -1,
+      "sign_matches_assigned": true,
+      "odd_years_ic": -0.0036752045616546864,
+      "odd_years_t": -0.9648186246027656,
+      "even_years_ic": -0.0002643485207182345,
+      "even_years_t": -0.07571963963846401,
+      "split_half_same_sign": "True"
+    },
+    "short_interest_days_to_cover": {
+      "is_candidate": false,
+      "assigned_sign": -1,
+      "pooled_ic": NaN,
+      "t": NaN,
+      "n_dates": 0,
+      "measured_sign": 0,
+      "sign_matches_assigned": null,
+      "odd_years_ic": NaN,
+      "odd_years_t": NaN,
+      "even_years_ic": NaN,
+      "even_years_t": NaN,
+      "split_half_same_sign": null
+    },
+    "log_market_cap": {
+      "is_candidate": true,
+      "assigned_sign": -1,
+      "pooled_ic": -0.020125504932054145,
+      "t": -2.0435232804612284,
+      "n_dates": 3272,
+      "measured_sign": -1,
+      "sign_matches_assigned": true,
+      "odd_years_ic": -0.010334282834737057,
+      "odd_years_t": -0.8094565890663791,
+      "even_years_ic": -0.031550758796605606,
+      "even_years_t": -2.111674020702439,
+      "split_half_same_sign": "True"
+    },
+    "momentum_1_1": {
+      "is_candidate": true,
+      "assigned_sign": -1,
+      "pooled_ic": -0.003073659885939503,
+      "t": -0.39407846427813475,
+      "n_dates": 3272,
+      "measured_sign": -1,
+      "sign_matches_assigned": true,
+      "odd_years_ic": 0.0023029700098695875,
+      "odd_years_t": 0.21519872578672372,
+      "even_years_ic": -0.009347581658400177,
+      "even_years_t": -0.8274071315669683,
+      "split_half_same_sign": "False"
+    }
+  },
+  "coverage": {
+    "hi_coverage_n_rows": 6426204,
+    "lo_coverage_n_rows": 215954,
+    "hi_coverage_mean": 8.0,
+    "lo_coverage_mean": 3.303407207090399
+  },
+  "decile_cap150_raw": [
+    {
+      "decile": 0,
+      "n": 667174,
+      "mean_forward_return": 0.015162040004011612,
+      "t": 1.4042737175197464
+    },
+    {
+      "decile": 1,
+      "n": 665560,
+      "mean_forward_return": 0.019189060062761745,
+      "t": 2.0197782831735607
+    },
+    {
+      "decile": 2,
+      "n": 665217,
+      "mean_forward_return": 0.018088570203339604,
+      "t": 2.096430808078214
+    },
+    {
+      "decile": 3,
+      "n": 665508,
+      "mean_forward_return": 0.018821173755952398,
+      "t": 2.375309256234606
+    },
+    {
+      "decile": 4,
+      "n": 665875,
+      "mean_forward_return": 0.01860160707256391,
+      "t": 2.5640466786518066
+    },
+    {
+      "decile": 5,
+      "n": 664919,
+      "mean_forward_return": 0.018704142316969086,
+      "t": 2.7598273277279137
+    },
+    {
+      "decile": 6,
+      "n": 665177,
+      "mean_forward_return": 0.018516480675211715,
+      "t": 2.9501011766361036
+    },
+    {
+      "decile": 7,
+      "n": 665548,
+      "mean_forward_return": 0.017190982164268665,
+      "t": 2.93311958228191
+    },
+    {
+      "decile": 8,
+      "n": 665229,
+      "mean_forward_return": 0.016528967679905734,
+      "t": 2.969037040162723
+    },
+    {
+      "decile": 9,
+      "n": 666857,
+      "mean_forward_return": 0.01776478857648945,
+      "t": 3.4548457746088137
+    }
+  ],
+  "decile_cap150_neutral": [
+    {
+      "decile": 0,
+      "n": 667174,
+      "mean_forward_return": 0.017371384282625937,
+      "t": 1.5824514275243438
+    },
+    {
+      "decile": 1,
+      "n": 665560,
+      "mean_forward_return": 0.020550322419853648,
+      "t": 2.142989011621845
+    },
+    {
+      "decile": 2,
+      "n": 665217,
+      "mean_forward_return": 0.019982486321598984,
+      "t": 2.3773357265017454
+    },
+    {
+      "decile": 3,
+      "n": 665508,
+      "mean_forward_return": 0.01903802943007933,
+      "t": 2.4193987916084243
+    },
+    {
+      "decile": 4,
+      "n": 665875,
+      "mean_forward_return": 0.01786568098514823,
+      "t": 2.5483857001904076
+    },
+    {
+      "decile": 5,
+      "n": 664919,
+      "mean_forward_return": 0.017139086985927164,
+      "t": 2.588551073746794
+    },
+    {
+      "decile": 6,
+      "n": 665177,
+      "mean_forward_return": 0.016721477107355363,
+      "t": 2.658927755867314
+    },
+    {
+      "decile": 7,
+      "n": 665548,
+      "mean_forward_return": 0.016338989789540764,
+      "t": 2.7242775339859144
+    },
+    {
+      "decile": 8,
+      "n": 665229,
+      "mean_forward_return": 0.01623213899753782,
+      "t": 2.9252125222530005
+    },
+    {
+      "decile": 9,
+      "n": 666857,
+      "mean_forward_return": 0.0173221925285361,
+      "t": 3.253965722414043
+    }
+  ],
+  "coverage_ic_cap150_raw": {
+    "full": {
+      "mean": 0.026165023436143436,
+      "t": 2.3122506927075097,
+      "n": 3272,
+      "n_dates": 3272
+    },
+    "hi_coverage": {
+      "mean": 0.026565293846952037,
+      "t": 2.285492651801462,
+      "n": 3272,
+      "n_dates": 3272
+    },
+    "lo_coverage": {
+      "mean": 0.022249272835899135,
+      "t": 2.0092529464922992,
+      "n": 3119,
+      "n_dates": 3119
+    }
+  },
+  "fama_macbeth": {
+    "cap150_raw": {
+      "mean_slope": 0.0022599897859430936,
+      "slope_t": 0.14740972067899516,
+      "mean_r2": 0.01500895438776313,
+      "n_dates": 3272
+    },
+    "cap150_neutral": {
+      "mean_slope": -0.00571127122266448,
+      "slope_t": -0.36257635952265443,
+      "mean_r2": 0.013266313451956202,
+      "n_dates": 3272
+    },
+    "cap2000_raw": {
+      "mean_slope": 0.029473616877836596,
+      "slope_t": 2.436879143209109,
+      "mean_r2": 0.020303460148766887,
+      "n_dates": 3272
+    },
+    "cap2000_neutral": {
+      "mean_slope": 0.01485737485466505,
+      "slope_t": 1.3572232437863598,
+      "mean_r2": 0.014932080034257483,
+      "n_dates": 3272
+    }
+  },
+  "factor_correlation_gk": {
+    "factor_order": [
+      "momentum_12_1",
+      "pct_from_high_252",
+      "volatility_60",
+      "gross_profitability",
+      "accruals",
+      "asset_growth",
+      "net_issuance_pct",
+      "days_to_next_filing_seasonal"
+    ],
+    "dropped_no_data_this_era": [
+      "short_interest_days_to_cover"
+    ],
+    "correlation_matrix": {
+      "momentum_12_1": {
+        "momentum_12_1": 1.0,
+        "pct_from_high_252": 0.5592,
+        "volatility_60": 0.0999,
+        "gross_profitability": 0.0718,
+        "accruals": 0.0231,
+        "asset_growth": -0.1299,
+        "net_issuance_pct": -0.0591,
+        "days_to_next_filing_seasonal": -0.0063
+      },
+      "pct_from_high_252": {
+        "momentum_12_1": 0.5592,
+        "pct_from_high_252": 1.0,
+        "volatility_60": 0.4879,
+        "gross_profitability": 0.0236,
+        "accruals": -0.079,
+        "asset_growth": -0.0376,
+        "net_issuance_pct": 0.1156,
+        "days_to_next_filing_seasonal": 0.0429
+      },
+      "volatility_60": {
+        "momentum_12_1": 0.0999,
+        "pct_from_high_252": 0.4879,
+        "volatility_60": 1.0,
+        "gross_profitability": -0.0692,
+        "accruals": -0.1959,
+        "asset_growth": 0.0307,
+        "net_issuance_pct": 0.2356,
+        "days_to_next_filing_seasonal": 0.0887
+      },
+      "gross_profitability": {
+        "momentum_12_1": 0.0718,
+        "pct_from_high_252": 0.0236,
+        "volatility_60": -0.0692,
+        "gross_profitability": 1.0,
+        "accruals": 0.2525,
+        "asset_growth": 0.0339,
+        "net_issuance_pct": 0.2578,
+        "days_to_next_filing_seasonal": 0.0354
+      },
+      "accruals": {
+        "momentum_12_1": 0.0231,
+        "pct_from_high_252": -0.079,
+        "volatility_60": -0.1959,
+        "gross_profitability": 0.2525,
+        "accruals": 1.0,
+        "asset_growth": 0.1473,
+        "net_issuance_pct": -0.0212,
+        "days_to_next_filing_seasonal": -0.0094
+      },
+      "asset_growth": {
+        "momentum_12_1": -0.1299,
+        "pct_from_high_252": -0.0376,
+        "volatility_60": 0.0307,
+        "gross_profitability": 0.0339,
+        "accruals": 0.1473,
+        "asset_growth": 1.0,
+        "net_issuance_pct": 0.3379,
+        "days_to_next_filing_seasonal": 0.0377
+      },
+      "net_issuance_pct": {
+        "momentum_12_1": -0.0591,
+        "pct_from_high_252": 0.1156,
+        "volatility_60": 0.2356,
+        "gross_profitability": 0.2578,
+        "accruals": -0.0212,
+        "asset_growth": 0.3379,
+        "net_issuance_pct": 1.0,
+        "days_to_next_filing_seasonal": 0.0912
+      },
+      "days_to_next_filing_seasonal": {
+        "momentum_12_1": -0.0063,
+        "pct_from_high_252": 0.0429,
+        "volatility_60": 0.0887,
+        "gross_profitability": 0.0354,
+        "accruals": -0.0094,
+        "asset_growth": 0.0377,
+        "net_issuance_pct": 0.0912,
+        "days_to_next_filing_seasonal": 1.0
+      }
+    },
+    "signed_ic_vector": {
+      "momentum_12_1": 0.018508471353702333,
+      "pct_from_high_252": 0.013359253779815741,
+      "volatility_60": 0.0034256704917825474,
+      "gross_profitability": 0.041020791575821905,
+      "accruals": 0.013469853249897563,
+      "asset_growth": -0.010494282657125166,
+      "net_issuance_pct": 0.01405101983915155,
+      "days_to_next_filing_seasonal": 0.0021011236870171427
+    },
+    "grinold_kahn_weights_normalized": {
+      "momentum_12_1": 0.14431445344849778,
+      "pct_from_high_252": 0.03678308575529359,
+      "volatility_60": 0.03251189858891161,
+      "gross_profitability": 0.42623743790285873,
+      "accruals": 0.08224462028495319,
+      "asset_growth": -0.16655719604313252,
+      "net_issuance_pct": 0.10833033058480618,
+      "days_to_next_filing_seasonal": 0.003020977391546381
+    },
+    "equal_weights": {
+      "momentum_12_1": 0.125,
+      "pct_from_high_252": 0.125,
+      "volatility_60": 0.125,
+      "gross_profitability": 0.125,
+      "accruals": 0.125,
+      "asset_growth": 0.125,
+      "net_issuance_pct": 0.125,
+      "days_to_next_filing_seasonal": 0.125
+    },
+    "cosine_similarity_gk_vs_equal": 0.47046433596680415
+  },
+  "ic_to_ir_check": {
+    "n_windows": 82,
+    "mean_excess_per_window": 0.007437475491315126,
+    "std_excess_per_window": 0.019688868895173073,
+    "ir_annualized_realized": 0.9481456716374703,
+    "note": "single offset (0), gross of cost -- a quick check, not the 40-offset headline"
+  },
+  "composite_full_universe_ic": {
+    "cap150_raw": {
+      "mean": 0.026165023436143436,
+      "t": 2.3122506927075097,
+      "n": 3272,
+      "n_dates": 3272
+    },
+    "cap150_neutral": {
+      "mean": 0.017353535042033186,
+      "t": 1.6056751921524377,
+      "n": 3272,
+      "n_dates": 3272
+    },
+    "cap2000_raw": {
+      "mean": 0.03544504994954191,
+      "t": 2.790568749868939,
+      "n": 3272,
+      "n_dates": 3272
+    },
+    "cap2000_neutral": {
+      "mean": 0.02065168633629496,
+      "t": 1.8605170211710207,
+      "n": 3272,
+      "n_dates": 3272
+    }
+  }
+}

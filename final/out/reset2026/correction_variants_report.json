@@ -1,0 +1,67 @@
+{
+  "generated": "2026-09-22T11:11:32.748572",
+  "era": "nominate_2007_2019",
+  "tier": "cap150",
+  "cost_bps": 15.0,
+  "null_draws": 50,
+  "backtest_variants": {
+    "decile1_volq": {
+      "n_offsets": 40,
+      "mean_excess_cagr_vs_spy": -0.008325286304279677,
+      "std_excess_cagr_vs_spy": 0.004695283917953851,
+      "min": -0.01722243955867645,
+      "max": 0.00029365906869219856,
+      "n_offsets_positive": 1,
+      "mean_null_percentile": 0.0,
+      "mean_years_won": 6.075,
+      "mean_n_years": 13.0
+    },
+    "exclude_bottom_decile": {
+      "n_offsets": 40,
+      "mean_excess_cagr_vs_spy": 0.02786741311889641,
+      "std_excess_cagr_vs_spy": 0.002019098229426288,
+      "min": 0.023421604780691576,
+      "max": 0.030982577572131006,
+      "n_offsets_positive": 40,
+      "mean_null_percentile": 1.0,
+      "mean_years_won": 8.25,
+      "mean_n_years": 13.0
+    },
+    "asset_growth_dropped": {
+      "n_offsets": 40,
+      "mean_excess_cagr_vs_spy": 0.04320852571388379,
+      "std_excess_cagr_vs_spy": 0.00553209751084664,
+      "min": 0.0298543131141917,
+      "max": 0.0529530473155701,
+      "n_offsets_positive": 40,
+      "mean_null_percentile": 0.9995,
+      "mean_years_won": 11.05,
+      "mean_n_years": 13.0
+    }
+  },
+  "book_to_market_screen": {
+    "coverage_frac": 0.9987956632519632,
+    "pooled_ic": {
+      "mean": -0.023996395262775527,
+      "t": -2.316354854877127,
+      "n": 3272,
+      "n_dates": 3272
+    },
+    "odd_years_ic": {
+      "mean": -0.042406115428882916,
+      "t": -3.0378667472322483,
+      "n": 1762,
+      "n_dates": 1762
+    },
+    "even_years_ic": {
+      "mean": -0.002514324446430349,
+      "t": -0.1802466121466204,
+      "n": 1510,
+      "n_dates": 1510
+    },
+    "citation": "Fama & French 1992/1993; Novy-Marx 2013 (paired with gross_profitability)",
+    "note": "IC screen only -- not added to any composite, not backtested as a portfolio, not promoted.",
+    "classical_value_premium_sign": 1,
+    "interpretation": "Classic value premium (Fama-French HML) predicts sign +1 (high B/M -> higher forward return). Measured pooled IC here is -0.0240 (t=-2.32) -- the OPPOSITE sign, statistically significant, not noise. Not promoted regardless of sign."
+  }
+}

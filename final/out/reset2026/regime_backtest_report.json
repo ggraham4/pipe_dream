@@ -1,0 +1,61 @@
+{
+  "overall": {
+    "mean_excess_annualized": 0.05253357481683948,
+    "n_windows": 3272
+  },
+  "year_regime_down": {
+    "n_windows": 253,
+    "mean_excess_annualized": 0.18758432451009577,
+    "sd_annualized": 0.08235643400709118,
+    "offsets_positive": 40,
+    "years": [
+      2008,
+      2022
+    ]
+  },
+  "year_regime_flat": {
+    "n_windows": 1006,
+    "mean_excess_annualized": 0.03234744197269879,
+    "sd_annualized": 0.0665277398740385,
+    "offsets_positive": 40,
+    "years": [
+      2007,
+      2011,
+      2015,
+      2018
+    ]
+  },
+  "year_regime_up": {
+    "n_windows": 2013,
+    "mean_excess_annualized": 0.04564803580482344,
+    "sd_annualized": 0.06349438682621354,
+    "offsets_positive": 40,
+    "years": [
+      2006,
+      2009,
+      2010,
+      2012,
+      2013,
+      2014,
+      2016,
+      2017,
+      2019,
+      2020,
+      2021,
+      2023,
+      2024,
+      2025,
+      2026
+    ]
+  },
+  "vol_regime_high": {
+    "n_windows": 1375,
+    "mean_excess_annualized": 0.07213236334837879,
+    "sd_annualized": 0.0836688680928504
+  },
+  "vol_regime_low": {
+    "n_windows": 1897,
+    "mean_excess_annualized": 0.03832781085750023,
+    "sd_annualized": 0.05296152677936317
+  }
+}

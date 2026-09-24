@@ -1,0 +1,62 @@
+[12:46:57] nomination cap150 rows 6,691,650, dates 3,272
+[12:46:57] coverage {"ins_buyers_90": {"nonnull": 1.0, "fire_rate": 0.19651834749277083, "rank_z_of_zero_median": -0.0896711202466598}, "ins_sellers_90": {"nonnull": 1.0, "fire_rate": 0.5805060037509433, "rank_z_of_zero_median": -0.2901578458681523}, "ins_cluster_buy_90": {"nonnull": 1.0, "fire_rate": 0.07656706492419657}}
+[12:47:10] harness check passed: vectorized composite == composite.compute_composite
+[12:47:58] ins_buyers_90: IC raw -0.0006 t -0.16 | odd -1.76 even +1.61 | beta-adj t -0.17 | sector-neutral t +3.10 | partial|ew t +1.88 partial|icw t +2.30
+[12:48:46] ins_sellers_90: IC raw +0.0136 t +1.95 | odd +2.44 even +0.16 | beta-adj t +1.84 | sector-neutral t -0.39 | partial|ew t +0.93 partial|icw t +1.05
+[12:50:52] ablation ew8                        IC raw +0.0317 (t +2.53)  beta-adj +0.0450 (t +4.25)
+[12:50:52] ablation icw8_production            IC raw +0.0421 (t +5.88)  beta-adj +0.0422 (t +5.69)
+[12:50:52] ablation ew9_ins_buyers_90          IC raw +0.0321 (t +2.60)  beta-adj +0.0454 (t +4.40)
+[12:50:52] ablation icw_oos_ins_buyers_90 fit_odd_test_even: w_new +0.099  icw9 +0.0315 vs icw8 +0.0304 (raw); +0.0315 vs +0.0305 (beta-adj)
+[12:50:52] ablation icw_oos_ins_buyers_90 fit_even_test_odd: w_new +0.167  icw9 +0.0491 vs icw8 +0.0496 (raw); +0.0492 vs +0.0500 (beta-adj)
+[12:50:52] ablation ew9_ins_sellers_90         IC raw +0.0284 (t +2.42)  beta-adj +0.0427 (t +4.37)
+[12:50:52] ablation icw_oos_ins_sellers_90 fit_odd_test_even: w_new -0.172  icw9 +0.0298 vs icw8 +0.0304 (raw); +0.0299 vs +0.0305 (beta-adj)
+[12:50:52] ablation icw_oos_ins_sellers_90 fit_even_test_odd: w_new -0.032  icw9 +0.0489 vs icw8 +0.0496 (raw); +0.0495 vs +0.0500 (beta-adj)
+[12:50:54] portfolio ew8 decile_volq excess +0.0482/yr (offset sd 0.0055)
+[12:50:59]   ins_buyers_90 null draw 1/20: +0.0481
+[12:51:02]   ins_buyers_90 null draw 2/20: +0.0475
+[12:51:05]   ins_buyers_90 null draw 3/20: +0.0487
+[12:51:08]   ins_buyers_90 null draw 4/20: +0.0478
+[12:51:11]   ins_buyers_90 null draw 5/20: +0.0476
+[12:51:14]   ins_buyers_90 null draw 6/20: +0.0484
+[12:51:17]   ins_buyers_90 null draw 7/20: +0.0487
+[12:51:20]   ins_buyers_90 null draw 8/20: +0.0486
+[12:51:23]   ins_buyers_90 null draw 9/20: +0.0481
+[12:51:26]   ins_buyers_90 null draw 10/20: +0.0484
+[12:51:29]   ins_buyers_90 null draw 11/20: +0.0488
+[12:51:32]   ins_buyers_90 null draw 12/20: +0.0485
+[12:51:35]   ins_buyers_90 null draw 13/20: +0.0489
+[12:51:38]   ins_buyers_90 null draw 14/20: +0.0479
+[12:51:41]   ins_buyers_90 null draw 15/20: +0.0480
+[12:51:45]   ins_buyers_90 null draw 16/20: +0.0482
+[12:51:48]   ins_buyers_90 null draw 17/20: +0.0476
+[12:51:51]   ins_buyers_90 null draw 18/20: +0.0483
+[12:51:54]   ins_buyers_90 null draw 19/20: +0.0484
+[12:51:57]   ins_buyers_90 null draw 20/20: +0.0481
+[12:51:57] portfolio ew9+ins_buyers_90: +0.0494/yr vs null p50 +0.0483 p80 +0.0486 -> pctile 1.00
+[12:52:03]   ins_sellers_90 null draw 1/20: +0.0467
+[12:52:06]   ins_sellers_90 null draw 2/20: +0.0469
+[12:52:10]   ins_sellers_90 null draw 3/20: +0.0475
+[12:52:13]   ins_sellers_90 null draw 4/20: +0.0483
+[12:52:16]   ins_sellers_90 null draw 5/20: +0.0472
+[12:52:20]   ins_sellers_90 null draw 6/20: +0.0483
+[12:52:23]   ins_sellers_90 null draw 7/20: +0.0471
+[12:52:26]   ins_sellers_90 null draw 8/20: +0.0468
+[12:52:29]   ins_sellers_90 null draw 9/20: +0.0467
+[12:52:32]   ins_sellers_90 null draw 10/20: +0.0481
+[12:52:36]   ins_sellers_90 null draw 11/20: +0.0476
+[12:52:40]   ins_sellers_90 null draw 12/20: +0.0459
+[12:52:43]   ins_sellers_90 null draw 13/20: +0.0481
+[12:52:46]   ins_sellers_90 null draw 14/20: +0.0478
+[12:52:49]   ins_sellers_90 null draw 15/20: +0.0481
+[12:52:52]   ins_sellers_90 null draw 16/20: +0.0475
+[12:52:56]   ins_sellers_90 null draw 17/20: +0.0476
+[12:52:59]   ins_sellers_90 null draw 18/20: +0.0475
+[12:53:02]   ins_sellers_90 null draw 19/20: +0.0474
+[12:53:05]   ins_sellers_90 null draw 20/20: +0.0480
+[12:53:05] portfolio ew9+ins_sellers_90: +0.0500/yr vs null p50 +0.0475 p80 +0.0481 -> pctile 1.00
+[12:53:06] event study all            n= 40507 excess40 +0.0066 (t +1.51)  beta-adj +0.0065 (t +1.48)
+[12:53:06] event study cluster_2plus  n=  6950 excess40 +0.0089 (t +0.53)  beta-adj +0.0077 (t +0.27)
+[12:53:06] event study value_ge_100k  n= 18075 excess40 +0.0070 (t +1.74)  beta-adj +0.0065 (t +1.55)
+[12:53:06] VERDICT ins_buyers_90: {'sign_and_t': False, 'both_halves_sign': False, 'sector_neutral_sign': True, 'beats_null_p80': True, 'nominated': False}
+[12:53:06] VERDICT ins_sellers_90: {'sign_and_t': False, 'both_halves_sign': False, 'sector_neutral_sign': True, 'beats_null_p80': True, 'nominated': False}
+[12:53:06] wrote /Users/ggraham/pipe_dream/final/out/insider/insider_screen_report.json (377s)
