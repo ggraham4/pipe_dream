@@ -36,6 +36,7 @@ Rate: SLEEP between requests keeps us well under SEC's 10 req/s; 403/429
 responses back off exponentially.
 """
 import argparse
+import http.client
 import json
 import sys
 import time
@@ -61,7 +62,7 @@ def log(msg):
     print(f"[{time.strftime('%H:%M:%S')}] {msg}", flush=True)
 
 
-def _get_json(url, retries=6):
+def _get_json(url, retries=8):
     req = urllib.request.Request(url, headers={
         "User-Agent": USER_AGENT, "Accept": "application/json",
         "Accept-Encoding": "identity"})
@@ -78,9 +79,14 @@ def _get_json(url, retries=6):
                 time.sleep(wait)
                 continue
             raise
-        except (urllib.error.URLError, TimeoutError) as e:
+        except (urllib.error.URLError, TimeoutError, ConnectionError, OSError,
+                http.client.HTTPException, json.JSONDecodeError) as e:
+            # RemoteDisconnected / IncompleteRead / resets killed the first
+            # full run (2026-09-23); retry with backoff instead of dying.
             if attempt < retries - 1:
-                time.sleep(2 ** (attempt + 1))
+                wait = 2 ** (attempt + 1)
+                log(f"  {type(e).__name__} on {url}; backing off {wait}s")
+                time.sleep(wait)
                 continue
             raise
 
@@ -91,7 +97,9 @@ def fetch_cached(name):
     if p.exists():
         return json.loads(p.read_text()), False
     d = _get_json(f"https://data.sec.gov/submissions/{name}")
-    p.write_text(json.dumps(d))
+    tmp = p.with_suffix(".tmp")               # atomic: a kill never leaves a torn cache file
+    tmp.write_text(json.dumps(d))
+    tmp.replace(p)
     time.sleep(SLEEP)
     return d, True
 
