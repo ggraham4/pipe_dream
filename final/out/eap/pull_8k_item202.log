@@ -1,0 +1,28 @@
+[22:59:41] 3,969 CIKs to pull
+[22:59:42]   250/3969 CIKs, 19,260 rows, 0 fresh requests, 1s
+[22:59:43]   500/3969 CIKs, 37,888 rows, 0 fresh requests, 2s
+[22:59:44]   750/3969 CIKs, 55,902 rows, 0 fresh requests, 3s
+[22:59:44]   1000/3969 CIKs, 72,823 rows, 0 fresh requests, 3s
+[22:59:45]   1250/3969 CIKs, 91,014 rows, 0 fresh requests, 4s
+[22:59:46]   1500/3969 CIKs, 107,349 rows, 0 fresh requests, 5s
+[23:00:27]   1750/3969 CIKs, 124,199 rows, 101 fresh requests, 46s
+[23:03:11]   2000/3969 CIKs, 139,685 rows, 531 fresh requests, 210s
+[23:05:55]   2250/3969 CIKs, 154,352 rows, 931 fresh requests, 374s
+[23:08:50]   2500/3969 CIKs, 166,979 rows, 1320 fresh requests, 549s
+[23:11:20]   2750/3969 CIKs, 177,810 rows, 1683 fresh requests, 699s
+[23:13:25]   3000/3969 CIKs, 187,215 rows, 1994 fresh requests, 824s
+[23:15:24]   3250/3969 CIKs, 194,682 rows, 2282 fresh requests, 943s
+[23:17:04]   3500/3969 CIKs, 200,887 rows, 2553 fresh requests, 1043s
+[23:18:38]   3750/3969 CIKs, 205,622 rows, 2806 fresh requests, 1137s
+[23:19:50] wrote /Users/ggraham/pipe_dream/final/data/edgar/8k_item202.parquet: 207,736 rows, 3,945 CIKs, 2004-08-23..2026-09-23
+[23:19:53]   crosscheck {'cik': 75252, 'filing_date': '2019-05-07', 'accession': '0000075252-19-000070', 'efts_found_accession': True, 'efts_items_has_202': True}
+[23:19:54]   crosscheck {'cik': 803649, 'filing_date': '2014-08-06', 'accession': '0001104659-14-057046', 'efts_found_accession': True, 'efts_items_has_202': True}
+[23:19:55]   crosscheck {'cik': 1396440, 'filing_date': '2019-02-28', 'accession': '0001144204-19-011196', 'efts_found_accession': True, 'efts_items_has_202': True}
+[23:19:58]   crosscheck {'cik': 1030469, 'filing_date': '2022-04-21', 'accession': '0001030469-22-000019', 'efts_found_accession': True, 'efts_items_has_202': True}
+[23:19:59]   crosscheck {'cik': 1682745, 'filing_date': '2019-03-18', 'accession': '0001564590-19-008326', 'efts_found_accession': True, 'efts_items_has_202': True}
+[23:20:00]   crosscheck {'cik': 858877, 'filing_date': '2014-11-12', 'accession': '0001193125-14-409258', 'efts_found_accession': True, 'efts_items_has_202': True}
+[23:20:00]   crosscheck {'cik': 34782, 'filing_date': '2020-01-23', 'accession': '0000034782-20-000006', 'efts_found_accession': True, 'efts_items_has_202': True}
+[23:20:01]   crosscheck {'cik': 890926, 'filing_date': '2008-08-22', 'accession': '0001193125-08-182981', 'efts_found_accession': True, 'efts_items_has_202': True}
+[23:20:02]   crosscheck {'cik': 1750, 'filing_date': '2011-09-16', 'accession': '0001104659-11-051974', 'efts_found_accession': True, 'efts_items_has_202': True}
+[23:20:03]   crosscheck {'cik': 1280058, 'filing_date': '2004-10-27', 'accession': '0000950144-04-010095', 'efts_found_accession': True, 'efts_items_has_202': True}
+[23:20:03] meta: 24 CIKs with zero 2.02s, 0 404s

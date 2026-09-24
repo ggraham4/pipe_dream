@@ -1,0 +1,105 @@
+{
+  "n_ciks_requested": 3969,
+  "n_ciks_with_202": 3945,
+  "ciks_zero_202": [
+    3499,
+    216275,
+    1135017,
+    1173911,
+    1325964,
+    1369568,
+    1476150,
+    1487843,
+    1527762,
+    1549756,
+    1650101,
+    1669600,
+    1671941,
+    1677203,
+    1699683,
+    1722969,
+    1811882,
+    1818873,
+    1854587,
+    1923891,
+    2070457,
+    2078416,
+    2097163,
+    2128115
+  ],
+  "ciks_404": [],
+  "n_rows": 207736,
+  "n_rows_8k": 205771,
+  "efts_crosscheck": [
+    {
+      "cik": 75252,
+      "filing_date": "2019-05-07",
+      "accession": "0000075252-19-000070",
+      "efts_found_accession": true,
+      "efts_items_has_202": true
+    },
+    {
+      "cik": 803649,
+      "filing_date": "2014-08-06",
+      "accession": "0001104659-14-057046",
+      "efts_found_accession": true,
+      "efts_items_has_202": true
+    },
+    {
+      "cik": 1396440,
+      "filing_date": "2019-02-28",
+      "accession": "0001144204-19-011196",
+      "efts_found_accession": true,
+      "efts_items_has_202": true
+    },
+    {
+      "cik": 1030469,
+      "filing_date": "2022-04-21",
+      "accession": "0001030469-22-000019",
+      "efts_found_accession": true,
+      "efts_items_has_202": true
+    },
+    {
+      "cik": 1682745,
+      "filing_date": "2019-03-18",
+      "accession": "0001564590-19-008326",
+      "efts_found_accession": true,
+      "efts_items_has_202": true
+    },
+    {
+      "cik": 858877,
+      "filing_date": "2014-11-12",
+      "accession": "0001193125-14-409258",
+      "efts_found_accession": true,
+      "efts_items_has_202": true
+    },
+    {
+      "cik": 34782,
+      "filing_date": "2020-01-23",
+      "accession": "0000034782-20-000006",
+      "efts_found_accession": true,
+      "efts_items_has_202": true
+    },
+    {
+      "cik": 890926,
+      "filing_date": "2008-08-22",
+      "accession": "0001193125-08-182981",
+      "efts_found_accession": true,
+      "efts_items_has_202": true
+    },
+    {
+      "cik": 1750,
+      "filing_date": "2011-09-16",
+      "accession": "0001104659-11-051974",
+      "efts_found_accession": true,
+      "efts_items_has_202": true
+    },
+    {
+      "cik": 1280058,
+      "filing_date": "2004-10-27",
+      "accession": "0000950144-04-010095",
+      "efts_found_accession": true,
+      "efts_items_has_202": true
+    }
+  ]
+}
