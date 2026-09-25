@@ -1,0 +1,291 @@
+{
+  "cik_map": {
+    "tickers_with_cik": 20863,
+    "one_cik_per_ticker": true
+  },
+  "panel_rows": {
+    "before_merge": 15420963,
+    "after_merge": 15420963
+  },
+  "coverage_fire": {
+    "added|cap150_not_500": {
+      "rows": 1905662.0,
+      "cik_mapped": 1.0,
+      "fire_rate": 0.265138308892133,
+      "cluster2_rate": 0.12867129637889616,
+      "fire_rate_mapped": 0.265138308892133
+    },
+    "added|cap500_not_2000": {
+      "rows": 1081943.0,
+      "cik_mapped": 1.0,
+      "fire_rate": 0.20186645692055866,
+      "cluster2_rate": 0.08800093905131787,
+      "fire_rate_mapped": 0.20186645692055866
+    },
+    "added|not_cap150": {
+      "rows": 3101652.0,
+      "cik_mapped": 1.0,
+      "fire_rate": 0.27072089325301485,
+      "cluster2_rate": 0.14265849295794628,
+      "fire_rate_mapped": 0.27072089325301485
+    },
+    "added_spac|cap150_not_500": {
+      "rows": 2065.0,
+      "cik_mapped": 1.0,
+      "fire_rate": 0.13075060532687652,
+      "cluster2_rate": 0.06585956416464891,
+      "fire_rate_mapped": 0.13075060532687652
+    },
+    "added_spac|cap500_not_2000": {
+      "rows": 376.0,
+      "cik_mapped": 1.0,
+      "fire_rate": 0.0,
+      "cluster2_rate": 0.0,
+      "fire_rate_mapped": 0.0
+    },
+    "added_spac|not_cap150": {
+      "rows": 9890.0,
+      "cik_mapped": 1.0,
+      "fire_rate": 0.09989888776541962,
+      "cluster2_rate": 0.029019211324570273,
+      "fire_rate_mapped": 0.09989888776541962
+    },
+    "old|cap150_not_500": {
+      "rows": 644483.0,
+      "cik_mapped": 1.0,
+      "fire_rate": 0.29462064941976746,
+      "cluster2_rate": 0.1559777371939989,
+      "fire_rate_mapped": 0.29462064941976746
+    },
+    "old|cap2000": {
+      "rows": 3802861.0,
+      "cik_mapped": 1.0,
+      "fire_rate": 0.1679995666420624,
+      "cluster2_rate": 0.05338796237885108,
+      "fire_rate_mapped": 0.1679995666420624
+    },
+    "old|cap500_not_2000": {
+      "rows": 2327232.0,
+      "cik_mapped": 1.0,
+      "fire_rate": 0.21755931510051427,
+      "cluster2_rate": 0.09378093804141573,
+      "fire_rate_mapped": 0.21755931510051427
+    },
+    "old|not_cap150": {
+      "rows": 377302.0,
+      "cik_mapped": 1.0,
+      "fire_rate": 0.21861267631764475,
+      "cluster2_rate": 0.10871397448197995,
+      "fire_rate_mapped": 0.21861267631764475
+    }
+  },
+  "coverage_fire_cap150_all": {
+    "added": {
+      "rows": 2987605,
+      "cik_mapped": 1.0,
+      "fire_rate": 0.24222479209935718
+    },
+    "old": {
+      "rows": 6768536,
+      "cik_mapped": 1.0,
+      "fire_rate": 0.19704571269178445
+    }
+  },
+  "named_dimon_jpm": {
+    "raw_zip_rows": [
+      {
+        "accession": "0001225208-16-026145",
+        "issuer_cik": "19617",
+        "owner_cik": "1195345",
+        "filing_date": "2016-02-11",
+        "value": "26590400.0",
+        "is_od": "True"
+      }
+    ],
+    "jpm_ins_buyers_90_2016-02-05..16": {
+      "2016-02-05": 1.0,
+      "2016-02-08": 1.0,
+      "2016-02-09": 1.0,
+      "2016-02-10": 1.0,
+      "2016-02-11": 2.0,
+      "2016-02-12": 2.0,
+      "2016-02-16": 2.0
+    },
+    "step_on_2016-02-11": 1.0,
+    "pass": true
+  },
+  "named_old_tickers": {
+    "JPM": {
+      "cik": 19617,
+      "n_od_P_filings_2007_2019": 40,
+      "checks": [
+        {
+          "accession": "0000019617-07-000179",
+          "filing_date": "2007-02-01",
+          "trans_date": "2007-02-01",
+          "value": 203560.0,
+          "panel_date": "2007-02-01",
+          "prev": 0.0,
+          "on": 1.0,
+          "step_up": true
+        }
+      ]
+    },
+    "XOM": {
+      "cik": 34088,
+      "n_od_P_filings_2007_2019": 5,
+      "checks": [
+        {
+          "accession": "0000034088-07-000116",
+          "filing_date": "2007-08-16",
+          "trans_date": "2007-08-08",
+          "value": 12982.5,
+          "panel_date": "2007-08-16",
+          "prev": 0.0,
+          "on": 1.0,
+          "step_up": true
+        }
+      ]
+    }
+  },
+  "named_added_A1": {
+    "ANIK": {
+      "cik": 898437,
+      "n_od_P_filings_2007_2019": 7,
+      "checks": [
+        {
+          "accession": "0001104659-08-017095",
+          "filing_date": "2008-03-12",
+          "trans_date": "2008-03-10",
+          "value": 4580.0,
+          "panel_date": "2008-03-12",
+          "prev": 0.0,
+          "on": 2.0,
+          "step_up": true
+        },
+        {
+          "accession": "0001157523-08-002362",
+          "filing_date": "2008-03-19",
+          "trans_date": "2008-03-19",
+          "value": 16578.0,
+          "panel_date": "2008-03-19",
+          "prev": 2.0,
+          "on": 2.0,
+          "step_up": false
+        }
+      ]
+    },
+    "NGS": {
+      "cik": 1084991,
+      "n_od_P_filings_2007_2019": 3,
+      "checks": [
+        {
+          "accession": "0001209191-07-031352",
+          "filing_date": "2007-05-18",
+          "trans_date": "2007-05-15",
+          "value": 22710.0,
+          "panel_date": "2007-05-18",
+          "prev": 0.0,
+          "on": 1.0,
+          "step_up": true
+        },
+        {
+          "accession": "0001209191-08-063174",
+          "filing_date": "2008-12-01",
+          "trans_date": "2008-11-26",
+          "value": 8770.0,
+          "panel_date": "2008-12-01",
+          "prev": 0.0,
+          "on": 1.0,
+          "step_up": true
+        }
+      ]
+    },
+    "WTBA": {
+      "cik": 1166928,
+      "n_od_P_filings_2007_2019": 94,
+      "checks": [
+        {
+          "accession": "0001209191-07-010785",
+          "filing_date": "2007-02-14",
+          "trans_date": "2007-02-12",
+          "value": 24885.0,
+          "panel_date": "2007-02-14",
+          "prev": 0.0,
+          "on": 1.0,
+          "step_up": true
+        },
+        {
+          "accession": "0001209191-07-029422",
+          "filing_date": "2007-05-10",
+          "trans_date": "2007-05-09",
+          "value": 7765.0,
+          "panel_date": "2007-05-10",
+          "prev": 1.0,
+          "on": 2.0,
+          "step_up": true
+        }
+      ]
+    },
+    "NRIM": {
+      "cik": 1163370,
+      "n_od_P_filings_2007_2019": 151,
+      "checks": [
+        {
+          "accession": "0001163370-07-000003",
+          "filing_date": "2007-02-22",
+          "trans_date": "2007-02-21",
+          "value": 140352.0,
+          "panel_date": "2007-02-22",
+          "prev": 0.0,
+          "on": 1.0,
+          "step_up": true
+        },
+        {
+          "accession": "0001163370-07-000006",
+          "filing_date": "2007-05-24",
+          "trans_date": "2007-05-24",
+          "value": 5617.5,
+          "panel_date": "2007-05-24",
+          "prev": 0.0,
+          "on": 1.0,
+          "step_up": true
+        }
+      ]
+    },
+    "ACHN": {
+      "cik": 1070336,
+      "n_od_P_filings_2007_2019": 20,
+      "checks": [
+        {
+          "accession": "0001181431-08-050941",
+          "filing_date": "2008-09-02",
+          "trans_date": "2008-08-28",
+          "value": 4835.0,
+          "panel_date": "2008-09-02",
+          "prev": 0.0,
+          "on": 1.0,
+          "step_up": true
+        },
+        {
+          "accession": "0001012975-08-000149",
+          "filing_date": "2008-09-09",
+          "trans_date": "2008-09-05",
+          "value": 10480.26,
+          "panel_date": "2008-09-09",
+          "prev": 1.0,
+          "on": 2.0,
+          "step_up": true
+        }
+      ]
+    }
+  },
+  "old_file_duplicate_keys": 0,
+  "reconcile_column_b_cap150": {
+    "rows_col_b_cap150": 6768536,
+    "rows_matched_to_old": 6768536,
+    "mismatches": 0,
+    "mismatch_rate": 0.0,
+    "mismatch_tickers": {}
+  }
+}

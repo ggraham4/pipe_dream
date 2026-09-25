@@ -1,0 +1,25 @@
+[19:53:27] events from raw zips (build_insider_panel.load_events) ...
+[19:53:27] events 1,456,667
+[19:53:30] v2 panel <=2019: 15,420,963 rows, 7,284 tickers
+[19:53:41] coverage/fire by group x band:
+                               rows  cik_mapped  fire_rate  cluster2_rate  fire_rate_mapped
+g          band                                                                            
+added      cap150_not_500   1905662         1.0   0.265138       0.128671          0.265138
+           cap500_not_2000  1081943         1.0   0.201866       0.088001          0.201866
+           not_cap150       3101652         1.0   0.270721       0.142658          0.270721
+added_spac cap150_not_500      2065         1.0   0.130751       0.065860          0.130751
+           cap500_not_2000      376         1.0   0.000000       0.000000          0.000000
+           not_cap150          9890         1.0   0.099899       0.029019          0.099899
+old        cap150_not_500    644483         1.0   0.294621       0.155978          0.294621
+           cap2000          3802861         1.0   0.168000       0.053388          0.168000
+           cap500_not_2000  2327232         1.0   0.217559       0.093781          0.217559
+           not_cap150        377302         1.0   0.218613       0.108714          0.218613
+[19:53:42] cap150 all bands: {'added': {'rows': 2987605, 'cik_mapped': 1.0, 'fire_rate': 0.24222479209935718}, 'old': {'rows': 6768536, 'cik_mapped': 1.0, 'fire_rate': 0.19704571269178445}}
+[19:53:42] Dimon: {"raw_zip_rows": [{"accession": "0001225208-16-026145", "issuer_cik": "19617", "owner_cik": "1195345", "filing_date": "2016-02-11", "value": "26590400.0", "is_od": "True"}], "jpm_ins_buyers_90_2016-02-05..16": {"2016-02-05": 1.0, "2016-02-08": 1.0, "2016-02-09": 1.0, "2016-02-10": 1.0, "2016-02-11": 2.0, "2016-02-12": 2.0, "2016-02-16": 2.0}, "step_on_2016-02-11": 1.0, "pass": true}
+[19:53:42] A1 ANIK: {"cik": 898437, "n_od_P_filings_2007_2019": 7, "checks": [{"accession": "0001104659-08-017095", "filing_date": "2008-03-12", "trans_date": "2008-03-10", "value": 4580.0, "panel_date": "2008-03-12", "prev": 0.0, "on": 2.0, "step_up": true}, {"accession": "0001157523-08-002362", "filing_date": "2008-03-19", "trans_date": "2008-03-19", "value": 16578.0, "panel_date": "2008-03-19", "prev": 2.0, "on": 2.0, "step_up": false}]}
+[19:53:42] A1 NGS: {"cik": 1084991, "n_od_P_filings_2007_2019": 3, "checks": [{"accession": "0001209191-07-031352", "filing_date": "2007-05-18", "trans_date": "2007-05-15", "value": 22710.0, "panel_date": "2007-05-18", "prev": 0.0, "on": 1.0, "step_up": true}, {"accession": "0001209191-08-063174", "filing_date": "2008-12-01", "trans_date": "2008-11-26", "value": 8770.0, "panel_date": "2008-12-01", "prev": 0.0, "on": 1.0, "step_up": true}]}
+[19:53:42] A1 WTBA: {"cik": 1166928, "n_od_P_filings_2007_2019": 94, "checks": [{"accession": "0001209191-07-010785", "filing_date": "2007-02-14", "trans_date": "2007-02-12", "value": 24885.0, "panel_date": "2007-02-14", "prev": 0.0, "on": 1.0, "step_up": true}, {"accession": "0001209191-07-029422", "filing_date": "2007-05-10", "trans_date": "2007-05-09", "value": 7765.0, "panel_date": "2007-05-10", "prev": 1.0, "on": 2.0, "step_up": true}]}
+[19:53:42] A1 NRIM: {"cik": 1163370, "n_od_P_filings_2007_2019": 151, "checks": [{"accession": "0001163370-07-000003", "filing_date": "2007-02-22", "trans_date": "2007-02-21", "value": 140352.0, "panel_date": "2007-02-22", "prev": 0.0, "on": 1.0, "step_up": true}, {"accession": "0001163370-07-000006", "filing_date": "2007-05-24", "trans_date": "2007-05-24", "value": 5617.5, "panel_date": "2007-05-24", "prev": 0.0, "on": 1.0, "step_up": true}]}
+[19:53:42] A1 ACHN: {"cik": 1070336, "n_od_P_filings_2007_2019": 20, "checks": [{"accession": "0001181431-08-050941", "filing_date": "2008-09-02", "trans_date": "2008-08-28", "value": 4835.0, "panel_date": "2008-09-02", "prev": 0.0, "on": 1.0, "step_up": true}, {"accession": "0001012975-08-000149", "filing_date": "2008-09-09", "trans_date": "2008-09-05", "value": 10480.26, "panel_date": "2008-09-09", "prev": 1.0, "on": 2.0, "step_up": true}]}
+[19:53:45] reconcile: {'rows_col_b_cap150': 6768536, 'rows_matched_to_old': 6768536, 'mismatches': 0, 'mismatch_rate': 0.0, 'mismatch_tickers': {}}  (old dup keys 0)
+[19:53:45] wrote /Users/ggraham/pipe_dream/final/out/insider/insider_features_v2grid.parquet and /Users/ggraham/pipe_dream/final/out/insider/insider_v2grid_integrity.json (18s)
