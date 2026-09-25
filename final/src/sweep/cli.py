@@ -37,6 +37,9 @@ from sweep import portfolio as P                            # noqa: E402
 from sweep import stats as S                                # noqa: E402
 from sweep import feature_ic as FIC                         # noqa: E402
 from sweep import attribute as AT                           # noqa: E402
+from sweep import _num                                     # noqa: E402
+from sweep import factors as F                             # noqa: E402
+from sweep import breadth as B                             # noqa: E402
 
 SWEEP_DIR = OUT_DIR / "sweep"
 OUTCOMES_PATH = SWEEP_DIR / "outcomes.parquet"
@@ -252,6 +255,663 @@ NOMINATE_ERA = ("2007-01-01", "2020-01-01")
 HOLDOUT_ERA = ("2020-01-01", "2027-01-01")
 
 
+def cmd_breadth(args):
+    """Round 15. Effective breadth: B1 measure, B2 rank-depth, B3 intervention.
+
+    Pre-registered in claude/2026-09-11-round15-breadth-preregistration.md.
+    The gates below are the ones written there and are not restated loosely:
+      B1  instrumentation only, NO decision rides on it
+      B2  CONCENTRATED if top decile beats second by >= 2 SE, else FLAT
+      B3  PASS requires (a) BR_eff x>=1.5 AND (b) matched-null pctile >= 0.95
+    """
+    cell = args.cell
+    meta = json.load(open(SC.meta_path(cell)))
+    H = int(meta["config"]["horizon"])
+    scores = pd.read_parquet(SC.cache_path(cell))
+    tab = pd.read_parquet(OUTCOMES_PATH)
+    tab["ticker"] = tab["ticker"].astype(str)
+    era = HOLDOUT_ERA if args.era == "holdout" else NOMINATE_ERA
+    if args.era == "holdout":
+        raise SystemExit(
+            "Round 15 is declared nomination-era only. The 2020-2026 hold-out "
+            "was spent on the Round 13 breadth choice and no result in this "
+            "round licenses touching it again.")
+    print(f"era = {args.era} {era}\ncell = {cell}  (horizon {H})")
+
+    stop = None if args.stop is None else float(args.stop)
+    prep = P.Prepared(scores, tab, H, stop)
+    spy_ret = P.spy_windows(_spy(), np.sort(scores["timepoint"].unique()), H)
+    smap = F.load_sector_map()
+
+    print("\n--- definition anchors (independent -> N, correlated -> 1) ---")
+    if not B.self_test():
+        raise SystemExit("breadth definition failed its own anchors; nothing below is usable")
+
+    base = dict(horizon=H, top_n=args.top_n, weighting=args.weighting,
+                bucket=args.bucket)
+
+    # ------------------------------------------------------------------ B1
+    print("\n" + "=" * 78)
+    print("B1 -- WHERE THE BREADTH GOES  (instrumentation; no gate)")
+    print("=" * 78)
+    lad = B.breadth_ladder(prep, spy_ret, sector_map=smap, **base)
+    if len(lad):
+        cols = ["stage", "n_windows", "mean_positions", "N_w", "ceiling",
+                "BR_eff", "BR_eff_annual", "rho_bar", "capture"]
+        print(lad[[c for c in cols if c in lad.columns]].to_string(
+            index=False, float_format=lambda v: f"{v:8.3f}"))
+        print("\n  'ceiling' is the max breadth these weights could reach if the")
+        print("  positions were independent; BR_eff <= ceiling always. Under")
+        print("  invvol with a good vol forecast the risk weights come out")
+        print("  uniform, so the ceiling sits at ~N and any shortfall below it")
+        print("  is CORRELATION, not weighting. 'capture' = BR_eff / ceiling is")
+        print("  the fraction of the nominal bets that are actually independent.")
+        print("  (N_w is the cash-weight count, shown for reference only -- it is")
+        print("  NOT the ceiling when position variances differ, which is the")
+        print("  error the first version of this module shipped.) If BR_eff rises")
+        print("  as factors are removed, the portfolio is re-loading a factor the")
+        print("  feature screen already stripped -- a CONSTRUCTION defect, and")
+        print("  fixable. If it does not move, the correlation is in the assets")
+        print("  and no selection rule buys breadth.")
+
+    for n in args.breadth_scan:
+        r = B.effective_breadth(
+            B.position_rows(prep, spy_ret, **{**base, "top_n": int(n)}), H)
+        if r.get("n_windows", 0):
+            print(f"  top_n={int(n):3d}   ceiling {r['ceiling']:6.2f}   "
+                  f"BR_eff {r['BR_eff']:6.2f}   capture {r['capture']:5.3f}   "
+                  f"rho_bar {r['rho_bar']:+.3f}")
+
+    # ------------------------------------------------------------------ B2
+    print("\n" + "=" * 78)
+    print("B2 -- IS IC CONCENTRATED AT THE TOP, OR FLAT?")
+    print("=" * 78)
+    dec = B.decile_active(prep, spy_ret, era=era)
+    if len(dec):
+        print(dec.to_string(index=False, float_format=lambda v: f"{v:+8.4f}"))
+        tv = dec.attrs.get("top_vs_second", {})
+        if tv:
+            print(f"\n  top decile - second: {tv['diff']:+.4f} "
+                  f"(SE {tv['se']:.4f}, t {tv['t']:+.2f})")
+            print(f"  PRE-REGISTERED VERDICT: {tv['verdict']}")
+            if tv["verdict"] == "FLAT":
+                print("  -> the ranking does not concentrate. Extra breadth costs")
+                print("     no IC, and the hold-out ordering (top-5 1.526x >")
+                print("     top-20 0.909x > top-50 0.813x) was noise, consistent")
+                print("     with 27% of ZERO-SIGNAL configs beating the market here.")
+            else:
+                print("  -> breadth genuinely trades off against IC; maximise")
+                print("     IC(k)*sqrt(BR(k)), do not maximise breadth.")
+
+    # ------------------------------------------------------------------ B3
+    print("\n" + "=" * 78)
+    print("B3 -- NEUTRALIZE AT SELECTION  (gate: BR_eff x>=1.5 AND null pctile >=0.95)")
+    print("=" * 78)
+    rprep = B.residualized_prepared(prep, spec=args.spec, sector_map=smap)
+
+    out = []
+    for label, pr in (("raw scores", prep), (f"resid ({args.spec})", rprep)):
+        rows = B.position_rows(pr, spy_ret, **base)
+        br = B.effective_breadth(rows, H)
+        pw = P.simulate(pr, cost_bps=args.cost_bps, **base)
+        m = P.score_run(pw, spy_ret, H, era=era)
+        rec = {"variant": label, "ceiling": br.get("ceiling"),
+               "BR_eff": br.get("BR_eff"),
+               "capture": br.get("capture"), "rho_bar": br.get("rho_bar"),
+               "mult_ratio": (m or {}).get("mult_ratio"),
+               "excess_cagr": (m or {}).get("excess_cagr")}
+
+        # (b) the gate that actually decides. Breadth cuts variance drag and
+        # improves compounded return with ZERO signal, so the comparison is
+        # against the construction-matched null, never against SPY.
+        if args.null_draws:
+            nl = S.random_selection_null(
+                pr, P.simulate, lambda p, s: P.score_run(p, s, H, era=era),
+                spy_ret, n_draws=args.null_draws, seed=17,
+                cost_bps=args.cost_bps, **base)
+            rec["null_p50"] = nl.get("null_mult_ratio_p50")
+            rec["null_p95"] = nl.get("null_mult_ratio_p95")
+            rec["null_pctile"] = S.percentile_of(rec["mult_ratio"],
+                                                  nl.get("_null_mults", []))
+        out.append(rec)
+
+    res = pd.DataFrame(out)
+    print(res.to_string(index=False, float_format=lambda v: f"{v:8.4f}"))
+
+    if len(res) == 2 and res["BR_eff"].notna().all():
+        ratio = res.BR_eff.iloc[1] / res.BR_eff.iloc[0]
+        a_pass = ratio >= 1.5
+        pct = res.get("null_pctile")
+        b_pass = bool(pct is not None and pd.notna(pct.iloc[1]) and pct.iloc[1] >= 0.95)
+        print(f"\n  (a) BR_eff {res.BR_eff.iloc[0]:.2f} -> {res.BR_eff.iloc[1]:.2f} "
+              f"= {ratio:.2f}x   threshold 1.50x   {'PASS' if a_pass else 'FAIL'}")
+        if pct is not None and pd.notna(pct.iloc[1]):
+            print(f"  (b) matched-null percentile {pct.iloc[1]:.3f}   "
+                  f"threshold 0.950   {'PASS' if b_pass else 'FAIL'}")
+        else:
+            print("  (b) NOT RUN -- pass --null-draws 200. Without it there is no")
+            print("      gate at all: a breadth gain improves compounded return")
+            print("      with zero signal, and (a) alone cannot tell the two apart.")
+        print(f"\n  B3 VERDICT: {'PASS' if (a_pass and b_pass) else 'FAIL'}")
+        if a_pass and not b_pass:
+            print("  This is the failure mode named in the pre-registration:")
+            print("  residualizing ranks the RESIDUAL of a model with no signal.")
+            print("  Breadth was a construction defect AND there is nothing to")
+            print("  amplify. Reported as FAIL, not as a breadth success.")
+
+    # ------------------------------------------------------------------ B4
+    print("\n" + "=" * 78)
+    print("B4 -- POWER RESTATEMENT AT THE ACHIEVED BREADTH")
+    print("=" * 78)
+    for _, r in res.iterrows():
+        if not np.isfinite(r.get("BR_eff", np.nan)):
+            continue
+        n_eff = r["BR_eff"] * len(prep.tps)
+        mdi = 2.8 / np.sqrt(max(n_eff, 1.0))
+        print(f"  {r['variant']:<22} BR_eff {r['BR_eff']:6.2f}  "
+              f"effective n {n_eff:8.0f}  min detectable IC {mdi:.4f}")
+    print("\n  Round 13 observed neutralized ICs were 0.001-0.014. If the minimum")
+    print("  detectable IC above still exceeds those, the honest conclusion is")
+    print("  STILL UNDERPOWERED, not 'no signal' -- the distinction Round 12 got")
+    print("  wrong once and had to walk back.")
+
+    res.to_csv(SWEEP_DIR / f"breadth_{args.era}.csv", index=False)
+    if len(lad):
+        lad.to_csv(SWEEP_DIR / f"breadth_ladder_{args.era}.csv", index=False)
+    print(f"\nwritten {SWEEP_DIR / f'breadth_{args.era}.csv'}")
+
+def cmd_horizon(args):
+    """Round 15b / gate B5. Does the horizon breadth lever survive its costs?
+
+    Pre-registered in claude/2026-09-12-round15b-horizon-cost-preregistration.md.
+    PASS requires ALL THREE, evaluated ONLY at 15bp:
+      (a) best cell's net mult_ratio beats the deployed H=40/top-5 cell
+      (b) that cell >= 95th pctile of its OWN construction-matched null
+      (c) it survives leave-one-year-out against the deployed cell
+    Multiplicity declared up front: 3 horizons x 4 book sizes = 12 cells.
+    """
+    tab = pd.read_parquet(OUTCOMES_PATH)
+    tab["ticker"] = tab["ticker"].astype(str)
+    spy = _spy()
+    era = NOMINATE_ERA
+    if args.era != "nominate":
+        raise SystemExit(
+            "Round 15b is nomination-era only. The 2020-2026 hold-out was spent "
+            "on the Round 13 breadth choice and nothing in 15/15b licenses it.")
+    print(f"era = nominate {era}")
+
+    cells = dict(c.split("=", 1) for c in args.cells)
+    cells = {int(k): v for k, v in cells.items()}
+    GATE_BPS = 15.0
+    print(f"grid: {len(cells)} horizons x {len(args.top_ns)} book sizes = "
+          f"{len(cells) * len(args.top_ns)} cells   (gate evaluated at {GATE_BPS:.0f}bp only)")
+
+    ctx, rows = {}, []
+    for H in sorted(cells):
+        scores = pd.read_parquet(SC.cache_path(cells[H]))
+        prep = P.Prepared(scores, tab, H, None)
+        spy_ret = P.spy_windows(spy, np.sort(scores["timepoint"].unique()), H)
+        ctx[H] = (prep, spy_ret, cells[H])
+        for tn in args.top_ns:
+            base = dict(horizon=H, top_n=int(tn), weighting="invvol", bucket="volq")
+            br = B.effective_breadth(B.position_rows(prep, spy_ret, **base), H)
+            for cb in args.cost_bps:
+                m = P.score_run(P.simulate(prep, cost_bps=float(cb), **base),
+                                spy_ret, H, era=era)
+                if m is None:
+                    continue
+                rows.append({"H": H, "top_n": int(tn), "cost_bps": float(cb),
+                             "BR_eff": br.get("BR_eff"),
+                             "BR_per_year": (br.get("BR_eff", np.nan) * 252.0 / H),
+                             "mult_ratio": m["mult_ratio"],
+                             "excess_cagr": m["excess_cagr"]})
+            print(f"  H={H:<3} top_n={int(tn):<4} BR/yr "
+                  f"{br.get('BR_eff', float('nan')) * 252.0 / H:7.1f}", flush=True)
+
+    res = pd.DataFrame(rows)
+    if res.empty:
+        raise SystemExit("no cells scored")
+
+    gate = res[res.cost_bps == GATE_BPS].copy()
+    print("\n" + "=" * 78)
+    print(f"B5(a) -- NET OF {GATE_BPS:.0f}bp COSTS  (the gate)")
+    print("=" * 78)
+    piv = gate.pivot(index="top_n", columns="H", values="mult_ratio")
+    print(piv.to_string(float_format=lambda v: f"{v:8.4f}"))
+
+    dep = gate[(gate.H == args.deployed_h) & (gate.top_n == args.deployed_top_n)]
+    dep_mult = float(dep.mult_ratio.iloc[0]) if len(dep) else np.nan
+    print(f"\n  deployed cell (H={args.deployed_h}, top_n={args.deployed_top_n}): "
+          f"{dep_mult:.4f}")
+
+    best = gate.sort_values("mult_ratio", ascending=False).iloc[0]
+    a_pass = bool(np.isfinite(dep_mult) and best.mult_ratio > dep_mult)
+    print(f"  best cell     (H={int(best.H)}, top_n={int(best.top_n)}): "
+          f"{best.mult_ratio:.4f}   BR/yr {best.BR_per_year:.1f}")
+    print(f"\n  (a) {best.mult_ratio:.4f} vs deployed {dep_mult:.4f}   "
+          f"{'PASS' if a_pass else 'FAIL'}")
+
+    # ---- cost sensitivity: REPORTED, never optimised -----------------------
+    print("\n" + "=" * 78)
+    print("COST SENSITIVITY  (reported only -- the gate is 15bp)")
+    print("=" * 78)
+    cs = res[(res.H == best.H) & (res.top_n == best.top_n)][["cost_bps", "mult_ratio"]]
+    dp = res[(res.H == args.deployed_h) & (res.top_n == args.deployed_top_n)][
+        ["cost_bps", "mult_ratio"]].rename(columns={"mult_ratio": "deployed"})
+    print(cs.merge(dp, on="cost_bps").to_string(
+        index=False, float_format=lambda v: f"{v:8.4f}"))
+    same_cell = (int(best.H) == args.deployed_h
+                 and int(best.top_n) == args.deployed_top_n)
+    if same_cell:
+        print("\n  The best cell IS the deployed cell, so the two columns above are")
+        print("  the same series and no breakeven is defined. Reported as such")
+        print("  rather than as a number: comparing a cell to itself at a")
+        print("  different cost level is not a cost sensitivity.")
+    be = cs[cs.mult_ratio > dep_mult]
+    if not same_cell and len(be) and len(be) < len(cs):
+        print(f"\n  breakeven: the best cell stops beating the deployed cell above "
+              f"~{float(be.cost_bps.max()):.0f}bp.")
+        print("  Informational. A cell that needs costs below the project's")
+        print("  standing 15bp assumption is a FAIL -- that is a statement about")
+        print("  execution quality, not about signal.")
+
+    # ---- (b) matched null on the best cell --------------------------------
+    b_pass = False
+    print("\n" + "=" * 78)
+    print("B5(b) -- CONSTRUCTION-MATCHED NULL ON THE BEST CELL")
+    print("=" * 78)
+    if args.null_draws:
+        H = int(best.H)
+        prep, spy_ret, _ = ctx[H]
+        base = dict(horizon=H, top_n=int(best.top_n), weighting="invvol",
+                    bucket="volq")
+        nl = S.random_selection_null(
+            prep, P.simulate, lambda p, s: P.score_run(p, s, H, era=era),
+            spy_ret, n_draws=args.null_draws, seed=17, cost_bps=GATE_BPS, **base)
+        pct = S.percentile_of(best.mult_ratio, nl.get("_null_mults", []))
+        b_pass = bool(np.isfinite(pct) and pct >= 0.95)
+        print(f"  null p50 {nl.get('null_mult_ratio_p50', float('nan')):.4f}   "
+              f"p95 {nl.get('null_mult_ratio_p95', float('nan')):.4f}   "
+              f"n={nl.get('n')}")
+        print(f"  (b) percentile {pct:.3f}   threshold 0.950   "
+              f"{'PASS' if b_pass else 'FAIL'}")
+        print("\n  A wider book beats SPY with ZERO signal by cutting variance")
+        print("  drag; 27% of zero-signal configs already do in this harness.")
+        print("  Only this null separates that from selection.")
+    else:
+        print("  NOT RUN -- pass --null-draws 200. Gate (b) does not exist without it.")
+
+    # ---- (c) leave-one-year-out -------------------------------------------
+    c_pass = False
+    print("\n" + "=" * 78)
+    print("B5(c) -- LEAVE-ONE-YEAR-OUT  (standing procedure since Round 14)")
+    print("=" * 78)
+    if a_pass:
+        H = int(best.H)
+        prep, spy_ret, _ = ctx[H]
+        bw = P.simulate(prep, cost_bps=GATE_BPS, horizon=H, top_n=int(best.top_n),
+                        weighting="invvol", bucket="volq")
+        dprep, dspy, _ = ctx[args.deployed_h]
+        dw = P.simulate(dprep, cost_bps=GATE_BPS, horizon=args.deployed_h,
+                        top_n=args.deployed_top_n, weighting="invvol", bucket="volq")
+        yrs = sorted(set(pd.to_datetime(bw.timepoint).dt.year)
+                     & set(pd.to_datetime(dw.timepoint).dt.year))
+        yrs = [y for y in yrs
+               if pd.Timestamp(era[0]).year <= y < pd.Timestamp(era[1]).year]
+        out = []
+        for y in yrs:
+            mb = P.score_run(bw[pd.to_datetime(bw.timepoint).dt.year != y],
+                             spy_ret, H, era=era)
+            md = P.score_run(dw[pd.to_datetime(dw.timepoint).dt.year != y],
+                             dspy, args.deployed_h, era=era)
+            if mb and md:
+                out.append({"dropped": y, "best": mb["mult_ratio"],
+                            "deployed": md["mult_ratio"],
+                            "still_beats": mb["mult_ratio"] > md["mult_ratio"]})
+        lo = pd.DataFrame(out)
+        if len(lo):
+            print(lo.to_string(index=False, float_format=lambda v: f"{v:8.4f}"))
+            c_pass = bool(lo.still_beats.all())
+            bad = lo[~lo.still_beats]
+            print(f"\n  (c) survives dropping every single year: "
+                  f"{'PASS' if c_pass else 'FAIL'}")
+            if len(bad):
+                print(f"      carried by: {', '.join(str(int(v)) for v in bad.dropped)}")
+                print("      One year carrying the result is what killed")
+                print("      rate_beta_x_move in Round 14 (2019 was 8% of windows")
+                print("      and 45% of the effect) AFTER max-|t| and BH had")
+                print("      already said no for the wrong reason.")
+    else:
+        print("  NOT RUN -- (a) failed, so there is nothing to concentration-test.")
+
+    print("\n" + "=" * 78)
+    print(f"B5 VERDICT: {'PASS' if (a_pass and b_pass and c_pass) else 'FAIL'}"
+          f"   [(a) {a_pass}  (b) {b_pass}  (c) {c_pass}]")
+    print("=" * 78)
+    if not a_pass:
+        print("  FAIL as pre-registered -- but do NOT read the cause off this")
+        print("  gate. (a) compares every cell against the deployed cell, and")
+        print("  that cell was SELECTED from 1,152 configs on this same era, so")
+        print("  it is the maximum of the search and not a fair benchmark.")
+        print("  Diagnose the cause from the full cost table instead:")
+        print("    - if the short-horizon cells are still far behind at 5bp,")
+        print("      costs are NOT the cause and the horizon lever failed for")
+        print("      lack of anything to amplify;")
+        print("    - if they close the gap as costs fall, turnover is the cause.")
+        print("  The decisive read is whether mult_ratio moves MONOTONICALLY with")
+        print("  BR_per_year at FIXED book size. Grinold says it must if IC > 0.")
+
+    print("\n  CAVEAT, declared in the pre-registration: the H=10/H=20 caches use")
+    print("  `expanding` training and the deployed H=40 cell uses `cap500k`, so")
+    print("  this horizon comparison is confounded by training window. A passing")
+    print("  cell must be re-run with matched training before it is believed.")
+
+    res.to_csv(SWEEP_DIR / "horizon_cost_nominate.csv", index=False)
+    print(f"\nwritten {SWEEP_DIR / 'horizon_cost_nominate.csv'}")
+
+def cmd_prune(args):
+    """Round 17. Rank feature subsets x tree depths by MODEL IC.
+
+    Selection metric is IC, not terminal value, and that is deliberate. IC uses
+    every eligible name every window -- ~1,100 x 164 = 180,000 observations --
+    where a portfolio result is 82 numbers dominated by which five names
+    happened to be held. Standing rule 4. Rounds 15/15b showed terminal value
+    moves by several hundred basis points on pure construction while IC does
+    not move at all, so ranking 24 cells on mult_ratio would rank them on noise.
+
+    The family is 6 feature sets x 4 depths, DECLARED before the run. This is a
+    fixed grid, not a greedy search over subsets.
+    """
+    cells = _load_cells(args.cells)
+    era = NOMINATE_ERA
+    print(f"era = nominate {era}")
+    tab = pd.read_parquet(OUTCOMES_PATH)
+    tab["ticker"] = tab["ticker"].astype(str)
+    spy = _spy()
+    smap = F.load_sector_map()
+
+    rows = []
+    for c in cells:
+        if not SC.have(c.id):
+            print(f"  [skip, not built] {c.id}")
+            continue
+        meta = json.load(open(SC.meta_path(c.id)))
+        cfg = meta["config"]
+        H = int(cfg["horizon"])
+        scores = pd.read_parquet(SC.cache_path(c.id))
+        prep = P.Prepared(scores, tab, H, None)
+        spy_ret = P.spy_windows(spy, np.sort(scores["timepoint"].unique()), H)
+
+        # --- per-window IC, raw and with a SECTOR-NEUTRALIZED target --------
+        # Round 13/15 both showed apparent signal collapsing once sector came
+        # out. A subset that wins only on the raw target is a sector bet.
+        raw, neu, tps = [], [], []
+        for tp, d in prep.g.items():
+            t = pd.Timestamp(tp)
+            if not (pd.Timestamp(era[0]) <= t < pd.Timestamp(era[1])):
+                continue
+            m = np.isfinite(d["ret"]) & np.isfinite(d["score"])
+            if m.sum() < 40:
+                continue
+            y, s = d["ret"][m], d["score"][m]
+            r = _num.spearman(s, y)
+            D, _ = F.build_design(d["ticker"][m], d["cap"][m], d["vol"][m],
+                                  spec="size_vol_sector", sector_map=smap)
+            yr = F.residualize(y, D)
+            ok = np.isfinite(yr)
+            n = _num.spearman(s[ok], yr[ok]) if ok.sum() >= 40 else np.nan
+            if np.isfinite(r):
+                raw.append(r); neu.append(n); tps.append(t)
+
+        if len(raw) < 8:
+            print(f"  [skip, too few windows] {c.id}")
+            continue
+        raw = np.asarray(raw); neu = np.asarray(neu, dtype=np.float64)
+        tps = pd.DatetimeIndex(tps)
+
+        def _t(v):
+            v = v[np.isfinite(v)]
+            if len(v) < 3 or v.std(ddof=1) <= 0:
+                return np.nan, np.nan
+            return float(v.mean()), float(v.mean() / (v.std(ddof=1) / np.sqrt(len(v))))
+
+        ic_r, t_r = _t(raw)
+        ic_n, t_n = _t(neu)
+
+        # --- leave-one-year-out on the NEUTRALIZED IC -----------------------
+        # Standing procedure since Round 14: a result carried by one year has a
+        # near-zero forward expectation whatever its t-statistic. This is what
+        # killed rate_beta_x_move after BH and max-|t| had already said no for
+        # the wrong reason.
+        yrs = sorted(set(tps.year))
+        loyo = []
+        for y in yrs:
+            _, tt = _t(neu[np.asarray(tps.year != y)])
+            if np.isfinite(tt):
+                loyo.append(tt)
+        loyo_min = float(min(np.abs(loyo))) if loyo else np.nan
+        same_sign = bool(len(set(np.sign(loyo))) == 1) if loyo else False
+
+        # portfolio number, REPORTED ONLY -- never the selection metric
+        pw = P.simulate(prep, horizon=H, top_n=args.top_n, weighting="invvol",
+                        bucket="volq", cost_bps=15.0)
+        m = P.score_run(pw, spy_ret, H, era=era)
+
+        rows.append({
+            "features": cfg["features"], "depth": int(cfg["depth"]),
+            "n_cols": len(meta.get("feature_cols", [])),
+            "ic_raw": ic_r, "t_raw": t_r,
+            "ic_neutral": ic_n, "t_neutral": t_n,
+            "loyo_min_t": loyo_min, "loyo_same_sign": same_sign,
+            "n_windows": int(np.isfinite(neu).sum()),
+            "mult_ratio": (m or {}).get("mult_ratio"),
+            "cell_id": c.id,
+        })
+        print(f"  {cfg['features']:<18} d{cfg['depth']}  "
+              f"IC_neutral {ic_n:+.4f} (t {t_n:+.2f})  LOYO min|t| {loyo_min:.2f}",
+              flush=True)
+
+    if not rows:
+        raise SystemExit("no cells evaluated -- build them with `scores` first")
+    res = pd.DataFrame(rows).sort_values("t_neutral", key=np.abs, ascending=False)
+
+    print("\n" + "=" * 84)
+    print("RANKED BY SECTOR-NEUTRALIZED IC  (the selection metric)")
+    print("=" * 84)
+    cols = ["features", "depth", "n_cols", "ic_raw", "t_raw", "ic_neutral",
+            "t_neutral", "loyo_min_t", "loyo_same_sign", "mult_ratio"]
+    print(res[cols].to_string(index=False, float_format=lambda v: f"{v:8.4f}"))
+
+    print("\n--- marginal effect of each axis (median neutralized |t|) ---")
+    for ax in ("features", "depth"):
+        g = res.groupby(ax)["t_neutral"].apply(lambda s: np.median(np.abs(s)))
+        print(f"  by {ax}:")
+        for k, v in g.sort_values(ascending=False).items():
+            print(f"    {str(k):<20} {v:.2f}")
+
+    best = res.iloc[0]
+    print(f"\nbest cell: {best.features} d{int(best.depth)} "
+          f"({int(best.n_cols)} columns)")
+    print(f"  neutralized IC {best.ic_neutral:+.4f}  t {best.t_neutral:+.2f}")
+    print(f"  LOYO min |t| {best.loyo_min_t:.2f}, same sign {best.loyo_same_sign}")
+    print(f"\n  Deflation reference: this is the best of {len(res)} declared cells.")
+    print(f"  Under the decision bar (validation-gates.md) the question is the")
+    print(f"  EXPECTED IC, not whether it clears a threshold -- but a max over 24")
+    print(f"  cells is biased upward, so the honest estimate of the winner's")
+    print(f"  forward IC is below its in-sample value, and the LOYO column is")
+    print(f"  what says whether it is carried by one period.")
+    if not best.loyo_same_sign:
+        print("  WARNING: the best cell changes sign on a year-drop. Treat as noise.")
+
+    res.to_csv(SWEEP_DIR / "prune_nominate.csv", index=False)
+    print(f"\nwritten {SWEEP_DIR / 'prune_nominate.csv'}")
+
+def cmd_live(args):
+    """Rank cells on the LIVE construction, by profit.
+
+    Round 18. This exists because Rounds 17b/17c ranked on sector-NEUTRAL
+    performance, which deliberately discards factor exposure -- and Gabe has
+    been explicit, more than once, that factor and sector bets are acceptable
+    and that the objective is profit. Selecting on a criterion the owner has
+    rejected is not conservatism, it is answering the wrong question.
+
+    So: the ranking metric here is excess CAGR on the construction that is
+    actually deployed (top-5, volq buckets, inverse-vol weights), against its
+    own construction-matched null.
+
+    The sector-neutral number is still computed and printed, but as a
+    DIAGNOSTIC in its own column -- it is the only way to tell how much of a
+    result is stock selection versus factor loading, which is worth knowing
+    even when both are wanted. It does not drive the ranking.
+    """
+    tab = pd.read_parquet(OUTCOMES_PATH)
+    tab["ticker"] = tab["ticker"].astype(str)
+    spy = _spy()
+    era = NOMINATE_ERA
+    if args.era != "nominate":
+        raise SystemExit(
+            "Live evaluation is nomination-era only. The 2020-2026 hold-out was "
+            "spent in Round 13 and was touched once more in error on 2026-09-12; "
+            "it is not a clean test of anything and must not be used to choose.")
+    smap = F.load_sector_map()
+    base = dict(top_n=args.top_n, weighting=args.weighting, bucket=args.bucket)
+    print(f"era = nominate {era}")
+    print(f"LIVE construction: top_n={args.top_n}, {args.weighting}, "
+          f"bucket={args.bucket}, {args.cost_bps:.0f}bp\n")
+
+    cells = _load_cells(args.cells) if args.cells else None
+    ids = [c.id for c in cells] if cells else sorted(
+        p.stem for p in SC.CACHE_DIR.glob("*.parquet"))
+
+    rows = []
+    for cid in ids:
+        if not SC.have(cid):
+            continue
+        meta = json.load(open(SC.meta_path(cid)))
+        cfg = meta["config"]
+        H = int(cfg["horizon"])
+        if H != args.horizon:
+            continue
+        scores = pd.read_parquet(SC.cache_path(cid))
+        prep = P.Prepared(scores, tab, H, None)
+        spy_ret = P.spy_windows(spy, np.sort(scores["timepoint"].unique()), H)
+
+        pw = P.simulate(prep, horizon=H, cost_bps=args.cost_bps, **base)
+        m = P.score_run(pw, spy_ret, H, era=era)
+        if m is None:
+            continue
+
+        # matched null on the SAME construction -- the only thing that separates
+        # "this ranking earned it" from "this construction earned it"
+        pct = np.nan
+        if args.null_draws:
+            nl = S.random_selection_null(
+                prep, P.simulate, lambda p, s: P.score_run(p, s, H, era=era),
+                spy_ret, n_draws=args.null_draws, seed=17,
+                horizon=H, cost_bps=args.cost_bps, **base)
+            pct = S.percentile_of(m["mult_ratio"], nl.get("_null_mults", []))
+
+        # leave-one-year-out on the live construction
+        d = pw[(pw.timepoint >= era[0]) & (pw.timepoint < era[1])]
+        yrs = sorted(set(pd.to_datetime(d.timepoint).dt.year))
+        lo = []
+        for y in yrs:
+            mm = P.score_run(pw[pd.to_datetime(pw.timepoint).dt.year != y],
+                             spy_ret, H, era=era)
+            if mm:
+                lo.append(mm["excess_cagr"] * 100)
+        worst = float(min(lo)) if lo else np.nan
+        allpos = bool(all(v > 0 for v in lo)) if lo else False
+
+        # DIAGNOSTIC ONLY: how much survives removing the sector bet
+        sn = _sector_neutral_excess(prep, spy_ret, smap, H, era,
+                                    per_sector=args.diag_per_sector,
+                                    cost_bps=args.cost_bps)
+
+        rows.append({"features": cfg["features"], "label": cfg["label"],
+                     "model": cfg["model"], "n_cols": len(meta.get("feature_cols", [])),
+                     "excess_cagr": m["excess_cagr"] * 100,
+                     "mult_ratio": m["mult_ratio"],
+                     "null_pctile": pct, "loyo_worst": worst,
+                     "loyo_all_pos": allpos,
+                     "diag_sector_neutral": sn, "cell_id": cid})
+        print(f"  {cfg['features']:<26} {cfg['label']:<6} {cfg['model']:<8} "
+              f"{m['excess_cagr']*100:>+7.2f}%/yr  pctile {pct:.3f}", flush=True)
+
+    if not rows:
+        raise SystemExit("no cells evaluated")
+    res = pd.DataFrame(rows).sort_values("excess_cagr", ascending=False)
+
+    print("\n" + "=" * 92)
+    print("RANKED BY EXCESS CAGR ON THE LIVE CONSTRUCTION  (the objective)")
+    print("=" * 92)
+    cols = ["features", "label", "model", "n_cols", "excess_cagr", "mult_ratio",
+            "null_pctile", "loyo_worst", "loyo_all_pos", "diag_sector_neutral"]
+    print(res[cols].to_string(index=False, float_format=lambda v: f"{v:8.3f}"))
+
+    print("\n  excess_cagr          THE RANKING METRIC -- profit on what is live.")
+    print("  null_pctile          same construction, rankings shuffled. Below ~0.95")
+    print("                       the construction earned it, not the model.")
+    print("  loyo_worst           worst single-year-drop. A result that goes")
+    print("                       negative on one drop has a fragile expectation.")
+    print("  diag_sector_neutral  DIAGNOSTIC, not a gate: excess CAGR with the")
+    print("                       sector bet removed. Says how much is stock")
+    print("                       selection vs factor loading. Both are wanted,")
+    print("                       but knowing the split is how we know what we")
+    print("                       have and what will happen when factors turn.")
+
+    best = res.iloc[0]
+    print(f"\nbest on the objective: {best.features} / {best.label} / {best.model}")
+    print(f"  {best.excess_cagr:+.2f}%/yr   null pctile {best.null_pctile:.3f}   "
+          f"worst year-drop {best.loyo_worst:+.2f}%/yr")
+    if len(res) > 1:
+        d = best.excess_cagr - res.iloc[1].excess_cagr
+        print(f"  margin over #2: {d:+.2f}%/yr")
+    print(f"\n  Selected from {len(res)} cells. In-sample and biased upward; the")
+    print(f"  2020-2026 hold-out is spent and cannot adjudicate this.")
+
+    res.to_csv(SWEEP_DIR / "live_nominate.csv", index=False)
+    print(f"\nwritten {SWEEP_DIR / 'live_nominate.csv'}")
+
+
+def _sector_neutral_excess(prep, spy_ret, smap, H, era, per_sector=5,
+                           cost_bps=15.0):
+    """Excess CAGR with equal weight across sectors -- zero sector bet."""
+    rows, prev = [], set()
+    for tp in prep.tps:
+        t = pd.Timestamp(tp)
+        if not (pd.Timestamp(era[0]) <= t < pd.Timestamp(era[1])):
+            continue
+        d = prep.g.get(np.datetime64(tp))
+        if d is None:
+            continue
+        labs = np.array([F._base_ticker(x) for x in d["ticker"]])
+        labs = np.array([smap.get(x, "") for x in labs])
+        ok = np.isfinite(d["ret"]) & d["tradable"] & np.isfinite(d["score"])
+        picks = []
+        for s in sorted(set(labs[ok]) - {""}):
+            m = np.flatnonzero(ok & (labs == s))
+            if len(m) < per_sector * 2:
+                continue
+            picks.append(m[np.argsort(-d["score"][m])[:per_sector]])
+        if len(picks) < 6:
+            continue
+        w = np.zeros(len(d["score"]))
+        for g in picks:
+            w[g] = 1.0 / (len(picks) * len(g))
+        idx = np.flatnonzero(w > 0)
+        gr = float((w[idx] * d["ret"][idx]).sum())
+        cur = set(d["ticker"][idx])
+        turn = 1.0 - (len(cur & prev) / max(len(cur), 1))
+        prev = cur
+        rows.append({"sleeve": 0, "timepoint": t, "n": len(idx), "gross": gr,
+                     "net": gr - turn * cost_bps / 1e4, "exposure": 1.0,
+                     "turnover": turn})
+    if not rows:
+        return np.nan
+    m = P.score_run(pd.DataFrame(rows), spy_ret, H, era=era)
+    return m["excess_cagr"] * 100 if m else np.nan
+
 def cmd_portfolio(args):
     tab = pd.read_parquet(OUTCOMES_PATH)
     tab["ticker"] = tab["ticker"].astype(str)
@@ -277,8 +937,19 @@ def cmd_portfolio(args):
         cell = cpath.stem
         if args.only and args.only != cell:
             continue
+        # A cell whose scores parquet exists but whose meta sidecar does not is
+        # a half-written cache entry (fly_none_T20_s0 is one: the run_fly
+        # --no-reservoir crash of 2026-09-16 wrote the scores and died before
+        # the meta). It used to take the WHOLE portfolio run down with a
+        # FileNotFoundError, which meant one stale artifact could block every
+        # later experiment. Skip it and say so.
+        mpath = SC.meta_path(cell)
+        if not Path(mpath).exists():
+            print(f"  {cell}: SKIPPED -- no meta sidecar ({Path(mpath).name}); "
+                  f"the score cache for this cell is incomplete.")
+            continue
         scores = pd.read_parquet(cpath)
-        meta = json.load(open(SC.meta_path(cell)))
+        meta = json.load(open(mpath))
         H = int(meta["config"]["horizon"])
         spy_ret = P.spy_windows(spy, np.sort(scores["timepoint"].unique()), H)
 
@@ -308,6 +979,8 @@ def cmd_portfolio(args):
             if m is None:
                 continue
             m.update(P.mean_ic(prep, era=era))
+            # Round 19: the higher-powered metric. See portfolio.decile_stats.
+            m.update(P.decile_stats(prep, era=era))
 
             # Construction-matched null. This is what separates "the signal
             # helped" from "holding 50 names instead of 5 helped".
@@ -804,7 +1477,11 @@ def main():
     p = sub.add_parser("features")
     p.add_argument("--features", default="price_fund",
                    choices=["price", "price_fund", "novol", "volonly",
-                            "rates", "price_fund_rates"],
+                            "rates", "price_fund_rates",
+                            "events", "price_fund_events",
+                            # Round 19: "path" screens accel_20 alone, so the
+                            # multiple-testing family is the 1 new hypothesis.
+                            "path", "price_fund_path"],
                    help="which feature set to screen; also selects the panel")
     p.add_argument("--horizons", default="10,20,40,60")
     p.add_argument("--start", default="2007-01-02")
@@ -832,6 +1509,66 @@ def main():
     p.add_argument("--null-draws", type=int, default=200,
                    help="shuffled-ranking draws for the t(alpha) null")
     p.set_defaults(func=cmd_attribute)
+
+    p = sub.add_parser("breadth")
+    p.add_argument("--cell", required=True,
+                   help="score-cache cell id to measure breadth for")
+    p.add_argument("--era", choices=["nominate"], default="nominate",
+                   help="nomination era only; the hold-out is spent (Round 13)")
+    p.add_argument("--top-n", type=int, default=5)
+    p.add_argument("--weighting", default="invvol")
+    p.add_argument("--bucket", default="volq")
+    p.add_argument("--stop", default=None)
+    p.add_argument("--cost-bps", type=float, default=15.0)
+    p.add_argument("--spec", default="size_vol_sector",
+                   help="factor design residualized out at SELECTION time")
+    p.add_argument("--breadth-scan", type=int, nargs="*",
+                   default=[5, 10, 20, 50, 100],
+                   help="top_n values to measure BR_eff at (B1 instrumentation)")
+    p.add_argument("--null-draws", type=int, default=0,
+                   help="matched random-selection draws. Gate B3(b) does not "
+                        "exist without this: a breadth gain improves compounded "
+                        "return with ZERO signal, and only the matched null "
+                        "separates the two. Use 200 for any run that decides.")
+    p.set_defaults(func=cmd_breadth)
+
+    p = sub.add_parser("horizon")
+    p.add_argument("--cells", nargs="+", required=True,
+                   help="H=cell_id pairs, e.g. 10=price_fund_h10_... 40=...")
+    p.add_argument("--top-ns", type=int, nargs="+", default=[5, 20, 50, 100])
+    p.add_argument("--cost-bps", type=float, nargs="+",
+                   default=[5, 10, 15, 25, 40],
+                   help="sensitivity curve. The GATE is evaluated at 15bp only; "
+                        "a cell that needs cheaper execution is a FAIL.")
+    p.add_argument("--deployed-h", type=int, default=40)
+    p.add_argument("--deployed-top-n", type=int, default=5)
+    p.add_argument("--era", choices=["nominate"], default="nominate")
+    p.add_argument("--null-draws", type=int, default=0,
+                   help="matched random-selection draws for gate B5(b). A wider "
+                        "book beats SPY with ZERO signal by cutting variance "
+                        "drag; without this there is no gate. Use 200.")
+    p.set_defaults(func=cmd_horizon)
+
+    p = sub.add_parser("prune")
+    p.add_argument("--cells", default="sweep/grid_prune.json")
+    p.add_argument("--top-n", type=int, default=5,
+                   help="portfolio size for the REPORTED mult_ratio only; "
+                        "selection is on IC, never on terminal value")
+    p.set_defaults(func=cmd_prune)
+
+    p = sub.add_parser("live")
+    p.add_argument("--cells", default=None,
+                   help="cell list; omit to evaluate every cached cell at --horizon")
+    p.add_argument("--horizon", type=int, default=40)
+    p.add_argument("--top-n", type=int, default=5)
+    p.add_argument("--weighting", default="invvol")
+    p.add_argument("--bucket", default="volq")
+    p.add_argument("--cost-bps", type=float, default=15.0)
+    p.add_argument("--era", choices=["nominate"], default="nominate")
+    p.add_argument("--null-draws", type=int, default=150)
+    p.add_argument("--diag-per-sector", type=int, default=5,
+                   help="book size for the sector-neutral DIAGNOSTIC column")
+    p.set_defaults(func=cmd_live)
 
     p = sub.add_parser("portfolio")
     p.add_argument("--grid", required=True)

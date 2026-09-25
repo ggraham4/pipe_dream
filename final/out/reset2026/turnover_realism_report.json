@@ -1,0 +1,63 @@
+{
+  "ladder": {
+    "per_offset": {
+      "0": {
+        "terminal_wealth_multiple": 4.090775184086695,
+        "spy_terminal_multiple": 2.1424421713978474,
+        "annualized_excess_vs_spy": 0.0509476245663667,
+        "mean_f_new_per_window": 0.19264419789499815,
+        "n_windows": 82
+      },
+      "8": {
+        "terminal_wealth_multiple": 4.194911237441779,
+        "spy_terminal_multiple": 2.1873036934825927,
+        "annualized_excess_vs_spy": 0.051304125889374275,
+        "mean_f_new_per_window": 0.19239806090157302,
+        "n_windows": 82
+      },
+      "16": {
+        "terminal_wealth_multiple": 5.252405306864835,
+        "spy_terminal_multiple": 2.6728260461637543,
+        "annualized_excess_vs_spy": 0.05327251085686635,
+        "mean_f_new_per_window": 0.19049918814981995,
+        "n_windows": 82
+      },
+      "24": {
+        "terminal_wealth_multiple": 3.9013700565193377,
+        "spy_terminal_multiple": 2.1163271790102995,
+        "annualized_excess_vs_spy": 0.04811392689188776,
+        "mean_f_new_per_window": 0.19061214950165797,
+        "n_windows": 82
+      },
+      "32": {
+        "terminal_wealth_multiple": 4.1865458156371655,
+        "spy_terminal_multiple": 2.1007877124209138,
+        "annualized_excess_vs_spy": 0.05509702216109558,
+        "mean_f_new_per_window": 0.1896821798617477,
+        "n_windows": 81
+      }
+    },
+    "ladder_blended": {
+      "terminal_wealth_multiple": 4.325201520109962,
+      "annualized_excess_vs_spy": 0.051774748384519675,
+      "mean_f_new_per_window": 0.19116715526195935
+    },
+    "single_offset_dispersion_sd": 0.0023487950364408186
+  },
+  "buffer": {
+    "baseline": {
+      "terminal_wealth_multiple": 4.090775184086695,
+      "spy_terminal_multiple": 2.1424421713978474,
+      "annualized_excess_vs_spy": 0.0509476245663667,
+      "mean_f_new_per_window": 0.19264419789499815,
+      "n_windows": 82
+    },
+    "buffered": {
+      "terminal_wealth_multiple": 4.265615133810107,
+      "spy_terminal_multiple": 2.1424421713978474,
+      "annualized_excess_vs_spy": 0.054332335001981535,
+      "mean_f_new_per_window": 0.06319755036506641,
+      "n_windows": 82
+    }
+  }
+}

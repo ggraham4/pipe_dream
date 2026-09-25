@@ -1,0 +1,15 @@
+loading base panel (features_with_fundamentals_sharadar_pit.parquet) ...
+  12,270,047 rows, 4,011 tickers (1s)
+  + issuance ['net_issuance_pct']: coverage 95.4% (1s)
+  + short interest ['short_interest_days_to_cover']: coverage 29.6% (2s)
+  + events ['days_to_next_filing_seasonal']: coverage 99.7% (4s)
+  + quality ['gross_profitability', 'accruals', 'asset_growth', 'momentum_12_1']: coverage 98.7% (6s)
+merging sector (tickers_master.csv, current classification) ...
+  sector coverage 100.0%, 12 distinct sectors (7s)
+merging down-cap universe eligibility (separate source grid -- match rate matters) ...
+  eligible_cap2000: 6,888,686 eligible rows (56.1% of panel)
+  eligible_cap500: 10,539,483 eligible rows (85.9% of panel)
+  eligible_cap150: 11,495,125 eligible rows (93.7% of panel)
+  11,518,778 of 16,244,015 downcap_universe rows found a matching (ticker, date) in the feature panel (70.9%)
+
+-> /Users/ggraham/pipe_dream/final/out/reset2026/composite_panel.parquet  (12,270,047 rows, 22s total)

@@ -41,6 +41,7 @@ import time
 from pathlib import Path
 
 import numpy as np
+import pyarrow.parquet as pq
 import pandas as pd
 import xgboost as xgb
 
@@ -68,6 +69,61 @@ except Exception:                                  # rates panel not built yet
     RATE_FEATURE_COLS = []
 _RATE_ALL = list(RATE_FEATURE_COLS) + (["d_y10_20"] if RATE_FEATURE_COLS else [])
 
+from sweep.events import EVENT_FEATURE_COLS as _EVENT_ALL   # noqa: E402
+
+# Round 19 (2026-09-16): path-ORDER candidates. Imported from features.py, not
+# restated, so the screen, the model and the live signal cannot disagree about
+# what the column is -- the same rule as the rate columns above, and it matters
+# more here because accel_20's evidence is a permutation test tied to one exact
+# definition. Kept OUT of FEATURE_COLS: these are candidates, not features.
+from features import CANDIDATE_FEATURE_COLS as _PATH_ALL     # noqa: E402
+
+# Event columns whose value is computable from the information set at time t.
+_CAUSAL_EVENTS = [c for c in _EVENT_ALL
+                  if not (c.endswith("_actual") or c.endswith("_known"))]
+
+# Round 20 (2026-09-17): sector/industry-neutralized features, data-sourcing
+# report item #1. Imported rather than restated -- same rule as rates/events.
+try:
+    from sweep.sector_neutral import SECTOR_NEUTRAL_ALL
+except Exception:                          # sector-neutral panel not built yet
+    SECTOR_NEUTRAL_ALL = []
+
+# Round 20 (2026-09-17): net issuance/buyback, data-sourcing report item #2.
+try:
+    from sweep.issuance import NET_ISSUANCE_COL
+    _ISSUANCE_ALL = [NET_ISSUANCE_COL]
+except Exception:                          # issuance panel not built yet
+    _ISSUANCE_ALL = []
+
+# Round 20 (2026-09-18): FINRA short interest, data-sourcing report item #7.
+# Own era (2020-04-15 floor), same reason as options -- see
+# build_short_interest_shuffle_null.py, not the standard nomination backlog.
+try:
+    from sweep.short_interest import SHORT_INTEREST_ALL
+except Exception:                          # short-interest panel not built yet
+    SHORT_INTEREST_ALL = []
+
+# Round 20 (2026-09-18): SEC EDGAR 8-K event flags, data-sourcing report
+# item #8. Full 2007-2026 coverage (CIK maps predate 2020, unlike options/
+# short-interest) -- screens on the STANDARD nomination era via _BACKLOG,
+# not its own era.
+try:
+    from sweep.edgar_events import EDGAR_EVENTS_ALL
+except Exception:                          # edgar-events panel not built yet
+    EDGAR_EVENTS_ALL = []
+
+_SURVIVORS = [
+    "volatility_60", "volatility_20", "market_cap",          # split importance
+    "days_to_next_filing_seasonal", "earnings_in_window_seasonal",
+    "days_to_next_filing_est",                                # |t| > 1, causal
+    "rnd_intensity", "gross_margin", "revenue_growth_yoy",    # |t| > 1 raw
+]
+_MINIMAL = [
+    "volatility_60", "volatility_20", "market_cap",
+    "days_to_next_filing_seasonal", "earnings_in_window_seasonal",
+]
+
 FEATURE_SETS = {
     "price":      list(FEATURE_COLS),
     "price_fund": list(FEATURE_COLS) + list(_NO_STALE),
@@ -78,9 +134,128 @@ FEATURE_SETS = {
     # known to be dead. "price_fund_rates" is the combined set for modelling.
     "rates":            list(_RATE_ALL),
     "price_fund_rates": list(FEATURE_COLS) + list(_NO_STALE) + list(_RATE_ALL),
+    # Round 16. Same convention: "events" screens ONLY the 8 new columns so the
+    # multiple-testing family is 8 new hypotheses, not a re-test of the 24
+    # already known to be dead.
+    "events":            list(_EVENT_ALL),
+    "price_fund_events": list(FEATURE_COLS) + list(_NO_STALE) + list(_EVENT_ALL),
+    # Round 19. Same convention as rounds 14 and 16: "path" screens ONLY the
+    # new column, so the multiple-testing family is the 1 new hypothesis rather
+    # than a re-test of the 24 already known to be dead. Folding accel_20 into
+    # the 24-feature family would also let BH borrow strength from features
+    # whose fate is already settled, which is not what the correction is for.
+    "path":            list(_PATH_ALL),
+    "price_fund_path": list(FEATURE_COLS) + list(_NO_STALE) + list(_PATH_ALL),
+
+    # ---- Round 17: feature pruning. Six subsets declared UP FRONT; this is a
+    # fixed family of 6, not a greedy search over 2^38 subsets.
+    #
+    # `_CAUSAL_EVENTS` deliberately excludes the `_actual` and `_known`
+    # variants. `_actual` is the strongest column in the screen (t -4.17) but
+    # rests on the true next-filing date, which this dataset cannot prove was
+    # knowable at the time. Training on it would put an unverifiable column
+    # into a deployed model. The seasonal estimator is the tradeable version.
+    "fund_events":  list(_NO_STALE) + list(_CAUSAL_EVENTS),
+    # survivors: |t| > 1 in ANY screen run to date, plus the two volatility
+    # columns that carry ~80% of the deployed model's split importance.
+    "survivors":    list(_SURVIVORS),
+    # minimal: the smallest set that keeps the one feature with real signal
+    # plus the risk structure the model actually trades on.
+    "minimal":      list(_MINIMAL),
+
+    # ---- Round 17c: attribution controls. `fund_events` (23 cols) is the
+    # current nomination, but it is fundamentals PLUS causal event columns and
+    # nothing has isolated which half carries it. These two split it.
+    "fund_only":     list(_NO_STALE),          # 13 fundamentals, no events
+    "events_causal": list(_CAUSAL_EVENTS),     # 10 event cols, no fundamentals
+
+    # ---- Round 18: the DEPLOYED feature set plus the causal earnings columns,
+    # nothing else changed. This is the incremental question that should have
+    # been asked first: does adding earnings timing to what is already live
+    # make it better, judged on the construction that is actually live
+    # (top-5, volq, invvol) rather than on a sector-neutral book nobody runs.
+    "price_fund_causal_events":
+        list(FEATURE_COLS) + list(_NO_STALE) + list(_CAUSAL_EVENTS),
 }
 
 # Which panel each feature set needs.
+# --------------------------------------------------------------------------
+# Round 19 backlog: ONE feature set per candidate column
+# --------------------------------------------------------------------------
+# The rates (Round 14) and events (Round 16) screens were run as BUNDLES -- all
+# 5 rate columns, all 8 causal event columns, at once -- which answers "does
+# this GROUP help" and not "does this COLUMN belong". The shuffled-feature null
+# is a per-column test, so each candidate gets its own `price_fund + one
+# column` set. Generated rather than hand-listed, so a column can never appear
+# here and be missing from PANEL_FOR below.
+#
+# Options candidates are deliberately ABSENT. The chain starts 2019-02-09, so
+# across the 2007-2019 nomination era those columns carry 365 non-null rows out
+# of 8.2M. There is nothing to test, and Gabe cut them from the backlog on
+# 2026-09-16 for exactly that reason.
+_BACKLOG = {}
+for _c in list(_RATE_ALL):
+    _BACKLOG[f"pf_{_c}"] = ("features_with_rates_sharadar_pit.parquet",
+                            list(FEATURE_COLS) + list(_NO_STALE) + [_c])
+for _c in list(_CAUSAL_EVENTS):
+    _BACKLOG[f"pf_{_c}"] = ("features_with_events_sharadar_pit.parquet",
+                            list(FEATURE_COLS) + list(_NO_STALE) + [_c])
+for _c in list(SECTOR_NEUTRAL_ALL):
+    _BACKLOG[f"pf_{_c}"] = ("features_with_sector_neutral_sharadar_pit.parquet",
+                            list(FEATURE_COLS) + list(_NO_STALE) + [_c])
+for _c in list(_ISSUANCE_ALL):
+    _BACKLOG[f"pf_{_c}"] = ("features_with_issuance_sharadar_pit.parquet",
+                            list(FEATURE_COLS) + list(_NO_STALE) + [_c])
+for _c in list(EDGAR_EVENTS_ALL):
+    _BACKLOG[f"pf_{_c}"] = ("features_with_edgar_events_sharadar_pit.parquet",
+                            list(FEATURE_COLS) + list(_NO_STALE) + [_c])
+BACKLOG_SETS = sorted(_BACKLOG)
+FEATURE_SETS.update({k: v[1] for k, v in _BACKLOG.items()})
+
+# 2026-09-18: crude, explicitly-not-rigorous pilot. Sparse insider-cluster-buy
+# column, real data for only 7 tickers (AV free-tier sample), NaN elsewhere.
+# Deliberately kept OUT of _BACKLOG/BACKLOG_SETS -- this must never get swept
+# into a real nomination scan; it exists only to give Gabe a lightweight
+# real-model read before deciding on an AV subscription.
+FEATURE_SETS["pilot_insider_cluster"] = list(FEATURE_COLS) + list(_NO_STALE) + ["insider_cluster_recent"]
+
+# --------------------------------------------------------------------------
+# Round 20 (2026-09-17): the options-implied backlog, on its OWN era
+# --------------------------------------------------------------------------
+# These 9 columns were deliberately left out of `_BACKLOG` above because the
+# chain starts 2019-02-09 -- across the 2007-2019 nomination era they are
+# ~365 non-null rows out of 8.2M, nothing to test. Per Gabe: screen them on
+# their own split instead (nominate 2019-02-09..2025-01-01, confirm
+# 2025-01-01..present -- widened from the original 2019..2024/2024..2027 split
+# on 2026-09-17 for more nomination data). `build_options_shuffle_null.py`
+# applies that era directly via `portfolio.decile_series(..., era=...)`
+# rather than through `cli.py`'s fixed NOMINATE_ERA/HOLDOUT_ERA, so this does
+# not touch or reinterpret any existing result keyed to those two eras.
+_OPTIONS_ALL = [
+    "opt_vrp", "opt_iv_pctile", "opt_iv_mom_1m", "opt_vrp_mom_1m",
+    "opt_atm_iv", "opt_rr25", "opt_bfly25", "opt_term_slope",
+    "opt_implied_move_40",
+]
+_OPTIONS_BACKLOG = {}
+for _c in list(_OPTIONS_ALL):
+    _OPTIONS_BACKLOG[f"pf_{_c}"] = ("features_with_options_sharadar_pit.parquet",
+                                    list(FEATURE_COLS) + list(_NO_STALE) + [_c])
+OPTIONS_BACKLOG_SETS = sorted(_OPTIONS_BACKLOG)
+FEATURE_SETS.update({k: v[1] for k, v in _OPTIONS_BACKLOG.items()})
+
+# Round 20 (2026-09-18): FINRA short interest, same "own era" treatment as
+# options -- data starts 2020-04-15 (+8 business day publish lag), nothing
+# to test in the 2007-2019 nomination era. See
+# build_short_interest_shuffle_null.py.
+_SHORT_INTEREST_BACKLOG = {}
+for _c in list(SHORT_INTEREST_ALL):
+    _SHORT_INTEREST_BACKLOG[f"pf_{_c}"] = (
+        "features_with_short_interest_sharadar_pit.parquet",
+        list(FEATURE_COLS) + list(_NO_STALE) + [_c])
+SHORT_INTEREST_BACKLOG_SETS = sorted(_SHORT_INTEREST_BACKLOG)
+FEATURE_SETS.update({k: v[1] for k, v in _SHORT_INTEREST_BACKLOG.items()})
+
+
 PANEL_FOR = {
     "price":      "features_sharadar_pit.parquet",
     "novol":      "features_sharadar_pit.parquet",
@@ -88,6 +263,24 @@ PANEL_FOR = {
     "price_fund": "features_with_fundamentals_sharadar_pit.parquet",
     "rates":            "features_with_rates_sharadar_pit.parquet",
     "price_fund_rates": "features_with_rates_sharadar_pit.parquet",
+    "events":            "features_with_events_sharadar_pit.parquet",
+    "price_fund_events": "features_with_events_sharadar_pit.parquet",
+    # accel_20 is added to the fundamentals panel in place by
+    # build_accel_feature.py -- no new panel file, because a rebuild would
+    # change dozens of unrelated cells' inputs and invalidate the score caches
+    # every current result rests on.
+    "path":            "features_with_fundamentals_sharadar_pit.parquet",
+    "price_fund_path": "features_with_fundamentals_sharadar_pit.parquet",
+    "pilot_insider_cluster": "features_with_insider_pilot_sharadar_pit.parquet",
+    **{k: v[0] for k, v in _BACKLOG.items()},
+    **{k: v[0] for k, v in _OPTIONS_BACKLOG.items()},
+    **{k: v[0] for k, v in _SHORT_INTEREST_BACKLOG.items()},
+    "fund_events":       "features_with_events_sharadar_pit.parquet",
+    "survivors":         "features_with_events_sharadar_pit.parquet",
+    "minimal":           "features_with_events_sharadar_pit.parquet",
+    "fund_only":         "features_with_events_sharadar_pit.parquet",
+    "events_causal":     "features_with_events_sharadar_pit.parquet",
+    "price_fund_causal_events": "features_with_events_sharadar_pit.parquet",
 }
 
 # Extra columns carried into the score cache so the portfolio layer can weight,
@@ -116,6 +309,29 @@ class SignalConfig(dict):
         "cap_tier": "all",          # all | mega | large | mid  (market-cap tercile)
         "step": 40,                 # rebalance frequency in trading days
         "seed": 0,
+        # --- Round 19: the shuffled-feature null -------------------------
+        # Permute ONE feature column within each date's cross-section, leaving
+        # everything else identical. Same marginal distribution, same column
+        # count (so XGBoost's regularisation and split budget are unchanged),
+        # cross-sectional information destroyed. Dropping the column instead
+        # would change the model's shape and confound "this feature carries
+        # nothing" with "24 columns behave differently from 25".
+        #
+        # This is the control the IC screen could never be: it asks whether the
+        # column improves the PORTFOLIO, against a distribution of what an
+        # uninformative column of the same shape does.
+        "shuffle_col": "",          # "" = no shuffle (every historical cell)
+        "shuffle_seed": 0,
+        # --- Round 20 (2026-09-17): train-time regime exclusion ----------
+        # Gabe's hypothesis: 2020-2021 is such an outlier regime (COVID crash
+        # + reopening) that TRAINING on it teaches the model a feature-return
+        # mapping that doesn't generalize to normal markets -- distinct from
+        # LOYO, which asks whether an EVALUATION year dominates a result.
+        # This drops those rows from the training mask only; the walk-forward
+        # still SCORES every window as usual, so 2020-2021 becomes a genuine
+        # out-of-sample test of a model that never saw it, rather than being
+        # removed from the record. "" = no exclusion (every historical cell).
+        "train_exclude": "",       # "" | "covid" (see TRAIN_EXCLUDE_RANGES)
     }
 
     def __init__(self, **kw):
@@ -142,6 +358,10 @@ class SignalConfig(dict):
         if d["cap_tier"] != "all":
             parts.append(d["cap_tier"])
         parts.append(f"s{d['step']}")
+        if d["shuffle_col"]:
+            parts.append(f"shuf{d['shuffle_col']}{d['shuffle_seed']}")
+        if d["train_exclude"]:
+            parts.append(f"exc{d['train_exclude']}")
         return "_".join(parts)
 
     @property
@@ -167,7 +387,15 @@ class PanelContext:
         # one load serves all of them.
         want = list(dict.fromkeys(
             ["close", "open", "market_cap"] + list(FEATURE_COLS) + list(_NO_STALE)
-            + list(_RATE_ALL)))
+            + list(_RATE_ALL) + list(_EVENT_ALL) + list(_PATH_ALL)
+            + list(_OPTIONS_ALL) + list(SECTOR_NEUTRAL_ALL) + list(_ISSUANCE_ALL)
+            + list(SHORT_INTEREST_ALL) + list(EDGAR_EVENTS_ALL)
+            + ["insider_cluster_recent"]))
+        # NOTE: a column missing from `want` is silently absent downstream --
+        # feature_ic.screen() filters its feature list to what the panel
+        # actually carries, so a forgotten entry here produces an EMPTY screen
+        # rather than an error. Round 16 lost a run to exactly that.
+        want = [c for c in want if c in pq.ParquetFile(path).schema_arrow.names]
         t0 = time.time()
         if verbose:
             print(f"  [ctx] loading {panel_file} at horizon {horizon} ...", flush=True)
@@ -260,6 +488,82 @@ class PanelContext:
         self._mm_cache[key] = out
         return out
 
+    def featmat_shuffled(self, feature_cols, col, seed):
+        """featmat() with `col` permuted WITHIN each date's cross-section.
+
+        Not cached: each one is ~1GB on scratch and the null runs them one at a
+        time. The caller frees it with drop_shuffled().
+
+        Permuting within date is the whole point. A global permutation would
+        also scramble the column across TIME, so the model would see a feature
+        whose distribution drifts against the market -- a different and easier
+        null. Within-date keeps every cross-section's marginal distribution
+        exactly as it was and destroys only the pairing between a name and its
+        value, which is precisely the information a cross-sectional ranker uses.
+
+        BUG FOUND AND FIXED 2026-09-18: the permutation used to run over
+        EVERY eligible row that date, NaN included. For a column with real
+        coverage below ~60% (EDGAR events 54%, FINRA short interest 30%,
+        options-implied 30%), that does not preserve "same marginals, same
+        missingness, information destroyed" -- it reassigns which TICKERS
+        are covered at all. Measured directly on one EDGAR date: of 1,255
+        tickers with a real value, 553 (44%) came out NaN after the old
+        shuffle, while 553 previously-NaN tickers acquired a fabricated
+        value. Coverage here is a structural fact (has a CIK match or
+        doesn't), not noise, so scrambling it changes what's being tested.
+        Fix: permute only among the rows that already have a finite value
+        that date; NaN rows stay NaN. For dense columns (rates, events,
+        sector-neutral, issuance -- all >=90% covered) this changes
+        essentially nothing, which is why those results were NOT rerun.
+        """
+        feature_cols = list(feature_cols)
+        if col not in feature_cols:
+            raise ValueError(f"shuffle_col {col!r} not in the feature set "
+                             f"{feature_cols}")
+        import tempfile
+        base = self.featmat(feature_cols)
+        j = feature_cols.index(col)
+        if self._mm_dir is None:
+            self._mm_dir = tempfile.mkdtemp(prefix="sweep_featmat_")
+        path = os.path.join(self._mm_dir, f"shuf_{col}_{seed}.npy")
+        mm = np.memmap(path, dtype=np.float32, mode="w+", shape=base.shape)
+        mm[:] = base
+        rng = np.random.default_rng(int(seed))
+        for idx in self._date_blocks():
+            v = mm[idx, j]
+            finite = np.isfinite(v)
+            k = int(finite.sum())
+            if k > 1:
+                sub = np.flatnonzero(finite)
+                v = v.copy()
+                v[sub] = v[sub][rng.permutation(k)]
+                mm[idx, j] = v
+        mm.flush()
+        del mm
+        gc.collect()
+        out = np.memmap(path, dtype=np.float32, mode="r", shape=base.shape)
+        self._shuf_path = path
+        return out
+
+    def drop_shuffled(self):
+        p = getattr(self, "_shuf_path", None)
+        if p and os.path.exists(p):
+            try:
+                os.remove(p)
+            except OSError:
+                pass
+        self._shuf_path = None
+
+    def _date_blocks(self):
+        """Row indices of each date, computed once."""
+        if getattr(self, "_dblocks", None) is None:
+            d = self.feat["date"].to_numpy()
+            order = np.argsort(d, kind="stable")
+            ds = d[order]
+            cut = np.flatnonzero(ds[1:] != ds[:-1]) + 1
+            self._dblocks = np.split(order, cut)
+        return self._dblocks
+
     def target(self, cfg):
         """Return the continuous target array for a config."""
         basis = cfg["label_basis"]
@@ -277,6 +581,16 @@ class PanelContext:
 # ==========================================================================
 # The run
 # ==========================================================================
+# Round 20 (2026-09-17). Named train-time regime exclusions. "covid" spans
+# the crash (2020-02) through the reopening/meme-stock aftermath (2021-12) --
+# a full two years rather than just the crash months, per Gabe: the whole
+# stretch behaved oddly, not only the acute crash weeks. Half-open on the
+# high end so an exact 2022-01-01 row is training-eligible.
+TRAIN_EXCLUDE_RANGES = {
+    "covid": ("2020-01-01", "2022-01-01"),
+}
+
+
 def _train_lo(dates_arr, hi, cfg, all_dates):
     """Start index of the training block -- 0 for expanding, else a rolling
     window of N years ending at the cutoff."""
@@ -358,7 +672,11 @@ def run_signal(cfg, ctx, start="2007-01-02", verbose=True, checkpoint=None):
         return pd.DataFrame(), {"error": "no step dates"}
 
     y_all = ctx.target(cfg)
-    featmat = ctx.featmat(feature_cols)
+    if cfg["shuffle_col"]:
+        featmat = ctx.featmat_shuffled(feature_cols, cfg["shuffle_col"],
+                                       cfg["shuffle_seed"])
+    else:
+        featmat = ctx.featmat(feature_cols)
 
     carry = [c for c in CARRY_COLS if c in f.columns]
     frame = f[["ticker", "date"] + carry]
@@ -431,6 +749,11 @@ def run_signal(cfg, ctx, start="2007-01-02", verbose=True, checkpoint=None):
             mask = np.isfinite(lab)
             if lo > 0:
                 mask[:lo] = False
+            if cfg["train_exclude"]:
+                exc_lo, exc_hi = TRAIN_EXCLUDE_RANGES[cfg["train_exclude"]]
+                exc = ((dates_arr[:hi] >= np.datetime64(exc_lo))
+                       & (dates_arr[:hi] < np.datetime64(exc_hi)))
+                mask[exc] = False
             n_sel = int(mask.sum())
             if n_sel < 300:
                 n_skipped += 1

@@ -1,0 +1,112 @@
+{
+ "featureset": "price_fund_path",
+ "candidate": "accel_20",
+ "sources": [
+  "accel_20"
+ ],
+ "draws": 20,
+ "real": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+ "null": [
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_200",
+   "source": "accel_20",
+   "seed": 0
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_201",
+   "source": "accel_20",
+   "seed": 1
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_202",
+   "source": "accel_20",
+   "seed": 2
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_203",
+   "source": "accel_20",
+   "seed": 3
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_204",
+   "source": "accel_20",
+   "seed": 4
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_205",
+   "source": "accel_20",
+   "seed": 5
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_206",
+   "source": "accel_20",
+   "seed": 6
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_207",
+   "source": "accel_20",
+   "seed": 7
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_208",
+   "source": "accel_20",
+   "seed": 8
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_209",
+   "source": "accel_20",
+   "seed": 9
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_2010",
+   "source": "accel_20",
+   "seed": 10
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_2011",
+   "source": "accel_20",
+   "seed": 11
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_2012",
+   "source": "accel_20",
+   "seed": 12
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_2013",
+   "source": "accel_20",
+   "seed": 13
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_2014",
+   "source": "accel_20",
+   "seed": 14
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_2015",
+   "source": "accel_20",
+   "seed": 15
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_2016",
+   "source": "accel_20",
+   "seed": 16
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_2017",
+   "source": "accel_20",
+   "seed": 17
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_2018",
+   "source": "accel_20",
+   "seed": 18
+  },
+  {
+   "id": "price_fund_path_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufaccel_2019",
+   "source": "accel_20",
+   "seed": 19
+  }
+ ],
+ "baseline": "price_fund_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40"
+}

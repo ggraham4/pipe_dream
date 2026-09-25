@@ -41,13 +41,33 @@ are fixed here and both are real changes to what gets picked:
     already over before you could trade it. Every backtested number the app
     quotes comes from the tradable basis. Now switched to TRADABLE_LABEL_COL.
 
- 2. CANDIDATE POOL. The sweep scores EVERY name in that day's point-in-time
-    universe and lets XGBoost handle missing features natively. This script
-    was dropping any name with a NaN in FEATURE_COLS before scoring, which
-    silently excludes recently-listed names (no 252-day high yet) that the
-    backtest did hold. Training is likewise masked on label availability only,
-    matching scorecache._run_cell. Both pool sizes are printed so the effect
-    is visible rather than assumed.
+ 2. CANDIDATE POOL -- and a warning, because this was got wrong once already.
+
+    The pool is names with COMPLETE price features. It has to be, and the
+    reason is not obvious from reading scorecache._run_cell, which contains no
+    filter of its own: the filter is applied far upstream, when the panel is
+    loaded. PanelContext calls
+
+        W.load_panel_prepared(path, want, list(FEATURE_COLS), horizon)
+
+    whose third argument is `filter_cols`, and which "keeps only rows with
+    complete features". By the time _run_cell slices a test set, every
+    incomplete row is already gone. The proof is in the cache: the deployed
+    cell's 154,839 scored rows contain ZERO NaN volatility_60.
+
+    On 2026-09-16 this script was changed to score every PIT-eligible name on
+    the theory that the backtest did. It does not. The change admitted 59
+    names (3.5% of the universe), and because volatility_60 is itself one of
+    FEATURE_COLS, a name missing it reaches _bucket_idx as NaN -- which files
+    it in BUCKET 0, the lowest-volatility quintile, since that array is
+    initialised to zeros and only finite entries are overwritten. An unknown
+    volatility is not a low volatility. Two of five deployed picks that day
+    were names that should never have been scored, and one of them displaced
+    the genuine low-vol pick in both signals.
+
+    The filter below is therefore deliberate and load-bearing. If you are
+    tempted to widen the pool again, the thing to check first is
+    load_panel_prepared, not _run_cell.
 
 --------------------------------------------------------------------------
 CONSTRUCTION (identical for both signals, and to the backtest)
@@ -225,11 +245,27 @@ def latest_complete_date_pit(feat, gap_tickers, min_coverage=0.9):
     return complete_dates.max()
 
 
+def _modelling_frame(panel):
+    """The panel the backtest actually sees: rows with COMPLETE price features.
+
+    This is load_panel_prepared's `filter_cols` step, reproduced here. It has
+    to happen before anything else -- before the label ranking, before the
+    training mask, before today's candidate pool -- because in the sweep it
+    happens at panel load and everything downstream inherits it. See the
+    module docstring for what went wrong when it did not."""
+    n_before = len(panel)
+    feat = panel.dropna(subset=FEATURE_COLS)
+    print(f"Complete price features: {len(feat):,} of {n_before:,} panel rows "
+          f"({len(feat) / max(n_before, 1):.1%}) -- matches "
+          f"load_panel_prepared(filter_cols=FEATURE_COLS)")
+    return feat.reset_index(drop=True)
+
+
 def _training_frame(feat):
-    """Rows eligible to train on, masked exactly the way
-    scorecache._run_cell masks them: label availability ONLY, then the most
-    recent TRAIN_CAP of those. Feature NaNs are left in -- XGBoost splits on
-    missingness natively and the backtest trained on them."""
+    """Rows eligible to train on: finite label, then the most recent
+    TRAIN_CAP of those. `feat` is already restricted to complete price
+    features, so this is exactly scorecache._run_cell's mask over exactly
+    scorecache's frame."""
     train = feat[np.isfinite(feat[LABEL_BASIS_COL].to_numpy(np.float64))]
     n_before = len(train)
     if TRAIN_CAP and len(train) > TRAIN_CAP:
@@ -242,11 +278,15 @@ def _training_frame(feat):
 
 def _xrank_target(feat, train_index):
     """Within-date cross-sectional percentile rank of the tradable forward
-    return, computed over the WHOLE panel and then subset to the training
-    rows -- the same order of operations as scorecache._derive_labels, which
-    ranks once per date across the full cross-section. Ranking inside the
-    capped training subset instead would rank against a truncated peer group
-    on the boundary dates and quietly change the target."""
+    return.
+
+    Two things about WHICH rows it is ranked against, both of which change the
+    target if got wrong. scorecache._derive_labels runs on `self.feat`, the
+    ALREADY-FILTERED frame, so the peer group is names with complete price
+    features on that date -- not every row in the raw panel. And it ranks once
+    per date over that whole frame, then the training mask is applied, so the
+    peer group is not the capped training subset either; ranking inside the cap
+    would rank against a truncated peer group on the boundary dates."""
     y = feat[LABEL_BASIS_COL].to_numpy(np.float32)
     r = pd.Series(y).groupby(feat["date"].values).rank(pct=True)
     r.index = feat.index
@@ -387,8 +427,9 @@ def main():
              if UNIVERSE == "pit"
              else OUT_DIR / "features_with_fundamentals_pit.parquet")
     print(f"Panel: {panel.name}  (universe={UNIVERSE})")
-    feat = pd.read_parquet(panel)
-    feat = feat.sort_values(["ticker", "date"]).reset_index(drop=True)
+    raw = pd.read_parquet(panel)
+    raw = raw.sort_values(["ticker", "date"]).reset_index(drop=True)
+    feat = raw
     if LABEL_BASIS_COL not in feat.columns:
         raise RuntimeError(
             f"{LABEL_BASIS_COL} is not in {panel.name}. The deployed cell is "
@@ -397,9 +438,14 @@ def main():
             f"to {LABEL_COL}, which credits a move you could not have traded.")
 
     gap_tickers = load_gap_ticker_set()
-    latest_date = latest_complete_date_pit(feat, gap_tickers)
+    # Freshness is asked of the RAW panel: the question is whether the price
+    # pull covers that day's universe, not whether every name has a 252-day
+    # high yet. Filtering first would make a perfectly fresh panel look stale.
+    latest_date = latest_complete_date_pit(raw, gap_tickers)
     print(f"Latest complete trading date: {pd.Timestamp(latest_date).date()}")
 
+    feat = _modelling_frame(raw)
+    del raw
     train = _training_frame(feat)
 
     today = feat[feat["date"] == latest_date].copy()
@@ -422,14 +468,24 @@ def main():
                          & (today["market_cap"] >= MIN_MARKET_CAP)].copy()
         print(f"Mid-cap+ floor: {len(eligible)}/{len(today)} eligible today")
 
-    # Visibility for faithfulness fix (2): how many names the sweep-matched
-    # pool admits that the old complete-features filter would have dropped.
-    n_complete = int(eligible.dropna(subset=FEATURE_COLS).shape[0])
-    if n_complete != len(eligible):
-        print(f"  {len(eligible) - n_complete} of these have at least one NaN "
-              f"price feature. They are SCORED (XGBoost handles missingness, "
-              f"and the backtest scored them too); the pre-Round-18 script "
-              f"dropped them.")
+    # Gate A7c, "verify by naming what should be there": every selectable name
+    # must have a finite volatility_60, because that is the variable the
+    # volatility-quintile buckets and the inverse-vol weights are BOTH built
+    # from, and _bucket_idx silently files a NaN into bucket 0 -- the
+    # lowest-volatility quintile -- rather than refusing it. The filter above
+    # already guarantees this; the assert is here so that if some future change
+    # widens the pool again, it fails loudly at the source instead of quietly
+    # putting an unknown-volatility name in the low-volatility slot.
+    _v = eligible["volatility_60"].to_numpy(np.float64)
+    if not np.isfinite(_v).all():
+        bad = eligible.loc[~np.isfinite(_v), "ticker"].tolist()
+        raise RuntimeError(
+            f"{len(bad)} eligible name(s) have a NaN volatility_60 "
+            f"({', '.join(bad[:10])}{' ...' if len(bad) > 10 else ''}). "
+            f"_bucket_idx would file these in the LOWEST-volatility quintile, "
+            f"which is wrong -- an unknown volatility is not a low one. The "
+            f"complete-price-feature filter is supposed to make this "
+            f"impossible; something upstream changed.")
     if eligible.empty:
         raise RuntimeError(
             "No tickers cleared the point-in-time eligibility screen today -- "

@@ -1,0 +1,33 @@
+{
+  "as_of_date": "2026-09-08",
+  "primary": "q75",
+  "variants": {
+    "q75": {
+      "picks": [
+        "GDDY",
+        "RAPP",
+        "IMVT",
+        "AMGN",
+        "R"
+      ],
+      "cell_id": "price_fund_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+      "role": "primary",
+      "display_name": "Deployed (q75 / classifier)"
+    },
+    "xrank": {
+      "picks": [
+        "NCNO",
+        "CLDX",
+        "TRVI",
+        "TSN",
+        "TRMK"
+      ],
+      "cell_id": "price_fund_h40_xrank_trd_xgb_reg_d3e01r100_expanding_cap500k_pit_s40",
+      "role": "candidate",
+      "display_name": "Candidate (xrank / regressor)"
+    }
+  },
+  "overlap": [],
+  "n_overlap": 0,
+  "caveat": "Agreement between the two is NOT confirmation. They share features, hyperparameters and construction and differ only in the training target, so their errors are correlated by design. The candidate lost to SPY on the hold-out; overlap with it does not make a primary pick safer."
+}

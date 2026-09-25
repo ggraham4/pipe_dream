@@ -424,6 +424,65 @@ def score_run(per_window, spy_ret, horizon, era=None):
     }
 
 
+def decile_series(prep, era=None, n_buckets=5, frac=0.10, min_per_bucket=10):
+    """`decile_volq_excess` per window, as a dated Series: top `frac` by score WITHIN each
+    volatility quintile, mean realized return minus the cross-section's mean.
+
+    Round 19 (2026-09-16). Added because the compounded multiple is the noisiest
+    statistic this project computes -- a 5-name book's `mult_ratio` swings from
+    1.06x to 2.97x when ONE of 25 feature columns is swapped, and the best cell
+    in the whole sweep is a cell with a SCRAMBLED column. That variance is luck,
+    and it drowns any feature-level effect.
+
+    This is the same selection rule the book uses -- one pick per volatility
+    quintile -- widened to the top decile of each bucket so it averages ~160
+    names per window across 82 windows instead of 5. Same thing measured, far
+    more observations. The bucketing is not optional: a raw top-decile would let
+    a feature score by preferring high- or low-volatility names, which the real
+    construction cannot exploit because it must take one from every bucket.
+
+    Definition lifted from fly/marginal_fly.py so the number means the same
+    thing everywhere it appears.
+    """
+    out, dates = [], []
+    for tp, d in prep.g.items():
+        if era is not None:
+            t = pd.Timestamp(tp)
+            if not (pd.Timestamp(era[0]) <= t < pd.Timestamp(era[1])):
+                continue
+        ok = np.isfinite(d["ret"]) & np.isfinite(d["score"]) & d["tradable"]
+        if ok.sum() < n_buckets * min_per_bucket:
+            continue
+        ret, sco, vol = d["ret"][ok], d["score"][ok], d["vol"][ok]
+        b = _bucket_idx(vol, n_buckets)
+        sel = []
+        for bi in range(n_buckets):
+            m = np.flatnonzero(b == bi)
+            if len(m) < min_per_bucket:
+                continue
+            k = max(1, int(frac * len(m)))
+            sel.append(m[np.argpartition(-sco[m], k - 1)[:k]])
+        if not sel:
+            continue
+        idx = np.concatenate(sel)
+        dates.append(pd.Timestamp(tp))
+        out.append(float(ret[idx].mean()) - float(ret.mean()))
+    return pd.Series(out, index=pd.DatetimeIndex(dates), name="decile_volq_excess")
+
+
+def decile_stats(prep, era=None, n_buckets=5, frac=0.10, min_per_bucket=10):
+    """Summary of `decile_series` -- mean, t, count. See that function."""
+    a = decile_series(prep, era=era, n_buckets=n_buckets, frac=frac,
+                      min_per_bucket=min_per_bucket).to_numpy(np.float64)
+    if len(a) < 2:
+        return {"decile_volq_excess": np.nan, "t_decile": np.nan,
+                "n_decile": len(a)}
+    sd = a.std(ddof=1)
+    return {"decile_volq_excess": float(a.mean()),
+            "t_decile": float(a.mean() / (sd / np.sqrt(len(a)))) if sd > 0 else np.nan,
+            "n_decile": len(a)}
+
+
 def mean_ic(prep, era=None, min_names=20):
     """Cross-sectional rank IC of score vs realized return -- the B4 measure.
 

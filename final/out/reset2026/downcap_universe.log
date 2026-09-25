@@ -1,0 +1,30 @@
+domestic common stock in master: 17,045 of 20,965
+filed share counts: 630,008 rows, 13,861 tickers
+261 months, 2005-01 .. 2026-09
+
+  loaded  60/261 2009-12  rows so far 4,103,143  (4s)
+  loaded 120/261 2014-12  rows so far 7,937,570  (7s)
+  loaded 180/261 2019-12  rows so far 11,980,570  (11s)
+  loaded 240/261 2024-12  rows so far 16,400,145  (14s)
+  loaded 261/261 2026-09  rows so far 17,753,178  (16s)
+
+loosest-pool rows: 17,753,178, 9,571 tickers (16s)
+dropped 14,968 rows on the cxs_marketcap disagreement rule (20s)
+computed trailing 20d median dollar volume (27s)
+  cap2000: marketcap>=$2000M, closeunadj>$10  -> 6,888,686 rows
+  cap500: marketcap>=$500M, 20d-median-$vol>=$0.50M  -> 12,335,617 rows
+  cap150: marketcap>=$150M, 20d-median-$vol>=$0.25M  -> 16,220,362 rows
+
+final rows: 16,244,015, 8,967 distinct tickers
+-> /Users/ggraham/pipe_dream/final/data/sharadar/downcap_universe.parquet
+
+universe size at a few dates:
+  2008-06-30  cap2000=947  cap500=1961  cap150=2869
+  2011-06-30  cap2000=1076  cap500=2078  cap150=2829
+  2014-06-30  cap2000=1382  cap500=2407  cap150=3097
+  2017-06-30  cap2000=1378  cap500=2395  cap150=3015
+  2020-06-30  cap2000=1299  cap500=2227  cap150=2921
+  2023-06-30  cap2000=1498  cap500=2436  cap150=3083
+  2026-06-30  cap2000=1648  cap500=2515  cap150=3124
+
+total wall time: 35s

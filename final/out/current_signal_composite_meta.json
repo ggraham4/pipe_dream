@@ -1,0 +1,39 @@
+{
+  "as_of_date": "2026-09-08",
+  "tier": "cap150",
+  "n_eligible_universe": 2214,
+  "n_picks": 220,
+  "construction": "decile_volq: top decile by IC-weighted composite score within each of 5 trailing-volatility quintiles, inverse-vol weighted, 40-trading-day hold, no stop-loss",
+  "factor_signs": {
+    "momentum_12_1": 1,
+    "pct_from_high_252": 1,
+    "volatility_60": -1,
+    "gross_profitability": 1,
+    "accruals": -1,
+    "net_issuance_pct": -1,
+    "days_to_next_filing_seasonal": -1,
+    "short_interest_days_to_cover": -1
+  },
+  "factor_weights": {
+    "momentum_12_1": 0.0497,
+    "pct_from_high_252": 0.013,
+    "volatility_60": -0.013,
+    "gross_profitability": 0.5956,
+    "accruals": -0.1627,
+    "net_issuance_pct": -0.1399,
+    "days_to_next_filing_seasonal": -0.013,
+    "short_interest_days_to_cover": -0.013
+  },
+  "backtest_summary": {
+    "model_version": "ic_weighted_2026-09-22",
+    "nominate_pooled_ic": "+0.03 to +0.05 (t=2.8-5.6, odd/even split-half OOS)",
+    "holdout_excess_cagr_pct": 2.44,
+    "holdout_offsets_positive": "40/40",
+    "holdout_loyo_status": "FAILS -- dropping 2020 alone flips the mean to -3.95%/yr. Same failure mode confirmed on three separate model versions now (equal-weight, asset_growth-dropped, IC-weighted). See the full-specification and corrections docs before trusting the headline number above.",
+    "writeup": "final/models/2026-09-22-composite-model-full-specification.md"
+  },
+  "writeup": "final/models/2026-09-22-composite-model-full-specification.md",
+  "preregistration": "final/src/reset2026/PREREGISTRATION.md",
+  "role": "candidate",
+  "note": "TRACKED, NOT ACTED ON AS A VALIDATED EDGE -- a theoretical, zero-fitted-parameter rank model (only the 8 factor SIGNS and the IC-weights' shrinkage formula are decisions; no return target was ever fit). Fails leave-one-year-out on the 2020-2026 hold-out across all three tested versions. See the write-up."
+}

@@ -1,6 +1,6 @@
 # pipe_dream model dashboard
 
-> **STATUS AS OF 2026-09-16 (Round 18) — READ FIRST.**
+> **STATUS AS OF 2026-09-16 (Rounds 18–19) — READ FIRST.**
 >
 > The Stock tab now shows **two signals side by side**, plus SPY and USMV as
 > reference lines.
@@ -74,7 +74,7 @@ running while you use it.
 as-of date, the deployed model's picks, the candidate's picks and today's
 overlap, and the options backtest win rate.
 
-**Stock Buy/No-Buy** (five tabs)
+**Stock Buy/No-Buy** (six tabs)
 - *Today's Picks* — the deployed signal and the tracked candidate, side by
   side, each with its hold-out result under it. Both are produced by a single
   run of `src/current_signal_pit.py`, which loads the panel once and trains
@@ -96,6 +96,55 @@ overlap, and the options backtest win rate.
   means top quartile among eligible names — a lower bar than being one of the
   five allocated positions. If a saved model is older than the panel on disk,
   a banner suggests a retrain.
+- *Sector Bets* — **new in Round 19.** What the model is actually betting on,
+  at every level of the industry tree, because Round 13's finding that
+  essentially *all* of this model's performance is a sector bet was not visible
+  anywhere in the app until now.
+
+  - **Active weight, not portfolio weight.** The book's weight in a group minus
+    the *eligible universe's* weight in that group on the same date. A portfolio
+    30% in technology when the universe is 28% technology is not a technology
+    bet, it is the market. The universe is equal-weighted, because that is the
+    benchmark the model's own construction-matched null uses.
+  - **Six levels**, coarse to fine: `sector` (11) → `famaindustry` (48) →
+    `sic2` (65) → `industry` (136) → `sic3` (210) → `sicindustry` (315). SIC
+    rollups render as `"283 · Pharmaceutical Preparations"`, each named by the
+    modal 4-digit industry among its members, derived from the data rather than
+    hardcoded. The *statistics* stop at four levels — residualising 1,665 names
+    on 314 dummies burns 19% of the degrees of freedom — but that objection is
+    about **regression**, not **counting**. "Three of five picks are in
+    Biotechnology" is a fact about the portfolio, not an estimate with a
+    standard error, so the description goes deeper than the statistics do.
+  - **"Is any of this more than chance?"** A hypergeometric enrichment test, the
+    same one used for GO terms, matched to how the model actually draws: one
+    name per volatility quintile, so a group's pick count is a sum of five
+    *one-draw* hypergeometrics rather than one five-draw hypergeometric. Same
+    expectation, different dispersion — and for a group concentrated in one
+    quintile the flat version understates a real concentration by ~10–50×.
+    Exact Poisson-binomial tails, no normal approximation, BH-corrected across
+    every group at that level. Pooled over 124 windows / 620 draws: Healthcare
+    and Energy clear q < 0.10 in **both** eras; Biotechnology does at
+    `industry`. Industrials, Financials, Real Estate, Materials and Utilities
+    are significantly *avoided*. The single-date test on today's five picks is
+    also offered and is near-powerless by construction — a group needs 2 of the
+    5 before BH can call anything — and the tab says so.
+  - **"Where does a ticker sit?"** Any classified ticker's group at all six
+    levels, beside how many eligible peers share it today and what the model did
+    with that group across the 620 pooled draws. The gap between adjacent levels
+    is the useful part: XOM is in Energy (74 picks vs 48.0 expected, q 6.6e-4)
+    but in *Oil & Gas Integrated*, where the model has bought **0** against 1.63
+    expected. The energy bet is E&P, not integrateds.
+  - Sources: `models/2026-09-16-sector-enrichment-hypergeometric.md`,
+    `models/2026-09-16-sector-hierarchy-and-the-bet-descriptor.md`.
+  - Built by `src/build_sector_tilt.py` → `out/sector_tilt_history.json` and
+    `src/build_sector_enrichment.py` → `out/sector_enrichment.json`. The tilt
+    history predates the finer levels and carries four; the level selector on
+    the standing-tilts panel is driven by what the file actually has, not by the
+    display list. Rerun it to add the rest.
+
+- *Query a Ticker* also gained the industry-classification expander described
+  above, per looked-up ticker.
+
 - *Model Weights* — one sub-tab per model: `feature_importances_` as a chart
   plus table, fundamentals features marked 🧾. Read as *what the trees split on*,
   not *what predicts returns*: Round 17 took a raw feature with t = +3.40 and
@@ -131,6 +180,11 @@ refresh actions (see below).
    sequence: `sharadar_pull_pit_panel.py` → `build_pit_universe.py` →
    `build_features_sharadar.py` → `build_features_fundamentals_sharadar.py` →
    `export_sharadar_ohlc.py` → `current_signal_pit.py` → `build_app_benchmarks.py`.
+   The Sector Bets tab additionally reads two artifacts that are **not** part of
+   this sequence and are rebuilt by hand when the deployed cell changes:
+   `src/build_sector_tilt.py` and `src/build_sector_enrichment.py`. Both read
+   the score cache, not the live signal, so they go stale only when the cell id
+   they hard-code is replaced.
    Can take several minutes. The same sequence without the price pull is the
    "Retrain" button on the Today's Picks tab; "Retrain ALL models" (button 0)
    is this plus a `features.py` rebuild for the sidebar and Universe tab.
@@ -209,6 +263,25 @@ features, or tune hyperparameters, without needing its own code touched:
   been rerun for puts).
 - **Options data update (button 3) only refreshes the raw history**, not
   the engineered training tables or GARCH panel — see above.
+- **The Sector Bets tab describes the bet; it does not validate it.** The
+  enrichment test says *which* groups the model over-picks and with what
+  confidence. It says nothing about whether those bets made money — Round 13
+  established that sector-neutralising removes essentially all of the edge
+  (2.7957× → 0.7719 against a null median of 0.7721, the exact centre). An
+  enrichment test on the picks is a description of the portfolio, not an
+  attribution of its returns.
+- **The benchmark on that tab fails loudly, not quietly.** If
+  `data/sharadar/pit_universe.parquet` is missing or has no row for the as-of
+  date, every group would read 100% active weight against a universe weight of
+  zero — a plausible-looking tab built on nothing. The tab now refuses to be
+  read in that state and says which file is missing. That failure mode was live
+  in the first version of the code.
+- **IC is no longer a feature-admission gate anywhere in this project, and the
+  Model Weights tab's caveat is now stronger than it reads.** Across all 64
+  cells scored to 2026-09-16, the rank correlation between a cell's IC and what
+  it earned is **+0.019** — the deployed model has IC +0.0020 while the highest
+  IC in the set earns 1.49×. Split importance was already not a claim about
+  returns; IC turns out not to be either. See `sweep/RUNBOOK.md` §9.
 - **The stock model has no demonstrated edge, and the app says so on every
   relevant tab.** Round 12's pre-registered sweep of 1,152 configurations
   failed its acceptance criteria (Deflated Sharpe 0.746, Reality Check

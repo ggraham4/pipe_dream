@@ -1,0 +1,54 @@
+{
+  "amihud_screen": {
+    "pooled": {
+      "mean": 0.0009346135482359716,
+      "t": 0.09932420706118736,
+      "n": 3272,
+      "n_dates": 3272
+    },
+    "odd_years": {
+      "mean": -0.00999651583867631,
+      "t": -0.8109614594738321,
+      "n": 1762,
+      "n_dates": 1762
+    },
+    "even_years": {
+      "mean": 0.013690010885811756,
+      "t": 0.976553762154278,
+      "n": 1510,
+      "n_dates": 1510
+    },
+    "hypothesized_sign": 1
+  },
+  "regime_diagnostic": {
+    "n_high_vol_dates": 1375,
+    "n_low_vol_dates": 1897,
+    "momentum_ic_high_vol": {
+      "mean": -0.024236835242441333,
+      "t": -1.0156328409439255,
+      "n": 1375,
+      "n_dates": 1375
+    },
+    "momentum_ic_low_vol": {
+      "mean": 0.049491495375683106,
+      "t": 3.7554339797887657,
+      "n": 1897,
+      "n_dates": 1897
+    },
+    "volatility_ic_high_vol": {
+      "mean": 0.015009869876064836,
+      "t": 0.5793797837097572,
+      "n": 1375,
+      "n_dates": 1375
+    },
+    "volatility_ic_low_vol": {
+      "mean": -0.016788278823775246,
+      "t": -0.865371628103335,
+      "n": 1897,
+      "n_dates": 1897
+    },
+    "hypothesis_1_momentum_weaker_in_high_vol": true,
+    "hypothesis_2_lowvol_stronger_in_high_vol": false,
+    "both_hold": false
+  }
+}

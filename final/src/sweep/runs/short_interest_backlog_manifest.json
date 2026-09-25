@@ -1,0 +1,46 @@
+{
+ "candidates": [
+  {
+   "id": "pf_short_interest_chg_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_short_interest_chg_pct",
+   "column": "short_interest_chg_pct",
+   "panel": "features_with_short_interest_sharadar_pit.parquet",
+   "null": [
+    "pf_short_interest_chg_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufshort_interest_chg_pct0",
+    "pf_short_interest_chg_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufshort_interest_chg_pct1",
+    "pf_short_interest_chg_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufshort_interest_chg_pct2",
+    "pf_short_interest_chg_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufshort_interest_chg_pct3",
+    "pf_short_interest_chg_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufshort_interest_chg_pct4",
+    "pf_short_interest_chg_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufshort_interest_chg_pct5",
+    "pf_short_interest_chg_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufshort_interest_chg_pct6",
+    "pf_short_interest_chg_pct_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufshort_interest_chg_pct7"
+   ]
+  },
+  {
+   "id": "pf_short_interest_days_to_cover_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_short_interest_days_to_cover",
+   "column": "short_interest_days_to_cover",
+   "panel": "features_with_short_interest_sharadar_pit.parquet",
+   "null": [
+    "pf_short_interest_days_to_cover_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufshort_interest_days_to_cover0",
+    "pf_short_interest_days_to_cover_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufshort_interest_days_to_cover1",
+    "pf_short_interest_days_to_cover_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufshort_interest_days_to_cover2",
+    "pf_short_interest_days_to_cover_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufshort_interest_days_to_cover3",
+    "pf_short_interest_days_to_cover_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufshort_interest_days_to_cover4",
+    "pf_short_interest_days_to_cover_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufshort_interest_days_to_cover5",
+    "pf_short_interest_days_to_cover_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufshort_interest_days_to_cover6",
+    "pf_short_interest_days_to_cover_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufshort_interest_days_to_cover7"
+   ]
+  }
+ ],
+ "baseline": "price_fund_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+ "draws": 8,
+ "era_nominate": [
+  "2020-04-15",
+  "2025-01-01"
+ ],
+ "era_confirm": [
+  "2025-01-01",
+  "2027-01-01"
+ ]
+}

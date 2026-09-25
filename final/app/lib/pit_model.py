@@ -105,6 +105,11 @@ BUY_PERCENTILE_THRESHOLD = 0.25   # top quartile -> BUY, the convention used eve
 CONTEXT_COLS = [
     "close", "momentum_20", "momentum_60", "momentum_120",
     "relative_strength_20", "pct_from_high_252", "pct_from_low_252", "volatility_20",
+    # volatility_60 is not here for display. It is the variable the five
+    # selection buckets are cut on, so the sector view needs it to rebuild the
+    # construction-matched null for the enrichment test -- without it the test
+    # would score a one-per-quintile selection against an unstratified draw.
+    "volatility_60",
     "market_cap",
 ]
 
@@ -348,6 +353,19 @@ def _score_universe(key: str, gfeat: pd.DataFrame) -> tuple[pd.DataFrame | None,
 
     cols = ["ticker", "score", "rank", "percentile", "eligible_today"] + CONTEXT_COLS
     return rows[cols].sort_values("score", ascending=False).reset_index(drop=True), meta
+
+
+def scored_universe(key: str = PRIMARY):
+    """(DataFrame, meta) for the WHOLE eligible universe on the as-of date.
+
+    Public wrapper over _score_universe so the sector view can show every name
+    the model considered in a group, not only the five it bought. Shares the
+    cached panel read and the cached checkpoint with the ticker query, so the
+    first call is slow (the panel is ~2.3GB) and every later one is free."""
+    gfeat = get_fundamentals_pit_features()
+    if gfeat is None:
+        return None, None
+    return _score_universe(key, gfeat)
 
 
 def query_tickers(tickers: list[str]) -> dict:

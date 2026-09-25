@@ -1,0 +1,13 @@
+loading OHLC panel from /Users/ggraham/pipe_dream/final/scripts/td_data_sharadar ...
+  4,011 tickers (8s)
+  1,000/4,011 tickers (8s)
+  2,000/4,011 tickers (8s)
+  3,000/4,011 tickers (9s)
+  4,000/4,011 tickers (9s)
+  benchmark SPY: 5,202 rows (9s)
+  benchmark USMV: 3,746 rows (9s)
+total rows: 12,278,995, coverage 100.0% (9s)
+verifying 300 random samples against execution.realize_position directly ...
+verify_sample: 300 checked, 0 mismatches
+
+-> /Users/ggraham/pipe_dream/final/out/reset2026/outcome_cache.parquet  (11s total)

@@ -1,0 +1,19 @@
+loading price panel (ticker, date, close) ...
+  12,270,047 rows, 4,011 tickers (2s)
+momentum_12_1 (skip-month, per-ticker) ...
+  coverage 91.9% (3s)
+loading SF1 facts (assets/gp/netinc/ncfo, ARQ+ARY, filed-date keyed) ...
+  assets: 498,982 filed observations, 13,864 tickers
+  gp: 138,571 filed observations, 13,666 tickers
+  netinc: 138,562 filed observations, 13,665 tickers
+  ncfo: 137,219 filed observations, 13,661 tickers
+as-of joins (current) ...
+  done (12s)
+as-of join (assets, 365 days back, for asset_growth) ...
+  done (14s)
+  gross_profitability: coverage 98.7%, median 0.2067
+  accruals: coverage 98.7%, median -0.04038
+  asset_growth: coverage 95.4%, median 0.05572
+  momentum_12_1: coverage 91.9%, median 0.05746
+
+-> /Users/ggraham/pipe_dream/final/out/reset2026/quality_factors.parquet  (12,270,047 rows, 17s total)

@@ -52,11 +52,17 @@ recording *his* decisions, not a spec to freely deviate from.
    (feature set, horizon, universe) are the only reasonable ones — they're
    this project's choices, arrived at empirically and documented as such
    throughout, not a claim that they're optimal in general.
-5. **Never run `git add`/`git commit`/`git push` yourself.** Deliver
-   changed files to Gabe (via whatever file-transfer mechanism your
-   session has) and give him the commands to run himself — this has held
-   throughout the project and combines with constraint #1: nothing reaches
-   the live app without Gabe personally reviewing and running it.
+5. **`git add`/`git commit`/`git push` are fine to run yourself, on your
+   own judgment (changed 2026-09-17, per Gabe — previously this required
+   handing files to him to run manually).** This does NOT loosen anything
+   else: constraint #1 (never push/redeploy the *live app*) and constraint
+   #2 (no destructive ops — force-push, `reset --hard`, history rewrites —
+   without explicit request) both still stand exactly as before, including
+   pushing/merging to `main`, which still needs Gabe's in-the-moment
+   go-ahead like any other main-branch or deploy action. Keep `.gitignore`
+   doing its job — don't commit large/regenerable files (see the
+   reproduction table below); everything currently gitignored should stay
+   that way unless there's a specific reason to change it.
 6. **Never store live API keys/secrets in any file that lives inside this
    git repo** (`SHARADAR_API_KEY` included) — those belong only in
    whatever out-of-repo secrets store this project's owner uses (e.g. the
@@ -729,6 +735,221 @@ models/2026-09-11-deployed-best-case-config.md   what the app is running
 
 Pre-registrations sit alongside under `claude/`, written before each round ran.
 
+## THE FEATURE-ADMISSION GATE CHANGED (2026-09-16). Read this first.
+
+`final/src/build_shuffle_null.py`, `check_grid_offset.py`,
+`sweep/scorecache.py` (`shuffle_col` / `shuffle_seed`).
+Full write-up: `models/2026-09-16-shuffle-null-replaces-the-ic-gate.md`.
+
+**IC is retired as a feature-admission gate.** Gabe: *"our thresholds are so
+strict that they would exclude features already in the model."* He was right.
+
+| feature | `sweep.cli features` t | |
+|---|---|---|
+| `volatility_60` | **−0.41** | 60.3% of XGBoost's importance |
+| `momentum_20` | **+0.23** | production feature; flips sign on 16/40 grid offsets |
+
+And across all 64 cells then scored, the rank correlation between a cell's
+`mean_ic` and what it EARNED was **+0.019**. Zero. The best cell (2.94×) has IC
++0.0020; the highest IC anywhere (+0.0243) earns 1.49×; `volonly_xrank` has IC
+−0.0145 and earns 2.04×. Every feature ever rejected on an IC threshold was
+rejected on a statistic with no measured relationship to the objective.
+
+### The replacement
+- **Metric:** what the portfolio does (`mult_ratio`, `excess_cagr`,
+  `info_ratio`, and `decile_volq_excess` for power).
+- **Null:** refit the identical cell with the candidate column **permuted within
+  each date**. Same marginals, same column count. NOT "drop the column", which
+  changes the model's shape.
+- **Gate:** beat the **80th percentile** of the null (Gabe's choice; 20%
+  false-pass per feature).
+- A shuffle source must be a CANDIDATE, never a production feature — permuting
+  `momentum_20` measures the cost of DESTROYING information and would make
+  anything look like a pass. `plan()` refuses it.
+
+### A performance gate WITHOUT the null is worse than the IC gate
+In the 84-cell sweep, **the best cell is a shuffled one**: `...shufaccel_2012`
+at **3.309×**, beating the deployed model's 2.938× and every real config ever
+scored here. A column of pure noise, permuted, produced the best backtest in the
+grid. Never quote a backtest improvement for a feature without its null.
+
+### accel_20 FAILED (20 draws, nominate era)
+| metric | real | baseline | null p50 | null p80 | pctile | |
+|---|---|---|---|---|---|---|
+| mult_ratio | 2.013 | 2.796 | 1.850 | 2.113 | 70% | fail |
+| excess_cagr | 0.0585 | 0.0871 | 0.0513 | 0.0626 | 70% | fail |
+| info_ratio | 0.445 | 0.605 | 0.390 | 0.483 | 70% | fail |
+
+Null on mult_ratio 1.919 ± 0.415. It is not neutral either: the null median
+1.850 vs the deployed 2.796 means adding a 25th column costs ~a full multiple,
+and accel_20's own information recovers almost none of it. **Not added to
+`FEATURE_COLS`.**
+
+### The backlog
+23 candidates (5 rates, 8 events, 9 options, accel_20) were rejected on the
+retired statistic and need rerunning under this gate. **Not naively:** at an
+80th-percentile gate, k=23 yields ~5 false passes, so decide the correction
+BEFORE the run. The shared-null shortcut (one null for all candidates, ~3.5h
+instead of ~37h) assumes exchangeability across shuffle sources and is
+**unverified** — only one candidate is materialised, so the check has not run.
+
+## Round 19 (2026-09-16) — order information in a 20-day path, and accel_20
+
+`final/src/screen_path_order.py`, `calibrate_path_order.py`,
+`build_accel_feature.py`; registrations in
+`claude/2026-09-16-order-information-preregistration.md` (+ Amendment A),
+`...-amendment-b-decile.md`, `...-accel20-promotion-preregistration.md`;
+results in `models/2026-09-16-order-information-in-20-day-paths.md`.
+
+`momentum_20` is the SUM of 20 daily returns and is therefore blind to their
+ORDER. Tested directly rather than by building an LSTM: order-aware statistics
+on identical inputs, each paired against **its own 5 matched shuffles** (same
+returns permuted, same sum, order destroyed), 4,911 daily cross-sections.
+
+| | IC | traded tail | verdict |
+|---|---|---|---|
+| `slope_20` (trend) | +1.75 | **+0.33** | 9 of 10 order-free draws beat it. Nothing. |
+| `accel_20` (2nd half − 1st half) | −1.74 | **−1.97** | 17/20 years one sign, emp p ≈ 0.18 |
+
+All three registered reads returned INCONCLUSIVE. **|t| = 2.0 was the wrong
+bar**: an exact leave-one-out permutation null (`calibrate_path_order.py`) shows
+order-free control series reaching **2.47** at IC and 2.18 at the decile. A
+near-miss of 2.0 is not a near-miss of significance here.
+
+**Three control failures, all in the registration, two of them decisive:**
+- The original gate would have reported a **PASS** — `slope_20` cleared +2.16
+  and the shuffle cleared *higher* at +2.48. The conditional null is not centred
+  at zero; Amendment A subtracts the control instead of vetoing on its level.
+- Amendment B's positive control (`volatility_60`) is structurally invalid for a
+  decile metric that **buckets on volatility**. Its FAIL gate was unreachable
+  before the run started.
+- `effratio_20` is permutation-invariant and was never order-aware. Its paired
+  statistic is exactly 0.00000 in all 20 years — now a self-test, and proof the
+  shuffle machinery is exact.
+
+**Carry this forward:** at `decile_volq_excess`, 15 order-free shuffle series
+reach median |t| 1.66 and max 3.86, against 1.09/2.51 for IC. Any decile screen
+in this project that reads an **unpaired** t against a ±2 bar is using a
+statistic whose null is roughly twice that wide.
+
+### accel_20 is promoted as a CANDIDATE, not a feature
+`features.CANDIDATE_FEATURE_COLS` is a new list, deliberately separate from
+`FEATURE_COLS`: nothing reaches the deployed model by being listed there.
+`build_accel_feature.py` adds the column to the fundamentals panel in place
+(arrow-native, schema byte-identical to sibling panels, 99.3% finite) and
+refuses to run if `accel_20` ever appears in `FEATURE_COLS`. Feature set `path`
+screens only that one column, per the Round 14/16 convention.
+
+### accel_20 FAILED its screen, and found a defect in the screen
+`python3 -m sweep.cli features --era nominate --features path --horizons 40`
+returned t +1.88 (gate: 2.0), permutation p 0.080 (gate: 0.05) and IC **+0.0226
+— the wrong SIGN** (gate: negative, matching the promotion evidence's −0.0033).
+Three of four gates fail. accel_20 is **not promoted**, is not traded,
+`FEATURE_COLS` is unchanged, and the path-order line closes as a negative.
+`promotion_trial_count = 7` is spent; retesting it would be an eighth trial.
+
+**The sign gate earned its place.** Chasing the flip down eliminated the label
+(same one), neutralisation (raw is −0.0009, neutralised −0.0033, both negative),
+the feature definition (asserted identical to 1e-12) and the universe. The cause
+is **which 82 days the screen looks at**.
+
+## THE GRID-OFFSET PROBLEM — read this before promoting any feature
+
+`sweep/feature_ic.py` measures IC on non-overlapping windows, one cross-section
+every `horizon` days. Correct instinct — overlapping days inflate a naive t by
+~sqrt(40). But there are **forty equally-valid grids**, one per starting offset,
+and the screen silently uses **offset 0**.
+
+Nomination era, h=40, all 40 grids (`final/src/check_grid_offset.py`):
+
+| feature | all 3,272 days | offset 0 | grid min | grid max | sign flips |
+|---|---|---|---|---|---|
+| `accel_20` | −0.0011 (t −0.54) | **+0.0218 (t +1.83)** | −0.0350 | +0.0272 | **21/40** |
+| `momentum_20` | −0.0059 | +0.0031 | −0.0388 | +0.0170 | **16/40** |
+| `volatility_60` | −0.0101 | −0.0092 | −0.0174 | −0.0034 | 0/40 |
+| `pct_from_high_252` | +0.0153 | +0.0187 | +0.0041 | +0.0251 | 0/40 |
+
+Stable for features with a real effect; a **coin flip for features near zero** —
+exactly the ones a screen exists to judge. Two of accel_20's forty grids would
+have cleared |t| >= 2; two others would have cleared it with the opposite sign.
+
+**Does NOT invalidate** the past negatives (rounds 12/14/16 concluded "nothing",
+and a null feature reads null on most grids). **Does invalidate** any near-miss,
+narrow pass, or claim about a weak feature's sign or magnitude — `momentum_20`
+is a production feature and flips on 16/40 grids.
+
+**Rule:** run `check_grid_offset.py` before promoting anything on a
+`sweep.cli features` result. Non-zero sign flips means the result is not
+evidence. The durable fix — average over offsets, or use all days with
+Newey-West as `screen_path_order.py` does — is NOT yet implemented.
+
+## Sector enrichment (2026-09-16) — the null must be volatility-stratified
+
+`final/src/sweep/enrich.py`, `final/src/build_sector_enrichment.py`,
+`out/sector_enrichment.json`, app → Stock → Sector Bets.
+
+A hypergeometric enrichment test over the model's picks, the same test used for
+GO terms. **The naive version is wrong here.** The construction takes the best
+name in each of five trailing-volatility quintiles, so a group's pick count is
+a sum of five *one-draw* hypergeometrics, not one five-draw hypergeometric. The
+two have identical expectations (equal-sized quintiles) and different
+dispersion; for a group that sits inside one quintile — utilities low, biotech
+high, which is most of what a fine taxonomy separates — the flat version is
+over-dispersed and understates a real concentration by ~10–50×. Both are
+reported so the size of the correction stays visible. Same lesson as
+`decile_volq_excess`: an unmatched null measures the selection.
+
+Every p carries a Benjamini-Hochberg q across all groups at that level (up to
+439 at `sicindustry`). Exact Poisson-binomial tails, no normal approximation,
+numpy only. Invariant checked at build and in the app: **Σ expected over all
+groups == number of draws** (620 pooled, 5 live).
+
+Pooled over 124 windows / 620 draws, **enriched in BOTH eras** (q < 0.10 in
+2007-2019 *and* independently in 2020-2026):
+
+| level | groups |
+|---|---|
+| sector | Healthcare, Energy |
+| famaindustry | Pharmaceutical Products, Petroleum and Natural Gas |
+| industry | Biotechnology |
+| sicindustry | Pharmaceutical Preparations |
+
+All eras, sector: Healthcare 124 vs 72.4 expected (1.71×, p 9.6e-10),
+Technology 1.32× (p 1.0e-3), Energy 1.54× (p 1.1e-4). Significantly **avoided**:
+Industrials (q 0.0012), Financial Services / Real Estate / Basic Materials /
+Utilities (q ≈ 0.015).
+
+This is descriptive — it reports what the model picked, it selects nothing — so
+the hold-out rule does not bind and the eras are split rather than pooled.
+**It says nothing about whether those bets made money**; Round 13 already
+established that sector-neutralising removes essentially all of the edge, so
+this names the bet rather than validating it.
+
+**Today's five picks are tested live in the app and are near-powerless by
+design** — a group needs 2 of 5 before BH can call anything at 145 groups. An
+empty table there is the expected table, not evidence of no tilt.
+
+### Also this round
+- **Ticker → group lookup.** `sector_view.ticker_groups()` returns one ticker's
+  group at all six levels beside the pooled enrichment for each, on both the
+  ticker query and the Sector Bets tab. The gap between levels is the useful
+  part: XOM sits in Energy (1.54x, q 6.6e-4) but in Oil & Gas Integrated, where
+  the model has bought **0** against 1.63 expected — the energy bet is E&P, not
+  integrateds.
+- All six taxonomy levels are now displayed (`sector` → `sicindustry`);
+  `sic2`/`sic3` render as `"283 · Pharmaceutical Preparations"` via
+  `taxonomy.display_label_map()`, never as a bare code. Neutralisation
+  statistics still stop at four levels — that limit is about regression, not
+  counting.
+- `taxonomy._table/load/sic_names/display_label_map` are now `lru_cache`d; the
+  sector tab was re-reading a 20k-row CSV twelve times per rerun.
+- **Silent-failure fix.** `sector_view.eligible_universe()` imported
+  `continuous_walkforward_pit`, which imports xgboost at module scope; a bare
+  `except` turned any import failure into an empty universe, and the tab then
+  showed every group at 100% active weight with no warning. It now reads
+  `pit_universe.parquet` directly and `describe()` returns `_universe_ok`,
+  which the app renders as a blocking error.
+
 ## Round 18 (2026-09-16) — the app shows two models, and what that cost
 
 ### What changed on the app
@@ -770,19 +991,68 @@ quotes. Both changed today's picks:
    `forward_return_tradable_40` (`close[t+H] / open[t+1]`). The live script was
    training on `forward_return_40` (`close[t]`-to-`close[t+H]`), which credits a
    move that was over before you could trade it. Now `TRADABLE_LABEL_COL`.
-2. **Candidate pool.** The sweep scores **every** name in that day's
-   point-in-time universe and lets XGBoost handle missing features natively.
-   The live script was dropping any name with a NaN in `FEATURE_COLS` before
-   scoring, silently excluding recently-listed names the backtest did hold.
-   Training is likewise masked on label availability only, matching
-   `scorecache._run_cell`. The script prints how many names the change admits.
+2. ~~**Candidate pool.**~~ **RETRACTED THE SAME DAY — this was not a fix, it
+   was a regression.** The claim was that the sweep scores every name in the
+   day's point-in-time universe and lets XGBoost handle missing features
+   natively, so the live script's `dropna(subset=FEATURE_COLS)` was excluding
+   names the backtest held. That is false. `scorecache._run_cell` contains no
+   filter of its own, but `PanelContext` calls
 
-This is the same class of defect as the six in the Rounds 10-17 table: every
-automated check passed, because each verified internal consistency while the
-error was in correspondence to the thing being claimed. **Standing addition: a
-live script that names a backtested cell id must be diffable against that
-cell's config, field by field.** The feature list already was (24 columns, same
-order, verified). The label basis was not, and nothing caught it for five days.
+   ```python
+   W.load_panel_prepared(path, want, list(FEATURE_COLS), horizon)
+   ```
+
+   whose third argument is `filter_cols` and which "keeps only rows with
+   complete features". Every incomplete row is gone before `_run_cell` ever
+   slices a test set. Proof: the deployed cell's 154,839 cached rows contain
+   **zero** NaN `volatility_60`.
+
+   The error was reading `_run_cell`, finding no filter there, and concluding
+   there wasn't one — without checking where its `frame` came from. Same shape
+   as the six bugs in the table above: internal consistency verified,
+   correspondence to the rest of the pipeline not.
+
+   **What it cost, before Gabe caught it by looking at the picks.** The change
+   admitted 59 names (3.5% of the universe). `volatility_60` is itself one of
+   `FEATURE_COLS`, so a name missing it reaches `_bucket_idx` as NaN — and
+   `_bucket_idx` initialises its output to zeros and overwrites only the finite
+   entries, so **a NaN volatility is filed in bucket 0, the LOWEST-volatility
+   quintile**. An unknown volatility is not a low volatility. On 2026-09-08 two
+   of the five deployed picks (`COAG`, 3 NaN features; `KARD`, 5 including
+   `volatility_60`) were names that should never have been scored, and `KARD`
+   displaced the genuine low-vol pick in **both** signals. The model's one
+   demonstrated edge is a low-vol tilt, so the defect attacked precisely the
+   part that works.
+
+   Reverted. The complete-price-feature filter in `current_signal_pit.py` is
+   deliberate and load-bearing, and now runs once, up front, in
+   `_modelling_frame()` — before the label ranking, the training mask and
+   today's candidate pool, mirroring where the sweep applies it. A hard
+   `RuntimeError` guard asserts no selectable name has a NaN `volatility_60`.
+
+   **Latent trap worth knowing separately:** `_bucket_idx`'s NaN-to-bucket-0
+   behaviour is still there in the shared backtest path. It is harmless today
+   because the panel filter means no NaN vol ever reaches it, but it is one
+   filter change away from being live again, and it fails silently rather than
+   loudly. Fixing it touches `simulate()` and therefore every backtest number,
+   so it is left as a flagged decision rather than changed in passing.
+
+Divergence 1 was real and the fix stands. Divergence 2 was not a divergence at
+all, and "fixing" it introduced a worse defect than the one it claimed to
+remove — see the retraction above.
+
+**Standing additions, both earned the hard way in one afternoon:**
+
+- A live script that names a backtested cell id must be **diffable against that
+  cell's config, field by field**. The feature list already was (24 columns,
+  same order, verified). The label basis was not, and nothing caught it for
+  five days.
+- Before claiming the production path and the backtest disagree, **trace the
+  backtest's data to where it is loaded, not to where it is used.** A filter
+  applied at panel load is invisible at the point of use, and the absence of a
+  filter in the function you happen to be reading is not evidence that there
+  isn't one. The cheap check that would have settled it in seconds: the score
+  cache is on disk, so count the NaNs in it.
 
 ### New / changed files
 

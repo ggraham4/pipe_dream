@@ -1,0 +1,35 @@
+{
+  "as_of_date": "2026-09-08",
+  "tier": "cap2000",
+  "n_eligible_universe": 1665,
+  "n_picks": 165,
+  "construction": "blend_score = mean(rank_z(composite_9factor_frozen), rank_z(q75_xgboost)), decile_volq portfolio (top decile per trailing-vol quintile, inverse-vol weighted), 40-trading-day hold, no stop-loss",
+  "factors": {
+    "momentum_12_1": 1,
+    "pct_from_high_252": 1,
+    "volatility_60": -1,
+    "gross_profitability": 1,
+    "accruals": -1,
+    "asset_growth": -1,
+    "net_issuance_pct": -1,
+    "days_to_next_filing_seasonal": -1,
+    "short_interest_days_to_cover": -1
+  },
+  "q75_weight": 0.5,
+  "composite_weight": 0.5,
+  "backtest_summary": {
+    "single_grid_only": true,
+    "excess_cagr_vs_spy_pct": 1.54,
+    "q75_alone_excess_cagr_vs_spy_pct": 0.35,
+    "composite_alone_excess_cagr_vs_spy_pct": 0.54,
+    "nominate_only_excess_cagr_pct": 2.52,
+    "holdout_only_excess_cagr_pct": -0.36,
+    "holdout_still_negative_in_absolute_terms": true,
+    "null_percentile": 1.0,
+    "loyo_drop_2020_still_positive": true,
+    "source": "final/src/reset2026/blend_q75.py, final/out/reset2026/blend_q75_report.json",
+    "writeup": "final/models/2026-09-19-factor-composite-reset.md"
+  },
+  "role": "primary",
+  "note": "Promoted to primary 2026-09-19 on a SINGLE-GRID backtest (not this project's usual 40-offset average) that still shows negative absolute excess vs SPY on the 2020-2026 hold-out (-0.36%, the least-bad of the three constructions tested, not a winner in absolute terms). See final/models/2026-09-19-factor-composite-reset.md. Composite factor set frozen 2026-09-22 to the exact version this backtest ran against -- see this file's module docstring; the corrected/IC-weighted version is shown separately in the app's Theoretical Model tab."
+}

@@ -125,6 +125,62 @@ FEATURE_COLS = [
     "pct_from_high_252", "pct_from_low_252",
 ]
 
+# --------------------------------------------------------------------------
+# CANDIDATE features -- computed, screened, and NOT in the model
+# --------------------------------------------------------------------------
+# These are built into every panel so the screens can see them, and are
+# deliberately kept OUT of FEATURE_COLS. Nothing reaches the deployed model by
+# being listed here; a candidate enters FEATURE_COLS only after clearing the
+# feature_ic screen and then a pre-registered sweep cell. Keeping the two lists
+# separate is what stops "we built the column" from quietly becoming "we trade
+# the column".
+#
+# accel_20 (promoted 2026-09-16).
+#   Second half of the trailing 20 days minus the first half, in log returns:
+#
+#       accel_20 = log(close[t] / close[t-10]) - log(close[t-10] / close[t-20])
+#
+#   momentum_20 is the SUM of 20 daily returns and is therefore invariant to
+#   their ORDER -- an uptrend, a downtrend ending where it started, a V and an
+#   inverted V all give the identical value. accel_20 is the cheapest statistic
+#   that separates them, and it is the ONLY order-aware statistic that survived
+#   the 2026-09-16 path-order screen
+#   (models/2026-09-16-order-information-in-20-day-paths.md): paired against its
+#   own matched shuffles it came back at -1.74 on IC and -1.97 at the traded
+#   tail, one sign in 17 of 20 years, empirical p ~0.18 against an exact
+#   permutation null. That is weak, not established -- which is exactly why it
+#   is a candidate and not a feature.
+#
+#   The sign says DECELERATING names do better forward, holding the 20-day sum
+#   fixed: short-term reversal inside the window.
+#
+#   Definition fidelity matters here. This must stay numerically identical to
+#   screen_path_order.py's version, or the screen's evidence no longer applies
+#   to the column being traded. build_accel_feature.py asserts the two agree.
+CANDIDATE_FEATURE_COLS = ["accel_20"]
+ACCEL_WINDOW = 20        # must equal screen_path_order.WIN
+
+
+def accel_20(close: pd.Series, window: int = ACCEL_WINDOW) -> pd.Series:
+    """Second half minus first half of the trailing `window` log returns.
+
+    The telescoping form -- log(P_t/P_h) - log(P_h/P_0) with h the midpoint --
+    is algebraically identical to summing the two halves of the daily log
+    returns, and needs three prices instead of twenty-one.
+
+    It is NOT identical when a price is missing inside the window: the
+    telescoping form happily spans the gap, while summing daily returns yields
+    NaN. The screen this feature came from treats a path with a missing day as
+    not being a 20-day path, so that behaviour is reproduced explicitly via the
+    validity count rather than inherited by accident.
+    """
+    h = window // 2
+    lp = np.log(close.where(close > 0))
+    a = (lp - lp.shift(h)) - (lp.shift(h) - lp.shift(window))
+    # every one of the `window` daily log returns in the window must exist
+    valid = lp.diff().notna().rolling(window).sum() == window
+    return a.where(valid)
+
 
 def latest_complete_date(feat: pd.DataFrame, min_coverage: float = 0.9) -> pd.Timestamp:
     """
@@ -180,6 +236,8 @@ def build_features(data: pd.DataFrame) -> pd.DataFrame:
         for w in VOL_WINDOWS:
             g[f"volatility_{w}"] = g["daily_return"].rolling(w).std()
         g["volume_ratio_20"] = g["volume"] / g["volume"].rolling(VOLUME_WINDOW).mean()
+
+        g["accel_20"] = accel_20(g["close"])
 
         rolling_high = g["close"].rolling(PRICE_LEVEL_WINDOW).max()
         rolling_low = g["close"].rolling(PRICE_LEVEL_WINDOW).min()

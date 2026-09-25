@@ -1,3 +1,24 @@
+> **SUPERSEDED — do not follow this file.**
+>
+> This is the Round 12-only runbook, frozen 2026-09-09. The live version is
+> `final/src/sweep/RUNBOOK.md`, which covers Rounds 12-19 and carries the
+> current module map, feature sets, results table, bug ledger and standing
+> rules.
+>
+> Two things here are now actively wrong:
+>
+> - The **feature-admission gate** changed in Round 19. IC is retired as an
+>   admission criterion (rank correlation with what a cell earns: **+0.019**
+>   across 64 cells). The replacement is a shuffled-feature null scored on
+>   `decile_volq_excess`. See `final/src/sweep/RUNBOOK.md` §9.
+> - The **hold-out is spent.** 2020-2026 was used in Round 13 and again in
+>   Round 18. Nothing nominated from here is confirmable on data that exists.
+>
+> Kept for provenance: the Round 12 numbers quoted elsewhere were produced by
+> these exact commands.
+
+---
+
 # Round 12 sweep — runbook
 
 One command per line. A trailing `# comment` parses as an argparse argument and

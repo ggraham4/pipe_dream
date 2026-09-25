@@ -1,0 +1,3 @@
+features,depth,n_cols,ic_raw,t_raw,ic_neutral,t_neutral,loyo_min_t,loyo_same_sign,n_windows,mult_ratio,cell_id
+events_causal,3,10,0.009599979123555489,0.9361245112396608,0.012126482996479475,2.422832095620161,1.7187808996241285,True,82,1.3324345980809456,events_causal_h40_xrank_trd_xgb_reg_d3e01r100_expanding_cap500k_pit_s40
+fund_only,3,13,0.018058213906208865,1.2806781500702586,0.012160105014746302,1.5999260669635087,1.184847681601276,True,82,1.972813304837263,fund_only_h40_xrank_trd_xgb_reg_d3e01r100_expanding_cap500k_pit_s40

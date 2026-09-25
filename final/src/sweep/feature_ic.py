@@ -194,7 +194,20 @@ def screen(ctx, features=None, start="2007-01-02", step=None, era=None,
 
     Returns (table, diagnostics).
     """
-    feats = [c for c in (features or ALL_FEATURES) if c in ctx.feat.columns]
+    _asked = list(features or ALL_FEATURES)
+    feats = [c for c in _asked if c in ctx.feat.columns]
+    if not feats:
+        # Silent-failure guard. The filter above quietly drops any column the
+        # panel context did not load, so a missing entry in PanelContext.want
+        # yields an empty screen with no error -- which reads as "no signal"
+        # rather than "nothing was measured". Name the columns instead.
+        raise KeyError(
+            f"none of the {len(_asked)} requested features are in the loaded "
+            f"panel: {_asked[:6]}{' ...' if len(_asked) > 6 else ''}. "
+            f"Add them to PanelContext's `want` list in scorecache.py.")
+    if len(feats) < len(_asked) and verbose:
+        print(f"    WARNING: {len(_asked) - len(feats)} requested feature(s) "
+              f"absent from the panel: {sorted(set(_asked) - set(feats))}")
     horizon = int(ctx.horizon)
     step = int(step or horizon)
     f = ctx.feat
@@ -349,6 +362,13 @@ def screen(ctx, features=None, start="2007-01-02", step=None, era=None,
             pm = PERM.mean(axis=0)                # (F, n_perm)
             ps = PERM.std(axis=0, ddof=1)
             pt = np.where(ps > 0, pm / (ps / np.sqrt(W_)), np.nan)
+        if pt.size == 0 or not np.isfinite(pt).any():
+            # every feature degenerate under permutation (all-NaN or constant
+            # within every date) -- report it rather than crashing on an empty
+            # reduction, which says nothing about what went wrong.
+            print("    permutation null skipped: no finite t-statistics "
+                  "(all screened features are constant or empty within dates)")
+            return tab.sort_values("t_stat", key=np.abs, ascending=False), diag
         maxabs = np.nanmax(np.abs(pt), axis=0)   # max across features, per draw
         obs_max = float(np.nanmax(np.abs(t)))
         diag["permutation"] = {

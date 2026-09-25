@@ -1,0 +1,158 @@
+{
+ "candidates": [
+  {
+   "id": "pf_opt_atm_iv_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_opt_atm_iv",
+   "column": "opt_atm_iv",
+   "panel": "features_with_options_sharadar_pit.parquet",
+   "null": [
+    "pf_opt_atm_iv_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_atm_iv0",
+    "pf_opt_atm_iv_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_atm_iv1",
+    "pf_opt_atm_iv_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_atm_iv2",
+    "pf_opt_atm_iv_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_atm_iv3",
+    "pf_opt_atm_iv_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_atm_iv4",
+    "pf_opt_atm_iv_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_atm_iv5",
+    "pf_opt_atm_iv_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_atm_iv6",
+    "pf_opt_atm_iv_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_atm_iv7"
+   ]
+  },
+  {
+   "id": "pf_opt_bfly25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_opt_bfly25",
+   "column": "opt_bfly25",
+   "panel": "features_with_options_sharadar_pit.parquet",
+   "null": [
+    "pf_opt_bfly25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_bfly250",
+    "pf_opt_bfly25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_bfly251",
+    "pf_opt_bfly25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_bfly252",
+    "pf_opt_bfly25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_bfly253",
+    "pf_opt_bfly25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_bfly254",
+    "pf_opt_bfly25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_bfly255",
+    "pf_opt_bfly25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_bfly256",
+    "pf_opt_bfly25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_bfly257"
+   ]
+  },
+  {
+   "id": "pf_opt_implied_move_40_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_opt_implied_move_40",
+   "column": "opt_implied_move_40",
+   "panel": "features_with_options_sharadar_pit.parquet",
+   "null": [
+    "pf_opt_implied_move_40_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_implied_move_400",
+    "pf_opt_implied_move_40_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_implied_move_401",
+    "pf_opt_implied_move_40_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_implied_move_402",
+    "pf_opt_implied_move_40_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_implied_move_403",
+    "pf_opt_implied_move_40_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_implied_move_404",
+    "pf_opt_implied_move_40_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_implied_move_405",
+    "pf_opt_implied_move_40_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_implied_move_406",
+    "pf_opt_implied_move_40_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_implied_move_407"
+   ]
+  },
+  {
+   "id": "pf_opt_iv_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_opt_iv_mom_1m",
+   "column": "opt_iv_mom_1m",
+   "panel": "features_with_options_sharadar_pit.parquet",
+   "null": [
+    "pf_opt_iv_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_iv_mom_1m0",
+    "pf_opt_iv_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_iv_mom_1m1",
+    "pf_opt_iv_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_iv_mom_1m2",
+    "pf_opt_iv_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_iv_mom_1m3",
+    "pf_opt_iv_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_iv_mom_1m4",
+    "pf_opt_iv_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_iv_mom_1m5",
+    "pf_opt_iv_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_iv_mom_1m6",
+    "pf_opt_iv_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_iv_mom_1m7"
+   ]
+  },
+  {
+   "id": "pf_opt_iv_pctile_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_opt_iv_pctile",
+   "column": "opt_iv_pctile",
+   "panel": "features_with_options_sharadar_pit.parquet",
+   "null": [
+    "pf_opt_iv_pctile_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_iv_pctile0",
+    "pf_opt_iv_pctile_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_iv_pctile1",
+    "pf_opt_iv_pctile_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_iv_pctile2",
+    "pf_opt_iv_pctile_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_iv_pctile3",
+    "pf_opt_iv_pctile_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_iv_pctile4",
+    "pf_opt_iv_pctile_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_iv_pctile5",
+    "pf_opt_iv_pctile_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_iv_pctile6",
+    "pf_opt_iv_pctile_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_iv_pctile7"
+   ]
+  },
+  {
+   "id": "pf_opt_rr25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_opt_rr25",
+   "column": "opt_rr25",
+   "panel": "features_with_options_sharadar_pit.parquet",
+   "null": [
+    "pf_opt_rr25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_rr250",
+    "pf_opt_rr25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_rr251",
+    "pf_opt_rr25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_rr252",
+    "pf_opt_rr25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_rr253",
+    "pf_opt_rr25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_rr254",
+    "pf_opt_rr25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_rr255",
+    "pf_opt_rr25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_rr256",
+    "pf_opt_rr25_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_rr257"
+   ]
+  },
+  {
+   "id": "pf_opt_term_slope_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_opt_term_slope",
+   "column": "opt_term_slope",
+   "panel": "features_with_options_sharadar_pit.parquet",
+   "null": [
+    "pf_opt_term_slope_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_term_slope0",
+    "pf_opt_term_slope_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_term_slope1",
+    "pf_opt_term_slope_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_term_slope2",
+    "pf_opt_term_slope_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_term_slope3",
+    "pf_opt_term_slope_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_term_slope4",
+    "pf_opt_term_slope_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_term_slope5",
+    "pf_opt_term_slope_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_term_slope6",
+    "pf_opt_term_slope_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_term_slope7"
+   ]
+  },
+  {
+   "id": "pf_opt_vrp_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_opt_vrp",
+   "column": "opt_vrp",
+   "panel": "features_with_options_sharadar_pit.parquet",
+   "null": [
+    "pf_opt_vrp_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_vrp0",
+    "pf_opt_vrp_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_vrp1",
+    "pf_opt_vrp_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_vrp2",
+    "pf_opt_vrp_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_vrp3",
+    "pf_opt_vrp_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_vrp4",
+    "pf_opt_vrp_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_vrp5",
+    "pf_opt_vrp_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_vrp6",
+    "pf_opt_vrp_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_vrp7"
+   ]
+  },
+  {
+   "id": "pf_opt_vrp_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+   "featureset": "pf_opt_vrp_mom_1m",
+   "column": "opt_vrp_mom_1m",
+   "panel": "features_with_options_sharadar_pit.parquet",
+   "null": [
+    "pf_opt_vrp_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_vrp_mom_1m0",
+    "pf_opt_vrp_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_vrp_mom_1m1",
+    "pf_opt_vrp_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_vrp_mom_1m2",
+    "pf_opt_vrp_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_vrp_mom_1m3",
+    "pf_opt_vrp_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_vrp_mom_1m4",
+    "pf_opt_vrp_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_vrp_mom_1m5",
+    "pf_opt_vrp_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_vrp_mom_1m6",
+    "pf_opt_vrp_mom_1m_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40_shufopt_vrp_mom_1m7"
+   ]
+  }
+ ],
+ "baseline": "price_fund_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+ "draws": 8,
+ "era_nominate": [
+  "2019-02-09",
+  "2025-01-01"
+ ],
+ "era_confirm": [
+  "2025-01-01",
+  "2027-01-01"
+ ]
+}
