@@ -20,6 +20,7 @@ approximations -- clearly flagged both there and in the Options tab).
 """
 from __future__ import annotations
 
+import os
 import sys
 import time
 from pathlib import Path
@@ -29,7 +30,8 @@ import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lib import (paths, stock_model as sm, options_model as om, data_refresh as dr,
-                 pit_model as pm, blend_model as bm, composite_model as cm)
+                 pit_model as pm, blend_model as bm, composite_model as cm,
+                 model_agreement as ma)
 
 st.set_page_config(page_title="pipe_dream — Model Dashboard", layout="wide", page_icon="📈")
 
@@ -378,36 +380,154 @@ def render_stock_theoretical():
         c3.metric("Windows", f"{len(curve)}")
 
 
+def _signal_mtimes() -> tuple:
+    return tuple(file_mtime(p) for p in (bm.SIGNAL_CSV, bm.SIGNAL_META, bm.SIGNAL_FULL_CSV,
+                                         cm.SIGNAL_CSV, cm.SIGNAL_META, cm.SIGNAL_FULL_CSV))
+
+
+@st.cache_data(max_entries=4)
+def _cached_agreement(_mtimes: tuple):
+    return ma.agreement()
+
+
+@st.cache_data(max_entries=32)
+def _cached_two_model_query(tickers: tuple, _mtimes: tuple):
+    return ma.two_model_query(list(tickers))
+
+
 def render_stock_query():
+    """Query a Ticker: one row per ticker, answered by BOTH the blend (Today's
+    Picks, cap2000) and the theoretical model (composite alone, cap150), plus
+    how much the two books agree. 2026-09-24, per Gabe."""
+    mt = _signal_mtimes()
+    fr = ma.freshness()
+    b, t = fr["blend"], fr["theoretical"]
+    st.markdown(f"**Blend as of:** {b['as_of'] or 'not generated'}  ·  "
+                f"**Theoretical as of:** {t['as_of'] or 'not generated'}")
+    if fr["dates_differ"]:
+        st.warning(f"The two files are from different dates (blend {b['as_of']}, "
+                   f"theoretical {t['as_of']}), so agreement below compares books "
+                   f"built on different days.")
+    stale = [f"{name} ({x['as_of']}, {x['busdays_old']} business days old)"
+             for name, x in (("blend", b), ("theoretical", t)) if x["stale"]]
+    if stale:
+        st.warning("Stale picks: " + "; ".join(stale) + ". Rerun the models "
+                   "(\"Retrain ALL models\" in Data & Updates) before acting on these.")
+
     st.caption(
-        "Looks a ticker up against today's full scanned universe "
-        "(`current_signal_blend_full.csv`) — instant, no rescoring. Every "
-        "ticker gets one of four answers: **PICK**, **ELIGIBLE_NOT_PICKED** "
-        "(scored, with its exact blend score and rank within its volatility "
-        "quintile), **ELIGIBLE_NOT_SCORED** (in the universe but missing a "
-        "score), or **INELIGIBLE_TODAY** (fails the point-in-time cap2000 "
-        "screen — not considered at all)."
+        "Blend answers come from `current_signal_blend_full.csv` (every name in its cap2000 "
+        "universe): **PICK**, **ELIGIBLE_NOT_PICKED** (scored, with rank in its volatility "
+        "quintile), **ELIGIBLE_NOT_SCORED**, **INELIGIBLE_TODAY** or **NOT SCANNED**. "
+        "The theoretical model only writes a picks file today, so a non-pick there says "
+        "**NOT A PICK** without a reason; its composite score is only shown for its own "
+        "picks (the blend's composite score is ranked in a different universe)."
     )
     raw = st.text_input("Ticker(s), comma or space separated", placeholder="AAPL, MSFT, NVDA")
     if st.button("Look up", key="stock_query_btn") and raw.strip():
-        tickers = [t for t in raw.replace(",", " ").split() if t]
-        with st.spinner("Looking up..."):
-            result = bm.query_tickers(tickers)
-
-        rows = []
-        for t, r in result.items():
-            row = {"ticker": t, **r}
-            rows.append(row)
-        df = pd.DataFrame(rows)
-        st.dataframe(df, hide_index=True, use_container_width=True)
+        tickers = tuple(dict.fromkeys(x.upper() for x in raw.replace(",", " ").split() if x))
+        df = _cached_two_model_query(tickers, mt)
+        st.dataframe(
+            df, hide_index=True, width="stretch",
+            column_config={
+                "ticker": "Ticker",
+                "both_pick": "Both models pick it",
+                "sector": "Sector",
+                "blend_status": "Blend status",
+                "blend_weight_pct": st.column_config.NumberColumn("Blend weight %", format="%.2f"),
+                "blend_score": st.column_config.NumberColumn("Blend score", format="%.4f"),
+                "blend_rank": "Blend rank in vol quintile",
+                "blend_detail": "Blend detail",
+                "theo_status": "Theoretical status",
+                "theo_weight_pct": st.column_config.NumberColumn("Theoretical weight %", format="%.2f"),
+                "theo_composite_score": st.column_config.NumberColumn(
+                    "Theoretical composite score (cap150)", format="%.4f"),
+                "theo_detail": "Theoretical detail",
+            },
+        )
+        st.caption(
+            "Neither model is a validated edge. The blend shows **-0.36%** excess vs SPY on "
+            "the 2020-2026 hold-out (single grid). The theoretical model **fails "
+            "leave-one-year-out** on the hold-out. Both are shown for tracking, not as proof."
+        )
 
         if feat is not None:
-            for t in tickers:
-                hist = sm.ticker_history(t, feat)
+            for tk in tickers:
+                hist = sm.ticker_history(tk, feat)
                 if hist is not None:
-                    with st.expander(f"{t} — price & momentum history"):
+                    with st.expander(f"{tk} — price & momentum history"):
                         st.line_chart(hist.set_index("date")[["close"]])
                         st.line_chart(hist.set_index("date")[["momentum_20", "momentum_60", "momentum_120"]])
+
+    st.divider()
+    render_model_agreement(mt)
+
+
+def render_model_agreement(mt: tuple):
+    st.subheader("How much do the blend and the theoretical model agree?")
+    a = _cached_agreement(mt)
+    if a is None:
+        st.info("Needs both current_signal_blend.csv and current_signal_composite.csv.")
+        return
+    with st.container(horizontal=True):
+        st.metric("Blend picks", a["n_blend"], border=True)
+        st.metric("Theoretical picks", a["n_theo"], border=True)
+        st.metric("Picked by both", a["n_shared"], border=True)
+        st.metric("Jaccard (shared / union)", f"{a['jaccard']:.3f}", border=True)
+        st.metric("Weight overlap", pct(a["weight_overlap"], 1), border=True,
+                  help="Sum over shared tickers of min(blend weight, theoretical weight). "
+                       "1.0 would mean identical books.")
+    st.markdown(
+        f"- **{pct(a['pct_blend_shared'], 1)}** of the blend's picks are also theoretical picks; "
+        f"**{pct(a['pct_theo_shared'], 1)}** of the theoretical picks are also blend picks.\n"
+        f"- The universes differ: blend = **cap2000**, theoretical = **cap150**. "
+        f"Some disagreement is structural, not a difference of opinion."
+    )
+    if a["has_blend_full"]:
+        st.markdown(
+            f"- Of the **{a['n_theo_only']}** theoretical-only picks: "
+            f"**{a['theo_only_structural']}** are outside the blend's universe "
+            f"(INELIGIBLE_TODAY / NOT SCANNED, so the blend could never pick them) and "
+            f"**{a['theo_only_genuine']}** are genuine disagreements (ELIGIBLE_NOT_PICKED: "
+            f"the blend scored them and ranked them out)"
+            + (f"; **{a['theo_only_not_scored']}** are blend-eligible but unscored"
+               if a["theo_only_not_scored"] else "") + ".\n"
+            f"- On the shared eligible universe: **{a['n_theo_in_blend_universe']}** theoretical "
+            f"picks are blend-eligible, and **{pct(a['pct_theo_eligible_shared'], 1)}** of those "
+            f"are also blend picks."
+        )
+    else:
+        st.caption("current_signal_blend_full.csv is missing, so theoretical-only picks "
+                   "can't be split into structural vs genuine disagreement.")
+    if a["has_theo_full"]:
+        st.markdown(
+            f"- Of the **{a['n_blend_only']}** blend-only picks: **{a['blend_only_structural']}** "
+            f"are outside the theoretical model's cap150 universe and **{a['blend_only_genuine']}** "
+            f"are genuine disagreements; **{pct(a['pct_blend_eligible_shared'], 1)}** of the "
+            f"**{a['n_blend_in_theo_universe']}** theoretical-eligible blend picks are shared."
+        )
+    else:
+        st.caption(f"The {a['n_blend_only']} blend-only picks can't be split the same way until "
+                   f"the theoretical model writes a full-universe file "
+                   f"(current_signal_composite_full.csv).")
+
+    st.markdown(f"**The {a['n_shared']} tickers both models pick**")
+    st.dataframe(
+        a["shared_table"], hide_index=True, width="stretch",
+        column_config={
+            "ticker": "Ticker", "sector": "Sector",
+            "blend_weight": st.column_config.NumberColumn("Blend weight", format="percent"),
+            "theo_weight": st.column_config.NumberColumn("Theoretical weight", format="percent"),
+            "blend_score": st.column_config.NumberColumn("Blend score", format="%.3f"),
+            "blend_composite_score": st.column_config.NumberColumn(
+                "Composite score (blend, cap2000)", format="%.3f"),
+            "theo_composite_score": st.column_config.NumberColumn(
+                "Composite score (theoretical, cap150)", format="%.3f"),
+        },
+    )
+    st.caption("Agreement is descriptive. Two models agreeing is not evidence either one is "
+               "right. Some overlap is built in: both lean on the same composite factors (the "
+               "blend on the frozen 9-factor equal-weight composite plus q75, the theoretical "
+               "model on the 8-factor IC-weighted composite alone).")
 
 
 def render_stock_universe():
@@ -774,8 +894,9 @@ def render_data_updates():
                         "Composite panel (blend)", "Score today's blend"]
                      + ["Score today's theoretical model (composite alone)",
                         "Rebuild theoretical model's backtest-history plot"])
-            dr.run_step_sequence("retrain_all_models", cmds, labels, cwd=paths.SRC_DIR)
-            st.rerun()
+            if _sharadar_key_preflight(cmds):
+                dr.run_step_sequence("retrain_all_models", cmds, labels, cwd=paths.SRC_DIR)
+                st.rerun()
         _job_status_block("retrain_all_models")
 
     st.divider()
@@ -791,9 +912,10 @@ def render_data_updates():
         py = sys.executable
         cmds = ([[py, str(paths.SCRIPTS_DIR / "local_data_pull.py"), "--refresh-recent"]]
                 + pm.retrain_commands())
-        dr.run_step_sequence("stock_full_refresh", cmds,
-                             ["Pull price data (yfinance)"] + pm.PIT_STEP_LABELS)
-        st.rerun()
+        if _sharadar_key_preflight(cmds):
+            dr.run_step_sequence("stock_full_refresh", cmds,
+                                 ["Pull price data (yfinance)"] + pm.PIT_STEP_LABELS)
+            st.rerun()
     _job_status_block("stock_full_refresh")
 
     st.divider()
@@ -826,6 +948,30 @@ def render_data_updates():
                               ["dolt pull + incremental export"])
         st.rerun()
     _job_status_block("options_history_refresh")
+
+
+# Steps whose script exits immediately without SHARADAR_API_KEY in its
+# environment. Job subprocesses inherit Streamlit's own environment, so the key
+# has to be exported in the shell that launched Streamlit. 2026-09-24: "Retrain
+# ALL models" failed at step 2 for exactly this reason. The app never reads the
+# key from a file and never displays it; it only checks that the name is set.
+NEEDS_SHARADAR_KEY = ("sharadar_pull_pit_panel.py",)
+
+
+def _sharadar_key_preflight(cmds: list[list[str]]) -> bool:
+    """True if the job may start. Shows a blocking error and returns False if a
+    step needs SHARADAR_API_KEY and this Streamlit process doesn't have it."""
+    needs = any(Path(arg).name in NEEDS_SHARADAR_KEY for cmd in cmds for arg in cmd)
+    if needs and not os.environ.get("SHARADAR_API_KEY"):
+        st.error(
+            "Not started: this job pulls from Sharadar, and `SHARADAR_API_KEY` is not set in "
+            "the environment Streamlit was launched from, so the Sharadar step would fail "
+            "(this is why the last \"Retrain ALL models\" failed at step 2). Stop Streamlit, "
+            "then relaunch it from a shell where the key is exported:\n\n"
+            "```\nexport SHARADAR_API_KEY=...\nstreamlit run app.py\n```"
+        )
+        return False
+    return True
 
 
 def _job_status_block(job_name: str):
