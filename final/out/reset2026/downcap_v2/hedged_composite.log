@@ -1,0 +1,34 @@
+[08:56:03] pulled IWM -> /Users/ggraham/pipe_dream/final/data/benchmarks/IWM.csv (3420 rows)
+[08:56:03] name-check IWM 2008: total -0.3414 (target -0.340) price-only -0.3513
+[08:56:03] name-check IWM 2017: total +0.1458 (target +0.146) price-only +0.1306
+[08:56:03] pull-method SPY: max rel close 2.22e-16 open 2.22e-16 (all dates 2.22e-16)
+[08:56:03] SPY method reconcile: 50 sampled max |diff| 1.35e-08; all 3483 dates 1.35e-08
+[08:56:08] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[08:56:08] IWM40 NaN on 40 era dates (end-of-era mask, first 2019-11-04)
+[08:56:09]     date 0 2007-01-03 (1s)
+[08:56:21]     date 500 2008-12-26 (12s)
+[08:56:31]     date 1000 2010-12-21 (23s)
+[08:56:43]     date 1500 2012-12-17 (34s)
+[08:56:54]     date 2000 2014-12-11 (46s)
+[08:57:07]     date 2500 2016-12-06 (58s)
+[08:57:20]     date 3000 2018-11-30 (72s)
+[08:57:27] books built (85s)
+[08:57:27] cap150: readout reconcile OK icw8 vs SPY +0.02854
+[08:57:27]   cap150 primary_15bp: full +0.0228 (40/40, LOYO min +0.0161 drop 2018) common +0.0092 beta -0.164 (t -5.01) MDD med -0.131 -> MIDDLE
+[08:57:27]   cap150 supp_total_return_iwm_15bp: full +0.0091 (40/40, LOYO min +0.0022 drop 2018) common -0.0054 beta -0.167 (t -5.10) MDD med -0.182 -> KILL
+[08:57:28]   cap150 supp_0bp: full +0.0311 (40/40, LOYO min +0.0244 drop 2018) common +0.0173 beta -0.163 (t -4.98) MDD med -0.120 -> PASS (nomination)
+[08:57:28]   cap150 attribution full: icw8-noscore +0.0316 (40/40) IWM-noscore +0.0025 noscore-SPY -0.0006
+[08:57:29]   cap150 attribution common: icw8-noscore +0.0210 (40/40) IWM-noscore +0.0055 noscore-SPY -0.0177
+[08:57:29] cap500: readout reconcile OK icw8 vs SPY +0.02660
+[08:57:30]   cap500 primary_15bp: full +0.0207 (40/40, LOYO min +0.0138 drop 2011) common +0.0069 beta -0.206 (t -7.35) MDD med -0.149 -> MIDDLE
+[08:57:30]   cap500 supp_total_return_iwm_15bp: full +0.0070 (40/40, LOYO min +0.0001 drop 2018) common -0.0077 beta -0.209 (t -7.45) MDD med -0.204 -> KILL
+[08:57:30]   cap500 supp_0bp: full +0.0291 (40/40, LOYO min +0.0222 drop 2011) common +0.0151 beta -0.205 (t -7.33) MDD med -0.137 -> PASS (nomination)
+[08:57:31]   cap500 attribution full: icw8-noscore +0.0287 (40/40) IWM-noscore +0.0017 noscore-SPY +0.0002
+[08:57:31]   cap500 attribution common: icw8-noscore +0.0177 (40/40) IWM-noscore +0.0045 noscore-SPY -0.0167
+[08:57:31] cap2000: readout reconcile OK icw8 vs SPY +0.02837
+[08:57:31]   cap2000 primary_15bp: full +0.0221 (40/40, LOYO min +0.0135 drop 2011) common +0.0128 beta -0.298 (t -9.02) MDD med -0.184 -> PASS (nomination)
+[08:57:32]   cap2000 supp_total_return_iwm_15bp: full +0.0083 (40/40, LOYO min -0.0003 drop 2011) common -0.0018 beta -0.302 (t -9.06) MDD med -0.205 -> KILL
+[08:57:32]   cap2000 supp_0bp: full +0.0305 (40/40, LOYO min +0.0220 drop 2011) common +0.0211 beta -0.298 (t -9.02) MDD med -0.176 -> PASS (nomination)
+[08:57:32]   cap2000 attribution full: icw8-noscore +0.0328 (40/40) IWM-noscore +0.0045 noscore-SPY -0.0026
+[08:57:32]   cap2000 attribution common: icw8-noscore +0.0244 (40/40) IWM-noscore +0.0053 noscore-SPY -0.0175
+[08:57:32] VERDICT cap150: MIDDLE (90s)
