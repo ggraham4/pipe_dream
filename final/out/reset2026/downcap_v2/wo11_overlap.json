@@ -1,0 +1,272 @@
+{
+  "date": "2026-09-08",
+  "v2_universe_rule": {
+    "date": "2026-09-08",
+    "rows": 3901,
+    "spac_rows_dropped_eligible_cap150": 19,
+    "spac_rows_dropped_eligible_cap500": 0,
+    "spac_rows_dropped_eligible_cap2000": 0,
+    "rows_dropped_spac_rule": 201
+  },
+  "tiers": {
+    "cap150": {
+      "v1": {
+        "n_eligible": 2214,
+        "n_valid": 2201,
+        "n_book": 220,
+        "n_per_bucket": {
+          "0": 441,
+          "1": 440,
+          "2": 440,
+          "3": 440,
+          "4": 440
+        },
+        "book_per_bucket": {
+          "0": 44,
+          "1": 44,
+          "2": 44,
+          "3": 44,
+          "4": 44
+        }
+      },
+      "v2": {
+        "n_eligible": 3065,
+        "n_valid": 3033,
+        "n_book": 305,
+        "n_per_bucket": {
+          "0": 607,
+          "1": 606,
+          "2": 607,
+          "3": 606,
+          "4": 607
+        },
+        "book_per_bucket": {
+          "0": 61,
+          "1": 61,
+          "2": 61,
+          "3": 61,
+          "4": 61
+        }
+      },
+      "n_v1": 220,
+      "n_v2": 305,
+      "n_common": 215,
+      "jaccard": 0.6935483870967742,
+      "weight_overlap_sum_min": 0.733856016181495,
+      "top5_v1_not_v2": [
+        {
+          "ticker": "HTLD",
+          "weight": 0.0042604358803558645,
+          "market_cap": 952737767.52,
+          "sector": "Industrials"
+        },
+        {
+          "ticker": "DT",
+          "weight": 0.003646503665170203,
+          "market_cap": 14533917017.119999,
+          "sector": "Technology"
+        },
+        {
+          "ticker": "AEO",
+          "weight": 0.003499898594579726,
+          "market_cap": 2885612794.2599998,
+          "sector": "Consumer Cyclical"
+        },
+        {
+          "ticker": "UAA",
+          "weight": 0.0032700382714247757,
+          "market_cap": 2173500437.46,
+          "sector": "Consumer Cyclical"
+        },
+        {
+          "ticker": "CORT",
+          "weight": 0.0023744693107445604,
+          "market_cap": 12321055290.060001,
+          "sector": "Healthcare"
+        }
+      ],
+      "top5_v2_not_v1": [
+        {
+          "ticker": "NATH",
+          "weight": 0.01009688395835912,
+          "market_cap": 402800076.3,
+          "sector": "Consumer Cyclical"
+        },
+        {
+          "ticker": "WLKP",
+          "weight": 0.009714517457679775,
+          "market_cap": 766245409.4599999,
+          "sector": "Basic Materials"
+        },
+        {
+          "ticker": "EBF",
+          "weight": 0.005819653713548005,
+          "market_cap": 538094245.4399999,
+          "sector": "Industrials"
+        },
+        {
+          "ticker": "VLGEA",
+          "weight": 0.005581495678140367,
+          "market_cap": 635327163.9,
+          "sector": "Consumer Defensive"
+        },
+        {
+          "ticker": "ACEL",
+          "weight": 0.005425906700824589,
+          "market_cap": 949963657.5,
+          "sector": "Consumer Cyclical"
+        }
+      ],
+      "equals_live_scorer_csv_v1": true,
+      "equals_live_scorer_csv_v2": true
+    },
+    "cap500": {
+      "v1": {
+        "n_eligible": 2091,
+        "n_valid": 2078,
+        "n_book": 210,
+        "n_per_bucket": {
+          "0": 416,
+          "1": 415,
+          "2": 416,
+          "3": 415,
+          "4": 416
+        },
+        "book_per_bucket": {
+          "0": 42,
+          "1": 42,
+          "2": 42,
+          "3": 42,
+          "4": 42
+        }
+      },
+      "v2": {
+        "n_eligible": 2503,
+        "n_valid": 2480,
+        "n_book": 250,
+        "n_per_bucket": {
+          "0": 496,
+          "1": 496,
+          "2": 496,
+          "3": 496,
+          "4": 496
+        },
+        "book_per_bucket": {
+          "0": 50,
+          "1": 50,
+          "2": 50,
+          "3": 50,
+          "4": 50
+        }
+      },
+      "n_v1": 210,
+      "n_v2": 250,
+      "n_common": 208,
+      "jaccard": 0.8253968253968254,
+      "weight_overlap_sum_min": 0.8415934876011827,
+      "top5_v1_not_v2": [
+        {
+          "ticker": "HTLD",
+          "weight": 0.004333141296947869,
+          "market_cap": 952737767.52,
+          "sector": "Industrials"
+        },
+        {
+          "ticker": "AEO",
+          "weight": 0.003559625249902006,
+          "market_cap": 2885612794.2599998,
+          "sector": "Consumer Cyclical"
+        }
+      ],
+      "top5_v2_not_v1": [
+        {
+          "ticker": "WLKP",
+          "weight": 0.011226225821216,
+          "market_cap": 766245409.4599999,
+          "sector": "Basic Materials"
+        },
+        {
+          "ticker": "EBF",
+          "weight": 0.0067252693789663885,
+          "market_cap": 538094245.4399999,
+          "sector": "Industrials"
+        },
+        {
+          "ticker": "VLGEA",
+          "weight": 0.0064500507797646675,
+          "market_cap": 635327163.9,
+          "sector": "Consumer Defensive"
+        },
+        {
+          "ticker": "ACEL",
+          "weight": 0.006270250084336595,
+          "market_cap": 949963657.5,
+          "sector": "Consumer Cyclical"
+        },
+        {
+          "ticker": "GIC",
+          "weight": 0.005958867752959157,
+          "market_cap": 1515187638.1599998,
+          "sector": "Industrials"
+        }
+      ]
+    },
+    "cap2000": {
+      "v1": {
+        "n_eligible": 1665,
+        "n_valid": 1655,
+        "n_book": 165,
+        "n_per_bucket": {
+          "0": 331,
+          "1": 331,
+          "2": 331,
+          "3": 331,
+          "4": 331
+        },
+        "book_per_bucket": {
+          "0": 33,
+          "1": 33,
+          "2": 33,
+          "3": 33,
+          "4": 33
+        }
+      },
+      "v2": {
+        "n_eligible": 1665,
+        "n_valid": 1655,
+        "n_book": 165,
+        "n_per_bucket": {
+          "0": 331,
+          "1": 331,
+          "2": 331,
+          "3": 331,
+          "4": 331
+        },
+        "book_per_bucket": {
+          "0": 33,
+          "1": 33,
+          "2": 33,
+          "3": 33,
+          "4": 33
+        }
+      },
+      "n_v1": 165,
+      "n_v2": 165,
+      "n_common": 165,
+      "jaccard": 1.0,
+      "weight_overlap_sum_min": 0.9999999999999997,
+      "top5_v1_not_v2": [],
+      "top5_v2_not_v1": []
+    }
+  },
+  "blend": {
+    "n_v1": 165,
+    "n_v2": 165,
+    "n_common": 165,
+    "jaccard": 1.0,
+    "weight_overlap_sum_min": 0.9999999999999915,
+    "top5_v1_not_v2": [],
+    "top5_v2_not_v1": [],
+    "max_abs_weight_diff_common": 0.0
+  }
+}

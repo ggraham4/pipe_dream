@@ -8,7 +8,8 @@ calendar time that has not happened yet.
 Two commands:
 
   record  -- Uses the MOST RECENT available cross-section in
-             `composite_panel.parquet` (currently 2026-09-08 -- verified
+             the WORKING panel, working_panel.WORKING_PANEL (v2 since WO-11;
+             the 2026-09-08 records were made on composite_panel.parquet -- verified
              `forward_return_tradable_40` is 100% NaN for every eligible name
              on this date and every date after late July 2026: the 40-trading
              -day-forward outcome genuinely does not exist yet). Computes,
@@ -29,7 +30,7 @@ Two commands:
              both the panel date and the real wall-clock time this was
              written, before any outcome exists to peek at.
 
-  score   -- Re-reads `composite_panel.parquet` for any ledger dates whose
+  score   -- Re-reads the working panel for any ledger dates whose
              40-day-forward outcome has since matured (non-NaN), fills in
              realized returns, and computes the actual test: cross-sectional
              Spearman IC (rank prediction) and a Fama-MacBeth-style
@@ -68,11 +69,24 @@ import ic_weighted_composite as ICW  # noqa: E402
 import build_new_factors as NF  # noqa: E402
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "insider"))
 import opportunistic as OPP  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import working_panel as W  # noqa: E402
 
 MAIN_ROOT = Path("/Users/ggraham/pipe_dream/final")
-PANEL_PATH = MAIN_ROOT / "out" / "reset2026" / "composite_panel.parquet"
-BETA_PATH = MAIN_ROOT / "out" / "reset2026" / "beta_feature.parquet"
-OUTCOME_PATH = MAIN_ROOT / "out" / "reset2026" / "outcome_cache.parquet"
+# WO-11 (2026-09-25, Gabe: "all models should use it"): records from the
+# next record date on read the WORKING panel (composite_panel_v2) with the
+# v2 universe rule applied before scoring (working_panel.py). The records
+# already made (panel_date 2026-09-08, all on composite_panel.parquet) are
+# never rewritten; ledger_panel_manifest.json maps every (ledger, panel_date)
+# to the panel it was recorded on. beta_feature / outcome_cache follow the
+# panel (their v2 files equal v1 on every common (ticker, date) checked,
+# pre-2020; outcome_cache SPY differs only at v1's series-end truncation,
+# dates >= 2026-07-13). `selftest` stays on V1_PANEL: it reproduces
+# new_factors.parquet and insider_features.parquet, which are v1-grid files.
+PANEL_PATH = W.WORKING_PANEL
+V1_PANEL_PATH = W.V1_PANEL
+BETA_PATH = W.WORKING_BETA
+OUTCOME_PATH = W.WORKING_OUTCOME
 OUT_DIR = MAIN_ROOT / "out" / "reset2026"
 # v1 (`prediction_ledger.csv`) and v2 (`prediction_ledger_v2.csv`, both
 # panel_date=2026-09-08) are FROZEN -- immutable commitments already made
@@ -99,6 +113,12 @@ LABEL = "forward_return_tradable_40"
 # mechanical decomposition (Sharpe 1964 / Fama-Fisher-Jensen-Roll 1969's
 # market-model methodology, no different parameterization chosen for fit).
 MODEL_VERSION = "beta_adjusted_2026-09-22"
+# FROZEN (WO-11, 2026-09-25): the nomination-era Fama-MacBeth slope that the
+# v3 record on 2026-09-08 used (its fm_slope_used column). record() no longer
+# re-fits it: a re-fit on the v2 panel would re-derive a calibration constant
+# on a different cross-section, which the frozen-weights rule forbids.
+# fama_macbeth_slope_nomination() is kept for reference only.
+FM_SLOPE_FROZEN = 0.016276464738787338
 
 # ---------------------------------------------------------------------------
 # Side ledger (WO-2 + WO-3, 2026-09-23). Pre-registration:
@@ -168,8 +188,8 @@ def log(msg):
     print(f"[{time.strftime('%H:%M:%S')}] {msg}", flush=True)
 
 
-def load_panel(columns):
-    df = pd.read_parquet(PANEL_PATH, columns=columns)
+def load_panel(columns, path=None):
+    df = pd.read_parquet(PANEL_PATH if path is None else path, columns=columns)
     df["date"] = pd.to_datetime(df["date"])
     df["ticker"] = df["ticker"].astype(str)
     return df
@@ -219,9 +239,11 @@ def fama_macbeth_slope_nomination():
 def record():
     need = list(dict.fromkeys(["ticker", "date", "sector", "volatility_60",
                                 "eligible_cap150", LABEL] + C.FACTOR_COLS))
-    df = load_panel(need)
+    # latest date of the working panel, universe rule applied BEFORE scoring
+    df, uinfo = W.working_cross_section(need, path=PANEL_PATH)
     latest_date = df.loc[df["eligible_cap150"], "date"].max()
     cross = df[(df["date"] == latest_date) & df["eligible_cap150"]].reset_index(drop=True)
+    log(f"working panel {PANEL_PATH.name}: {uinfo}")
     n_matured = cross[LABEL].notna().sum()
     log(f"most recent eligible cross-section: {latest_date.date()}, {len(cross)} names, "
         f"{n_matured} already have a realized 40-day outcome (should be 0 for a genuinely blind record)")
@@ -233,7 +255,7 @@ def record():
     cross = cross.merge(beta[beta["date"] == latest_date][["ticker", "beta_252"]], on="ticker", how="left")
     log(f"beta_252 coverage on this cross-section: {cross['beta_252'].notna().mean():.1%}")
 
-    slope = fama_macbeth_slope_nomination()
+    slope = FM_SLOPE_FROZEN
     scored = C.compute_composite(cross, neutral=False)
     s = scored["composite"].to_numpy(np.float64)
     valid = np.isfinite(s)
@@ -281,6 +303,7 @@ def record():
         out.to_csv(LEDGER_CSV, mode="a", header=write_header, index=False)
         log(f"appended {len(out)} rows to {LEDGER_CSV} for panel_date={latest_date.date()} "
             f"(blind -- outcome does not exist yet)")
+        W.record_manifest(LEDGER_CSV, latest_date, PANEL_PATH)
     n_v3_after = _v3_rows_for(latest_date)
 
     record_ext(cross, latest_date, valid)
@@ -341,6 +364,7 @@ def record_ext(cross, panel_date, valid):
     ext, stale = build_ext_rows(cross, panel_date, valid)
     write_header = not EXT_CSV.exists()
     ext.to_csv(EXT_CSV, mode="a", header=write_header, index=False)
+    W.record_manifest(EXT_CSV, panel_date, PANEL_PATH)
     fire = (ext["opp_buyers_90"] >= 1).mean() if not stale else float("nan")
     log(f"appended {len(ext)} rows to {EXT_CSV} for {pd_iso}: leverage coverage "
         f"{ext['leverage'].notna().mean():.1%}, icw9 finite {ext['icw9_leverage_score'].notna().mean():.1%}, "
@@ -562,14 +586,14 @@ def selftest():
     before trusting it on real future data."""
     need = list(dict.fromkeys(["ticker", "date", "sector", "volatility_60",
                                 "eligible_cap150", LABEL] + C.FACTOR_COLS))
-    df = load_panel(need)
+    df = load_panel(need, path=V1_PANEL_PATH)   # v1-grid reference files below
     test_date = pd.Timestamp(sys.argv[2]) if len(sys.argv) > 2 else pd.Timestamp("2015-06-15")
     cross = df[(df["date"] == test_date) & df["eligible_cap150"]].reset_index(drop=True)
     if cross.empty:
         raise SystemExit(f"No eligible cross-section on {test_date.date()} -- pick another self-test date.")
     beta, spy = _load_beta_and_market()
     cross = cross.merge(beta[beta["date"] == test_date][["ticker", "beta_252"]], on="ticker", how="left")
-    slope = fama_macbeth_slope_nomination()
+    slope = FM_SLOPE_FROZEN
     scored = C.compute_composite(cross, neutral=False)
     s = scored["composite"].to_numpy(np.float64)
     valid = np.isfinite(s)

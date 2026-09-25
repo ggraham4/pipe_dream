@@ -1,0 +1,77 @@
+[14:44:22] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[14:44:22]     date 0 2009-03-16 (0s)
+[14:44:22]   [PASS] build_books drops == 0 on test date (0 dropped)
+[14:44:22]   [PASS] construction: book_one_date == build_books (tickers) (225 names)
+[14:44:22]   [PASS] construction: book_one_date == build_books (weights 1e-12) (max |dw| 5.2e-18)
+[14:44:23]   [PASS] working_cross_section cap150 set == load_column('c') cap150 set (2272 vs 2272)
+[14:44:23]   [PASS] working loader book == build_books book 
+[14:44:23]   [PASS] NaN-vol guard passes on test book (book 225 / valid 2270)
+[14:44:24]   [PASS] scoring: book gross == outcome_cache_v2 basis (1e-6) (+0.30644407 vs +0.30644407)
+[14:44:24]   [PASS] scoring: hedged == WO-9 tradable per-date value at f_new=1 (1e-6) (+0.02148353 vs +0.02148353)
+[14:44:24]   [PASS] score_hedge calendar guard refuses 2026-09-08 today 
+[14:44:24] === hedge selftest PASSED ===
+{
+  "test_date": "2009-03-16",
+  "checks": {
+    "build_books drops == 0 on test date": {
+      "pass": true,
+      "detail": "(0 dropped)"
+    },
+    "construction: book_one_date == build_books (tickers)": {
+      "pass": true,
+      "detail": "(225 names)"
+    },
+    "construction: book_one_date == build_books (weights 1e-12)": {
+      "pass": true,
+      "detail": "(max |dw| 5.2e-18)"
+    },
+    "working_cross_section cap150 set == load_column('c') cap150 set": {
+      "pass": true,
+      "detail": "(2272 vs 2272)"
+    },
+    "working loader book == build_books book": {
+      "pass": true,
+      "detail": ""
+    },
+    "NaN-vol guard passes on test book": {
+      "pass": true,
+      "detail": "(book 225 / valid 2270)"
+    },
+    "scoring: book gross == outcome_cache_v2 basis (1e-6)": {
+      "pass": true,
+      "detail": "(+0.30644407 vs +0.30644407)"
+    },
+    "scoring: hedged == WO-9 tradable per-date value at f_new=1 (1e-6)": {
+      "pass": true,
+      "detail": "(+0.02148353 vs +0.02148353)"
+    },
+    "score_hedge calendar guard refuses 2026-09-08 today": {
+      "pass": true,
+      "detail": ""
+    }
+  },
+  "scoring": {
+    "mine": {
+      "book_gross_price": 0.3064440743495087,
+      "book_net_price": 0.30448587688608186,
+      "book_div": 0.001539364106052591,
+      "iwm_price": 0.27936999284042474,
+      "iwm_div": 0.004171721530534134,
+      "short_cost": 0.001,
+      "hedged": 0.021483526621175586,
+      "exit_date": "2009-05-12",
+      "n_names": 225,
+      "missing": 0,
+      "never_opened": 0,
+      "delist_floor": 0
+    },
+    "ref": {
+      "net": 0.3044858774143506,
+      "bdiv": 0.0015393641060525904,
+      "iwm_price": 0.27936999284042474,
+      "iwm_div": 0.004171721530534134,
+      "hedged": 0.021483527149444348
+    }
+  },
+  "all_pass": true
+}

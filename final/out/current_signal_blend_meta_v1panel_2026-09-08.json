@@ -30,8 +30,6 @@
     "source": "final/src/reset2026/blend_q75.py, final/out/reset2026/blend_q75_report.json",
     "writeup": "final/models/2026-09-19-factor-composite-reset.md"
   },
-  "composite_panel_source": "composite_panel_v2",
-  "universe_rule": "composite leg: v2 eligible_cap2000, SPACs excluded unless in the old 4,011-ticker grid (0 eligible SPAC rows dropped)",
   "role": "primary",
   "note": "Promoted to primary 2026-09-19 on a SINGLE-GRID backtest (not this project's usual 40-offset average) that still shows negative absolute excess vs SPY on the 2020-2026 hold-out (-0.36%, the least-bad of the three constructions tested, not a winner in absolute terms). See final/models/2026-09-19-factor-composite-reset.md. Composite factor set frozen 2026-09-22 to the exact version this backtest ran against -- see this file's module docstring; the corrected/IC-weighted version is shown separately in the app's Theoretical Model tab."
 }
