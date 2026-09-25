@@ -6048,6 +6048,9 @@
           "dropped_weight_total": 3.1413447100842755,
           "absent_from_cache": 0,
           "in_cache_nan": 264,
+          "in_cache_nan_last_bar_in_cache": 264,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 264,
           "n_dropped_lastpricedate_within_60d": 264,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0009600686766761233
         },
@@ -6060,6 +6063,9 @@
           "dropped_weight_total": 2.0375856590408317,
           "absent_from_cache": 0,
           "in_cache_nan": 1966,
+          "in_cache_nan_last_bar_in_cache": 1966,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 1966,
           "n_dropped_lastpricedate_within_60d": 1966,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006227340033743375
         },
@@ -6072,6 +6078,9 @@
           "dropped_weight_total": 1.7761665808046518,
           "absent_from_cache": 0,
           "in_cache_nan": 179,
+          "in_cache_nan_last_bar_in_cache": 179,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 179,
           "n_dropped_lastpricedate_within_60d": 179,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005428381970674364
         },
@@ -6084,6 +6093,9 @@
           "dropped_weight_total": 2.1280460944980835,
           "absent_from_cache": 0,
           "in_cache_nan": 197,
+          "in_cache_nan_last_bar_in_cache": 197,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 197,
           "n_dropped_lastpricedate_within_60d": 197,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006503808357267981
         },
@@ -6096,6 +6108,9 @@
           "dropped_weight_total": 1.9536239086827212,
           "absent_from_cache": 0,
           "in_cache_nan": 190,
+          "in_cache_nan_last_bar_in_cache": 190,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 190,
           "n_dropped_lastpricedate_within_60d": 190,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.000597073321724548
         },
@@ -6108,6 +6123,9 @@
           "dropped_weight_total": 2.3445202760589794,
           "absent_from_cache": 0,
           "in_cache_nan": 229,
+          "in_cache_nan_last_bar_in_cache": 229,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 229,
           "n_dropped_lastpricedate_within_60d": 229,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0007165404266683919
         },
@@ -6120,6 +6138,9 @@
           "dropped_weight_total": 1.985124235439172,
           "absent_from_cache": 0,
           "in_cache_nan": 193,
+          "in_cache_nan_last_bar_in_cache": 193,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 193,
           "n_dropped_lastpricedate_within_60d": 193,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006067005609532921
         },
@@ -6132,6 +6153,9 @@
           "dropped_weight_total": 2.050781029679205,
           "absent_from_cache": 0,
           "in_cache_nan": 211,
+          "in_cache_nan_last_bar_in_cache": 211,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 211,
           "n_dropped_lastpricedate_within_60d": 211,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006267668183616154
         },
@@ -6144,6 +6168,9 @@
           "dropped_weight_total": 2.2173826217227632,
           "absent_from_cache": 0,
           "in_cache_nan": 213,
+          "in_cache_nan_last_bar_in_cache": 213,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 213,
           "n_dropped_lastpricedate_within_60d": 213,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006776841753431428
         },
@@ -6156,6 +6183,9 @@
           "dropped_weight_total": 2.19294552486506,
           "absent_from_cache": 0,
           "in_cache_nan": 197,
+          "in_cache_nan_last_bar_in_cache": 197,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 197,
           "n_dropped_lastpricedate_within_60d": 197,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.000670215624958759
         },
@@ -6168,6 +6198,9 @@
           "dropped_weight_total": 2.198399371058808,
           "absent_from_cache": 0,
           "in_cache_nan": 198,
+          "in_cache_nan_last_bar_in_cache": 198,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 198,
           "n_dropped_lastpricedate_within_60d": 198,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006718824483676064
         },
@@ -6180,6 +6213,9 @@
           "dropped_weight_total": 2.1801106076327894,
           "absent_from_cache": 0,
           "in_cache_nan": 211,
+          "in_cache_nan_last_bar_in_cache": 211,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 211,
           "n_dropped_lastpricedate_within_60d": 211,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006662929729929065
         },
@@ -6192,6 +6228,9 @@
           "dropped_weight_total": 2.7223283233224147,
           "absent_from_cache": 0,
           "in_cache_nan": 222,
+          "in_cache_nan_last_bar_in_cache": 222,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 222,
           "n_dropped_lastpricedate_within_60d": 222,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0008320074337782437
         },
@@ -6204,6 +6243,9 @@
           "dropped_weight_total": 1.6474139407883632,
           "absent_from_cache": 0,
           "in_cache_nan": 199,
+          "in_cache_nan_last_bar_in_cache": 199,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 199,
           "n_dropped_lastpricedate_within_60d": 199,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005034883682116024
         },
@@ -6216,6 +6258,9 @@
           "dropped_weight_total": 1.805145477684407,
           "absent_from_cache": 0,
           "in_cache_nan": 201,
+          "in_cache_nan_last_bar_in_cache": 201,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 201,
           "n_dropped_lastpricedate_within_60d": 201,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005516948281431562
         },
@@ -6228,6 +6273,9 @@
           "dropped_weight_total": 2.3220389125490457,
           "absent_from_cache": 0,
           "in_cache_nan": 219,
+          "in_cache_nan_last_bar_in_cache": 219,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 219,
           "n_dropped_lastpricedate_within_60d": 219,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0007096695942998306
         },
@@ -6240,6 +6288,9 @@
           "dropped_weight_total": 2.1260489748548985,
           "absent_from_cache": 0,
           "in_cache_nan": 201,
+          "in_cache_nan_last_bar_in_cache": 201,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 201,
           "n_dropped_lastpricedate_within_60d": 201,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006497704690876828
         },
@@ -6252,6 +6303,9 @@
           "dropped_weight_total": 1.7219412354993746,
           "absent_from_cache": 0,
           "in_cache_nan": 190,
+          "in_cache_nan_last_bar_in_cache": 190,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 190,
           "n_dropped_lastpricedate_within_60d": 190,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005262656587712026
         },
@@ -6264,6 +6318,9 @@
           "dropped_weight_total": 1.7066045532795258,
           "absent_from_cache": 0,
           "in_cache_nan": 206,
+          "in_cache_nan_last_bar_in_cache": 206,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 206,
           "n_dropped_lastpricedate_within_60d": 206,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005215784087040116
         },
@@ -6276,6 +6333,9 @@
           "dropped_weight_total": 1.742528058778045,
           "absent_from_cache": 0,
           "in_cache_nan": 204,
+          "in_cache_nan_last_bar_in_cache": 204,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 204,
           "n_dropped_lastpricedate_within_60d": 204,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005325574751766642
         },
@@ -6288,6 +6348,9 @@
           "dropped_weight_total": 1.9427261174602748,
           "absent_from_cache": 0,
           "in_cache_nan": 194,
+          "in_cache_nan_last_bar_in_cache": 194,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 194,
           "n_dropped_lastpricedate_within_60d": 194,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005937427009352918
         },
@@ -6300,6 +6363,9 @@
           "dropped_weight_total": 1.9751950495128863,
           "absent_from_cache": 0,
           "in_cache_nan": 184,
+          "in_cache_nan_last_bar_in_cache": 184,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 184,
           "n_dropped_lastpricedate_within_60d": 184,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006036659686775326
         }
@@ -12378,6 +12444,9 @@
           "dropped_weight_total": 3.1079076469662414,
           "absent_from_cache": 0,
           "in_cache_nan": 175,
+          "in_cache_nan_last_bar_in_cache": 175,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 175,
           "n_dropped_lastpricedate_within_60d": 175,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0009498495253564308
         },
@@ -12390,6 +12459,9 @@
           "dropped_weight_total": 2.0092914055828746,
           "absent_from_cache": 0,
           "in_cache_nan": 1375,
+          "in_cache_nan_last_bar_in_cache": 1375,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 1375,
           "n_dropped_lastpricedate_within_60d": 1375,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006140866153981895
         },
@@ -12402,6 +12474,9 @@
           "dropped_weight_total": 1.8456606224823384,
           "absent_from_cache": 0,
           "in_cache_nan": 163,
+          "in_cache_nan_last_bar_in_cache": 163,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 163,
           "n_dropped_lastpricedate_within_60d": 163,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005640772073601277
         },
@@ -12414,6 +12489,9 @@
           "dropped_weight_total": 1.6327992479936488,
           "absent_from_cache": 0,
           "in_cache_nan": 126,
+          "in_cache_nan_last_bar_in_cache": 126,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 126,
           "n_dropped_lastpricedate_within_60d": 126,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0004990217750591836
         },
@@ -12426,6 +12504,9 @@
           "dropped_weight_total": 1.6640556570565856,
           "absent_from_cache": 0,
           "in_cache_nan": 131,
+          "in_cache_nan_last_bar_in_cache": 131,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 131,
           "n_dropped_lastpricedate_within_60d": 131,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005085744673155824
         },
@@ -12438,6 +12519,9 @@
           "dropped_weight_total": 1.893975921912648,
           "absent_from_cache": 0,
           "in_cache_nan": 135,
+          "in_cache_nan_last_bar_in_cache": 135,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 135,
           "n_dropped_lastpricedate_within_60d": 135,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005788434969170684
         },
@@ -12450,6 +12534,9 @@
           "dropped_weight_total": 1.8733461015578479,
           "absent_from_cache": 0,
           "in_cache_nan": 135,
+          "in_cache_nan_last_bar_in_cache": 135,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 135,
           "n_dropped_lastpricedate_within_60d": 135,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005725385395959193
         },
@@ -12462,6 +12549,9 @@
           "dropped_weight_total": 2.2255466975644804,
           "absent_from_cache": 0,
           "in_cache_nan": 134,
+          "in_cache_nan_last_bar_in_cache": 134,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 134,
           "n_dropped_lastpricedate_within_60d": 134,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006801793085466017
         },
@@ -12474,6 +12564,9 @@
           "dropped_weight_total": 2.1547729985626014,
           "absent_from_cache": 0,
           "in_cache_nan": 138,
+          "in_cache_nan_last_bar_in_cache": 138,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 138,
           "n_dropped_lastpricedate_within_60d": 138,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006585492049396702
         },
@@ -12486,6 +12579,9 @@
           "dropped_weight_total": 2.0773843330403547,
           "absent_from_cache": 0,
           "in_cache_nan": 130,
+          "in_cache_nan_last_bar_in_cache": 130,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 130,
           "n_dropped_lastpricedate_within_60d": 130,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.000634897412298397
         },
@@ -12498,6 +12594,9 @@
           "dropped_weight_total": 2.205633610461189,
           "absent_from_cache": 0,
           "in_cache_nan": 146,
+          "in_cache_nan_last_bar_in_cache": 146,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 146,
           "n_dropped_lastpricedate_within_60d": 146,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006740934017301923
         },
@@ -12510,6 +12609,9 @@
           "dropped_weight_total": 1.9710659970344848,
           "absent_from_cache": 0,
           "in_cache_nan": 130,
+          "in_cache_nan_last_bar_in_cache": 130,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 130,
           "n_dropped_lastpricedate_within_60d": 130,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006024040333234978
         },
@@ -12522,6 +12624,9 @@
           "dropped_weight_total": 1.6290863926479286,
           "absent_from_cache": 0,
           "in_cache_nan": 134,
+          "in_cache_nan_last_bar_in_cache": 134,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 134,
           "n_dropped_lastpricedate_within_60d": 134,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0004978870393178267
         },
@@ -12534,6 +12639,9 @@
           "dropped_weight_total": 1.812971530572506,
           "absent_from_cache": 0,
           "in_cache_nan": 122,
+          "in_cache_nan_last_bar_in_cache": 122,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 122,
           "n_dropped_lastpricedate_within_60d": 122,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005540866535979543
         },
@@ -12546,6 +12654,9 @@
           "dropped_weight_total": 2.2315585055120732,
           "absent_from_cache": 0,
           "in_cache_nan": 149,
+          "in_cache_nan_last_bar_in_cache": 149,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 149,
           "n_dropped_lastpricedate_within_60d": 149,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006820166581638366
         },
@@ -12558,6 +12669,9 @@
           "dropped_weight_total": 1.7650860954239416,
           "absent_from_cache": 0,
           "in_cache_nan": 132,
+          "in_cache_nan_last_bar_in_cache": 132,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 132,
           "n_dropped_lastpricedate_within_60d": 132,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005394517406552389
         },
@@ -12570,6 +12684,9 @@
           "dropped_weight_total": 2.087055082981201,
           "absent_from_cache": 0,
           "in_cache_nan": 141,
+          "in_cache_nan_last_bar_in_cache": 141,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 141,
           "n_dropped_lastpricedate_within_60d": 141,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006378530204710272
         },
@@ -12582,6 +12699,9 @@
           "dropped_weight_total": 2.0695538980903145,
           "absent_from_cache": 0,
           "in_cache_nan": 140,
+          "in_cache_nan_last_bar_in_cache": 140,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 140,
           "n_dropped_lastpricedate_within_60d": 140,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006325042475826143
         },
@@ -12594,6 +12714,9 @@
           "dropped_weight_total": 1.9677252456613192,
           "absent_from_cache": 0,
           "in_cache_nan": 142,
+          "in_cache_nan_last_bar_in_cache": 142,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 142,
           "n_dropped_lastpricedate_within_60d": 142,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006013830212901342
         },
@@ -12606,6 +12729,9 @@
           "dropped_weight_total": 2.316802622535905,
           "absent_from_cache": 0,
           "in_cache_nan": 145,
+          "in_cache_nan_last_bar_in_cache": 145,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 145,
           "n_dropped_lastpricedate_within_60d": 145,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0007080692611662301
         },
@@ -12618,6 +12744,9 @@
           "dropped_weight_total": 2.296556035857442,
           "absent_from_cache": 0,
           "in_cache_nan": 164,
+          "in_cache_nan_last_bar_in_cache": 164,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 164,
           "n_dropped_lastpricedate_within_60d": 164,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0007018814290517856
         },
@@ -12630,6 +12759,9 @@
           "dropped_weight_total": 2.017876648467444,
           "absent_from_cache": 0,
           "in_cache_nan": 135,
+          "in_cache_nan_last_bar_in_cache": 135,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 135,
           "n_dropped_lastpricedate_within_60d": 135,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006167104671355269
         }
@@ -18708,6 +18840,9 @@
           "dropped_weight_total": 2.450621002717347,
           "absent_from_cache": 0,
           "in_cache_nan": 79,
+          "in_cache_nan_last_bar_in_cache": 79,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 79,
           "n_dropped_lastpricedate_within_60d": 79,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0007489672991189936
         },
@@ -18720,6 +18855,9 @@
           "dropped_weight_total": 1.8278679345565843,
           "absent_from_cache": 0,
           "in_cache_nan": 645,
+          "in_cache_nan_last_bar_in_cache": 645,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 645,
           "n_dropped_lastpricedate_within_60d": 645,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005586393443021344
         },
@@ -18732,6 +18870,9 @@
           "dropped_weight_total": 1.7652787483963543,
           "absent_from_cache": 0,
           "in_cache_nan": 70,
+          "in_cache_nan_last_bar_in_cache": 70,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 70,
           "n_dropped_lastpricedate_within_60d": 70,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005395106199255361
         },
@@ -18744,6 +18885,9 @@
           "dropped_weight_total": 1.7294487469782145,
           "absent_from_cache": 0,
           "in_cache_nan": 61,
+          "in_cache_nan_last_bar_in_cache": 61,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 61,
           "n_dropped_lastpricedate_within_60d": 61,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005285601304945643
         },
@@ -18756,6 +18900,9 @@
           "dropped_weight_total": 2.085562003269103,
           "absent_from_cache": 0,
           "in_cache_nan": 71,
+          "in_cache_nan_last_bar_in_cache": 71,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 71,
           "n_dropped_lastpricedate_within_60d": 71,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006373967002656183
         },
@@ -18768,6 +18915,9 @@
           "dropped_weight_total": 2.672960219599632,
           "absent_from_cache": 0,
           "in_cache_nan": 73,
+          "in_cache_nan_last_bar_in_cache": 73,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 73,
           "n_dropped_lastpricedate_within_60d": 73,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0008169193825182249
         },
@@ -18780,6 +18930,9 @@
           "dropped_weight_total": 1.8364103959029743,
           "absent_from_cache": 0,
           "in_cache_nan": 69,
+          "in_cache_nan_last_bar_in_cache": 69,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 69,
           "n_dropped_lastpricedate_within_60d": 69,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005612501209972415
         },
@@ -18792,6 +18945,9 @@
           "dropped_weight_total": 1.6661178708103663,
           "absent_from_cache": 0,
           "in_cache_nan": 67,
+          "in_cache_nan_last_bar_in_cache": 67,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 67,
           "n_dropped_lastpricedate_within_60d": 67,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.000509204728242777
         },
@@ -18804,6 +18960,9 @@
           "dropped_weight_total": 1.6149201696486042,
           "absent_from_cache": 0,
           "in_cache_nan": 69,
+          "in_cache_nan_last_bar_in_cache": 69,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 69,
           "n_dropped_lastpricedate_within_60d": 69,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0004935575090613093
         },
@@ -18816,6 +18975,9 @@
           "dropped_weight_total": 1.8316742686646612,
           "absent_from_cache": 0,
           "in_cache_nan": 75,
+          "in_cache_nan_last_bar_in_cache": 75,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 75,
           "n_dropped_lastpricedate_within_60d": 75,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005598026493473904
         },
@@ -18828,6 +18990,9 @@
           "dropped_weight_total": 2.0478195980617295,
           "absent_from_cache": 0,
           "in_cache_nan": 60,
+          "in_cache_nan_last_bar_in_cache": 60,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 60,
           "n_dropped_lastpricedate_within_60d": 60,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006258617353489393
         },
@@ -18840,6 +19005,9 @@
           "dropped_weight_total": 1.2749885229679094,
           "absent_from_cache": 0,
           "in_cache_nan": 53,
+          "in_cache_nan_last_bar_in_cache": 53,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 53,
           "n_dropped_lastpricedate_within_60d": 53,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0003896664189999723
         },
@@ -18852,6 +19020,9 @@
           "dropped_weight_total": 2.0754237479142783,
           "absent_from_cache": 0,
           "in_cache_nan": 68,
+          "in_cache_nan_last_bar_in_cache": 68,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 68,
           "n_dropped_lastpricedate_within_60d": 68,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.000634298211465244
         },
@@ -18864,6 +19035,9 @@
           "dropped_weight_total": 1.8629739013401843,
           "absent_from_cache": 0,
           "in_cache_nan": 55,
+          "in_cache_nan_last_bar_in_cache": 55,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 55,
           "n_dropped_lastpricedate_within_60d": 55,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.000569368551754335
         },
@@ -18876,6 +19050,9 @@
           "dropped_weight_total": 2.01760889723179,
           "absent_from_cache": 0,
           "in_cache_nan": 81,
+          "in_cache_nan_last_bar_in_cache": 81,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 81,
           "n_dropped_lastpricedate_within_60d": 81,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0006166286360732855
         },
@@ -18888,6 +19065,9 @@
           "dropped_weight_total": 1.8839347415146672,
           "absent_from_cache": 0,
           "in_cache_nan": 69,
+          "in_cache_nan_last_bar_in_cache": 69,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 69,
           "n_dropped_lastpricedate_within_60d": 69,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005757746765020377
         },
@@ -18900,6 +19080,9 @@
           "dropped_weight_total": 1.5419540001025969,
           "absent_from_cache": 0,
           "in_cache_nan": 76,
+          "in_cache_nan_last_bar_in_cache": 76,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 76,
           "n_dropped_lastpricedate_within_60d": 76,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0004712573349946812
         },
@@ -18912,6 +19095,9 @@
           "dropped_weight_total": 1.5487484357501793,
           "absent_from_cache": 0,
           "in_cache_nan": 62,
+          "in_cache_nan_last_bar_in_cache": 62,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 62,
           "n_dropped_lastpricedate_within_60d": 62,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.00047333387400677856
         },
@@ -18924,6 +19110,9 @@
           "dropped_weight_total": 1.8819384005732436,
           "absent_from_cache": 0,
           "in_cache_nan": 70,
+          "in_cache_nan_last_bar_in_cache": 70,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 70,
           "n_dropped_lastpricedate_within_60d": 70,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005751645478524584
         },
@@ -18936,6 +19125,9 @@
           "dropped_weight_total": 1.7511022718529352,
           "absent_from_cache": 0,
           "in_cache_nan": 64,
+          "in_cache_nan_last_bar_in_cache": 64,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 64,
           "n_dropped_lastpricedate_within_60d": 64,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0005351779559452736
         },
@@ -18948,6 +19140,9 @@
           "dropped_weight_total": 1.0764515777955217,
           "absent_from_cache": 0,
           "in_cache_nan": 55,
+          "in_cache_nan_last_bar_in_cache": 55,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 55,
           "n_dropped_lastpricedate_within_60d": 55,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.0003289888685194137
         },
@@ -18960,6 +19155,9 @@
           "dropped_weight_total": 1.4079624047462518,
           "absent_from_cache": 0,
           "in_cache_nan": 57,
+          "in_cache_nan_last_bar_in_cache": 57,
+          "in_cache_nan_other_bad_price": 0,
+          "pick_date_equals_lastpricedate": 57,
           "n_dropped_lastpricedate_within_60d": 57,
           "weight_dropped_lastpricedate_within_60d_mean_per_date": 0.00043030635841878113
         }

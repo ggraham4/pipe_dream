@@ -171,14 +171,23 @@ def build_books(p, tiers, with_null=True):
 
 
 # ---------------------------------------------------------------- pool integrity
-def classify_drops(drops, tier_books_dates, oc_keys, lastprice):
+def classify_drops(drops, oc_last, oc_keys, lastprice):
     out = {}
     for b, dr in drops.items():
-        cats = {"absent_from_cache": 0, "in_cache_nan": 0}
+        cats = {"absent_from_cache": 0, "in_cache_nan": 0,
+                "in_cache_nan_last_bar_in_cache": 0, "in_cache_nan_other_bad_price": 0,
+                "pick_date_equals_lastpricedate": 0}
         near_delist_w, near_delist_n = 0.0, 0
         for _, d, t, w in dr["names"]:
-            cats["absent_from_cache" if (t, d) not in oc_keys else "in_cache_nan"] += 1
+            if (t, d) not in oc_keys:
+                cats["absent_from_cache"] += 1
+            else:
+                cats["in_cache_nan"] += 1
+                cats["in_cache_nan_last_bar_in_cache" if oc_last.get(t) == d
+                     else "in_cache_nan_other_bad_price"] += 1
             lp = lastprice.get(t)
+            if lp is not None and pd.notna(lp) and lp == pd.Timestamp(d):
+                cats["pick_date_equals_lastpricedate"] += 1
             if lp is not None and pd.notna(lp) and pd.Timestamp(d) <= lp <= pd.Timestamp(d) + pd.Timedelta(days=60):
                 near_delist_n += 1
                 near_delist_w += w
@@ -270,8 +279,9 @@ def main():
         ocd["date"] = pd.to_datetime(ocd["date"])
         R.guard(ocd)
         oc_keys = set(zip(ocd["ticker"].astype(str), ocd["date"]))
+        oc_last = ocd.assign(ticker=ocd["ticker"].astype(str)).groupby("ticker")["date"].max().to_dict()
     else:
-        oc_keys = set()
+        oc_keys, oc_last = set(), {}
     tm = pd.read_csv(R.SH / "tickers_master.csv", dtype=str, usecols=["ticker", "lastpricedate"])
     tm["lastpricedate"] = pd.to_datetime(tm["lastpricedate"], errors="coerce")
     lastprice = tm.groupby("ticker")["lastpricedate"].max().to_dict()
@@ -369,7 +379,7 @@ def main():
         wt_i = weight_turnover_fn(bk_al["icw8"], all_dates)
         tres["turnover_caveat_icw8_mean_weight_turnover_estimate"] = float(np.mean(list(wt_i.values())))
 
-        tres["pool_integrity"] = classify_drops(drops[tier], None, oc_keys, lastprice)
+        tres["pool_integrity"] = classify_drops(drops[tier], oc_last, oc_keys, lastprice)
         pi = tres["pool_integrity"]
         agg_null_w = float(np.mean([pi[f"null{k}"]["dropped_weight_mean_per_date"] for k in range(N_DRAWS)]))
         log(f"  {tier} drops: icw8 {pi['icw8']['n_dropped']} (w/date {pi['icw8']['dropped_weight_mean_per_date']:.2e}), "

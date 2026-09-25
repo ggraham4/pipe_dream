@@ -220,14 +220,14 @@ it earns −0.25%/yr. The v2 grid rebuild removed essentially all of the
 | cap2000 | concentration | −0.87 | 0.18 | 0/40 | | |
 | cap2000 | total | +3.25 | 0.23 | 40/40 | +2.51 | +4.12 |
 
-Note that selection + concentration = total holds exactly only in the
-per-offset means. The null median of the LOYO values is taken elementwise, so
-the LOYO columns need not add up.
+The per-year LOYO gaps add exactly. The LOYO min and max columns do not add
+across components, because each one is taken at a different year.
 
 **The concentration term is the null's turnover cost.** In the supplementary
 0bp (gross) run the concentration term is **−0.02pp** at cap150 (cap500
-+0.01, cap2000 −0.05). A random decile is re-drawn every window, which gives
-name turnover near 90%, and at 15bp that costs about 0.85pp/yr. Before costs,
++0.01, cap2000 −0.05). A random decile is re-drawn every window. The gap between the gross and net
+runs implies about 0.85pp/yr of turnover cost; name turnover itself was not
+measured for the null. Before costs,
 concentrating into a random decile per vol quintile is worth nothing relative
 to holding the whole tier.
 
@@ -274,10 +274,14 @@ is +2.03. **The whole of icw8's full-era excess over SPY comes from before
 | cap500 | icw8 | 715,011 | 175 | 0.095% | 11.1% | 175/175 |
 | cap2000 | icw8 | 377,934 | 79 | 0.075% | 17.0% | 79/79 |
 
-- None of the drops is absent from the cache. Every one is a pick dated on the
-  ticker's final bar, where no next-open entry exists. Every dropped name's
-  Sharadar `lastpricedate` falls within 60 days of the pick date, and in fact
-  equals it.
+- The measured categories, in every book and tier:
+  - 0 drops are absent from the cache.
+  - 0 are "other bad price".
+  - **100% are the ticker's last bar in the outcome cache**, where no
+    next-open entry exists.
+  - For 100% of them the pick date **equals** Sharadar `lastpricedate`
+    exactly. For cap150 icw8 that is 264/264; for no-score it is
+    1,966/1,966.
 - The mean dropped weight is below the 0.5% materiality threshold in every
   book, so by the pre-registered test this is **not a material leak**.
 - It is, however, 100% concentrated in delisting eves, and icw8 drops about
@@ -313,6 +317,15 @@ by about 0.1pp. Neither changes the reading.
 
 **Verdict (cap150): SELECTION MATERIAL.** cap500 and cap2000 read the same
 way, descriptively.
+
+**Two consistency checks, using numbers already computed:**
+- **Across grids.** icw8 − no-score is +2.86pp on column a (5.254 − 2.398)
+  and +3.10pp on column c. The ranking's increment over its own universe is
+  stable across the two grids. What moved is the level of the universe,
+  +2.40 → −0.25.
+- **The null checks itself.** At 0bp the null median (−0.20) equals no-score
+  (−0.21) at cap150. The permutation null behaves as a fair random sample of
+  the tier, so what separates icw8 from it is the ranking.
 
 ### What this says, in plain terms
 
