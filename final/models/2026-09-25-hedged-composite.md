@@ -137,12 +137,132 @@ reported and not asserted.
 
 ## 2. Data checks
 
-(filled after the pre-registration commit)
+All passed. The pre-registration was committed as 60a2247 before any of these
+ran. Log: `final/out/reset2026/downcap_v2/hedged_composite.log`.
+
+| check | result |
+|---|---|
+| yfinance reachable | yes. IWM pulled 2006-06-01..2019-12-31, 3,420 rows, saved to `final/data/benchmarks/IWM.csv` (new, gitignored, not committed) |
+| name-check 2008, total return (`adj_close`) | **−34.14%** vs −34% target, within 2pp. Price-only: −35.13% |
+| name-check 2017, total return | **+14.58%** vs +14.6% target, within 2pp. Price-only: +13.06% |
+| largest daily IWM close move | 11.2% on 2008-12-01 (a real market day; no split seam) |
+| pull-method check: yfinance `auto_adjust=False` SPY vs `SPY.csv` | max relative difference 2.2e-16 on open and close, over all 3,523 dates. The pull reproduces the file SPY's cache row came from |
+| method reconcile: `ret40` on SPY.csv vs outcome_cache_v2 SPY `gross_return_40` | 50 sampled dates: max \|diff\| **1.35e-8** (tol 1e-6). Same on all 3,483 eligible dates. The residual is the cache's float32 storage |
+| end-of-era mask (C2) | IWM 40d return NaN on the last **40** era dates (from 2019-11-04). Those rebalance dates drop out of every hedged figure |
+| machinery reconcile: `backtest_vectors(icw8, bench=SPY)` vs `readout.json` c/tier/icw8 | equal to 1e-6 on mean40, sd40, loyo_min and offsets_positive, for all three tiers (cap150 +0.02854) |
+| per-date series oracle | per-offset mean of the per-date hedged series ×252/40 equals `backtest_vectors` to 1e-12 |
+| hold-out guard | every frame asserts max(date) < 2020-01-01. SPY cache read filtered to ≤ 2019-12-31 |
 
 ## 3. Results
 
-(filled after the data checks)
+Excess figures are in pp/yr (×252/40): the mean over 40 offsets, with the
+number of offsets positive. The short leg costs 10bp per rebalance on top of
+the book's 15bp. ETF borrow is assumed ≈ 0. Hedged = net book − IWM − 10bp.
+
+### 3.1 Primary: cap150, price-only IWM, 15bp + 10bp
+
+| window | mean40 | sd40 | min40 | offsets > 0 | LOYO min (dropped year) | beta to SPY (NW t, lag 39) | MDD median / worst |
+|---|---|---|---|---|---|---|---|
+| full 2007-2019 | **+2.28** | 0.29 | +1.69 | **40/40** | **+1.61** (2018) | **−0.164** (t −5.01) | −13.1% / −14.3% |
+| common 2011-10-20..2019 | **+0.92** | 0.33 | +0.11 | 40/40 | −0.40 (2018) | −0.246 (t −5.23) | −13.1% / −14.3% |
+
+Like-for-like, unhedged icw8 vs SPY on the same IWM-available dates: full
++3.10, common +0.33. Masking the last 40 dates moves the full-window figure up
+from the readout's +2.85.
+
+Per-year hedged return, cap150 primary (mean over offsets, ×252/40, pp/yr):
+
+| 2007 | 2008 | 2009 | 2010 | 2011 | 2012 | 2013 | 2014 | 2015 | 2016 | 2017 | 2018 | 2019 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| −5.3 | +7.5 | +9.7 | −0.5 | +9.1 | −1.1 | −1.1 | +6.2 | +2.0 | **−12.5** | +6.4 | +10.3 | −1.7 |
+
+Six of 13 years are negative. 2016, the small-cap rally year, is the worst at
+−12.5.
+
+### 3.2 Gates (cap150 primary)
+
+| gate | value | result |
+|---|---|---|
+| full mean40 > +1.0pp | +2.28 | pass |
+| common 2011-10..2019 mean40 > +1.0pp | **+0.92** | **FAIL** (short by 0.08pp) |
+| ≥ 36/40 offsets positive (full) | 40/40 | pass |
+| LOYO min > 0 (full) | +1.61 (drop 2018) | pass |
+| \|beta to SPY\| < 0.3 | 0.164 (t −5.01) | pass |
+| kill: mean40 ≤ 0 in either window, or LOYO min ≤ 0 | no | not triggered |
+
+**Outcome: MIDDLE.**
+
+### 3.3 Other tiers (primary construction; reported, not gating)
+
+| tier | full mean40 (pos) | full LOYO min | common mean40 (pos) | beta (t) | MDD median | the gates would read |
+|---|---|---|---|---|---|---|
+| cap150 | +2.28 (40/40) | +1.61 | +0.92 (40/40) | −0.164 (−5.01) | −13.1% | MIDDLE |
+| cap500 | +2.07 (40/40) | +1.38 | +0.69 (40/40) | −0.206 (−7.35) | −14.9% | MIDDLE |
+| cap2000 | +2.21 (40/40) | +1.35 | +1.28 (40/40) | −0.298 (−9.02) | −18.4% | pass (beta 0.298, just under 0.3) |
+
+### 3.4 Supplementary variants (disclosed; they do not change the verdict)
+
+| variant, cap150 | full mean40 (pos) | full LOYO min | common mean40 (pos) | the gates would read |
+|---|---|---|---|---|
+| **total-return IWM** (dividends in the short leg only) | +0.91 (40/40) | +0.22 | **−0.54 (0/40)** | KILL |
+| 0bp (no book cost, no short-leg charge) | +3.11 (40/40) | +2.44 | +1.73 (40/40) | pass |
+
+The total-return variant reads KILL in all three tiers (cap500 common −0.77,
+cap2000 common −0.18). It is not like-for-like: it credits IWM's dividends
+(about 1.4pp/yr) to the short leg while the book, built from split-adjusted
+price-only Sharadar OHLC, earns none of its own. The primary is price-only on
+both legs, so dividends drop out symmetrically only if the book's names yield
+about what IWM yields. That has not been measured. A real short pays IWM's
+dividends, and a real long collects the book's, so the tradable answer lies
+between the primary and this variant according to the book's yield relative
+to IWM's. The gap is material against a +1.0pp gate.
+
+### 3.5 Attribution (not tradable)
+
+Measured on dates where both the icw8 and no-score books exist (cap150: no
+dates removed). The IWM-price bench masks dates the same way for both books.
+
+| tier | window | icw8 − noscore | IWM − noscore | noscore − SPY |
+|---|---|---|---|---|
+| cap150 | full | +3.16 (40/40) | +0.25 | −0.06 |
+| cap150 | common | +2.10 (40/40) | +0.55 | −1.77 |
+| cap500 | full | +2.87 | +0.17 | +0.02 |
+| cap500 | common | +1.77 | +0.45 | −1.67 |
+| cap2000 | full | +3.28 | +0.45 | −0.26 |
+| cap2000 | common | +2.44 | +0.53 | −1.75 |
+
+IWM is a close proxy for the eligible universe: it trails the no-score book by
+only +0.25 (full) and +0.55 (common) pp/yr. That is price-only on both sides.
+IWM's total return would sit about 1.4pp higher. So the hedge removes the
+universe leg's 2011-2019 shortfall against SPY (−1.77) almost entirely. What
+it cannot recover is that the selection spread itself is smaller in the
+common window: +2.10 against +3.16 over the full window. The hedged common
+figure (+0.92) is roughly that spread minus IWM − noscore (+0.55), minus the
+0.63pp/yr that the 10bp short-leg charge costs at 6.3 rebalances a year.
+
+The icw8 − noscore figures are not asserted equal to WO-7's
+`total_icw8_minus_noscore`, because WO-7 aligned dates across 20 null books
+and these are the icw8/noscore-only dates (C3).
 
 ## 4. Verdict
 
-(filled last)
+**MIDDLE. It goes to Gabe.** This is the 14th nomination-era trial of the
+composite family. No kill condition fired. One success gate failed: the
+common window reads +0.92pp/yr against a +1.0pp bar.
+
+What the hedge does:
+- **It keeps the spread positive in both windows.** 40/40 offsets are
+  positive in both. The full window reads +2.28pp/yr with LOYO min +1.61. The
+  2011-2019 small-cap drag against SPY is almost fully removed: unhedged
+  icw8 − SPY on that window is +0.33, hedged +0.92.
+- **The spread is thin once costs are paid.** The 10bp short-leg charge costs
+  0.63pp/yr. Without any costs the common window is +1.73.
+- **The residual beta to SPY is negative** (−0.16, t −5.0). IWM's beta is
+  higher than the low-vol-tilted book's, so the hedge over-shorts the market.
+  Over 2007-2019 that bias cost return rather than adding it.
+- **Year to year, the hedged series is noisy.** Six of 13 years are negative,
+  2016 is −12.5pp, and the median offset's MDD is −13%.
+- **The largest open question is dividends (§3.4).** With IWM on a total-return
+  basis the common window turns negative (−0.54, 0/40). The book's own
+  dividend yield relative to IWM's decides where between +0.92 and −0.54 the
+  tradable number sits. That was outside this work order and was not measured.
