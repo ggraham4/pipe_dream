@@ -227,3 +227,87 @@ follow-up the pre-registration requires.**
   renames with overlapping histories); those tickers carry identical
   series. The same was true on the old grid.
 - SPACs (excluded from column c) fire at 0-13%.
+
+### Results: pre-registered screen (2026-09-24, run once, exactly as registered)
+
+Command: `python3 final/src/insider/screen_insider_v2grid.py` (20 null
+draws, seeds 0..19). Output: `out/insider/insider_v2grid_screen_report.json`,
+log `screen_insider_v2grid.log` (copies in this branch). Era
+2007-01-03..2019-12-31. Every frame was asserted to end before 2020-01-01.
+
+**Harness reconciliation: PASS, exact.** On column c cap150, before any
+insider number was computed:
+- icw8 with frozen `PRODUCTION_WEIGHTS`, decile_volq net 15bp, mean of 40
+  offsets: +0.0285416326, identical to `readout.json`.
+- Split-half OOS IC: +0.0404111 (fit odd, test even) and +0.0553980 (fit
+  even, test odd), identical to `readout.json` to 1e-12.
+- The vectorized scorer equals `ICW.compute_weighted_score` on 13 sampled
+  dates.
+
+**Universes:**
+- Primary: column c cap150, 9,756,141 rows, 6,508 tickers, fire rate 21.1%.
+- Secondary (added tickers only): 2,987,605 rows, 3,275 tickers, fire rate
+  24.2%.
+- `ins_buyers_90` is non-null on 100% of rows in both.
+- Sector is `Unknown` on 0.03% (primary) and 0.09% (added) of rows.
+
+| gate | bar | primary (column c) | secondary (added only) |
+|---|---|---|---|
+| 1 pooled IC, NW(39) t | ≥ +2.50 | −0.0017 (t **−0.50**) FAIL | +0.0090 (t **+2.36**) FAIL |
+| 2 odd / even halves | both > 0 | −0.0086 (t −2.17) / +0.0064 (t +1.28) FAIL | +0.0043 (t +0.96) / +0.0146 (t +2.47) pass |
+| 3 sector-demeaned, both sides | t ≥ +1.0 | −0.0011 (t −0.45) FAIL | +0.0017 (t +0.60) FAIL |
+| (3, factor only, not gated) | — | +0.0121 (t +2.97) | +0.0091 (t +2.40) |
+| 4 grid-offset sign flips | 0/40 | 6/40 FAIL (offset means −0.0043..+0.0010) | 0/40 pass (+0.0057..+0.0121) |
+| 5 max single-year share | ≤ 45% | sum of IC is negative; 2007 = 128% FAIL | 24% (2012) pass; LOYO t 1.87..2.91 |
+| 6 icw9 vs 20-draw shuffle, p80 | real > p80 | +2.432% vs p80 +2.387% (p50 +2.360%), 100th pctile, pass | −4.925% vs p80 −4.975% (p50 −5.003%), 100th pctile, pass |
+| (6, icw8 split-half OOS) | — | +2.368%/yr; icw9 − icw8 = **+0.063pp** | −4.979%/yr; icw9 − icw8 = **+0.054pp** |
+| **verdict** | all six | **KILL** (5 of 6 fail) | **KILL** (gates 1 and 3 fail) |
+
+**Gate-6 details:**
+- **Fitted weights.** The weight on `ins_buyers_90` came out +0.083 (fit
+  on odd years, where its t is −2.17) and +0.033 (fit on even years, t
+  +1.28). The frozen rule uses |t| with the prior sign, so the half where
+  buyers were significantly wrong-signed gave them the larger positive
+  weight. In the secondary the weights were +0.009 and +0.104.
+- **Rows dropped.** The common-universe rule dropped 2,812 primary rows
+  and 1,281 added rows whose icw8 score was NaN.
+- **What the pass means.** As in the v1 screen, the null's spread is tiny
+  (sd 0.022pp/yr primary, 0.061pp/yr added), because permuting one column
+  in nine barely moves the book. Beating it shows the column is not pure
+  noise inside the composite. It does not show a material gain: the
+  +0.05-0.06pp/yr is about a fifth of the book's own offset-to-offset sd.
+- **OOS IC with and without the column.** icw9 +0.0490 vs icw8 +0.0485
+  (primary); +0.0752 vs +0.0752 (added).
+
+**Reading.**
+1. **Primary: KILL.** On the survivorship-safe grid, plain insider buyer
+   counts have no cross-sectional IC (t −0.50). The halves disagree in sign
+   again, as on the old grid (v1: t −0.16, halves −1.76/+1.61). Adding the
+   true small caps did not change the answer.
+2. **Secondary: KILL, the nearest miss in this family.** Among the added
+   small caps, raw IC is positive and fairly stable:
+   - t +2.36, below the 2.50 bar;
+   - 0/40 offset flips and no year above 24%;
+   - LOYO t stays between 1.87 and 2.91.
+
+   It fails the sector gate, though. Once both the factor and the return
+   are demeaned within date × sector, t falls to +0.60. That is the same
+   mechanism the v1 results found in reverse: insider buying clusters by
+   sector, and sector returns drive the raw IC. The factor-only demeaned t
+   (+2.40 here, +2.97 on the primary) is exactly the artefact §3 of the v1
+   results warned about. Demeaning only the factor leaves the sector return
+   in the label. The registered both-sides version is the one that counts.
+3. There is no nomination. Promotion is not in question.
+4. **Trial accounting.** The insider family is now k = 4, all spent.
+   Re-testing plain buyer counts, on this grid or with window, value or
+   cluster variants, would be a fifth trial. The size-conditional reading
+   (the secondary) is recorded as a failed, registered secondary. Do not
+   re-mine it.
+
+**Out-of-scope observation (not a test, for the COO):** the icw8 book built
+*within the added-tickers-only universe* earns **−4.98%/yr vs SPY**, net
+15bp, using split-half OOS weights. Its OOS IC is +0.075, the highest of
+any universe measured. High rank IC alongside a strongly negative long-only
+book in never-large small caps is worth a look. The likely causes are that
+the whole slice underperforms SPY, and illiquidity. This work order does
+not chase it.
