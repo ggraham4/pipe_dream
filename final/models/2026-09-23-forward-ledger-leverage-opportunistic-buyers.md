@@ -347,3 +347,85 @@ Cadence options:
   selection in section 4 keeps any cadence honest.
 
 Under any option the first matured date is 2026-09-08, around 2026-11-03.
+
+## Implementation fix 2026-09-24: TRANS_DATE min (WO-8)
+
+This fixes the bug described in section 5c. It is an implementation fix. The
+definition is unchanged, and it is not a new trial.
+
+**The bug.** `build_insider_panel.load_events()` ran
+`groupby(["ACCESSION_NUMBER","TRANS_CODE"]).agg(trans_date=("TRANS_DATE","min"))`
+while TRANS_DATE was still a `DD-MON-YYYY` string. The minimum was therefore
+lexicographic by day of month. For example, "04-MAR-2008" sorted before
+"11-FEB-2008". `edgar_form4_refresh.py` already took the true minimum, so the
+bulk events and the live events were on different bases.
+
+**The fix.** TRANS_DATE is now parsed with
+`pd.to_datetime(..., format="%d-%b-%Y", errors="coerce")` before the groupby.
+Nothing else changed. `out/insider/insider_events.parquet` was regenerated with
+an atomic write. The old file was kept as
+`out/insider/insider_events_prefix_2026-09-24.parquet`. `insider_features.parquet`
+was **not** rebuilt, and its sha1 is unchanged. Its columns are keyed on
+filing_date and don't read trans_date.
+
+**What changed in the events file** (1,456,667 rows; row set and every other
+column are identical):
+- 25,081 rows (1.72%) have a new trans_date. These are 17,620 of the 217,778
+  multi-date (accession, code) groups, which is 8.09%.
+  - The "5.3%" in section 5c was the share of all rows on one day's sample
+    (17 of 320). It was not a share of multi-date filings.
+- The fixed date is always earlier than the old one, and every change moves the
+  year-month. Because of that, every changed row can matter to the routine test.
+  3,237 of the changed rows also change year.
+- By code: 13,246 S rows and 11,835 P rows changed. Of the 326,004 O/D P rows,
+  5,293 changed.
+- Three accessions were checked by hand against the raw zips. Each matches the
+  true minimum:
+  - 0001181431-08-031743: 04-MAR-2008 → 11-FEB-2008
+  - 0000712534-17-000046: 01-FEB-2017 → 31-JAN-2017
+  - 0001144204-09-011901: 02-MAR-2009 → 27-FEB-2009
+- Known residual: 3 changed rows now take a mistyped raw year as their minimum,
+  for example "08-MAY-0013". These come from the SEC data, not from this fix. We
+  left them alone.
+
+**Effect on the 2026-09-08 blind record: zero flips.**
+- Using the old events, the classifier reproduces the recorded
+  `opp_buyers_90`, `ins_buyers_90` and `unclass_buyers_90` exactly for all
+  2,214 tickers.
+- Using the fixed events:
+  - In-window O/D P events: 615. Opportunistic 180 → 180, routine 19 → 19,
+    unclassifiable 416 → 416. No event changed class.
+  - Owner-issuer pairs in the window: 529. Opportunistic 146, routine 18,
+    unclassifiable 365. None flipped.
+  - Tickers whose count changed: 0 for each of opp, ins and unclass. Fire
+    counts: opp 107, ins 301, unclass 219, the same before and after.
+- The reason: every event in the 90-day window is a live-refresh event, and
+  those already had the correct date. The fix only moves the historical key set
+  that the routine and classifiable tests read. For this cross-section, none of
+  those moves hit a month that decides a result.
+
+**Bulk vs live agreement on trans_date.** This compares the
+`--validate` sample, 320 overlapping rows, with no re-fetch.
+- Before the fix: 94.69% (17 mismatches).
+- After the fix: 100.00% (0 mismatches).
+- The full live file (filed 2026-04-01 onward) has no accessions in common with
+  the bulk data (which ends at 2026q1), so no other comparison is possible.
+
+**Status of the ledger.**
+- The 2026-09-08 record stands as recorded. It was not rewritten, and there are
+  no flips for the evaluator to account for.
+- The fix applies from the next record date. From then on, bulk and live
+  events are on the same basis.
+
+**For the insider workstream (not acted on here).** Across the full history,
+classifying every O/D P event filed on or before 2026-09-08 with the old dates
+versus the fixed dates flips 1,185 of 327,456 events (0.36%):
+- opportunistic → routine: 243
+- opportunistic → unclassifiable: 106
+- routine → opportunistic: 332
+- unclassifiable → opportunistic: 495
+
+`posthoc_insider.py` classifies on trans_date from the same events file. The
+in-era opportunistic-buyer lead in `2026-09-23-insider-congress-results.md` was
+measured on the old dates. Re-running that would be the insider owner's call
+(and the COO's). This fix does not re-run it.

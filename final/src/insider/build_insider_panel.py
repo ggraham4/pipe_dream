@@ -59,6 +59,9 @@ def load_events():
         tr = tr[tr["TRANS_CODE"].isin(["P", "S"])]
         tr = tr.assign(value=pd.to_numeric(tr["TRANS_SHARES"], errors="coerce")
                        * pd.to_numeric(tr["TRANS_PRICEPERSHARE"], errors="coerce"))
+        # Parse BEFORE the min: on the raw DD-MON-YYYY string, min() is
+        # lexicographic ("02-MAR-2016" < "15-FEB-2016"). Fixed 2026-09-24 (WO-8).
+        tr["TRANS_DATE"] = pd.to_datetime(tr["TRANS_DATE"], format="%d-%b-%Y", errors="coerce")
         tr = (tr.groupby(["ACCESSION_NUMBER", "TRANS_CODE"], as_index=False)
                 .agg(value=("value", "sum"), trans_date=("TRANS_DATE", "min")))
         rel = own["RPTOWNER_RELATIONSHIP"].fillna("")
@@ -70,7 +73,7 @@ def load_events():
         log(f"  {Path(path).name}: {len(df):,} owner-code rows")
     ev = pd.concat(rows, ignore_index=True)
     ev["filing_date"] = pd.to_datetime(ev["FILING_DATE"], format="%d-%b-%Y", errors="coerce")
-    ev["trans_date"] = pd.to_datetime(ev["trans_date"], format="%d-%b-%Y", errors="coerce")
+    ev["trans_date"] = pd.to_datetime(ev["trans_date"], errors="coerce")  # already datetime64
     ev["issuer_cik"] = pd.to_numeric(ev["ISSUERCIK"], errors="coerce").astype("Int64")
     ev["owner_cik"] = pd.to_numeric(ev["RPTOWNERCIK"], errors="coerce").astype("Int64")
     ev = ev.rename(columns={"TRANS_CODE": "code", "ACCESSION_NUMBER": "accession",
