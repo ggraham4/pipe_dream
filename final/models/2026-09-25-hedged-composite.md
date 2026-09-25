@@ -187,10 +187,28 @@ Six of 13 years are negative. 2016, the small-cap rally year, is the worst at
 | common 2011-10..2019 mean40 > +1.0pp | **+0.92** | **FAIL** (short by 0.08pp) |
 | ≥ 36/40 offsets positive (full) | 40/40 | pass |
 | LOYO min > 0 (full) | +1.61 (drop 2018) | pass |
+| LOYO min > 0 (common), if the clause covers it | **−0.40** (drop 2018) | **fail** |
 | \|beta to SPY\| < 0.3 | 0.164 (t −5.01) | pass |
-| kill: mean40 ≤ 0 in either window, or LOYO min ≤ 0 | no | not triggered |
+| kill: mean40 ≤ 0 in either window | +2.28 / +0.92 | not triggered |
+| kill: LOYO min ≤ 0 | full +1.61, common −0.40 | **reading-dependent** (see below) |
 
-**Outcome: MIDDLE.**
+**Outcome: it depends on a scope the pre-registration left open.** The work
+order's LOYO clauses ("leave-one-year-out min > 0" and "OR LOYO min ≤ 0")
+name no window. Neither does clarification C4. The script evaluated LOYO on
+the full window only, following WO-7 and the readout. That choice was not
+fixed before results, so both readings are reported and the COO decides:
+
+- **LOYO on the full window only: MIDDLE.** The common-window mean40 of
+  +0.92 misses the +1.0 gate, and no kill fires.
+- **LOYO checked in both windows: KILL.** The common-window LOYO min is
+  −0.40 when 2018 is dropped.
+
+cap500 splits the same way (common LOYO −0.64, drop 2018). cap2000's common
+LOYO is +0.30 (drop 2014).
+
+The JSON's `verdict_cap150` field ("MIDDLE") and every `gates` block record
+the full-window-LOYO reading only. The common-window LOYO values are in each
+`common.loyo_min`.
 
 ### 3.3 Other tiers (primary construction; reported, not gating)
 
@@ -246,15 +264,20 @@ and these are the icw8/noscore-only dates (C3).
 
 ## 4. Verdict
 
-**MIDDLE. It goes to Gabe.** This is the 14th nomination-era trial of the
-composite family. No kill condition fired. One success gate failed: the
-common window reads +0.92pp/yr against a +1.0pp bar.
+**MIDDLE if LOYO is read on the full window only. KILL if LOYO covers the
+common window as well. The pre-registration did not fix which, so the COO
+decides and then it goes to Gabe.** This is the 14th nomination-era trial of
+the composite family. The mean40 kill did not fire in either window. The
+common-window mean40 of +0.92pp/yr misses the +1.0pp success bar.
 
 What the hedge does:
-- **It keeps the spread positive in both windows.** 40/40 offsets are
-  positive in both. The full window reads +2.28pp/yr with LOYO min +1.61. The
-  2011-2019 small-cap drag against SPY is almost fully removed: unhedged
-  icw8 − SPY on that window is +0.33, hedged +0.92.
+- **It keeps the mean spread positive in both windows, but the 2011-2019 result
+  rests on one year.** 40/40 offsets are positive in both windows. The full
+  window reads +2.28pp/yr with LOYO min +1.61. The 2011-2019 small-cap drag
+  against SPY is almost fully removed: unhedged icw8 − SPY on that window is
+  +0.33, hedged +0.92. But the common window goes from +0.92 to **−0.40 with
+  2018 dropped** (2018 alone is +10.3pp). By the project's own LOYO rule,
+  concentrated results carry little forward expectation.
 - **The spread is thin once costs are paid.** The 10bp short-leg charge costs
   0.63pp/yr. Without any costs the common window is +1.73.
 - **The residual beta to SPY is negative** (−0.16, t −5.0). IWM's beta is
@@ -262,7 +285,8 @@ What the hedge does:
   Over 2007-2019 that bias cost return rather than adding it.
 - **Year to year, the hedged series is noisy.** Six of 13 years are negative,
   2016 is −12.5pp, and the median offset's MDD is −13%.
-- **The largest open question is dividends (§3.4).** With IWM on a total-return
-  basis the common window turns negative (−0.54, 0/40). The book's own
-  dividend yield relative to IWM's decides where between +0.92 and −0.54 the
-  tradable number sits. That was outside this work order and was not measured.
+- **Dividends are the other open question (§3.4).** With IWM on a
+  total-return basis the common window turns negative (−0.54, 0/40). The
+  book's own dividend yield relative to IWM's decides where between +0.92 and
+  −0.54 the tradable number sits. That was outside this work order and was
+  not measured.
