@@ -1,0 +1,16 @@
+{
+  "sf1_sha256": "7812f5e1a53f00963e3fc67534845447b73544a252a55e38436db222f58cb5b7",
+  "composite_panel_v2_sha256": "4baff1d7e947882966683e611ae0ea934cee844d49a207c9005a8aa3863ea2dc",
+  "composite_panel_v2_mtime": "Thu Sep 24 14:10:31 2026",
+  "arq_rows": 492578,
+  "arq_after_dedup": 474166,
+  "dims": [
+    "ARQ",
+    "ARY"
+  ],
+  "null_key_rows_dropped": 0,
+  "filings_finite_sue": 335361,
+  "filings_neg_lag": 2,
+  "panel_rows": 13253466,
+  "panel_finite_sue": 10596374
+}
