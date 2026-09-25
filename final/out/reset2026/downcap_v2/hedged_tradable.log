@@ -1,0 +1,26 @@
+[09:07:23] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[09:07:24]     date 0 2007-01-03 (1s)
+[09:07:36]     date 500 2008-12-26 (12s)
+[09:07:46]     date 1000 2010-12-21 (23s)
+[09:07:57]     date 1500 2012-12-17 (34s)
+[09:08:09]     date 2000 2014-12-11 (46s)
+[09:08:22]     date 2500 2016-12-06 (59s)
+[09:08:36]     date 3000 2018-11-30 (73s)
+[09:08:43] books built (85s)
+[09:08:45] panel loaded: 2178 tickers (87s)
+[09:08:51] cap150: basis reconcile book gross max|diff| 1.80e-09; {'dates': 3232, 'names': 954806, 'missing_in_panel': 0, 'era_truncated': 0, 'delist_floor': 9639, 'gross_max_abs_diff': np.float64(1.8008368130040253e-09)}
+[09:08:51]   cap150 yields: {'full': {'book_div_yield_ann': 0.016440137080510932, 'iwm_div_yield_ann': 0.013731173014567603, 'book_minus_iwm_ann': 0.0027089640659433297, 'n_rebalance_dates': 3232}, 'common': {'book_div_yield_ann': 0.016224801316575742, 'iwm_div_yield_ann': 0.014600561797166822, 'book_minus_iwm_ann': 0.0016242395194089184, 'n_rebalance_dates': 2022}}
+[09:08:51]   cap150 tradable_15bp: full +0.0256 (40/40, LOYO min +0.0188 drop 2018) common +0.0108 (40/40, LOYO -0.0026) beta -0.165
+[09:08:51]   cap150 tradable_0bp: full +0.0338 (40/40, LOYO min +0.0271 drop 2018) common +0.0190 (40/40, LOYO +0.0055) beta -0.164
+[09:08:52]   cap150 price_only_15bp_recheck: full +0.0228 (40/40, LOYO min +0.0161 drop 2018) common +0.0092 (40/40, LOYO -0.0040) beta -0.164
+[09:08:56] cap500: basis reconcile book gross max|diff| 1.71e-09; {'dates': 3232, 'names': 705395, 'missing_in_panel': 0, 'era_truncated': 0, 'delist_floor': 6413, 'gross_max_abs_diff': np.float64(1.710137587096483e-09)}
+[09:08:56]   cap500 yields: {'full': {'book_div_yield_ann': 0.016288989038175904, 'iwm_div_yield_ann': 0.013731173014567603, 'book_minus_iwm_ann': 0.0025578160236083, 'n_rebalance_dates': 3232}, 'common': {'book_div_yield_ann': 0.01591823515164326, 'iwm_div_yield_ann': 0.014600561797166822, 'book_minus_iwm_ann': 0.0013176733544764364, 'n_rebalance_dates': 2022}}
+[09:08:56]   cap500 tradable_15bp: full +0.0233 (40/40, LOYO min +0.0165 drop 2011) common +0.0082 (40/40, LOYO -0.0053) beta -0.208
+[09:08:56]   cap500 tradable_0bp: full +0.0316 (40/40, LOYO min +0.0248 drop 2011) common +0.0164 (40/40, LOYO +0.0029) beta -0.207
+[09:08:56]   cap500 price_only_15bp_recheck: full +0.0207 (40/40, LOYO min +0.0138 drop 2011) common +0.0069 (40/40, LOYO -0.0064) beta -0.206
+[09:08:59] cap2000: basis reconcile book gross max|diff| 1.94e-09; {'dates': 3232, 'names': 372193, 'missing_in_panel': 0, 'era_truncated': 0, 'delist_floor': 2962, 'gross_max_abs_diff': np.float64(1.9406232176777394e-09)}
+[09:08:59]   cap2000 yields: {'full': {'book_div_yield_ann': 0.01762138389517874, 'iwm_div_yield_ann': 0.013731173014567603, 'book_minus_iwm_ann': 0.003890210880611137, 'n_rebalance_dates': 3232}, 'common': {'book_div_yield_ann': 0.016596506547158073, 'iwm_div_yield_ann': 0.014600561797166822, 'book_minus_iwm_ann': 0.001995944749991246, 'n_rebalance_dates': 2022}}
+[09:08:59]   cap2000 tradable_15bp: full +0.0260 (40/40, LOYO min +0.0173 drop 2011) common +0.0148 (40/40, LOYO +0.0049) beta -0.301
+[09:08:59]   cap2000 tradable_0bp: full +0.0344 (40/40, LOYO min +0.0258 drop 2011) common +0.0231 (40/40, LOYO +0.0132) beta -0.301
+[09:08:59]   cap2000 price_only_15bp_recheck: full +0.0221 (40/40, LOYO min +0.0135 drop 2011) common +0.0128 (40/40, LOYO +0.0030) beta -0.298
+[09:08:59] FROZEN READING cap150: MIDDLE (102s)

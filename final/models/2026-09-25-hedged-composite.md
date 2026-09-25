@@ -320,31 +320,107 @@ and it carries `close` (split-adjusted, the book's basis) alongside
 - **Weights.** The book weights are the renormalised weights the gross
   return uses. Names dropped for NaN returns get no dividend.
 
+## 3.7 ITERATE #1 results: the tradable hedged composite
+
+Script: `final/src/reset2026/hedged_tradable.py`. Output: `hedged_tradable.json`
+and `.log`. The pre-registration (§3.6) was committed locally as 61d321b
+before this ran. The integrator's push of 61d321b was blocked by the
+auto-mode permission classifier and was not retried.
+
+**Checks (all passed):**
+- **Dividend name-check** (inferred from Sharadar closeadj/close jumps; 4
+  ex-dates each):
+  - JNJ 2017: $3.298 vs $3.32 (0.789 / 0.834 / 0.842 / 0.835)
+  - JNJ 2018: $3.534 vs $3.54 (0.834 / 0.899 / 0.901 / 0.901)
+  - XOM 2017: $3.061 vs $3.06
+  - The ex-dates are the real ones (e.g. JNJ 2017-02-24, 2017-05-25). All
+    three are within 2%.
+  - Caveat: closeadj rounding leaves ±0.001 jitter in f on non-ex days. The
+    jitter is zero-mean, and the formula reads f only at entry and exit.
+- **Basis reconcile.** The panel's open/close reproduce the book's gross
+  return on every IWM-live rebalance date (3,232), with max |diff| of
+  1.8e-9 (cap150), 1.7e-9 (cap500) and 1.9e-9 (cap2000).
+  - Missing names: 0. Era-truncated names: 0.
+  - Names on the delisting floor: 9,639 (cap150). These are handled as in
+    the outcome cache: the exit is the last bar, with the dividends earned
+    up to then.
+- **Price-only recheck.** It reproduces §3.1 exactly (to 1e-12).
+- **Hold-out.** The panel is loaded 2006-12..2019-12 with a max(date) assert.
+
+**Dividend yields** (pooled over IWM-live rebalance dates, ×252/40, %/yr):
+
+| tier | window | book | IWM | book − IWM |
+|---|---|---|---|---|
+| cap150 | full | 1.64 | 1.37 | **+0.27** |
+| cap150 | 2011-10..2019 | 1.62 | 1.46 | **+0.16** |
+| cap500 | full / common | 1.63 / 1.59 | 1.37 / 1.46 | +0.26 / +0.13 |
+| cap2000 | full / common | 1.76 / 1.66 | 1.37 / 1.46 | +0.39 / +0.20 |
+
+The low-vol-tilted book out-yields IWM slightly. The short leg's dividend
+cost is therefore more than covered, and the tradable number sits just
+above the price-only primary, not between it and the total-return variant.
+
+**Tradable hedged** (price-only hedged + book yield − IWM yield; 15bp book
+cost + 10bp short leg):
+
+| tier | full mean40 (pos) | full LOYO min | 2011-19 mean40 (pos) | 2011-19 LOYO min | beta (NW t) |
+|---|---|---|---|---|---|
+| **cap150** | **+2.56** (40/40) | **+1.88** (2018) | **+1.08** (40/40) | −0.26 (2018) | −0.165 (−5.09) |
+| cap500 | +2.33 (40/40) | +1.65 (2011) | +0.82 (40/40) | −0.53 (2018) | −0.208 |
+| cap2000 | +2.60 (40/40) | +1.73 (2011) | +1.48 (40/40) | +0.49 (2014) | −0.301 |
+
+The 0bp variant (supplementary) for cap150 is full +3.38 and 2011-19 +1.90.
+
+- **cap150 tradable per year** (pp/yr): 2007 −4.7, 2008 +7.8, 2009 +10.0,
+  2010 −0.1, 2011 +9.5, 2012 −0.8, 2013 −1.1, 2014 +6.4, 2015 +1.9,
+  2016 −12.4, 2017 +6.7, 2018 +10.6, 2019 −1.4.
+- **MDD:** median −12.8%, worst −14.2%.
+
+**Frozen reading (§3.6).** The tradable cap150 2011-19 mean40 is +1.08 > 0,
+so the verdict is **MIDDLE**, and it goes to Gabe with these numbers.
+
+For information only (this does not change the frozen reading): on the
+tradable basis, every WO-9 success gate is cleared at cap150 under the COO's
+full-window LOYO ruling.
+- full +2.56 > 1.0
+- 2011-19 +1.08 > 1.0, by a margin of only 0.08pp
+- 40/40 offsets positive
+- LOYO min +1.88
+- |beta| 0.165
+
+Two things still hold. The 2011-19 result rests on 2018: its LOYO is
+−0.26 with 2018 dropped. And the +1.0 bar is cleared only after a basis
+fix made post-hoc.
+
 ## 4. Verdict
 
-**MIDDLE if LOYO is read on the full window only. KILL if LOYO covers the
-common window as well. The pre-registration did not fix which, so the COO
-decides and then it goes to Gabe.** This is the 14th nomination-era trial of
-the composite family. The mean40 kill did not fire in either window. The
-common-window mean40 of +0.92pp/yr misses the +1.0pp success bar.
+**MIDDLE. It goes to Gabe.** This is the 14th nomination-era trial of the
+composite family. ITERATE #1 fixed the basis only, so it is not a new trial.
 
-What the hedge does:
-- **It keeps the mean spread positive in both windows, but the 2011-2019 result
-  rests on one year.** 40/40 offsets are positive in both windows. The full
-  window reads +2.28pp/yr with LOYO min +1.61. The 2011-2019 small-cap drag
-  against SPY is almost fully removed: unhedged icw8 − SPY on that window is
-  +0.33, hedged +0.92. But the common window goes from +0.92 to **−0.40 with
-  2018 dropped** (2018 alone is +10.3pp). By the project's own LOYO rule,
-  concentrated results carry little forward expectation.
-- **The spread is thin once costs are paid.** The 10bp short-leg charge costs
-  0.63pp/yr. Without any costs the common window is +1.73.
-- **The residual beta to SPY is negative** (−0.16, t −5.0). IWM's beta is
-  higher than the low-vol-tilted book's, so the hedge over-shorts the market.
-  Over 2007-2019 that bias cost return rather than adding it.
-- **Year to year, the hedged series is noisy.** Six of 13 years are negative,
-  2016 is −12.5pp, and the median offset's MDD is −13%.
-- **Dividends are the other open question (§3.4).** With IWM on a
-  total-return basis the common window turns negative (−0.54, 0/40). The
-  book's own dividend yield relative to IWM's decides where between +0.92 and
-  −0.54 the tradable number sits. That was outside this work order and was
-  not measured.
+- **COO ruling.** LOYO is read on the full window only.
+- **Primary (price-only IWM).** Every success gate passes except the
+  2011-19 mean: +0.92 against the +1.0pp bar. No kill fires.
+- **ITERATE #1 (tradable, with book and IWM dividends).** The book
+  out-yields IWM by +0.27pp/yr (full) and +0.16pp/yr (2011-19). That puts
+  the tradable cap150 at:
+  - full +2.56 (40/40), LOYO min +1.88
+  - 2011-19 +1.08 (40/40)
+  - beta −0.165
+  The frozen reading is tradable 2011-19 > 0, so the verdict stays
+  MIDDLE. On this basis every WO-9 success gate clears, but the 2011-19
+  margin is 0.08pp.
+
+What Gabe should weigh:
+- **The hedge does its job.** It removes the small-cap universe's 2011-19
+  drag against SPY almost entirely (IWM tracks the eligible universe to
+  within about 0.3-0.6pp/yr). The selection spread survives in both windows
+  on all 40 offsets.
+- **The 2011-19 spread is thin and concentrated.** It is about +1pp/yr
+  after costs, and it goes negative with 2018 dropped: −0.26 tradable,
+  −0.40 price-only.
+- **Year to year, the hedged series is noisy.** Six of 13 years are
+  negative, 2016 is about −12pp, and the median offset's MDD is about −13%.
+- **The hedge over-shorts the market** (beta −0.16, t −5). That bias cost
+  return over 2007-2019.
+- **cap2000 is the strongest tier** on the 2011-19 window (+1.48 tradable,
+  LOYO +0.49). Its residual beta is −0.30, right at the limit.
