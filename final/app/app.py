@@ -20,6 +20,7 @@ approximations -- clearly flagged both there and in the Options tab).
 """
 from __future__ import annotations
 
+import os
 import sys
 import time
 from pathlib import Path
@@ -29,7 +30,8 @@ import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lib import (paths, stock_model as sm, options_model as om, data_refresh as dr,
-                 pit_model as pm, composite_model as cm, blend_model as bm)
+                 pit_model as pm, blend_model as bm, composite_model as cm,
+                 model_agreement as ma)
 
 st.set_page_config(page_title="pipe_dream — Model Dashboard", layout="wide", page_icon="📈")
 
@@ -136,48 +138,23 @@ def render_overview():
 
     with col1:
         st.subheader("📈 Stock buy/no-buy")
-        if feat is None:
-            st.info("No data yet.")
+        blend_df, blend_meta = bm.get_signal()
+        if blend_meta is None:
+            st.info("No current_signal_blend.csv yet — see the Today's Picks tab.")
         else:
-            pit_df, pit_meta = pm.get_signal(pm.PRIMARY)
-            cand_df, _ = pm.get_signal(pm.CANDIDATE)
-            uc = pm.universe_counts()
             c1, c2, c3 = st.columns(3)
-            if uc is not None:
-                c1.metric("PIT universe", f"{uc['total_pit_tickers']:,}",
-                          help=f"{uc['current_universe_tickers']:,} current-universe + "
-                               f"{uc['total_pit_tickers'] - uc['current_universe_tickers']:,} valid "
-                               f"point-in-time gap tickers (delisted/acquired/bankrupt), if the current "
-                               f"count could be resolved."
-                          if uc.get("current_universe_tickers") is not None else None)
-            else:
-                c1.metric("Universe (price data)", f"{feat['ticker'].nunique():,}",
-                          help="No PIT panel on disk yet — this is the plain non-PIT current-universe "
-                               "count, not the deployed model's own universe.")
-            if pit_meta:
-                c2.metric("As of", pit_meta["as_of_date"])
-                c3.metric("Horizon", f"{pit_meta.get('forward_window_trading_days', 40)}d")
-            else:
-                c3.metric("Forward horizon", f"{sm.universe_summary()['forward_window_days']}d")
-            if pit_df is not None:
-                st.caption("**Deployed signal** (q75, point-in-time, vol-bucketed top-5, "
-                           "inverse-vol weighted) — today's picks. Not a validated edge.")
-                show = pit_df[["ticker", "allocation_pct", "close",
-                               "suggested_stop_loss_price"]].copy()
-                show["allocation_pct"] = show["allocation_pct"].map(lambda v: f"{v:.2f}%")
-                st.dataframe(show, hide_index=True, use_container_width=True)
-            else:
-                st.info("No current_signal_pit.csv yet — see the Today's Picks tab.")
-            if cand_df is not None:
-                agree = pm.get_agreement()
-                n = agree.get("n_overlap") if agree else None
-                st.caption(
-                    f"Tracked candidate (xrank) picks: **{', '.join(cand_df['ticker'])}**"
-                    + (f" · overlap {n}/5" if n is not None else "")
-                    + ". Shown for comparison only — it returned −4.28%/yr excess "
-                      "(0.771× SPY) on the 2020-2026 hold-out. Today's Picks tab has "
-                      "the detail."
-                )
+            c1.metric("Eligible universe (cap2000)", f"{blend_meta['n_eligible_universe']:,}")
+            c2.metric("As of", blend_meta["as_of_date"])
+            c3.metric("Horizon", "40d")
+            st.caption(
+                "**Composite + q75 blend** (rank-averaged 50/50, decile-within-vol-"
+                "quintile, inverse-vol weighted) — today's picks. Promoted 2026-09-19; "
+                "single-grid backtest, still negative vs SPY in absolute terms on the "
+                "2020-2026 hold-out. See the Today's Picks tab before acting on these."
+            )
+            show = blend_df[["ticker", "sector", "weight", "close"]].head(10).copy()
+            show["weight"] = show["weight"].map(lambda v: f"{v:.2%}")
+            st.dataframe(show, hide_index=True, use_container_width=True)
 
     with col2:
         st.subheader("📊 Options premium (calls)")
@@ -227,834 +204,330 @@ def render_overview():
 # direction.
 # --------------------------------------------------------------------------
 
-HOLDOUT_BANNER = (
-    "**The candidate is displayed, not followed.** `xrank` recovered "
-    "model-level information coefficient in Round 17b and then lost to SPY on "
-    "the 2020-2026 hold-out: **-4.28%/yr excess, 0.771x SPY**, against the "
-    "deployed model's **+7.33%/yr, 1.526x**. It is on this page so its "
-    "disagreements with the deployed model are visible, not as an alternative "
-    "to trade. See `backtest/2026-09-12-xrank-fails-the-holdout-do-not-switch.md`."
-)
-
-NOT_AN_EDGE = (
-    "**This is not a validated edge, and it is not claimed to be one.** A "
-    "pre-registered sweep of 1,152 configurations (Round 12) failed its "
-    "acceptance criteria — Deflated Sharpe 0.746 against a 0.95 threshold, "
-    "White Reality Check p = 0.61. Round 13 showed every fundamental feature "
-    "that appeared to carry signal is a **sector bet** (the strongest drops "
-    "from t = 3.28 to t = 0.77 under sector neutralization). Rounds 15 and 15b "
-    "closed off breadth and horizon as levers: effective breadth is capped at "
-    "~16 bets per window by an average pairwise active correlation of 0.055–"
-    "0.076, and varying breadth **13×** did not move the result. "
-    "What the model demonstrably owns is a **low-volatility tilt** "
-    "(score-vs-volatility correlation −0.134) plus a tech/healthcare sector "
-    "bet — both purchasable as ETFs, which is why USMV is on the chart in "
-    "Backtest & History. For calibration: in a synthetic grid containing **no "
-    "signal at all**, 27% of configurations beat the market and the best "
-    "reached 2.58×."
-)
-
-
-def _signal_freshness_warning(status: dict, label: str):
-    if status["exists"] and status["stale"]:
-        st.warning(
-            f"{label}: picks were computed as of {status['as_of_date']}, but the "
-            f"panel on disk goes through {status['latest_data_date']}. Retrain to "
-            f"pick up the newer data."
-        )
-
-
-def _picks_table(df: pd.DataFrame, compact: bool = False) -> pd.DataFrame:
-    show = df.copy()
-    if "allocation_pct" in show.columns:
-        show["allocation_pct"] = show["allocation_pct"].map(lambda v: f"{v:.2f}%")
-    if compact:
-        cols = [c for c in ("ticker", "allocation_pct", "close",
-                            "suggested_stop_loss_price") if c in show.columns]
-        return show[cols]
-    return show
-
-
-def _noise_band_caption(comp):
-    """The single most important number for reading anything else on the page."""
-    ns = (comp or {}).get("noise_scale")
-    if not ns:
-        return None
-    return (
-        f"**Noise scale: {ns['excess_cagr_pct_min']:+.2f} to "
-        f"{ns['excess_cagr_pct_max']:+.2f} %/yr excess, sd "
-        f"{ns['excess_cagr_pct_sd']:.2f}** — across {ns['n_cells']} cells that "
-        f"differ from the deployed one only by a turned knob (training window, "
-        f"training cap, tree depth, market-cap tier, label basis), on the same "
-        f"features, label and model. Any difference smaller than this band is "
-        f"not evidence of anything, including the difference between the two "
-        f"models on this page."
-    )
-
 
 def render_stock_pit():
-    """Today's Picks -- the deployed signal, with the tracked candidate beside
-    it. Both are produced by final/src/current_signal_pit.py in one run; see
-    lib/pit_model.py for what each file on disk is."""
-    if feat is None:
-        st.warning("No features.parquet — run a data refresh first (Data & Updates tab).")
-        return
-
-    st.caption(
-        "**Deployed configuration.** Trains on the most recent **500,000 labelled "
-        "rows** of price momentum + point-in-time SEC fundamentals (24 features), "
-        "restricts today's candidates to that date's **point-in-time universe** "
-        "(the same screen the backtest used), then takes the **single best name "
-        "in each of 5 trailing-volatility quintiles** and weights them by "
-        "**inverse volatility**. Entry is the next open; the position is held to "
-        "the 40-day horizon with **no stop-loss**. The 15% stop price shown per "
-        "name is risk guidance only and is not part of the backtested "
-        "configuration."
+    """Today's Picks -- PRIMARY signal as of 2026-09-19: the composite+q75
+    blend (final/src/current_signal_blend.py). Promoted over the prior
+    q75/xrank display per Gabe's explicit instruction; the caveats below are
+    not decorative -- read current_signal_blend.py's module docstring and
+    final/models/2026-09-19-factor-composite-reset.md for the full context."""
+    st.warning(
+        "**Read before acting on these picks.** The blend's backtest is a "
+        "SINGLE-GRID result (q75's score cache has only one cadence -- this "
+        "project's usual 40-offset average isn't available for it), and it "
+        "still shows NEGATIVE excess vs SPY in absolute terms on the "
+        "2020-2026 hold-out (-0.36%, the least-bad of three constructions "
+        "tested, not a winner). It was promoted anyway, on explicit "
+        "instruction, over that recommendation. Full detail: "
+        "`final/models/2026-09-19-factor-composite-reset.md`."
     )
-    st.error(NOT_AN_EDGE)
-    st.warning(HOLDOUT_BANNER)
 
-    if not pm.fundamentals_pit_panel_exists():
-        st.info(
-            "No features_with_fundamentals_sharadar_pit.parquet yet — hit "
-            "\"Retrain\" below. The first run rebuilds the Sharadar panel, the "
-            "point-in-time universe and both feature panels from scratch, so it "
-            "is much slower than a normal retrain."
-        )
-
-    statuses = pm.all_signal_status()
-    for v in pm.VARIANTS:
-        _signal_freshness_warning(statuses[v["key"]], v["short_name"])
-
-    if st.button("🔁 Retrain both signals on latest data", key="retrain_pit"):
-        dr.run_step_sequence("stock_retrain_pit", pm.retrain_commands(),
-                             pm.PIT_STEP_LABELS, cwd=paths.SRC_DIR)
+    df, meta = bm.get_signal()
+    if st.button("🔁 Refresh the blend's picks", key="retrain_blend"):
+        dr.run_step_sequence("stock_retrain_blend", bm.retrain_commands(),
+                             ["down-cap universe", "quality factors", "build panel", "score blend"],
+                             cwd=paths.SRC_DIR)
         st.rerun()
 
-    state = dr.refresh_status("stock_retrain_pit")
+    state = dr.refresh_status("stock_retrain_blend")
     if state.status == "running":
-        st.info(
-            f"Retraining in progress (started {state.started_at})... rebuilding "
-            f"the panels from scratch can take several minutes; this page keeps "
-            f"refreshing."
-        )
+        st.info("Refreshing... this page keeps updating.")
         with st.expander("Log", expanded=True):
-            st.code(dr.tail_log("stock_retrain_pit"))
+            st.code(dr.tail_log("stock_retrain_blend"))
         time.sleep(2)
         st.rerun()
     elif state.status in ("done", "failed"):
         (st.success if state.status == "done" else st.error)(
-            f"Last retrain {state.status} at {state.finished_at}."
-        )
+            f"Last refresh {state.status} at {state.finished_at}.")
         with st.expander("Log"):
-            st.code(dr.tail_log("stock_retrain_pit"))
+            st.code(dr.tail_log("stock_retrain_blend"))
 
-    signals = pm.get_all_signals()
-    primary_df, primary_meta = signals[pm.PRIMARY]
-    if primary_meta:
-        c1, c2, c3 = st.columns(3)
-        c1.metric("As of", primary_meta["as_of_date"])
-        c2.metric("Eligible universe today", f"{primary_meta.get('n_eligible_today', 0):,}")
-        c3.metric("Horizon", f"{primary_meta.get('forward_window_trading_days', 40)}d")
-
-    cols = st.columns(len(pm.VARIANTS))
-    for col, v in zip(cols, pm.VARIANTS):
-        df, meta = signals[v["key"]]
-        with col:
-            if v["role"] == "primary":
-                st.subheader(f"✅ {v['display_name']}")
-                st.caption("The signal this app runs.")
-            else:
-                st.subheader(f"👁️ {v['display_name']}")
-                st.caption("Tracked for comparison. **Not** a recommendation.")
-            if df is None:
-                st.info(f"No {v['signal_csv']} yet — hit Retrain above.")
-                continue
-            st.dataframe(_picks_table(df), hide_index=True, use_container_width=True)
-            if meta:
-                bits = [f"cell `{meta.get('cell_id', v['cell_id'])}`"]
-                if meta.get("holdout_excess_cagr_pct") is not None:
-                    bits.append(
-                        f"hold-out 2020-2026: **{meta['holdout_excess_cagr_pct']:+.2f}%/yr** "
-                        f"excess ({meta.get('holdout_mult_vs_spy')}× SPY)")
-                st.caption(" · ".join(bits))
-
-    agree = pm.get_agreement()
-    if agree:
-        n = agree.get("n_overlap", 0)
-        names = ", ".join(agree.get("overlap", [])) or "none"
-        st.info(f"**Overlap today: {n}/5** — {names}")
-        st.caption(agree.get("caveat", ""))
-
-    comp = pm.get_comparison()
-    band = _noise_band_caption(comp)
-    if band:
-        st.caption(band)
-
-
-def render_ticker_taxonomy(ticker: str, as_of=None):
-    """One ticker's full industry path, with what the model did to each group.
-
-    Used from both the ticker query and the Sector Bets tab. The group label is
-    a fact about the TICKER; the picks/expected/q columns beside it are a fact
-    about the MODEL, and putting them on one row is what makes the lookup worth
-    more than a classification table. It is still description, not a reason to
-    buy anything -- Round 13 measured that sector-neutralising removes
-    essentially all of the edge, so an enriched group is where the model bets,
-    not where it was shown to be right.
-    """
-    from lib import sector_view as sv
-
-    t = str(ticker).strip().upper()
-    if not sv.known_ticker(t):
-        st.caption(f"**{t}** is not in `tickers_master.csv`, so it has no "
-                   f"industry classification. That is a data gap, not a model "
-                   f"verdict.")
+    if df is None:
+        st.info("No current_signal_blend.csv yet — hit Refresh above. "
+               "(Needs features_with_fundamentals_sharadar_pit.parquet and "
+               "out/models/xgb_pit_augmented_model.json to already exist -- "
+               "run the base Retrain in Data & Updates first if this is a "
+               "fresh checkout.)")
         return
-    d = sv.ticker_groups(t, as_of, sv.load_enrichment())
-    show = d.copy()
-    ren = {"level": "level", "group": "group",
-           "n_eligible_today": "peers eligible today", "picks": "picks (620)",
-           "expected": "expected", "ratio": "×", "q_enrich": "q over",
-           "q_deplete": "q under"}
-    for c in ("expected",):
-        if c in show:
-            show[c] = show[c].map(lambda v: f"{v:.1f}" if pd.notna(v) else "—")
-    if "ratio" in show:
-        show["ratio"] = show["ratio"].map(
-            lambda v: f"{v:.2f}x" if pd.notna(v) else "—")
-    for c in ("q_enrich", "q_deplete"):
-        if c in show:
-            show[c] = show[c].map(lambda v: f"{v:.3g}" if pd.notna(v) else "—")
-    show = show.rename(columns=ren)
-    st.dataframe(show, hide_index=True, use_container_width=True)
-    st.caption(
-        "Coarse to fine. `picks (620)` is how often the deployed model has "
-        "bought *anything* from that group across all 124 rebalance windows, "
-        "against what a draw from the same volatility quintiles would give; "
-        "`q` is BH-corrected across every group at that level. A group can be "
-        "strongly enriched at one level and flat at the next — that gap is "
-        "where the bet actually lives."
+
+    c1, c2, c3 = st.columns(3)
+    c1.metric("As of", meta["as_of_date"])
+    c2.metric("Positions", meta["n_picks"])
+    c3.metric("Eligible universe (cap2000 tier)", f"{meta['n_eligible_universe']:,}")
+    st.write("**Construction:** " + meta["construction"])
+    with st.expander("The 9 composite factors, signs, and the q75/composite blend weight"):
+        st.json({"q75_weight": meta["q75_weight"], "composite_weight": meta["composite_weight"],
+                "composite_factor_signs": meta["factors"]})
+    with st.expander("Backtest summary (single grid — see the warning above)"):
+        st.json(meta["backtest_summary"])
+    st.dataframe(
+        df[["ticker", "sector", "close", "market_cap", "volatility_60",
+            "q75_score", "composite_score", "blend_score", "weight"]]
+          .style.format({"close": "${:.2f}", "market_cap": "${:,.0f}",
+                          "volatility_60": "{:.2%}", "q75_score": "{:.3f}",
+                          "composite_score": "{:.3f}", "blend_score": "{:.3f}",
+                          "weight": "{:.2%}"}),
+        use_container_width=True, height=480,
     )
+    st.caption(meta["note"])
+
+
+def render_stock_theoretical():
+    """Theoretical Model -- the factor composite ALONE (not blended with
+    q75), treated as a physics-style theory: every sign is a pre-registered
+    directional prediction from a cited anomaly, every weight is a measured
+    IC-shrinkage factor, NOTHING is fit to a return target. Shown here so it
+    can be compared directly against the blend in the Today's Picks tab --
+    same universe, same portfolio construction, same horizon; the only
+    difference is that this signal has zero XGBoost/q75 contribution.
+    Added 2026-09-22 per Gabe's request. See
+    final/models/2026-09-22-composite-model-full-specification.md."""
+    st.info(
+        "**What this is.** The 8-factor composite (see Table 1 in the "
+        "full-specification doc), IC-shrinkage weighted, scored with ZERO "
+        "return-target fitting -- only the factor signs and the weighting "
+        "formula are decisions, both made before ever looking at a return. "
+        "This is the SAME composite that feeds the blend in Today's Picks; "
+        "shown alone here for direct before/after comparison. It fails "
+        "leave-one-year-out on the 2020-2026 hold-out (see below) -- treat "
+        "it as a tracked research candidate, not a recommendation."
+    )
+
+    df, meta = cm.get_signal()
+    if st.button("🔁 Refresh the theoretical model's picks", key="retrain_composite"):
+        dr.run_step_sequence("stock_retrain_composite", cm.retrain_commands(),
+                             ["score theoretical model", "rebuild backtest equity curve"],
+                             cwd=paths.SRC_DIR)
+        st.rerun()
+    st.caption(
+        "This button only RESCORES today's picks off the composite panel -- it "
+        "does not rebuild that panel. If the panel itself is stale (new price/"
+        "fundamentals data pulled since the last full retrain), use \"Refresh "
+        "the blend's picks\" in Today's Picks first (it rebuilds the shared "
+        "panel), or \"Retrain ALL models\" in Data & Updates, which refreshes "
+        "everything including this model."
+    )
+
+    state = dr.refresh_status("stock_retrain_composite")
+    if state.status == "running":
+        st.info("Refreshing... this page keeps updating.")
+        with st.expander("Log", expanded=True):
+            st.code(dr.tail_log("stock_retrain_composite"))
+        time.sleep(2)
+        st.rerun()
+    elif state.status in ("done", "failed"):
+        (st.success if state.status == "done" else st.error)(
+            f"Last refresh {state.status} at {state.finished_at}.")
+        with st.expander("Log"):
+            st.code(dr.tail_log("stock_retrain_composite"))
+
+    if df is None:
+        st.info("No current_signal_composite.csv yet — hit Refresh above. "
+                "(Needs the composite panel to already exist -- run \"Refresh "
+                "the blend's picks\" in Today's Picks, or \"Retrain ALL "
+                "models\" in Data & Updates, first if this is a fresh "
+                "checkout.)")
+        return
+
+    c1, c2, c3 = st.columns(3)
+    c1.metric("As of", meta["as_of_date"])
+    c2.metric("Positions", meta["n_picks"])
+    c3.metric("Eligible universe (cap150 tier)", f"{meta['n_eligible_universe']:,}")
+    st.write("**Construction:** " + meta["construction"])
+    with st.expander("The 8 factors: signs and IC-shrinkage weights"):
+        st.json({"factor_signs": meta["factor_signs"], "factor_weights": meta["factor_weights"]})
+    with st.expander("Backtest summary"):
+        st.json(meta["backtest_summary"])
+    st.dataframe(
+        df[["ticker", "sector", "close", "market_cap", "volatility_60",
+            "composite_score", "weight"]]
+          .style.format({"close": "${:.2f}", "market_cap": "${:,.0f}",
+                          "volatility_60": "{:.2%}", "composite_score": "{:.3f}",
+                          "weight": "{:.2%}"}),
+        use_container_width=True, height=480,
+    )
+    st.caption(meta["note"])
+
+    st.divider()
+    st.subheader("Full backtest history: theoretical model vs SPY (2007–2026)")
+    st.caption(
+        "Nomination era (2007-2019) and hold-out era (2020-2026) stitched "
+        "into one continuous compounding curve -- IC-weighted composite, "
+        "decile_volq construction, single offset, net of 15bp turnover cost. "
+        "This is NOT a new hold-out spend: every number here reproduces an "
+        "already-reported cell (see build_backtest_equity_curve.py's "
+        "docstring); this just makes it plottable and shows the 2019/2020 "
+        "boundary. Read the failed leave-one-year-out result above before "
+        "reading too much into how good this curve looks -- most of the "
+        "hold-out-era gain concentrates in a single year (2020)."
+    )
+    curve = cm.get_equity_curve()
+    if curve is None:
+        st.info("No backtest_equity_curve.csv yet — run build_backtest_equity_curve.py "
+                "(final/src/reset2026/) or hit Refresh above.")
+    else:
+        chart_df = curve.set_index("date")[["composite_net_cum", "spy_cum"]].rename(
+            columns={"composite_net_cum": "Theoretical model (net of costs)", "spy_cum": "SPY"})
+        st.line_chart(chart_df)
+        boundary = curve[curve["era"] == "holdout"]["date"].min()
+        if pd.notna(boundary):
+            st.caption(f"Hold-out era begins {boundary.date()} (vertical eyeballing only -- "
+                       f"Streamlit's line_chart doesn't draw boundary markers).")
+        term = curve.iloc[-1]
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Terminal wealth (composite, net)", f"{term['composite_net_cum']:.2f}x")
+        c2.metric("Terminal wealth (SPY)", f"{term['spy_cum']:.2f}x")
+        c3.metric("Windows", f"{len(curve)}")
+
+
+def _signal_mtimes() -> tuple:
+    return tuple(file_mtime(p) for p in (bm.SIGNAL_CSV, bm.SIGNAL_META, bm.SIGNAL_FULL_CSV,
+                                         cm.SIGNAL_CSV, cm.SIGNAL_META, cm.SIGNAL_FULL_CSV))
+
+
+@st.cache_data(max_entries=4)
+def _cached_agreement(_mtimes: tuple):
+    return ma.agreement()
+
+
+@st.cache_data(max_entries=32)
+def _cached_two_model_query(tickers: tuple, _mtimes: tuple):
+    return ma.two_model_query(list(tickers))
 
 
 def render_stock_query():
-    if feat is None:
-        st.warning("No features.parquet — run a data refresh first.")
-        return
+    """Query a Ticker: one row per ticker, answered by BOTH the blend (Today's
+    Picks, cap2000) and the theoretical model (composite alone, cap150), plus
+    how much the two books agree. 2026-09-24, per Gabe."""
+    mt = _signal_mtimes()
+    fr = ma.freshness()
+    b, t = fr["blend"], fr["theoretical"]
+    st.markdown(f"**Blend as of:** {b['as_of'] or 'not generated'}  ·  "
+                f"**Theoretical as of:** {t['as_of'] or 'not generated'}")
+    if fr["dates_differ"]:
+        st.warning(f"The two files are from different dates (blend {b['as_of']}, "
+                   f"theoretical {t['as_of']}), so agreement below compares books "
+                   f"built on different days.")
+    stale = [f"{name} ({x['as_of']}, {x['busdays_old']} business days old)"
+             for name, x in (("blend", b), ("theoretical", t)) if x["stale"]]
+    if stale:
+        st.warning("Stale picks: " + "; ".join(stale) + ". Rerun the models "
+                   "(\"Retrain ALL models\" in Data & Updates) before acting on these.")
+
     st.caption(
-        "Scores a ticker against **both** saved checkpoints — the deployed model "
-        "and the tracked candidate — using the currently saved weights (instant, "
-        "no retraining). If you have pulled new price data since the last "
-        "retrain, hit \"Retrain\" on the Today's Picks tab first. "
-        "**BUY** here means top quartile of predicted score among eligible names, "
-        "which is a lower bar than being one of today's five allocated positions, "
-        "so a ticker can read BUY without being a pick. **INELIGIBLE** means the "
-        "name is not in today's point-in-time universe, so it is not pickable "
-        "regardless of what the model thinks of it."
-    )
-    st.caption(
-        "The candidate's verdict is a second opinion to read against the "
-        "deployed one, not a vote to average with it — it lost to SPY on the "
-        "hold-out (-4.28%/yr excess)."
+        "Blend answers come from `current_signal_blend_full.csv` (every name in its cap2000 "
+        "universe): **PICK**, **ELIGIBLE_NOT_PICKED** (scored, with rank in its volatility "
+        "quintile), **ELIGIBLE_NOT_SCORED**, **INELIGIBLE_TODAY** or **NOT SCANNED**. "
+        "The theoretical model only writes a picks file today, so a non-pick there says "
+        "**NOT A PICK** without a reason; its composite score is only shown for its own "
+        "picks (the blend's composite score is ranked in a different universe)."
     )
     raw = st.text_input("Ticker(s), comma or space separated", placeholder="AAPL, MSFT, NVDA")
     if st.button("Look up", key="stock_query_btn") and raw.strip():
-        tickers = [t for t in raw.replace(",", " ").split() if t]
-        with st.spinner("Scoring..."):
-            result = pm.query_tickers(tickers)
-        if "error" in result:
-            st.error(result["error"])
-            return
+        tickers = tuple(dict.fromkeys(x.upper() for x in raw.replace(",", " ").split() if x))
+        df = _cached_two_model_query(tickers, mt)
+        st.dataframe(
+            df, hide_index=True, width="stretch",
+            column_config={
+                "ticker": "Ticker",
+                "both_pick": "Both models pick it",
+                "sector": "Sector",
+                "blend_status": "Blend status",
+                "blend_weight_pct": st.column_config.NumberColumn("Blend weight %", format="%.2f"),
+                "blend_score": st.column_config.NumberColumn("Blend score", format="%.4f"),
+                "blend_rank": "Blend rank in vol quintile",
+                "blend_detail": "Blend detail",
+                "theo_status": "Theoretical status",
+                "theo_weight_pct": st.column_config.NumberColumn("Theoretical weight %", format="%.2f"),
+                "theo_composite_score": st.column_config.NumberColumn(
+                    "Theoretical composite score (cap150)", format="%.4f"),
+                "theo_detail": "Theoretical detail",
+            },
+        )
+        st.caption(
+            "Neither model is a validated edge. The blend shows **-0.36%** excess vs SPY on "
+            "the 2020-2026 hold-out (single grid). The theoretical model **fails "
+            "leave-one-year-out** on the hold-out. Both are shown for tracking, not as proof."
+        )
 
-        cap = f"As of {result['as_of_date']}"
-        if result.get("stop_loss_pct") is not None:
-            cap += f" · suggested stop-loss {pct(result['stop_loss_pct'])} below entry (guidance only)"
-        st.caption(cap)
-
-        df = pd.DataFrame(result["rows"])
-        col_order = (["ticker", "verdict", "score", "rank",
-                      "candidate_verdict", "candidate_score", "candidate_rank"]
-                     + pm.CONTEXT_COLS)
-        df = df[[c for c in col_order if c in df.columns]]
-        st.dataframe(df, hide_index=True, use_container_width=True)
-
-        disagree = [r["ticker"] for r in result["rows"]
-                    if r.get("verdict") != r.get("candidate_verdict")]
-        if disagree:
-            st.caption(f"The two models disagree on: **{', '.join(disagree)}**. "
-                       f"Disagreement is information about how stable the ranking "
-                       f"is, not a tiebreak to resolve.")
-
-        for t in tickers:
-            with st.expander(f"{t} — industry classification & the model's "
-                             f"standing bet on it"):
-                render_ticker_taxonomy(t, result.get("as_of_date"))
-            hist = sm.ticker_history(t, feat)
-            if hist is not None:
-                with st.expander(f"{t} — price & momentum history"):
-                    st.line_chart(hist.set_index("date")[["close"]])
-                    st.line_chart(hist.set_index("date")[["momentum_20", "momentum_60", "momentum_120"]])
-
-
-def render_stock_weights():
-    st.caption(
-        "Gain-based feature importances off each saved checkpoint. Read them as "
-        "*what the trees split on*, not as *what predicts returns*: Round 17 "
-        "took a raw feature with t = +3.40 and watched it come out of this "
-        "pipeline at t = −0.65, and Round 13 showed the fundamental block's "
-        "apparent signal is a sector bet. A tall bar here is a description of "
-        "the model, not evidence about the world."
-    )
-    tabs = st.tabs([v["display_name"] for v in pm.VARIANTS])
-    for tab, v in zip(tabs, pm.VARIANTS):
-        with tab:
-            if v["role"] == "candidate":
-                st.warning(HOLDOUT_BANNER)
-            pimp = pm.get_feature_importances(v["key"])
-            if pimp is None:
-                st.info(f"No saved {v['model_file']} yet — hit \"Retrain\" on the "
-                        f"Today's Picks tab first.")
-                continue
-            imp_df = pimp["importances"].copy()
-            st.bar_chart(imp_df.set_index("feature")[["importance"]])
-            shown = imp_df.copy()
-            shown["feature"] = shown.apply(
-                lambda r: f"{r['feature']} 🧾" if r["is_fundamentals_feature"] else r["feature"],
-                axis=1)
-            shown["importance"] = shown["importance"].map(lambda x: f"{x:.1%}")
-            st.dataframe(shown[["feature", "importance"]], hide_index=True,
-                         use_container_width=True)
-            top = imp_df.iloc[0]
-            st.caption(
-                f"🧾 = a fundamentals feature — together {pimp['fundamentals_share']:.1%} "
-                f"of this model's total importance. Top feature: "
-                f"**{top['feature']}** ({top['importance']:.1%})."
-            )
+        if feat is not None:
+            for tk in tickers:
+                hist = sm.ticker_history(tk, feat)
+                if hist is not None:
+                    with st.expander(f"{tk} — price & momentum history"):
+                        st.line_chart(hist.set_index("date")[["close"]])
+                        st.line_chart(hist.set_index("date")[["momentum_20", "momentum_60", "momentum_120"]])
 
     st.divider()
-    st.caption(
-        "Both models use the identical 24 columns and identical hyperparameters "
-        "(depth 3, eta 0.1, 100 rounds, most recent 500k labelled rows). The "
-        "only difference between them is the training target: a binary "
-        "top-quartile label versus a within-date percentile rank. Any "
-        "difference in the charts above is that one change propagating through "
-        "the trees."
-    )
+    render_model_agreement(mt)
 
 
-def render_stock_backtest():
-    comp = pm.get_comparison()
-    if comp is None:
-        st.info(
-            "No out/app_model_comparison.json yet — run "
-            "`python3 final/src/build_app_benchmarks.py`, or hit \"Retrain\" on "
-            "the Today's Picks tab (it is the last step of that sequence)."
-        )
+def render_model_agreement(mt: tuple):
+    st.subheader("How much do the blend and the theoretical model agree?")
+    a = _cached_agreement(mt)
+    if a is None:
+        st.info("Needs both current_signal_blend.csv and current_signal_composite.csv.")
         return
-
-    cons = comp.get("construction", {})
-    st.caption(
-        f"Non-overlapping {cons.get('horizon_trading_days', 40)}-trading-day "
-        f"windows. Each window: top name in each of {cons.get('top_n', 5)} "
-        f"volatility quintiles, {cons.get('weighting', 'invvol')}-weighted, "
-        f"entered at the **next open**, exited at the close "
-        f"{cons.get('horizon_trading_days', 40)} trading days later, "
-        f"{cons.get('cost_bps', 15)}bp charged against turnover. Benchmarks use "
-        f"the identical entry/exit convention. "
-        f"**{cons.get('returns', 'price only, no dividends on either side')}** — "
-        f"so SPY and USMV are each understated by roughly their ~1.8–1.9%/yr "
-        f"distribution yield, and so are the model's own picks."
+    with st.container(horizontal=True):
+        st.metric("Blend picks", a["n_blend"], border=True)
+        st.metric("Theoretical picks", a["n_theo"], border=True)
+        st.metric("Picked by both", a["n_shared"], border=True)
+        st.metric("Jaccard (shared / union)", f"{a['jaccard']:.3f}", border=True)
+        st.metric("Weight overlap", pct(a["weight_overlap"], 1), border=True,
+                  help="Sum over shared tickers of min(blend weight, theoretical weight). "
+                       "1.0 would mean identical books.")
+    st.markdown(
+        f"- **{pct(a['pct_blend_shared'], 1)}** of the blend's picks are also theoretical picks; "
+        f"**{pct(a['pct_theo_shared'], 1)}** of the theoretical picks are also blend picks.\n"
+        f"- The universes differ: blend = **cap2000**, theoretical = **cap150**. "
+        f"Some disagreement is structural, not a difference of opinion."
     )
-
-    band = _noise_band_caption(comp)
-    if band:
-        st.warning(band)
-
-    era_labels = {"nominate": "2007–2019 (selection era)",
-                  "holdout": "2020–2026 (hold-out)"}
-    present = [e for e in ("holdout", "nominate") if e in comp.get("eras", {})]
-    if not present:
-        st.info("The comparison file has no eras in it — rebuild it.")
-        return
-
-    tabs = st.tabs([era_labels.get(e, e) for e in present])
-    for tab, era in zip(tabs, present):
-        with tab:
-            if era == "holdout":
-                st.caption(
-                    "**Spent.** 2020-2026 was used once, in Round 13, to confirm "
-                    "the top-5 breadth choice, and once more in Round 18 to test "
-                    "the xrank label. It is replotted here because those numbers "
-                    "are already paid for — it cannot adjudicate anything new. "
-                    "Nothing from here may be confirmed on it."
-                )
-            else:
-                st.caption(
-                    "**In-sample.** The deployed configuration was selected on "
-                    "this span out of 1,152 candidates, so its result here is "
-                    "biased upward by the search and is not an estimate of "
-                    "forward return."
-                )
-            df = pm.comparison_frame(era)
-            if df is not None:
-                st.line_chart(df)
-                st.caption(
-                    "Growth of $1 across the windows in this era. A series that "
-                    "starts later (USMV, inception 2011-10) is rebased to $1 at "
-                    "its own first window rather than back-filled, so read its "
-                    "level against SPY over the same sub-span, not against the "
-                    "left edge of the chart."
-                )
-            summ = comp["eras"][era].get("summary", {})
-            labels = {}
-            labels.update({k: v["display_name"] for k, v in comp.get("cells", {}).items()})
-            labels.update({k: v["display_name"] for k, v in comp.get("benchmarks", {}).items()})
-            rows = []
-            for k, s in summ.items():
-                if not s:
-                    continue
-                rows.append({
-                    "series": labels.get(k, k),
-                    "windows": s["n_windows"],
-                    "$1 →": f"${s['mult']:.2f}",
-                    "CAGR": f"{s['cagr_pct']:+.2f}%",
-                    "excess vs SPY": ("—" if s.get("excess_cagr_pct") is None
-                                      else f"{s['excess_cagr_pct']:+.2f}%/yr"),
-                    "× SPY": ("—" if s.get("mult_vs_spy") is None
-                              else f"{s['mult_vs_spy']:.3f}"),
-                    "max drawdown": f"{s['max_drawdown_pct']:.2f}%",
-                    "full span": "yes" if s.get("covers_full_era", True) else "partial",
-                })
-            if rows:
-                st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
-
-    unavailable = [b["display_name"] for b in comp.get("benchmarks", {}).values()
-                   if b.get("unavailable_reason")]
-    if unavailable:
-        why = "; ".join(f"{b['display_name']}: {b['unavailable_reason']}"
-                        for b in comp.get("benchmarks", {}).values()
-                        if b.get("unavailable_reason"))
-        st.caption(f"Missing benchmark line(s) — {why}. Rerun "
-                   f"`build_app_benchmarks.py` from a machine with network "
-                   f"access; it pulls once and caches to data/benchmarks/.")
-
-    st.caption(
-        "Read the whole table against the noise band above before concluding "
-        "anything from a gap between two rows."
-    )
-
-
-def render_sector_enrichment(sv, picks, desc):
-    """Which groups the model over-picks, and whether it is more than chance.
-
-    Two tests, and the difference between them is the point.
-
-    TODAY is five draws. Against 145 industry groups a single group needs two
-    of the five before Benjamini-Hochberg can call anything at all, so an empty
-    table is the EXPECTED table and is labelled as such. Reporting an uncorrected
-    p here would manufacture a finding from a 5-name portfolio.
-
-    POOLED is the 124 rebalance windows in the score cache -- 620 draws -- which
-    is where the power is. It is computed offline by build_sector_enrichment.py
-    because it needs the cached score cross-section the app never loads.
-
-    Both use the construction-matched null: the model takes the best name in
-    each of five volatility quintiles, so the count in a group is a sum of five
-    one-draw hypergeometrics rather than one five-draw hypergeometric. The flat
-    p is shown beside it so the size of that correction is visible.
-    """
-    st.subheader("Is any of this more than chance?")
-    st.caption(
-        "A hypergeometric enrichment test, the same one used for GO terms — "
-        "but matched to how the model actually draws. It takes the single best "
-        "name in each of **five trailing-volatility quintiles**, so a group's "
-        "pick count is a sum of five *one-draw* hypergeometrics, not one "
-        "five-draw hypergeometric. The two have the same expectation and "
-        "different dispersion, and for a group that sits inside one quintile "
-        "(utilities low, biotech high — most of what a fine taxonomy separates) "
-        "the flat version is over-dispersed and understates a real "
-        "concentration by roughly an order of magnitude. Every p is reported "
-        "with a Benjamini-Hochberg **q** across all groups at that level."
-    )
-
-    enr = sv.load_enrichment()
-    t_pool, t_today = st.tabs(["Pooled, 124 windows (620 draws)",
-                               "Today's 5 picks (underpowered)"])
-
-    with t_pool:
-        if not enr:
-            st.info("Not built yet — run `python3 final/src/build_sector_enrichment.py`.")
-        else:
-            c1, c2 = st.columns(2)
-            lvl = c1.selectbox("Level", sv.DISPLAY_LEVELS, key="enr_level")
-            era = c2.selectbox("Era", ["nominate", "holdout", "all"],
-                               key="enr_era",
-                               format_func=lambda e: {
-                                   "nominate": "2007–2019 (nomination)",
-                                   "holdout": "2020–2026 (hold-out)",
-                                   "all": "2007–2026 (all)"}[e])
-            meta = enr.get("eras", {}).get(era, {})
-            d = sv.enrichment_frame(enr, lvl, era)
-            if d.empty:
-                st.info("No rows at this level and era.")
-            else:
-                sig = d[d["q_enrich"] < 0.10]
-                st.caption(
-                    f"{meta.get('n_windows', '?')} windows, "
-                    f"{meta.get('n_draws', '?')} draws. "
-                    f"**{len(sig)} of {len(d)} groups** clear q < 0.10."
-                )
-                show = d.head(40).copy()
-                show = show[["group", "observed", "expected", "ratio",
-                             "p_enrich", "q_enrich", "q_deplete",
-                             "p_enrich_flat"]]
-                show.columns = ["group", "picks", "expected", "×", "p",
-                                "q over (BH)", "q under (BH)",
-                                "p if unstratified"]
-                show["expected"] = show["expected"].map(lambda v: f"{v:.1f}")
-                show["×"] = show["×"].map(lambda v: f"{v:.2f}x")
-                for c in ("p", "q over (BH)", "q under (BH)",
-                          "p if unstratified"):
-                    show[c] = show[c].map(lambda v: f"{v:.3g}")
-                st.dataframe(show, hide_index=True, use_container_width=True,
-                             height=min(620, 40 + 28 * len(show)))
-                st.caption(
-                    "`expected` is what a random draw from the *same volatility "
-                    "quintiles* would have produced. Sorted by q; the top 40 are "
-                    "shown. This is descriptive — it reports what the model did "
-                    "and selects nothing — which is why the hold-out era is "
-                    "shown here at all, and why it is split rather than pooled."
-                )
-                if len(sig):
-                    both = None
-                    dn = sv.enrichment_frame(enr, lvl, "nominate", q_max=0.10)
-                    dh = sv.enrichment_frame(enr, lvl, "holdout", q_max=0.10)
-                    if not dn.empty and not dh.empty:
-                        both = sorted(set(dn["group"]) & set(dh["group"]))
-                    if both:
-                        st.success(
-                            "**Enriched in both eras** (q < 0.10 in the "
-                            "nomination era *and* independently in the hold-out): "
-                            + ", ".join(f"**{g}**" for g in both)
-                            + ". A tilt that survives the hold-out is the only "
-                            "kind worth describing as a standing preference."
-                        )
-                    else:
-                        st.info(
-                            "No group clears q < 0.10 in both eras. Treat any "
-                            "single-era result as a description of that era."
-                        )
-                # The other tail. A 5-name book must be underweight almost
-                # everything, so "avoided" only means something against the
-                # SAME construction-matched null the overweights are judged on
-                # -- and there it is a real, separately-testable statement.
-                av = d[d["q_deplete"] < 0.10]
-                if len(av):
-                    st.caption(
-                        "**Significantly avoided** at q < 0.10 (the depletion "
-                        "tail of the same test, corrected separately): "
-                        + ", ".join(f"{r.group} ({r.observed} vs "
-                                    f"{r.expected:.0f} expected)"
-                                    for r in av.head(8).itertuples())
-                        + ". A 5-name book is underweight nearly everything by "
-                        "construction; these are the groups it is underweight "
-                        "by more than the volatility-quintile draw explains."
-                    )
-
-    with t_today:
-        st.caption(
-            "Five draws. A group needs **2 of the 5** before BH can call "
-            "anything at 145 groups, so an empty table here is the expected "
-            "outcome and is not evidence that today's book is untilted — it is "
-            "evidence that five draws cannot answer the question. It needs the "
-            "full scored cross-section (~2.3GB panel), so it loads on request."
-        )
-        lvl_t = st.selectbox("Level", sv.DISPLAY_LEVELS, key="enr_today_level")
-        if st.button("Run the test on today's picks", key="enr_today_go"):
-            st.session_state["_enr_today"] = lvl_t
-        if st.session_state.get("_enr_today"):
-            lt = st.session_state["_enr_today"]
-            with st.spinner("Scoring the eligible universe ..."):
-                scored, _ = pm.scored_universe(pm.PRIMARY)
-            if scored is None:
-                st.info("No saved checkpoint or panel yet — retrain first.")
-            else:
-                rows = sv.enrichment_today(lt, picks, scored)
-                if not rows:
-                    st.info("Could not stratify today's universe — every "
-                            "eligible name needs a finite `volatility_60`, "
-                            "since that is what the quintiles are cut on.")
-                else:
-                    d = pd.DataFrame([r for r in rows if r["observed"] > 0])
-                    d = d[["group", "observed", "expected", "ratio",
-                           "p_enrich", "q_enrich"]]
-                    d.columns = ["group", "picks", "expected", "×", "p", "q (BH)"]
-                    d["expected"] = d["expected"].map(lambda v: f"{v:.3f}")
-                    d["×"] = d["×"].map(lambda v: f"{v:.1f}x")
-                    for c in ("p", "q (BH)"):
-                        d[c] = d[c].map(lambda v: f"{v:.3g}")
-                    st.dataframe(d, hide_index=True, use_container_width=True)
-                    n_sig = sum(1 for r in rows if r["q_enrich"] < 0.10)
-                    if n_sig:
-                        st.success(f"{n_sig} group(s) clear q < 0.10 on five "
-                                   f"draws — which takes a real concentration.")
-                    else:
-                        st.info("Nothing clears q < 0.10, which is what five "
-                                "draws almost always says. Use the pooled tab.")
-
-
-def render_stock_sectors():
-    """What the model is betting on, at every level of the industry tree.
-
-    Round 13 found essentially all of this model's performance is a sector bet,
-    and the 2026-09-16 hierarchy screen found the bet is somewhat FINER than
-    sector at the traded tail. Neither was visible anywhere in this app until
-    now, which meant the single best-established fact about the model was the
-    one thing a user could not see."""
-    from lib import sector_view as sv
-
-    df, meta = pm.get_signal(pm.PRIMARY)
-    if df is None or meta is None:
-        st.info("No current signal yet — hit Retrain on the Today's Picks tab.")
-        return
-
-    st.caption(
-        "**Active weight**, not portfolio weight: the book's weight in a group "
-        "minus the *eligible universe's* weight in that group on the same date. "
-        "A portfolio 30% in technology when the universe is 28% technology is "
-        "not a technology bet, it is the market. The universe is equal-weighted "
-        "because that is the benchmark the model's own construction-matched "
-        "null uses — a random pick from the eligible set."
-    )
-    st.caption(
-        "Why this tab exists: Round 13 measured that essentially **all** of this "
-        "model's performance is a sector bet — sector-neutralising drops the "
-        "nomination era from 2.7957× to 0.7719 against a null median of 0.7721, "
-        "the exact centre. The 2026-09-16 hierarchy screen then found the bet is "
-        "somewhat finer than sector at the traded tail (industry-level "
-        "neutralisation explains ~47% more of the decile edge than sector-level, "
-        "t ≈ 1.5). So this is not a curiosity — it is the clearest picture "
-        "available of what the model actually does."
-    )
-
-    desc = sv.describe(df, meta["as_of_date"])
-    conc = sv.concentration(desc)
-    hist = sv.load_tilt_history()
-
-    if not desc.get("_universe_ok"):
-        st.error(
-            f"**No point-in-time universe for {meta['as_of_date']}** — "
-            f"`data/sharadar/pit_universe.parquet` is missing or has no row for "
-            f"that date. Every number below is then computed against a universe "
-            f"weight of zero, which makes the whole book look like a 100% "
-            f"active bet. Read nothing off this tab until that file is built "
-            f"(`build_pit_universe.py`)."
+    if a["has_blend_full"]:
+        st.markdown(
+            f"- Of the **{a['n_theo_only']}** theoretical-only picks: "
+            f"**{a['theo_only_structural']}** are outside the blend's universe "
+            f"(INELIGIBLE_TODAY / NOT SCANNED, so the blend could never pick them) and "
+            f"**{a['theo_only_genuine']}** are genuine disagreements (ELIGIBLE_NOT_PICKED: "
+            f"the blend scored them and ranked them out)"
+            + (f"; **{a['theo_only_not_scored']}** are blend-eligible but unscored"
+               if a["theo_only_not_scored"] else "") + ".\n"
+            f"- On the shared eligible universe: **{a['n_theo_in_blend_universe']}** theoretical "
+            f"picks are blend-eligible, and **{pct(a['pct_theo_eligible_shared'], 1)}** of those "
+            f"are also blend picks."
         )
     else:
-        st.caption(f"Benchmark: the {desc['_n_universe']:,} names in the "
-                   f"point-in-time universe on {meta['as_of_date']}.")
-
-    top = desc["sector"]
-    top = top[top["n_picks"] > 0]
-    if len(top):
-        lead = top.iloc[0]
-        c1, c2, c3 = st.columns(3)
-        c1.metric(f"Largest sector bet", lead["sector"],
-                  f"{lead['active_pct']:+.1f}pp vs universe")
-        c2.metric("Sectors held", f"{int((desc['sector']['n_picks'] > 0).sum())} of "
-                                  f"{len(desc['sector'])}")
-        if hist:
-            h = {r["group"]: r for r in
-                 hist["levels"]["sector"]["nominate"]["groups"]}
-            hm = h.get(lead["sector"], {}).get("mean_active")
-            if hm is not None:
-                ratio = lead["active_pct"] / hm if hm > 0 else float("nan")
-                c3.metric("vs its own history", f"{hm:+.1f}pp typical",
-                          f"{ratio:.1f}x today" if ratio == ratio else None,
-                          delta_color="off")
-
-    st.subheader("Today's active weights by sector")
-    bar = desc["sector"].set_index("sector")[["active_pct"]]
-    bar = bar[bar["active_pct"].abs() > 1e-9].sort_values("active_pct")
-    st.bar_chart(bar)
-    st.caption("Above zero = overweight the eligible universe. Below = underweight, "
-               "which for a 5-name book is most of the market by construction.")
-
-    st.divider()
-    st.subheader("All the way down")
-    st.caption(
-        "The statistics stop at 145 groups — fitting 366 industry dummies on a "
-        "1,665-name cross-section absorbs noise rather than industry, so "
-        "`sic3` and `sicindustry` are excluded from the neutralisation "
-        "experiment. That objection is about **regression**, not **counting**: "
-        "\"three of five picks are in Biotechnology\" is a fact about the "
-        "portfolio, not an estimate with a standard error. So the description "
-        "goes deeper than the statistics do, and the two are consistent."
-    )
-    tabs = st.tabs([f"{l} ({len(desc[l])} groups)" for l in sv.DISPLAY_LEVELS])
-    for tab, lvl in zip(tabs, sv.DISPLAY_LEVELS):
-        with tab:
-            d = desc[lvl].copy()
-            held = d[d["n_picks"] > 0].copy()
-            show = held[[lvl, "portfolio_pct", "universe_pct", "active_pct",
-                         "n_picks", "n_universe"]]
-            for c in ("portfolio_pct", "universe_pct", "active_pct"):
-                show[c] = show[c].map(lambda v: f"{v:+.2f}%")
-            st.dataframe(show, hide_index=True, use_container_width=True)
-            st.caption(
-                f"Concentration at this level: **{conc[lvl]:.1f}%** of the book "
-                f"sits in groups it is overweight. This rises mechanically as "
-                f"the tree gets finer — a 5-name portfolio cannot match a "
-                f"{len(desc[lvl])}-group universe — so compare it across dates, "
-                f"never across levels."
-            )
-            if hist and lvl in hist["levels"]:
-                h = {r["group"]: r for r in hist["levels"][lvl]["nominate"]["groups"]}
-                rows = []
-                for _, r in held.iterrows():
-                    e = h.get(r[lvl])
-                    rows.append({
-                        lvl: r[lvl],
-                        "today": f"{r['active_pct']:+.1f}pp",
-                        "2007-2019 mean": (f"{e['mean_active']:+.1f}pp" if e else "—"),
-                        "held in": (f"{e['frequency']:.0%} of windows" if e else "never"),
-                    })
-                if rows:
-                    st.caption("**Is today typical?**")
-                    st.dataframe(pd.DataFrame(rows), hide_index=True,
-                                 use_container_width=True)
-
-    st.divider()
-    st.subheader("Where does a ticker sit?")
-    st.caption(
-        "Its group at every level of the tree, beside what the model has "
-        "historically done with each of those groups. Works for any classified "
-        "ticker, held or not."
-    )
-    tq = st.text_input("Ticker", placeholder="AMGN", key="sector_ticker_q")
-    if tq.strip():
-        render_ticker_taxonomy(tq, meta["as_of_date"])
-
-    st.divider()
-    render_sector_enrichment(sv, df, desc)
-
-    st.divider()
-    st.subheader("Look inside a group")
-    st.caption(
-        "Every name the model **scored** in one group, not just the ones it "
-        "bought — including what it thought of the names it passed over. "
-        "Scoring the full eligible cross-section needs the point-in-time panel "
-        "(~2.3GB), so the first load is slow and every later one is cached."
-    )
-    lvl_pick = st.selectbox("Level", sv.DISPLAY_LEVELS, key="drill_level")
-    d_lvl = desc[lvl_pick]
-    held_groups = d_lvl[d_lvl["n_picks"] > 0][lvl_pick].tolist()
-    other = [g for g in d_lvl[lvl_pick].tolist() if g not in held_groups]
-    choices = held_groups + other
-    labels = {g: (f"● {g}" if g in held_groups else g) for g in choices}
-    grp = st.selectbox("Group  (● = the model holds something here)", choices,
-                       format_func=lambda g: labels[g], key="drill_group")
-
-    if st.button("Load group", key="drill_go"):
-        st.session_state["_drill"] = (lvl_pick, grp)
-    if st.session_state.get("_drill"):
-        lvl_s, grp_s = st.session_state["_drill"]
-        with st.spinner(f"Scoring the eligible universe for {grp_s} ..."):
-            scored, smeta = pm.scored_universe(pm.PRIMARY)
-        if scored is None:
-            st.info("No saved checkpoint or panel yet — retrain first.")
-        else:
-            prof = sv.group_rank_profile(lvl_s, grp_s, scored)
-            if prof:
-                c1, c2, c3, c4 = st.columns(4)
-                c1.metric("Names scored", f"{prof['n_scored']:,}")
-                c2.metric("Median percentile", f"{prof['median_percentile']:.2f}",
-                          f"{prof['median_percentile'] - 0.5:+.2f} vs 0.50",
-                          delta_color="inverse")
-                c3.metric("Best rank in group", f"{prof['best_rank']:,}")
-                c4.metric("In model's top decile",
-                          f"{prof['share_top_decile']:.0%}")
-                mp = prof["median_percentile"]
-                if mp < 0.42:
-                    st.success(
-                        f"The model rates **this whole group** highly — a typical "
-                        f"member sits at percentile {mp:.2f} against 0.50 for a "
-                        f"group it is indifferent to. That is a group bet: the "
-                        f"specific names held are close to incidental, and almost "
-                        f"any member would have served."
-                    )
-                elif mp > 0.58:
-                    st.warning(
-                        f"The model rates this group POORLY overall (median "
-                        f"percentile {mp:.2f}) yet holds something in it — so the "
-                        f"position is within-group selection, not a group bet."
-                    )
-                else:
-                    st.info(
-                        f"The model is roughly indifferent to this group as a "
-                        f"whole (median percentile {mp:.2f}). Anything held here "
-                        f"is genuine within-group selection — which Round 13 "
-                        f"measured as at or below random in aggregate, so treat "
-                        f"it accordingly."
-                    )
-            mem = sv.group_members(lvl_s, grp_s, scored, picks=df)
-            show = mem.copy()
-            # group_members() already supplies `held` as a bool; overwrite it
-            # in place rather than insert(), which raises on an existing
-            # column. The `keep` list below does the ordering anyway.
-            show["held"] = show["held"].map(lambda b: "●" if b else "")
-            keep = [c for c in ["held", "ticker", "rank", "percentile", "score",
-                                "eligible_today", "close", "market_cap",
-                                "volatility_20", "momentum_20"]
-                    if c in show.columns]
-            show = show[keep]
-            for c in ("percentile", "score"):
-                if c in show:
-                    show[c] = pd.to_numeric(show[c], errors="coerce").round(4)
-            st.dataframe(show, hide_index=True, use_container_width=True,
-                         height=min(560, 40 + 28 * len(show)))
-            st.caption(
-                f"{len(mem)} names in **{grp_s}**, ordered by the model's overall "
-                f"rank across the whole eligible universe. `eligible_today` = "
-                f"False means the name is not in that date's point-in-time "
-                f"universe, so it could not have been bought whatever its score."
-            )
-
-    if hist:
-        st.divider()
-        st.subheader("Standing tilts, 2007–2019")
-        st.caption(
-            "Mean active weight across **all** windows in the era, so a group "
-            "held once at +40pp shows as +40/n — the honest description of a "
-            "standing allocation. The frequency column is what separates "
-            "\"always a little\" from \"rarely, a lot\"; a large mean built "
-            "from three enormous bets is a different animal from a persistent "
-            "overweight and should not be read as one."
-        )
-        tl = sv.tilt_levels(hist)
-        st.caption(
-            f"Built by `build_sector_tilt.py`, which predates the finer levels "
-            f"and stores {len(tl)}: {', '.join(tl)}. Rerun it to add the rest."
-        )
-        lvl = st.selectbox("Level", tl, key="tilt_hist_level")
-        g = hist["levels"][lvl]["nominate"]["groups"][:15]
-        st.dataframe(pd.DataFrame([{
-            lvl: r["group"],
-            "mean active": f"{r['mean_active']:+.2f}pp",
-            "held in": f"{r['frequency']:.0%}",
-            "largest single bet": f"{r['max_active']:+.1f}pp",
-            "windows held": r["n_windows_held"],
-        } for r in g]), hide_index=True, use_container_width=True)
-        st.caption(
-            f"From {hist['levels'][lvl]['nominate']['n_windows']} windows. "
-            f"Built by `final/src/build_sector_tilt.py`; rerun it after a "
-            f"retrain to refresh."
+        st.caption("current_signal_blend_full.csv is missing, so theoretical-only picks "
+                   "can't be split into structural vs genuine disagreement.")
+    if a["has_theo_full"]:
+        st.markdown(
+            f"- Of the **{a['n_blend_only']}** blend-only picks: **{a['blend_only_structural']}** "
+            f"are outside the theoretical model's cap150 universe and **{a['blend_only_genuine']}** "
+            f"are genuine disagreements; **{pct(a['pct_blend_eligible_shared'], 1)}** of the "
+            f"**{a['n_blend_in_theo_universe']}** theoretical-eligible blend picks are shared."
         )
     else:
-        st.info("No out/sector_tilt_history.json yet — run "
-                "`python3 final/src/build_sector_tilt.py` to add the historical "
-                "comparison.")
+        st.caption(f"The {a['n_blend_only']} blend-only picks can't be split the same way until "
+                   f"the theoretical model writes a full-universe file "
+                   f"(current_signal_composite_full.csv).")
+
+    st.markdown(f"**The {a['n_shared']} tickers both models pick**")
+    st.dataframe(
+        a["shared_table"], hide_index=True, width="stretch",
+        column_config={
+            "ticker": "Ticker", "sector": "Sector",
+            "blend_weight": st.column_config.NumberColumn("Blend weight", format="percent"),
+            "theo_weight": st.column_config.NumberColumn("Theoretical weight", format="percent"),
+            "blend_score": st.column_config.NumberColumn("Blend score", format="%.3f"),
+            "blend_composite_score": st.column_config.NumberColumn(
+                "Composite score (blend, cap2000)", format="%.3f"),
+            "theo_composite_score": st.column_config.NumberColumn(
+                "Composite score (theoretical, cap150)", format="%.3f"),
+        },
+    )
+    st.caption("Agreement is descriptive. Two models agreeing is not evidence either one is "
+               "right. Some overlap is built in: both lean on the same composite factors (the "
+               "blend on the frozen 9-factor equal-weight composite plus q75, the theoretical "
+               "model on the 8-factor IC-weighted composite alone).")
 
 
 def render_stock_universe():
@@ -1101,183 +574,6 @@ def render_stock_universe():
                  f"{u['labeled_rows']:,} ({u['labeled_rows'] / u['total_rows']:.1%})")
     st.caption("Universe construction methodology (market cap > $2B, US-incorporated, price > $10, "
                "dual-class dedup, etc.) is documented in universe/2026-08-27-expanded-universe-methodology.md.")
-
-
-def render_stock_composite():
-    """The factor-composite reset -- a TRACKED CANDIDATE, kept fully separate
-    from the q75/xrank signals above (different universe, different
-    construction, no trained model). Same honesty convention as the xrank
-    candidate: shown so its picks can be watched in real time, not presented
-    as a validated replacement for the deployed signal.
-
-    UPDATED 2026-09-22 to the model's current, corrected state: the factor
-    composite was treated as a physics-style theoretical model (formalized,
-    audited, corrected) -- asset_growth dropped (measured wrong-signed), and
-    scoring moved from equal-weight to IC-shrinkage weighted. See
-    final/models/2026-09-22-composite-model-full-specification.md for the
-    current spec; final/models/2026-09-19-factor-composite-reset.md covers
-    the original, now-superseded version this tab used to show."""
-    st.warning(
-        "**Candidate, not deployed.** Nomination era (2007-2019, genuinely "
-        "out-of-sample odd/even split-half for the weights): pooled Spearman "
-        "IC +0.03 to +0.05, t-stats 2.8-5.6. Hold-out (2020-2026), now "
-        "confirmed a THIRD time across three model versions (equal-weight, "
-        "asset_growth-dropped, IC-weighted): +2.44%/yr excess vs SPY, 40/40 "
-        "offsets positive -- but **fails leave-one-year-out** every time: "
-        "dropping 2020 alone flips the mean to -3.95%/yr. Full write-up: "
-        "`final/models/2026-09-22-composite-model-full-specification.md`."
-    )
-    df, meta = cm.get_signal()
-    if st.button("🔁 Refresh the theoretical model's picks", key="retrain_composite"):
-        dr.run_step_sequence("stock_retrain_composite", cm.retrain_commands(),
-                             ["score theoretical model", "rebuild backtest equity curve"],
-                             cwd=paths.SRC_DIR)
-        st.rerun()
-    st.caption(
-        "This only RESCORES today's picks off the composite panel -- it does "
-        "not rebuild that panel. If the panel itself is stale, use \"Retrain "
-        "ALL models\" in Data & Updates, which refreshes everything including "
-        "this model."
-    )
-
-    state = dr.refresh_status("stock_retrain_composite")
-    if state.status == "running":
-        st.info("Refreshing... this page keeps updating.")
-        with st.expander("Log", expanded=True):
-            st.code(dr.tail_log("stock_retrain_composite"))
-        time.sleep(2)
-        st.rerun()
-    elif state.status in ("done", "failed"):
-        (st.success if state.status == "done" else st.error)(
-            f"Last refresh {state.status} at {state.finished_at}.")
-        with st.expander("Log"):
-            st.code(dr.tail_log("stock_retrain_composite"))
-
-    if df is None:
-        st.info("No picks generated yet. Run `python3 src/current_signal_composite.py` "
-               "(after `src/reset2026/downcap_universe.py`, `quality_factors.py` and "
-               "`build_panel.py` are up to date), or hit Refresh above.")
-        return
-
-    c1, c2, c3 = st.columns(3)
-    c1.metric("As of", meta["as_of_date"])
-    c2.metric("Positions", meta["n_picks"])
-    c3.metric("Eligible universe (cap150 tier)", f"{meta['n_eligible_universe']:,}")
-
-    st.write("**Construction:** " + meta["construction"])
-    with st.expander("The 8 factors: signs and IC-shrinkage weights"):
-        st.json({"factor_signs": meta["factor_signs"], "factor_weights": meta["factor_weights"]})
-    with st.expander("Backtest summary"):
-        st.json(meta["backtest_summary"])
-
-    st.dataframe(
-        df[["ticker", "sector", "close", "market_cap", "volatility_60",
-            "composite_score", "weight"]]
-          .style.format({"close": "${:.2f}", "market_cap": "${:,.0f}",
-                          "volatility_60": "{:.2%}", "composite_score": "{:.3f}",
-                          "weight": "{:.2%}"}),
-        use_container_width=True, height=420,
-    )
-    st.caption(meta["note"])
-
-    st.divider()
-    st.subheader("Full backtest history: theoretical model vs SPY (2007–2026)")
-    st.caption(
-        "Nomination era (2007-2019) and hold-out era (2020-2026) stitched "
-        "into one continuous compounding curve -- IC-weighted composite, "
-        "decile_volq construction, single offset, net of 15bp turnover cost. "
-        "NOT a new hold-out spend: every number here reproduces an "
-        "already-reported cell (see build_backtest_equity_curve.py's "
-        "docstring). Read the failed leave-one-year-out result above before "
-        "reading too much into this curve -- most of the hold-out-era gain "
-        "concentrates in a single year (2020)."
-    )
-    curve = cm.get_equity_curve()
-    if curve is None:
-        st.info("No backtest_equity_curve.csv yet — run build_backtest_equity_curve.py "
-                "(final/src/reset2026/) or hit Refresh above.")
-    else:
-        chart_df = curve.set_index("date")[["composite_net_cum", "spy_cum"]].rename(
-            columns={"composite_net_cum": "Theoretical model (net of costs)", "spy_cum": "SPY"})
-        st.line_chart(chart_df)
-        boundary = curve[curve["era"] == "holdout"]["date"].min()
-        if pd.notna(boundary):
-            st.caption(f"Hold-out era begins {boundary.date()}.")
-        term = curve.iloc[-1]
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Terminal wealth (composite, net)", f"{term['composite_net_cum']:.2f}x")
-        c2.metric("Terminal wealth (SPY)", f"{term['spy_cum']:.2f}x")
-        c3.metric("Windows", f"{len(curve)}")
-
-
-def render_stock_blend():
-    """The composite+q75 blend -- a second, independent candidate, kept
-    separate from both the deployed q75/xrank signals and the standalone
-    composite tab. Added 2026-09-22: this candidate was built and backtested
-    on a different branch than the one carrying the corrected composite
-    model, so its own composite half is DELIBERATELY FROZEN to the original
-    9-factor equal-weight version it was actually promoted/backtested
-    against -- see current_signal_blend.py's module docstring. It does NOT
-    pick up the corrected 8-factor/IC-weighted composite shown in the tab
-    beside this one; that is a real, open re-promotion decision, not
-    something that should happen as a side effect of this merge."""
-    st.warning(
-        "**Candidate, not deployed.** Single-grid backtest (q75's score "
-        "cache has only one cadence, not this project's usual 40-offset "
-        "average): -0.36% excess vs SPY in absolute terms on the 2020-2026 "
-        "hold-out -- the least-bad of three constructions tested, not a "
-        "winner. Promoted on this branch 2026-09-19 anyway per explicit "
-        "instruction, to be tracked in real time. Full detail: "
-        "`final/models/2026-09-19-factor-composite-reset.md`."
-    )
-    df, meta = bm.get_signal()
-    if st.button("🔁 Refresh the blend's picks", key="retrain_blend"):
-        dr.run_step_sequence("stock_retrain_blend", bm.retrain_commands(),
-                             ["down-cap universe", "quality factors", "build panel", "score blend"],
-                             cwd=paths.SRC_DIR)
-        st.rerun()
-
-    state = dr.refresh_status("stock_retrain_blend")
-    if state.status == "running":
-        st.info("Refreshing... this page keeps updating.")
-        with st.expander("Log", expanded=True):
-            st.code(dr.tail_log("stock_retrain_blend"))
-        time.sleep(2)
-        st.rerun()
-    elif state.status in ("done", "failed"):
-        (st.success if state.status == "done" else st.error)(
-            f"Last refresh {state.status} at {state.finished_at}.")
-        with st.expander("Log"):
-            st.code(dr.tail_log("stock_retrain_blend"))
-
-    if df is None:
-        st.info("No current_signal_blend.csv yet — hit Refresh above. "
-               "(Needs features_with_fundamentals_sharadar_pit.parquet and "
-               "out/models/xgb_pit_augmented_model.json to already exist -- "
-               "run the base Retrain in Data & Updates first if this is a "
-               "fresh checkout.)")
-        return
-
-    c1, c2, c3 = st.columns(3)
-    c1.metric("As of", meta["as_of_date"])
-    c2.metric("Positions", meta["n_picks"])
-    c3.metric("Eligible universe (cap2000 tier)", f"{meta['n_eligible_universe']:,}")
-    st.write("**Construction:** " + meta["construction"])
-    with st.expander("The 9 (frozen) composite factors, signs, and the q75/composite blend weight"):
-        st.json({"q75_weight": meta["q75_weight"], "composite_weight": meta["composite_weight"],
-                "composite_factor_signs": meta["factors"]})
-    with st.expander("Backtest summary (single grid — see the warning above)"):
-        st.json(meta["backtest_summary"])
-    st.dataframe(
-        df[["ticker", "sector", "close", "market_cap", "volatility_60",
-            "q75_score", "composite_score", "blend_score", "weight"]]
-          .style.format({"close": "${:.2f}", "market_cap": "${:,.0f}",
-                          "volatility_60": "{:.2%}", "q75_score": "{:.3f}",
-                          "composite_score": "{:.3f}", "blend_score": "{:.3f}",
-                          "weight": "{:.2%}"}),
-        use_container_width=True, height=480,
-    )
-    st.caption(meta["note"])
 
 
 # --------------------------------------------------------------------------
@@ -1487,7 +783,6 @@ def render_data_updates():
         ("Benchmark comparison (app_model_comparison.json)", pm.COMPARISON_JSON, False),
         ("Theoretical model picks (current_signal_composite.csv)", cm.SIGNAL_CSV, False),
         ("Theoretical model backtest curve (backtest_equity_curve.csv)", cm.EQUITY_CURVE_CSV, False),
-        ("Blend picks (current_signal_blend.csv)", bm.SIGNAL_CSV, False),
         ("Options raw (option_chain)", paths.OPTION_CHAIN_SP500, False),
         ("Options raw (volatility_history)", paths.VOLATILITY_HISTORY_SP500, False),
         ("Options calls training table", paths.OPTIONS_CALLS_TRAINING, False),
@@ -1513,8 +808,10 @@ def render_data_updates():
         "re-pulling full history, and runs an options history update — all from your own network, so "
         "this should finish in a few minutes even across the full universe. \"Retrain all models\" "
         "rebuilds every feature panel (including the point-in-time price/fundamentals panels), retrains "
-        "**both** stock signals — the deployed q75 model and the tracked xrank candidate — and rebuilds "
-        "the SPY/USMV comparison chart. The options Tweedie GLM "
+        "q75 (whose checkpoint the primary blend scores off of), rebuilds the SPY/USMV comparison "
+        "chart, rescores the blend, and rescores the theoretical model (composite alone) plus its "
+        "backtest-history plot — so this one button is what actually refreshes Today's Picks and the "
+        "Theoretical Model tab end to end. The options Tweedie GLM "
         "needs no separate retrain step — it refits automatically next time it's used, off whatever "
         "training data is newest on disk. Run the data update first, then retrain, if you want a fully "
         "current read in one sitting. Note: neither button refreshes scripts/fundamentals_raw/ (SEC "
@@ -1573,12 +870,22 @@ def render_data_updates():
             # universe, so rerunning them only refreshed numbers nothing on
             # this page should be compared against.
             #
-            # 2026-09-22: bm.retrain_commands() (rebuilds the shared composite
-            # panel + scores the blend) and cm.retrain_commands() (rescores
-            # the standalone theoretical-model tab off that same panel, then
-            # re-extends its backtest-history plot) appended so this button
-            # refreshes the two new candidate tabs too. cm runs AFTER bm since
-            # it depends on the panel bm just rebuilt, not the other way round.
+            # 2026-09-22: bm.retrain_commands() appended so this button
+            # actually refreshes what's now the primary signal. Before this,
+            # a full retrain left current_signal_blend.csv stale -- q75's
+            # checkpoint and the fundamentals panel would update, but
+            # Today's Picks would keep showing whatever the last standalone
+            # blend refresh produced. Must run AFTER pm.retrain_commands():
+            # the blend scores q75's freshly-retrained checkpoint and reads
+            # the freshly-rebuilt fundamentals panel, not the other way round.
+            #
+            # 2026-09-22 (same day, second change): cm.retrain_commands()
+            # appended after bm.retrain_commands() so the theoretical model
+            # (composite alone -- the Theoretical Model tab) also gets
+            # rescored off the fresh panel bm just rebuilt, and its backtest-
+            # history plot re-extends to include any newly-rolled-in
+            # trading days. cm does NOT rebuild the panel itself -- it reads
+            # the one bm just built.
             cmds = ([[py, str(paths.SRC_DIR / "features.py")]] + pm.retrain_commands()
                     + bm.retrain_commands() + cm.retrain_commands())
             labels = (["Rebuild price features.parquet (sidebar + Universe tab)"]
@@ -1587,8 +894,9 @@ def render_data_updates():
                         "Composite panel (blend)", "Score today's blend"]
                      + ["Score today's theoretical model (composite alone)",
                         "Rebuild theoretical model's backtest-history plot"])
-            dr.run_step_sequence("retrain_all_models", cmds, labels, cwd=paths.SRC_DIR)
-            st.rerun()
+            if _sharadar_key_preflight(cmds):
+                dr.run_step_sequence("retrain_all_models", cmds, labels, cwd=paths.SRC_DIR)
+                st.rerun()
         _job_status_block("retrain_all_models")
 
     st.divider()
@@ -1604,9 +912,10 @@ def render_data_updates():
         py = sys.executable
         cmds = ([[py, str(paths.SCRIPTS_DIR / "local_data_pull.py"), "--refresh-recent"]]
                 + pm.retrain_commands())
-        dr.run_step_sequence("stock_full_refresh", cmds,
-                             ["Pull price data (yfinance)"] + pm.PIT_STEP_LABELS)
-        st.rerun()
+        if _sharadar_key_preflight(cmds):
+            dr.run_step_sequence("stock_full_refresh", cmds,
+                                 ["Pull price data (yfinance)"] + pm.PIT_STEP_LABELS)
+            st.rerun()
     _job_status_block("stock_full_refresh")
 
     st.divider()
@@ -1639,6 +948,30 @@ def render_data_updates():
                               ["dolt pull + incremental export"])
         st.rerun()
     _job_status_block("options_history_refresh")
+
+
+# Steps whose script exits immediately without SHARADAR_API_KEY in its
+# environment. Job subprocesses inherit Streamlit's own environment, so the key
+# has to be exported in the shell that launched Streamlit. 2026-09-24: "Retrain
+# ALL models" failed at step 2 for exactly this reason. The app never reads the
+# key from a file and never displays it; it only checks that the name is set.
+NEEDS_SHARADAR_KEY = ("sharadar_pull_pit_panel.py",)
+
+
+def _sharadar_key_preflight(cmds: list[list[str]]) -> bool:
+    """True if the job may start. Shows a blocking error and returns False if a
+    step needs SHARADAR_API_KEY and this Streamlit process doesn't have it."""
+    needs = any(Path(arg).name in NEEDS_SHARADAR_KEY for cmd in cmds for arg in cmd)
+    if needs and not os.environ.get("SHARADAR_API_KEY"):
+        st.error(
+            "Not started: this job pulls from Sharadar, and `SHARADAR_API_KEY` is not set in "
+            "the environment Streamlit was launched from, so the Sharadar step would fail "
+            "(this is why the last \"Retrain ALL models\" failed at step 2). Stop Streamlit, "
+            "then relaunch it from a shell where the key is exported:\n\n"
+            "```\nexport SHARADAR_API_KEY=...\nstreamlit run app.py\n```"
+        )
+        return False
+    return True
 
 
 def _job_status_block(job_name: str):
@@ -1675,27 +1008,19 @@ with tab_stock:
     # they produced is measured on data now known to be defective. Keeping them
     # beside point-in-time picks invited a comparison that was not valid in
     # either direction. The two models shown now differ ONLY in training label.
-    t1, t2, t3, t4, t5, t6, t7, t8 = st.tabs(
-        ["Today's Picks", "Query a Ticker", "Sector Bets", "Model Weights",
-         "Backtest & History", "Universe", "Small-Cap Composite (Candidate)",
-         "Composite+q75 Blend (Candidate)"]
-    )
+    #
+    # 2026-09-22: "Theoretical Model" added -- the composite ALONE (no q75
+    # contribution), for direct comparison against the blend in Today's
+    # Picks, per Gabe's request.
+    t1, t2, t3, t4 = st.tabs(["Today's Picks", "Theoretical Model", "Query a Ticker", "Universe"])
     with t1:
         render_stock_pit()
     with t2:
-        render_stock_query()
+        render_stock_theoretical()
     with t3:
-        render_stock_sectors()
+        render_stock_query()
     with t4:
-        render_stock_weights()
-    with t5:
-        render_stock_backtest()
-    with t6:
         render_stock_universe()
-    with t7:
-        render_stock_composite()
-    with t8:
-        render_stock_blend()
 
 with tab_options:
     t1, t2, t3, t4, t5 = st.tabs(["Today's Picks", "Query a Ticker", "Model Weights", "Backtest & History", "Universe"])
