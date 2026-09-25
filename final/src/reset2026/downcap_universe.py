@@ -39,7 +39,9 @@ import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-MAIN_ROOT = Path("/Users/ggraham/pipe_dream/final")
+# PIPE_DREAM_FINAL overrides the root (e.g. a Windows clone that rebuilt
+# data/sharadar/ itself -- see final/scripts/AV_PULL_WINDOWS.md).
+MAIN_ROOT = Path(os.environ.get("PIPE_DREAM_FINAL", "/Users/ggraham/pipe_dream/final"))
 SHARADAR = MAIN_ROOT / "data" / "sharadar"
 PANEL = SHARADAR / "panel"
 # DOWNCAP_OUT_NAME writes a side-by-side file (e.g. downcap_universe_v2) so a

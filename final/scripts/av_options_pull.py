@@ -148,7 +148,8 @@ class AV:
             self._wait()
             try:
                 r = json.loads(urllib.request.urlopen(f"{AV_URL}?{q}", timeout=60).read())
-            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, ConnectionError, OSError):
+            except Exception:  # URLError, IncompleteRead/HTTPException, bad JSON, resets...
+                # 2026-09-23 the Mac run died on an uncaught http.client.IncompleteRead
                 time.sleep(5 * (attempt + 1))
                 continue
             if r.get("data"):
@@ -238,7 +239,11 @@ def main():
     # down-cap feature-grid rebuild, so run --only-tier cap2000 first across
     # every date; a later run without it fills in the rest (resume skips
     # what is already logged, so nothing is pulled twice).
-    ap.add_argument("--only-tier", choices=["cap2000"], default=None)
+    ap.add_argument("--only-tier", choices=["cap2000", "downcap"], default=None,
+                    help="cap2000 = only $2B names; downcap = only names that are NOT cap2000")
+    ap.add_argument("--start-date", default=None,
+                    help="skip plan dates before this (YYYY-MM-DD); used to hand a run over "
+                         "between machines without re-pulling what the other already has")
     ap.add_argument("--status", action="store_true")
     a = ap.parse_args()
     a.data_root.mkdir(parents=True, exist_ok=True)
@@ -264,6 +269,8 @@ def main():
         plan += [("monthly", d) for d in monthly]
     if "weekly" in a.passes:
         plan += [("weekly", d) for d in weekly]
+    if a.start_date:
+        plan = [(p_, d) for p_, d in plan if d >= pd.Timestamp(a.start_date)]
     if a.only_dates:
         keep = {pd.Timestamp(x) for x in a.only_dates.split(",")}
         plan = [(p, d) for p, d in plan if d in keep]
@@ -287,6 +294,8 @@ def main():
         g = g.sort_values("ticker")
         if a.only_tier == "cap2000":
             g = g[g.eligible_cap2000]
+        elif a.only_tier == "downcap":
+            g = g[~g.eligible_cap2000]
         if a.only_tickers:
             g = g[g.ticker.isin(a.only_tickers.split(","))]
         if a.max_names:
