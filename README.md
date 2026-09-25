@@ -1,8 +1,8 @@
 # pipe_dream: current state of the project
 
-**Consolidated 2026-09-23 by `pipe-dream-readme-manager`** (first full sweep,
-then refreshed the same evening after the audit and insider-signals branches
-landed, integration `c8bba77`).
+**Consolidated 2026-09-23 by `pipe-dream-readme-manager`** (first full sweep),
+last refreshed **2026-09-25** after WO-6, WO-8, WO-4 and WO-7 landed (integration
+`576198d`).
 This is the one current-state document. It merges every branch's docs, the
 coordination ledger, handoffs and project memory, and the newest source wins
 where two disagree. Everything that lost is listed in [Superseded](#superseded)
@@ -10,7 +10,7 @@ at the bottom.
 
 How to read the tags:
 
-- **landed** means the claim is on `integration` (c8bba77).
+- **landed** means the claim is on `integration` (576198d).
 - **in flight** means it comes from an unlanded branch or from uncommitted files
   in a worktree. In-flight claims never describe current state. They live in
   [In flight](#5-in-flight).
@@ -56,7 +56,7 @@ Two newer rules live outside the repo and interact with them. See
 
 ---
 
-## 3. Current state (as of 2026-09-24)
+## 3. Current state (as of 2026-09-25)
 
 ### 3.1 The one-paragraph version
 
@@ -65,21 +65,30 @@ Rounds 10-19 (2026-09-09 to 2026-09-16) established that the original
 edge**. What it has is a low-volatility tilt plus a sector bet. On 2026-09-18
 Gabe restarted the stock model as a **sign-constrained linear factor composite**
 built from published anomalies, and moved down-cap. That composite shows a real
-nomination-era signal (2007-2019). On the 2020-2026 hold-out, **every version
-fails leave-one-year-out on 2020**. Since 2026-09-22, every down-cap (cap150 /
-cap500) number is also **unreadable**, because the feature grid it ran on is
-survivorship-selected. On rank accuracy the IC-weighted composite beats q75 by
+nomination-era signal (2007-2019). On the 2020-2026 hold-out (read on the old
+v1 grid), **every version fails leave-one-year-out on 2020**. The old down-cap
+grid (v1) was survivorship-selected. A survivorship-safe **v2 grid** was built on
+2026-09-24 (WO-6), and on it the production `icw8` book earns **+2.85%/yr** vs SPY
+at cap150 (nomination era, net 15bp, 40 offsets), down from +5.25% on v1. The
+result is now flat across cap tiers. WO-7 (2026-09-24) shows that on v2 all of
+that excess comes from the **ranking**, not from holding the universe. The
+caveat: from 2011-10-20 to 2019, icw8 only **ties SPY (+0.00)**, so all of the
+full-era excess over SPY comes from 2007-2011. A universe-hedged version (WO-9)
+is in flight. On rank accuracy the IC-weighted composite beats q75 by
 a margin that is **not detectable** at 82 dates (§19, MIDDLE), and its rank
 signal is essentially one factor, `gross_profitability`. The app keeps q75 as
 the displayed primary, and the composite and the composite+q75 blend appear as
 **Candidate** tabs. Gabe set this as the baseline on 2026-09-23. Insider buy/sell
-counts are a certified dead end (2026-09-23), with one weak lead (opportunistic
-buyers). Congress is forward-only. The Alpha Vantage options pull **crashed**
+counts are a certified dead end (2026-09-23). The down-cap reopen of that dead
+end was used by WO-4 on the v2 grid (2026-09-24, DEAD), so the insider family
+is spent in-era. One weak lead (opportunistic buyers) continues forward-only.
+Congress is forward-only. The Alpha Vantage options pull **crashed**
 on 2026-09-23 at 18:09 and is not running. The earnings-timing family is
 closed (8-K announcement-date test DEAD, 2026-09-23). Two forward-only bets
 (`icw9` leverage, opportunistic insider buyers) are now recorded blind in a side
-ledger from panel date 2026-09-08 (landed 2026-09-24). Active new work: the
-COO's WO-6 survivorship-safe down-cap grid rebuild (in flight).
+ledger from panel date 2026-09-08 (landed 2026-09-24). The insider TRANS_DATE
+bug is fixed (WO-8, 2026-09-24), with 0 classification flips on that blind
+record. Active new work: WO-9, the universe-hedged composite (in flight).
 
 ### 3.2 What the app shows: the baseline Gabe fixed on 2026-09-23 (landed, `bca3f7c`)
 
@@ -116,8 +125,11 @@ The blend tab's own meta (`final/out/current_signal_blend_meta.json`, landed)
 gives: single-grid backtest, excess vs SPY 1.54%/yr, hold-out -0.36%. The
 composite tab's meta (`final/out/current_signal_composite_meta.json`, landed)
 gives: hold-out excess 2.44%/yr, 40/40 offsets, **fails LOYO** (dropping 2020
-flips it to -3.95%/yr). The composite runs on cap150, so the survivorship
-caveat in 3.3 applies to it.
+flips it to -3.95%/yr). The composite tab and the forward ledger still read
+the **v1** grid (`composite_panel.parquet`; `current_signal_composite.py` and
+`prediction_ledger.py` on integration). Those hold-out numbers were measured
+on v1. No hold-out read has been made on v2, and one would need Gabe's OK
+(§3.4).
 
 Known inconsistencies in app-owned files: these are for `pipe-dream-app-manager`,
 not fixed here. `final/app/README.md` still describes six stock tabs.
@@ -131,20 +143,23 @@ See [Open conflicts](#6-open-conflicts-and-decisions-for-gabe).
 | The rebuilt point-in-time data erased the old edge: augmented model **−0.11% per window, t = −0.09**, compounded **1.00x vs SPY 5.23x** | landed | 2026-09-09 | [`DATA-PIPELINE-HANDOFF.md`](DATA-PIPELINE-HANDOFF.md) §0 |
 | Old XGBoost stock selection: no edge. Round 12 Deflated Sharpe 0.746, Reality Check p=0.61. 100% of the apparent performance is factor loading | landed (code), certified dead end | 2026-09-11/12 | [`final/src/sweep/RUNBOOK.md`](final/src/sweep/RUNBOOK.md) §5; `round18-app-two-models:AGENTS.md` "Rounds 10–17" |
 | IC is retired as a *feature-admission* gate. The gate is now a within-date shuffle null at the 80th percentile | landed | 2026-09-16 | [`final/src/sweep/RUNBOOK.md`](final/src/sweep/RUNBOOK.md) §9 |
-| Factor composite, nomination era, cap150: **+3.75%/yr** excess vs SPY, 40/40 offsets (9(8)-factor original) | landed. **Unreadable**: survivorship-selected grid | 2026-09-19 | [`final/out/reset2026/REPORT_nominate.md`](final/out/reset2026/REPORT_nominate.md), [reset doc](final/models/2026-09-19-factor-composite-reset.md) §3.1 |
-| `asset_growth` dropped (Gabe's call): nomination **+4.32%/yr**, sd 0.55%. `FACTOR_SIGNS` is now 8 factors | landed. Unreadable: same grid | 2026-09-22 | [`PREREGISTRATION.md`](final/src/reset2026/PREREGISTRATION.md) "Factor-set decision"; [corrections](final/models/2026-09-22-composite-model-corrections.md) §3 |
+| Factor composite, nomination era, cap150: **+3.75%/yr** excess vs SPY, 40/40 offsets (9(8)-factor original) | landed. **Superseded** by the v2-grid row below (v1 survivorship-selected grid) | 2026-09-19 | [`final/out/reset2026/REPORT_nominate.md`](final/out/reset2026/REPORT_nominate.md), [reset doc](final/models/2026-09-19-factor-composite-reset.md) §3.1 |
+| `asset_growth` dropped (Gabe's call): nomination **+4.32%/yr**, sd 0.55%. `FACTOR_SIGNS` is now 8 factors | landed. The factor set stands; the +4.32% (v1 grid) is **superseded** by ew8 +1.80% on v2 (row below) | 2026-09-22 | [`PREREGISTRATION.md`](final/src/reset2026/PREREGISTRATION.md) "Factor-set decision"; [corrections](final/models/2026-09-22-composite-model-corrections.md) §3 |
 | Composite hold-out (2020-2026): every version is positive in aggregate and **fails LOYO on 2020**. Original +1.85%/yr (drop 2020 → -2.05%/yr); asset_growth_dropped +2.62%/yr (→ -1.97%/yr); IC-weighted +2.44%/yr (→ -3.95%/yr) | landed | 2026-09-19/22 | [reset doc](final/models/2026-09-19-factor-composite-reset.md) §3.2; [corrections](final/models/2026-09-22-composite-model-corrections.md) §6b, §16 |
-| The composite is mostly universe beta. A no-score control earns +2.40%/yr against decile_volq's +4.32% | landed. Unreadable: cap150 grid | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §2a |
-| The composite is a strong low-beta bet: corr(score, beta_252) -0.2933. Beta-adjusted IC is sharper (t 2.53 → 4.25) | landed. Measured on the cap150 grid, so the survivorship caveat applies | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §9b |
-| **IC-shrinkage weights** (each factor weighted by sign × max(0.1, abs(t) − 1) of its own pooled-IC t, pre-registered, one run) beat equal weight out of sample on raw-return IC in both split-halves: fit-odd→test-even, weighted +0.0304 vs equal +0.0183; fit-even→test-odd, weighted +0.0496 vs equal +0.0434. On beta-adjusted IC the second split favours equal weight on the point estimate. No portfolio CAGR was computed for this step | landed. cap150 grid, nomination era | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §12 (OOS figures as reproduced in §19's sanity gate) |
+| **Survivorship-safe down-cap grid v2 built (WO-6), BUILD SUCCESS.** 22,535,814 rows, 9,266 tickers; the old 4,011 tickers reproduce `composite_panel.parquet` exactly on 20 dates. Re-measured (nomination era 2007-2019, `decile_volq` net 15bp, mean of 40 offsets, column c = v2 grid): cap150 icw8 **+2.85%** (v1: +5.25%), ew8 **+1.80%** (v1: +4.32%); cap500 icw8 +2.66%; cap2000 icw8 +2.84%. 40/40 offsets positive in every cell; LOYO min cap150 icw8 +1.71%. The survivorship fix alone is −1.8 to −2.6pp; the liquidity-flag fix is about 0. **No longer monotonic in cap.** Split-half OOS IC at cap150 *rises*, +0.0400 → +0.0479 | landed; COO-verified. "Monotonic in cap" is a certified dead end | 2026-09-24 | [down-cap grid rebuild](final/models/2026-09-24-downcap-grid-rebuild.md) "Phase 2 read-out" |
+| **No-score control on v2 (WO-7): SELECTION MATERIAL.** cap150, column c, 2007-2019, net 15bp, 40 offsets, vs SPY: icw8 **+2.85**, random same-size book (icw8 score permuted within date, 20 draws) median **−1.09** (p95 −0.93), whole eligible universe with no score **−0.25** (6/40 offsets > 0; the old grid gave +2.40). Selection (icw8 − null median) **+3.95pp/yr**, 40/40 offsets, LOYO min +3.32 (2018). So on the honest grid all of the composite's excess is the ranking, not universe beta. Of the +3.95, about 0.65pp is lower turnover than a random book: the gross (0bp) selection is **+3.28**. **Caveat: on the common window 2011-10-20 to 2019-12-31, icw8 is +0.00 vs SPY (19/40 offsets) and +0.59 vs USMV (37/40).** All full-era excess over SPY comes from before 2011-10-20; the universe lagged SPY by about 2pp/yr afterwards and the ranking made that up. Descriptive, not a trial | landed; COO verdict SELECTION MATERIAL | 2026-09-24 | [no-score control v2](final/models/2026-09-24-noscore-control-v2.md) |
+| The composite is a strong low-beta bet: corr(score, beta_252) -0.2933. Beta-adjusted IC is sharper (t 2.53 → 4.25) | landed. v1 cap150 grid, not re-measured on v2 | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §9b |
+| **IC-shrinkage weights** (each factor weighted by sign × max(0.1, abs(t) − 1) of its own pooled-IC t, pre-registered, one run) beat equal weight out of sample on raw-return IC in both split-halves: fit-odd→test-even, weighted +0.0304 vs equal +0.0183; fit-even→test-odd, weighted +0.0496 vs equal +0.0434. On beta-adjusted IC the second split favours equal weight on the point estimate. No portfolio CAGR was computed for this step | landed. v1 cap150 grid, nomination era (v2 split-half IC in the WO-6 row) | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §12 (OOS figures as reproduced in §19's sanity gate) |
 | **Cross-model rank accuracy (§19): MIDDLE.** Paired rho(icw8 split-half) − rho(q75) mean **+0.0449**, t **+1.89** (bar t ≥ 2), same sign in both halves. icw8 alone +0.0475 (t +4.19); q75 +0.0026 (t +0.12); `gross_profitability` alone +0.0458, so the composite's rank accuracy is **essentially one factor, not eight**. FM-R² ranks the other way because it is unsigned. Required labels: q75's large-cap-leaning (cap500k+) intersection, single s40 grid, pre-2020 only, descriptive (no trial spent) | landed; COO verdict: MIDDLE, no detectable difference | 2026-09-23 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §19; `final/out/reset2026/cross_model_accuracy_report.json` |
-| Composite extensions screened on the nomination era, none adopted: Amihud IC +0.0009 (t = +0.10); regime conditioning stopped (momentum flips in high-vol, the low-vol hypothesis fails); exponent p=2 no better; `fcf_yield` null; `profitability_trend` wrong-signed; EWMA beta marginal (IC +0.0462 vs +0.0450). `leverage` IC -0.0161, t -2.44, right sign, **not in the weights** (see §4.1 for its status) | landed. cap150 grid | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §10, §11, §13, §17 |
-| Turnover: a buffer band (hold unless out of the top 20%) cuts turnover 19.3% → 6.3% at +5.43% vs +5.09% excess. Laddering smooths offset dispersion but does not cut turnover. Buffer is a tested refinement, **not the confirmed default** | landed. cap150 grid, nomination era | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §15; [full spec](final/models/2026-09-22-composite-model-full-specification.md) §2.3 |
-| Options overlay (top-5 picks, 40-day ATM calls at Black-Scholes fair value, no real chain data): 47.1% of contracts expire worthless, all 5 worthless in 13 of 82 windows, full reinvestment compounds to ruin. A theoretical ceiling, not a recommendation | landed. cap150, nomination era | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §18 |
+| Composite extensions screened on the nomination era, none adopted: Amihud IC +0.0009 (t = +0.10); regime conditioning stopped (momentum flips in high-vol, the low-vol hypothesis fails); exponent p=2 no better; `fcf_yield` null; `profitability_trend` wrong-signed; EWMA beta marginal (IC +0.0462 vs +0.0450). `leverage` IC -0.0161, t -2.44, right sign, **not in the weights** (see §4.1 for its status) | landed. v1 cap150 grid, not re-measured on v2 | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §10, §11, §13, §17 |
+| Turnover: a buffer band (hold unless out of the top 20%) cuts turnover 19.3% → 6.3% at +5.43% vs +5.09% excess. Laddering smooths offset dispersion but does not cut turnover. Buffer is a tested refinement, **not the confirmed default** | landed. v1 cap150 grid, nomination era, not re-measured on v2 | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §15; [full spec](final/models/2026-09-22-composite-model-full-specification.md) §2.3 |
+| Options overlay (top-5 picks, 40-day ATM calls at Black-Scholes fair value, no real chain data): 47.1% of contracts expire worthless, all 5 worthless in 13 of 82 windows, full reinvestment compounds to ruin. A theoretical ceiling, not a recommendation | landed. v1 cap150 grid, nomination era | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §18 |
 | **Insider buy/sell counts are a certified dead end** as composite factors (cap150, h=40). Registered k=2: `ins_buyers_90` raw IC −0.0006 (t −0.16), halves disagree in sign; `ins_sellers_90` wrong-signed. The book gain is **gross, costs not applied**: ew9+buyers +4.94% vs the ew8 baseline +4.82%, against a shuffle-null p80 of +4.86%. The sector-neutral t of +3.10 is an artefact; with factor and return both sector-demeaned, IC +0.0018, **t 0.65**. Do not re-screen 30/180-day windows | landed; COO certified dead end | 2026-09-23 | [insider results](final/models/2026-09-23-insider-congress-results.md) §2-3, §7; [prereg](final/models/2026-09-23-insider-congress-preregistration.md) |
-| **Lead, not a result:** *opportunistic* insider purchases (Cohen, Malloy & Pomorski 2012), **+0.71% sector-demeaned 40-day return (Newey-West t 1.92, n = 10,419 events)**; routine purchases −0.70%. Post-hoc and below t = 2. Its "small-cap" tercile is mostly fallen large-caps | landed. Survivorship-selected cap150 grid | 2026-09-23 | [insider results](final/models/2026-09-23-insider-congress-results.md) §6 |
+| **Insider plain buyer counts on the v2 grid (WO-4): DEAD.** This used the dead end's stated reopen condition (a survivorship-safe down-cap grid). Insider family k=4, bar t ≥ 2.50. Primary, cap150 column c, 2007-2019: pooled IC −0.0017, **NW t −0.50**; halves disagree in sign; 6/40 offset flips. Registered secondary, added (never-cap2000) tickers only: t **+2.36**, but **+0.60** once both factor and return are sector-demeaned, so it is a sector effect. icw9 − icw8 book gap +0.063pp/yr. **The insider family is spent in-era**; plain counts reopen only on forward data | landed; COO verdict DEAD | 2026-09-24 | [insider buyers v2 grid](final/models/2026-09-24-insider-buyers-v2-grid.md) |
+| **Lead, not a result:** *opportunistic* insider purchases (Cohen, Malloy & Pomorski 2012), **+0.71% sector-demeaned 40-day return (Newey-West t 1.92, n = 10,419 events)**; routine purchases −0.70%. Post-hoc and below t = 2. Its "small-cap" tercile is mostly fallen large-caps. Measured on the **pre-fix TRANS_DATE** (see the WO-8 row): with the fixed dates, 1,185 of 327,456 officer/director purchases reclassify; not re-run. Continues forward-only | landed. v1 cap150 grid | 2026-09-23 | [insider results](final/models/2026-09-23-insider-congress-results.md) §6 |
+| **TRANS_DATE fix (WO-8).** `build_insider_panel.load_events` took a lexicographic min of `DD-MON-YYYY` strings. Fixed: 25,081 event rows (1.72%) get a new, always earlier trans_date; that is 17,620 of 217,778 multi-date (accession, code) groups (8.09%). **0 classification flips on the 2026-09-08 blind record** (its in-window events all come from the live refresh, which was already correct). Bulk-vs-live agreement 94.69% → 100.00%. Historic reclassification: 1,185 of 327,456 officer/director purchases. `insider_features.parquet` (filing-date keyed) is unchanged. Implementation fix, not a trial | landed; COO-verified | 2026-09-24 | [forward ledger doc](final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md) "Implementation fix 2026-09-24: TRANS_DATE min" |
 | **Congress trades are untestable in-era.** AV House coverage starts mid-2018 and 2020+ is spent. Forward-only. The premise that insider and congress data only record the execution date was wrong: SEC Form 345 has `FILING_DATE` (median lag 2 days) and AV congress has `filed_date` (median 28 days) | landed; COO: forward-only | 2026-09-23 | [insider results](final/models/2026-09-23-insider-congress-results.md) §1, §7 |
-| **The reset2026 cap500/cap150 grid is survivorship-selected.** 52% of cap150-only rows are future winners, and 4,598 real tickers are missing. Every down-cap result is unreadable until it's rebuilt | landed | 2026-09-22 | [AV spin doc](final/models/2026-09-22-alpha-vantage-spin.md) §A |
+| **The reset2026 cap500/cap150 grid (v1) is survivorship-selected.** 52% of cap150-only rows are future winners, and 4,598 real tickers are missing. Rebuilt as v2 on 2026-09-24 (WO-6 row); v1 numbers not re-measured on v2 stay caveated | landed | 2026-09-22 | [AV spin doc](final/models/2026-09-22-alpha-vantage-spin.md) §A |
 | `downcap_universe.py` split-basis bug is fixed; corrected universe written as `downcap_universe_v2.parquet` (v1 kept because `blend_model.py` reads it) | landed | 2026-09-22 | [AV spin doc](final/models/2026-09-22-alpha-vantage-spin.md) §B |
 | AV `HISTORICAL_OPTIONS` is the only survivorship-safe AV endpoint (dead names, 2008+, raw volume/OI, PIT-safe OI). EARNINGS/ESTIMATES/INSIDER/NEWS are live-only | landed | 2026-09-22 | [AV spin doc](final/models/2026-09-22-alpha-vantage-spin.md) §1-2 |
 | The one positive result from the XGBoost era: `days_to_next_filing` (the earnings announcement premium), h=20 IC -0.0153, t -4.17, and it gains strength under sector neutralisation. `_seasonal` is the tradeable, provably causal version (t -2.18). `_actual`/`_known` are **excluded from every training feature set** | landed (code); in the composite as `days_to_next_filing_seasonal`. The family is now closed (see the 8-K row) | 2026-09-12 | `round18-app-two-models:AGENTS.md` "Round 16" |
@@ -152,9 +167,13 @@ See [Open conflicts](#6-open-conflicts-and-decisions-for-gabe).
 | **Two forward-only bets pre-registered and recording** (WO-2+3): `icw9` (the frozen icw8 rule plus `leverage`, sign −1, weight −0.1582) vs icw8, and CMP-2012 opportunistic insider buyers (`opp_buyers_90`, with the plain count as control). First blind record: panel date **2026-09-08**, 2,214 rows. Decision after **6 non-overlapping matured dates**; the first matures around **2026-11-03**. No backtest was run. Record cadence is Gabe's call | landed | 2026-09-23/24 | [forward ledger doc](final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md) §1-5 |
 | LCID was **not** a data bug. It was a real 1-for-10 reverse split on 2025-09-02 | landed | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §6d |
 
-"cap150 grid" in the status column means the survivorship caveat in the row
-on the reset2026 grid applies: the number is measured on a universe of tickers
-that were cap2000 at some point, so it is not a true small-cap result.
+Two down-cap grids exist, and every number names one. **v1** (`composite_panel.parquet`,
+2026-09-18) holds only the 4,011 tickers that were cap2000 at some point, so it is
+survivorship-selected and its cap150/cap500 rows are not a true small-cap result.
+**v2** (`composite_panel_v2.parquet`, 2026-09-24) adds the 4,598 missing non-SPAC
+names; "column c" in the WO-6/WO-7/WO-4 docs is v2 without SPACs. A "v1 grid"
+status means the number was not re-measured on v2. cap2000 numbers are the same
+on both grids.
 
 The certified dead ends list is owned by the COO (`~/.claude/pipe_dream-coordination/COO.md`,
 2026-09-23) and is reproduced in §8.3.
@@ -183,6 +202,9 @@ The certified dead ends list is owned by the COO (`~/.claude/pipe_dream-coordina
   further hold-out look needs Gabe's explicit OK (COO.md). A side ledger,
   `prediction_ledger_ext.csv` (icw9 leverage + opportunistic buyers), landed
   2026-09-24 on the same first date and decision rule (§3.3).
+- All three hold-out reads above were on the **v1** grid. The v2-grid work
+  (WO-6, WO-7, WO-4, 2026-09-24) is nomination-era only and asserts
+  `max(date) < 2020-01-01`, so it spent nothing. No v2 hold-out read exists.
 
 ---
 
@@ -229,9 +251,17 @@ which now lives in §7 below.
   ledger. **Recording since panel date 2026-09-08** (landed 2026-09-24; frozen
   weights and the kill/success rule in the
   [forward ledger doc](final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md) §1a, §4).
-- **Next (COO.md, 2026-09-23):** rebuild the down-cap grid (decision #2,
-  needs Sharadar SF1 for ~4,600 more names); score the forward ledger from
-  about 2026-11-03 (WO-1). Laddered rebalancing was **not launched**: it
+- **v2 grid (landed 2026-09-24).** WO-6 rebuilt the grid survivorship-safe
+  without a new pull (SEP and SF1 for the missing names were already on disk;
+  the 14-ticker SF1 top-up added nothing). On v2 the down-cap premium over
+  cap2000 is gone, and the ranking holds (§3.3). WO-7 shows the excess is
+  selection, but only in 2007-2011 vs SPY.
+  [grid rebuild](final/models/2026-09-24-downcap-grid-rebuild.md),
+  [no-score control](final/models/2026-09-24-noscore-control-v2.md).
+- **Next (COO.md, 2026-09-25):** WO-9, the universe-hedged composite (long
+  icw8 `decile_volq`, short IWM), is in flight (§5). Score the forward ledger
+  from about 2026-11-03 (WO-1). The live candidate and the ledger still read
+  the v1 grid (Open conflicts #3). Laddered rebalancing was **not launched**: it
   only changes variance and can't fix the 2020 concentration (COO.md;
   corrections §15). Open composite questions for Gabe are COO decision #7.
 
@@ -291,6 +321,11 @@ which now lives in §7 below.
 - The Round 11 point-in-time Sharadar rebuild is the ground everything stands
   on: `pit_universe.parquet` 6,888,686 rows, 4,011 tickers. Reproduction and
   acceptance tests: [`DATA-PIPELINE-HANDOFF.md`](DATA-PIPELINE-HANDOFF.md).
+- **Down-cap grid v2** (2026-09-24, landed): `final/src/reset2026/build_downcap_grid_v2.py`
+  runs the existing builders unchanged into new `*_downcap_v2*` files and
+  `composite_panel_v2.parquet` / `outcome_cache_v2.parquet`. Added tickers' OHLC
+  go to `final/scripts/td_data_sharadar_downcap_v2/` (gitignored). Nothing
+  existing is overwritten.
 - Approved data-sourcing order (Gabe, 2026-09-17): sector-neutral features →
   net issuance (done, Round 20) → insider buys (**done 2026-09-23**, SEC Form
   345, plain counts a dead end, see §4.6) → options liquidity bucketing (AV
@@ -300,7 +335,7 @@ which now lives in §7 below.
   into data. The reset then chose a linear composite.
   [`2026-09-17-model-architecture-research.md`](final/models/2026-09-17-model-architecture-research.md).
 
-### 4.6 Insider and congressional trading: done 2026-09-23 (landed)
+### 4.6 Insider and congressional trading: done 2026-09-23, reopen spent 2026-09-24 (landed)
 
 - **Data:** SEC Insider Transactions Data Sets (structured Form 3/4/5,
   2006Q1-2026Q1, 868 MB, gitignored in `final/data/edgar/form345/`),
@@ -309,22 +344,24 @@ which now lives in §7 below.
   today's issuer only).
 - **Result:** plain buyer/seller counts are a certified dead end. Nearly all
   the cross-sectional structure is a sector bet: insiders buy most in
-  Financials, Energy and Real Estate, which then underperform. Verdicts in
-  §3.3.
+  Financials, Energy and Real Estate, which then underperform. The
+  down-cap reopen (WO-4, v2 grid, 2026-09-24) was also DEAD, and the family
+  (k=4) is spent in-era. Verdicts in §3.3.
 - **Lead:** opportunistic buyers. Now a pre-registered forward-only bet,
   recording since panel date 2026-09-08 (landed 2026-09-24,
   [forward ledger doc](final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md)).
   A live Form 4 refresh (`final/scripts/edgar_form4_refresh.py`) covers
   2026-04-01 to 2026-09-23. No 2007-2019 reruns.
-- **Found, not fixed:** `build_insider_panel.py` takes the min of `TRANS_DATE`
-  as a `DD-MON-YYYY` string (lexicographic), so multi-date filings can get the
-  wrong transaction date. Effect on historical classification unmeasured.
-  Fixing it rebuilds the bulk events the in-era lead was measured on
-  (forward ledger doc §5c).
+- **TRANS_DATE bug fixed** (WO-8, landed d9be19b, 2026-09-24). The bulk
+  events were regenerated; the old file is kept as
+  `out/insider/insider_events_prefix_2026-09-24.parquet`. 0 flips on the
+  2026-09-08 blind record; the fix applies from the next record date. The
+  in-era opportunistic lead was measured on the old dates and was not re-run.
 - **Congress:** forward-only. `final/scripts/av_congress_pull.py` needs the
   premium AV key and is **untested** against the REST response.
 - Code: `final/src/insider/` (`build_insider_panel.py`, `screen_insider.py`,
-  `posthoc_insider.py`). Small reports are committed in `final/out/insider/`.
+  `posthoc_insider.py`; v2 grid: `build_insider_panel_v2grid.py`,
+  `check_mapping_v2grid.py`, `screen_insider_v2grid.py`). Small reports are committed in `final/out/insider/`.
   [Results](final/models/2026-09-23-insider-congress-results.md),
   [pre-registration](final/models/2026-09-23-insider-congress-preregistration.md).
 
@@ -336,11 +373,12 @@ Nothing below is current state until it lands.
 
 | branch / worktree | what it will change | state | source |
 |---|---|---|---|
-| `worktree-factor-composite-reset` (5 commits) | "Merge whole branch, nothing dropped" (Gabe, 2026-09-23): the Retrain-ALL speedup (`build_features_fundamentals_sharadar.py`, 2:42 → 59s, verify-pass), the `blend_q75.py` backtest and report, and `current_signal_blend_full.csv` (per-ticker query statuses). **Its app.py UI reorg is superseded** by the 09-23 baseline, and its `current_signal_blend.py` must not be taken (it drops the frozen-factor guard) | blocked on app.lock contention and app-manager reconciliation | `worktree-factor-composite-reset:final/models/2026-09-22-session-handoff.md`; LEDGER landing queue #2; APP.md |
-| `worktree-agent-ab20b69899959cac5` (COO WO-6) | Survivorship-safe down-cap grid rebuild (COO decision #2, Gabe approved) | Phase 1 in progress; Phase 2 blocked on `SHARADAR_API_KEY` | LEDGER; COO.md log 2026-09-24 |
-| `app` | = `bca3f7c`, content-identical to integration's `final/app/**`. It should `git merge integration` (c8bba77) | awaiting the merge | `HANDOFF-app.md`; LEDGER landing log |
+| `worktree-factor-composite-reset` (5 commits) | "Merge whole branch, nothing dropped" (Gabe, 2026-09-23): the Retrain-ALL speedup (`build_features_fundamentals_sharadar.py`, 2:42 → 59s, verify-pass), the `blend_q75.py` backtest and report, and `current_signal_blend_full.csv` (per-ticker query statuses). **Its app.py UI reorg is superseded** by the 09-23 baseline, and its `current_signal_blend.py` must not be taken (it drops the frozen-factor guard) | blocked on app.lock contention and app-manager reconciliation. **Correctness risk (COO, 2026-09-24):** this branch's retrain speedup (0ad9c8f) swaps `build_features_fundamentals_sharadar.py` for a float32 version whose `market_cap` differs from `composite_panel` in 43,250 of 43,743 sampled rows. Before or at landing, show eligibility flags and composite ranks unchanged, or keep float64 | `worktree-factor-composite-reset:final/models/2026-09-22-session-handoff.md`; LEDGER landing queue #2; APP.md; COO.md "Open correctness items"; [grid rebuild doc](final/models/2026-09-24-downcap-grid-rebuild.md) "Reproduction-target provenance" |
+| `worktree-agent-a4c6de08254d118aa` (COO WO-9) | Universe-hedged composite: icw8 `decile_volq` net 15bp minus IWM's 40-day return minus 10bp per rebalance, v2 grid, 2007-2019 only. Pre-registered success needs > +1.0pp/yr in both the full era and 2011-10-20..2019, ≥ 36/40 offsets, LOYO min > 0, and \|beta to SPY\| < 0.3. A pass is a nomination only (composite family trial 14) | pre-registration committed (60a2247), no result yet | `worktree-agent-a4c6de08254d118aa:final/models/2026-09-25-hedged-composite.md`; COO.md WO-9 |
+| `worktree-agent-a62e372d5c3f442a3` (WO-8) | An uncommitted refinement to the landed TRANS_DATE section: 3 changed rows now take a mistyped raw year (e.g. "08-MAY-0013"), none on a ledger-universe purchase; plus a reproducibility note (re-running `posthoc_insider.py` reads the fixed events; point it at the `_prefix_2026-09-24` backup to reproduce the published lead) | uncommitted (file mtime 2026-09-24 19:53); the COO records the commit as classifier-denied. Needs Gabe | COO.md WO-8; LEDGER |
+| `app` | 0584436 + merge 80f9f57, pushed: Query a Ticker answers for blend and theoretical, a model-agreement panel, and a Retrain ALL `SHARADAR_API_KEY` preflight. **Built on 10bfb19's `app.py` layout** (what Gabe's live checkout runs), not bca3f7c's | blocked on Gabe confirming the layout swap (Open conflicts #10) | `HANDOFF-app.md` (2026-09-24); LEDGER |
 | `worktree-papermoney-order-sheet` | paper-broker order sheet | **not to land** (Gabe, 2026-09-23) | LEDGER |
-| `round18-app-two-models` | superseded. Its AGENTS.md Rounds 9-19 narrative is absorbed into this README | not merged. The merge-abort still needs confirming (LEDGER queue #0) | LEDGER |
+| `round18-app-two-models` (Gabe's live main checkout) | Its AGENTS.md Rounds 9-19 narrative is absorbed into this README. On 2026-09-24, with Gabe's OK, the integrator made an additive commit f5584db bringing `final/src` up to integration so Retrain ALL works; `final/app/**` stays at 10bfb19. On 2026-09-25, 02be838 copied integration's README.md and AGENTS.md (983a154) there | f5584db and 02be838 are local only (push fails: "remote end hung up"). Not to be merged into integration | LEDGER |
 
 ---
 
@@ -358,13 +396,15 @@ Nothing below is current state until it lands.
 2. ~~Landed code depends on an uncommitted file (`ic_weighted_composite`).~~
    **Resolved 2026-09-23** by f680f94 (audit landed; the integrator verified
    `import current_signal_composite` on integration).
-3. **Down-cap survivorship vs the composite's live role.** The AV doc (landed
-   2026-09-22) says every cap150/cap500 result is unreadable. The full-spec
-   doc (landed 2026-09-23; §4 "~4,011 tickers ever eligible") and the landed
-   composite meta quote cap150 numbers without that caveat. The insider
-   results doc does carry it. The live composite candidate and the
-   forward ledger both use cap150. **Gabe / COO decision #2:** fund the SF1
-   pull for ~4.6k names and rebuild, or move the candidate to cap2000.
+3. **The live composite still reads the v1 grid.** The survivorship-safe v2
+   grid exists (WO-6, landed 2026-09-24), but on integration
+   `current_signal_composite.py` and `prediction_ledger.py` both read
+   `composite_panel.parquet` (v1), and the app's composite tab quotes v1-grid
+   numbers. The full-spec doc (§4 "~4,011 tickers ever eligible") has no
+   survivorship caveat. On v2, cap150 no longer beats cap2000 (both about
+   +2.85%/yr icw8). **For Gabe / the COO:** keep the candidate on cap150,
+   move it to v2, or move it to cap2000. The forward ledger's frozen rule
+   should not change mid-record without an explicit decision.
 4. **IC's role (methodology, for the COO).** Round 19 (2026-09-16) retired IC as
    a feature-admission gate (rank correlation with earnings +0.019). Gabe's
    2026-09-22 reframe made pooled IC the composite's *target metric*, and the
@@ -385,7 +425,13 @@ Nothing below is current state until it lands.
    moot, because it was pushed and landed (f680f94). The ledger's AV row says
    new commits need landing, but `de4fdb5` is already in integration. Project
    memory (`project_thin_liquidity_options_edge_idea.md`) still says the AV
-   bulk pull is RUNNING, but it crashed at 18:09.
+   bulk pull is RUNNING, but it crashed at 18:09. (2026-09-25) COO.md's Active
+   bets composite row still quotes "+3.75%/yr cap150" and "mostly universe
+   beta: the no-score control gets +2.40%/yr", both superseded by WO-6/WO-7 on
+   v2; decision #2 still says the pull needs `SHARADAR_API_KEY`, but WO-6
+   needed no pull. COO.md and the ledger call the WO-8 doc addendum
+   uncommitted; its main section is on integration (d9be19b), and only a
+   later refinement is uncommitted (§5).
 7. **Earlier decisions still pending** (COO.md): why the HMM regime gate was
    retired; whether to renew AV premium (around 2026-10-22); whether the
    integrator may fast-forward `main` to `integration` (`main` 7898b52 is far
@@ -402,6 +448,17 @@ Nothing below is current state until it lands.
    it as standard, without changing past numbers. Not yet decided.
 9. ~~COO worker worktrees on origin/main.~~ **Resolved 2026-09-24:** WO-5
    landed at 371f2d0 and WO-2+3 at f3233bd, both via integration.
+10. **App layout: `app` branch on 10bfb19's layout vs Gabe's 2026-09-23
+    baseline (bca3f7c).** Gabe said on 2026-09-23 "this is the current
+    baseline" (§3.2). On 2026-09-24 the app manager rebuilt `app` on 10bfb19's
+    `app.py` (what the live checkout runs) and is holding it until Gabe
+    confirms the swap (HANDOFF-app.md). §3.2 still describes the bca3f7c
+    baseline, which is what is on integration. **Gabe decides.**
+11. **What the composite's post-2011 result means for promotion (for Gabe /
+    the COO).** WO-7: on v2, icw8 is +0.00 vs SPY from 2011-10-20 to 2019,
+    while selection over a random book is still +2.83 there. As a long-only
+    small-cap book it has not beaten the index since 2011. WO-9 (hedged) is the
+    registered test. The COO flags this as bearing on anything Gabe promotes.
 
 ---
 
@@ -445,6 +502,7 @@ unreachable from agent sandboxes, and keys (`SHARADAR_API_KEY`,
 | Composite corrections / audit | `model_audit.py`, `correction_variants.py`, `harness_check.py` | [physics](final/models/2026-09-22-composite-model-physics.md) §12, [corrections](final/models/2026-09-22-composite-model-corrections.md) §7 |
 | Sweep harness (XGBoost era) | `python3 -m sweep.cli …` | [`final/src/sweep/RUNBOOK.md`](final/src/sweep/RUNBOOK.md) |
 | Insider panel, screen, post-hoc (download 81 SEC quarterly zips first) | `build_insider_panel.py` → `screen_insider.py` → `posthoc_insider.py` | [insider results](final/models/2026-09-23-insider-congress-results.md) "Reproduction" |
+| Down-cap grid v2 and its read-outs (nomination era only) | `build_downcap_grid_v2.py --all` → `downcap_grid_acceptance.py` → `downcap_v2_readout.py` → `noscore_control_v2.py`; insider re-test `build_insider_panel_v2grid.py` → `screen_insider_v2grid.py`. Optional SF1 top-up: `final/scripts/sharadar_downcap_pull.py` (key needed; added nothing) | [grid rebuild](final/models/2026-09-24-downcap-grid-rebuild.md); [no-score control](final/models/2026-09-24-noscore-control-v2.md); [insider v2](final/models/2026-09-24-insider-buyers-v2-grid.md) |
 | Composite, current spec (universe → factors → panel → outcomes → beta, then `ic_weighted_composite.py`, `prediction_ledger.py record/score`) | per the spec | [full spec](final/models/2026-09-22-composite-model-full-specification.md) §6 |
 | AV options pull + unified chain + features | `av_options_pull.py`, `build_option_chain_unified.py`, `build_av_options_features.py` | [AV spin doc](final/models/2026-09-22-alpha-vantage-spin.md) §C-E |
 | Live signals | `current_signal_pit.py`, `current_signal_composite.py`, `current_signal_blend.py` (the app's "Retrain ALL" runs them) | `final/app/README.md` |
@@ -492,7 +550,8 @@ not superseded by anything newer):
 | Survivorship-selected down-cap grid | 52% of cap150-only rows are future winners | pool-integrity check, 62.85% | AV spin doc §A |
 | IC-weighted score without renormalising | missing-factor rows compressed | re-run after the fix | corrections §12 |
 | Sector-neutral t from demeaning the factor only | insider buyers t +3.10 "within sector"; both sides demeaned gives 0.65 | fire rate vs sector return, corr −0.79 | insider results §3 |
-| `build_insider_panel.py` min of `TRANS_DATE` as a string (**unfixed**) | "02-MAR-2026" sorts before "26-FEB-2026"; 17 of 320 rows mismatched | live-vs-bulk Form 4 validation | forward ledger doc §5c |
+| `build_insider_panel.py` min of `TRANS_DATE` as a string (**fixed 2026-09-24**, WO-8) | "04-MAR-2008" sorted before "11-FEB-2008"; 17 of 320 validation rows mismatched; 25,081 event rows wrong | live-vs-bulk Form 4 validation | forward ledger doc §5c and "Implementation fix 2026-09-24" |
+| Main-checkout builder swapped to float32 (not a bug yet, a risk) | `market_cap` differs from `composite_panel` in 43,250 of 43,743 sampled rows | WO-6 naming its reproduction target explicitly | [grid rebuild](final/models/2026-09-24-downcap-grid-rebuild.md); COO.md |
 | AV pull `IncompleteRead` not retried | bulk pull died at 2010-08-18 | `pull.out` traceback | COO.md; `final/scripts/av_options_pull.py:151` |
 | LCID "bug", **retracted** | adjusted vs raw price compared | split-signature scanner | corrections §6d |
 
@@ -524,6 +583,16 @@ permuted row.
   factor. When a factor's sector concentration tracks sector returns, the
   result looks like within-sector skill but isn't (insider round). Whether
   to report both-sides numbers as standard is pending (Open conflicts #8).
+- **Name the grid.** Two down-cap grids exist (v1 survivorship-selected, v2
+  safe; §3.3 footnote). Every cap150/cap500 number must say which one.
+  cap2000 is identical on both.
+- **Insider re-runs read the fixed events.** Since WO-8, `posthoc_insider.py`
+  and `screen_insider.py` read the regenerated `insider_events.parquet`. To
+  reproduce the published 2026-09-23 numbers, use
+  `out/insider/insider_events_prefix_2026-09-24.parquet`.
+- **Hedge or benchmark the universe leg.** On v2 the eligible small-cap
+  universe lagged SPY by about 2pp/yr after 2011 (WO-7). Report a long-only
+  small-cap book against its own no-score universe as well as SPY and USMV.
 - **Never admit NaN-feature names to a scored pool.** `_bucket_idx` sends NaN
   vol to the lowest-vol bucket. The fix touches `simulate()`, so it's Gabe's
   call.
@@ -541,7 +610,7 @@ permuted row.
 - **Calibration:** in a zero-signal grid, 27% of configs beat the market and
   the best reached 2.577×. One config beating SPY is evidence of nothing.
 
-### 8.3 Certified dead ends (COO.md, 2026-09-23). Reopen only with the stated reason
+### 8.3 Certified dead ends (COO.md, 2026-09-25). Reopen only with the stated reason
 
 Old XGBoost stock selection · fundamentals as a selection signal (R13) ·
 rate-sensitivity features (R14) · breadth via book size/horizon (R15/15b) ·
@@ -550,8 +619,12 @@ gate · the old HMM gate (until Gabe says why it was dropped) · earnings
 proximity as a stage-2 rule · composite `decile1_volq` · options: long calls,
 long puts, buy/no-buy gate + ATM, 60-day, ~2-day/0DTE, LEAPS, GAM hurdle · AV
 EARNINGS/ESTIMATES/INSIDER/NEWS as backtest features · **insider plain
-counts** (`ins_buyers_90`/`ins_sellers_90`, cap150, h=40; no 30/180-day
-variants) · **congress as a backtest factor** (forward-only) · **the
+counts** (`ins_buyers_90`/`ins_sellers_90`, cap150, h=40; no 30/180-day,
+value, cluster or size variants; the down-cap reopen condition **was used** by
+WO-4 on 2026-09-24, DEAD, so the insider family k=4 is spent and reopens only
+on forward data) · **"down-cap breadth improves the composite" / "monotonic
+in cap"** (WO-6, 2026-09-24; reopen only for a factor whose premium is
+specifically small-cap, tested on v2) · **congress as a backtest factor** (forward-only) · **the
 earnings-timing family** (6 trials, closed 2026-09-23 by the 8-K test; reopen
 only with point-in-time *announced* dates, tested forward). Screened
 negative but not certified by the COO: Amihud illiquidity, book-to-market
@@ -584,7 +657,11 @@ the file is on `integration`.
 | [`final/models/2026-09-23-insider-congress-preregistration.md`](final/models/2026-09-23-insider-congress-preregistration.md) | 2026-09-23 | landed | insider k=2 trials, congress ruled untestable before any return |
 | [`final/models/2026-09-23-insider-congress-results.md`](final/models/2026-09-23-insider-congress-results.md) | 2026-09-23 | landed | insider counts fail; sector-neutral artefact; opportunistic-buyer lead; congress forward-only |
 | [`final/models/2026-09-23-earnings-announcement-premium-8k.md`](final/models/2026-09-23-earnings-announcement-premium-8k.md) | 2026-09-23 | landed | WO-5: 8-K Item 2.02 EAP, DEAD; closes the earnings-timing family (Part 2 "Reading" first sentence struck by the COO) |
-| [`final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md`](final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md) | 2026-09-23/24 | landed | WO-2+3: forward pre-registration of icw9 leverage and opportunistic buyers; first blind record 2026-09-08; TRANS_DATE bug |
+| [`final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md`](final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md) | 2026-09-23/24 | landed | WO-2+3: forward pre-registration of icw9 leverage and opportunistic buyers; first blind record 2026-09-08; TRANS_DATE bug and its WO-8 fix (2026-09-24 section) |
+| [`final/models/2026-09-24-downcap-grid-rebuild.md`](final/models/2026-09-24-downcap-grid-rebuild.md) | 2026-09-24 | landed | WO-6: survivorship-safe v2 grid, BUILD SUCCESS; icw8 cap150 +5.25 → +2.85%/yr; flat across tiers |
+| [`final/models/2026-09-24-noscore-control-v2.md`](final/models/2026-09-24-noscore-control-v2.md) | 2026-09-24 | landed | WO-7: SELECTION MATERIAL on v2; universe −0.25 vs SPY; +0.00 vs SPY on 2011-10-20..2019 |
+| [`final/models/2026-09-24-insider-buyers-v2-grid.md`](final/models/2026-09-24-insider-buyers-v2-grid.md) | 2026-09-24 | landed | WO-4: plain insider buyers on v2, DEAD; insider family k=4 spent |
+| `worktree-agent-a4c6de08254d118aa:final/models/2026-09-25-hedged-composite.md` | 2026-09-25 | in flight (pre-registration only) | WO-9: IWM-hedged composite |
 | [`final/app/README.md`](final/app/README.md) | 2026-09-18 | landed; stale vs app.py (app-manager) | how to run the app, tab guide |
 | [`final/models/pit_integration/README.md`](final/models/pit_integration/README.md) | 2026-09-02 | landed | options PIT-integration reproduction |
 | [`final/models/hyperparameter_retune/README.md`](final/models/hyperparameter_retune/README.md) | 2026-09-02 | landed | options Tweedie/GAM retune |
@@ -636,3 +713,12 @@ Old claim, its source and date → what replaced it, with source and date.
 - Earnings announcement premium via 8-K as an open lead (COO.md leads, 2026-09-23) → DEAD, earnings-timing family closed at 6 trials (EAP 8-K doc; COO.md dead ends, 2026-09-23).
 - `leverage` / opportunistic buyers "confirmation being built" (README §4.1/§4.6, 2026-09-23) → recording forward since panel date 2026-09-08 (forward ledger doc §5e, 2026-09-24).
 - EAP 8-K doc Part 2 "Reading", first sentence (portfolio-impact claim, 2026-09-23) → struck by the COO: the icw9−icw8 gap is +0.10%/yr on in-sample weights (COO.md, 2026-09-23).
+- Composite cap150 +3.75%/yr (9-factor, v1) and +4.32%/yr (ew8, v1) "unreadable until the grid is rebuilt" (README §3.3, 2026-09-22/23) → re-measured on v2: ew8 +1.80%, icw8 +2.85% (v1 +5.25%) (downcap-grid-rebuild doc, 2026-09-24).
+- "Breadth is the lever": composite excess rises cap2000 < cap500 < cap150 (+1.09 → +3.03 → +3.75, reset REPORT_nominate 2026-09-19, as quoted in the downcap-grid-rebuild doc) → flat on v2, +2.84 / +2.66 / +2.85 (downcap-grid-rebuild doc, 2026-09-24; COO dead end).
+- The composite is mostly universe beta; no-score control +2.40%/yr (corrections §2a, 2026-09-22) → on v2 the no-score universe earns −0.25%/yr and all the excess is selection, +3.95pp/yr (noscore-control-v2 doc, 2026-09-24). §2a's result was survivorship.
+- Down-cap grid rebuild needs a Sharadar SF1 pull for ~4,600 names (AV spin doc §A / COO decision #2, 2026-09-22/24) → SEP and SF1 were already on disk; the 14-ticker top-up added nothing (downcap-grid-rebuild doc, 2026-09-24).
+- WO-6 in flight, Phase 2 blocked on `SHARADAR_API_KEY` (README §5, 2026-09-24) → landed deb156d + 26f600f (LEDGER, 2026-09-24).
+- Insider plain counts reopen "if a survivorship-safe down-cap grid exists" (COO.md dead ends, 2026-09-23) → reopen used by WO-4, DEAD; forward data only (insider-buyers-v2-grid doc, 2026-09-24).
+- `build_insider_panel.py` TRANS_DATE string-min "found, not fixed; effect on historical classification unmeasured" (forward ledger doc §5c, 2026-09-23) → fixed; 1,185 of 327,456 reclassify, 0 flips on the blind record (same doc, "Implementation fix 2026-09-24").
+- TRANS_DATE bug affects "5.3%" (forward ledger doc §5c, 2026-09-23) → that was 17 of 320 rows in one day's sample; the full count is 25,081 rows (1.72%), 8.09% of multi-date groups (same doc, 2026-09-24 section).
+- `app` = bca3f7c, awaiting `git merge integration` (README §5, 2026-09-23) → rebuilt on 10bfb19's layout, 0584436 + 80f9f57, blocked on Gabe (HANDOFF-app.md, 2026-09-24; Open conflicts #10).
