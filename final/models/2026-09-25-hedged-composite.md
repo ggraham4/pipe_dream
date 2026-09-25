@@ -262,6 +262,64 @@ The icw8 − noscore figures are not asserted equal to WO-7's
 `total_icw8_minus_noscore`, because WO-7 aligned dates across 20 null books
 and these are the icw8/noscore-only dates (C3).
 
+## 3.6 COO ruling and ITERATE #1 (registered before any iterate result)
+
+**COO ruling (made after the results, 2026-09-25).** LOYO applies to the
+FULL window only, following the readout/WO-7 precedent. In the work order,
+"in either window" qualifies only the kill's mean clause. The primary verdict
+is therefore **MIDDLE**. Success fails on the 2011-19 mean (+0.92 < +1.0),
+and no kill fires. The 2011-19 LOYO min of −0.40 (drop 2018) stays on the
+record.
+
+**ITERATE #1 (1 of 3; this fixes the basis, so it is not a new trial).**
+Measure the book's own dividend yield so the tradable number can be pinned
+down.
+
+- (a) **Book yield.** For the icw8 decile_volq book, per rebalance over the
+  40-day hold, weight each name's dividend return by the book's weights and
+  annualise ×252/40. Report the full and 2011-10..2019 windows for every
+  tier.
+- (b) **IWM yield** over the same windows, from yfinance Adj Close vs Close.
+- (c) **Tradable hedged** = price-only hedged + (book yield − IWM yield),
+  per rebalance, for full and 2011-19, all tiers, 15bp and 10bp as before.
+- **Frozen reading (cap150):** tradable 2011-19 mean40 ≤ 0 → **KILL** (the
+  kill's mean clause applied to the tradable number). Tradable 2011-19 > 0
+  → verdict stays **MIDDLE** and goes to Gabe with the tradable numbers.
+  Tradable full-window mean40 and LOYO min are reported either way.
+- **Constraints unchanged:** assert < 2020 on every frame, and mask exits
+  after 2019-12-31 as before.
+
+**Clarification, fixed before the iterate ran: the dividend source.** The
+COO named `final/data/sharadar/actions.csv`. On inspection that file covers
+only 2025-09-09..2026-09-10 (JNJ has just 4 dividend rows, all 2025-26), so
+it holds no 2007-2019 dividends and cannot be used. The substitute is from
+the same vendor and is disclosed here, not swapped in silently: the Sharadar
+SEP price panel, `final/data/sharadar/panel/stocks/*.parquet`. That panel is
+the source every book OHLC CSV was exported from (`export_sharadar_ohlc.py`),
+and it carries `close` (split-adjusted, the book's basis) alongside
+`closeadj` (split- and dividend-adjusted).
+
+- **Formula.** Per name, with f = closeadj/close, entry bar e = i+1 (the
+  open) and exit bar x = i+40:
+  dividend return = (close[x]/open[e]) × (f[x]/f[e] − 1).
+- **Consistency with IWM.** This is the same construction as IWM's
+  (Adj Close/Close), i.e. total-return ret40 minus price ret40.
+- **Ex-date handling.** A dividend going ex on the entry day is excluded,
+  because you buy at the ex-open. One going ex on the exit day is included.
+
+**Checks, fixed before the run:**
+- **Basis reconcile.** The panel's open/close reproduce outcome_cache_v2
+  `gross_return_40` on the book's picks. Mismatches are counted and must be
+  0 apart from a disclosed series-end truncation.
+- **Dividend name-check.** Per-share dividends inferred from the f jumps:
+  JNJ calendar 2017 = $3.32 and 2018 = $3.54, XOM 2017 = $3.06, each within
+  2%.
+- **Hold-out.** The panel is loaded through 2019-12-31 only, with a
+  max(date) assert.
+- **Window.** Only rebalance dates with finite IWM (the C2 mask) are used.
+- **Weights.** The book weights are the renormalised weights the gross
+  return uses. Names dropped for NaN returns get no dividend.
+
 ## 4. Verdict
 
 **MIDDLE if LOYO is read on the full window only. KILL if LOYO covers the
