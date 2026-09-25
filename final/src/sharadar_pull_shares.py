@@ -64,10 +64,11 @@ import requests
 
 BASE_URL = "https://api.sharadar.com/v1.0/data"
 API_KEY = os.environ.get("SHARADAR_API_KEY")
-OUT = Path(__file__).resolve().parent.parent / "data" / "sharadar" / "sf1_shares.csv"
+OUT = Path(os.environ.get("SHARADAR_OUT_DIR") or Path(__file__).resolve().parent.parent / "data" / "sharadar") / "sf1_shares.csv"
 PAGE = 10000
 DELAY = 0.2
-START, END = "2004-01-01", "2026-12-31"
+START = os.environ.get("SHARADAR_START", "2004-01-01")
+END = os.environ.get("SHARADAR_END", "2026-12-31")
 
 
 def get(params, timeout=180):

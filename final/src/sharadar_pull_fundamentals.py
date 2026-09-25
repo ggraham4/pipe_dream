@@ -63,10 +63,11 @@ import requests
 
 BASE_URL = "https://api.sharadar.com/v1.0/data"
 API_KEY = os.environ.get("SHARADAR_API_KEY")
-OUT = Path(__file__).resolve().parent.parent / "data" / "sharadar" / "sf1_fundamentals.parquet"
+OUT = Path(os.environ.get("SHARADAR_OUT_DIR") or Path(__file__).resolve().parent.parent / "data" / "sharadar") / "sf1_fundamentals.parquet"
 PAGE = 10000
 DELAY = 0.2
-START_YEAR, END_YEAR = 2004, 2026
+START_YEAR = int(os.environ.get("SHARADAR_START", "2004")[:4])
+END_YEAR = int(os.environ.get("SHARADAR_END", "2026")[:4])
 
 KEEP = [
     "ticker", "dimension", "date", "calendardate", "reportperiod",
