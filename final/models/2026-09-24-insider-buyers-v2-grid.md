@@ -152,3 +152,78 @@ firms, which is exactly what the old grid lacked.
 ## Results
 
 (appended after the run, below this line; nothing above is edited)
+
+### Integrity checks (run 2026-09-24, before any return statistic)
+
+Scripts: `final/src/insider/build_insider_panel_v2grid.py` (feature build +
+checks, writes `out/insider/insider_features_v2grid.parquet` and
+`insider_v2grid_integrity.json`) and `final/src/insider/check_mapping_v2grid.py`
+(mapping follow-up, writes `insider_v2grid_mapping_check.json`). Events were
+rebuilt from the 81 raw zips with `build_insider_panel.load_events()`:
+1,456,667 (filing, owner, code) rows, the same count as the v1 build.
+
+**Row count and CIK uniqueness: PASS.** v2 panel ≤ 2019-12-31: 15,420,963
+rows, 7,284 tickers, before and after the CIK merge. `tickers_master` has one
+duplicate ticker row; after deterministic dedup every ticker has exactly one
+CIK (asserted), and no ticker has two distinct CIKs. CIK-mapped share is
+100.0% for old and added tickers alike.
+
+**Reconcile vs `insider_features.parquet`: PASS, exact.** Column b cap150
+rows 2007-2019: 6,768,536; all 6,768,536 match a row of the old file;
+**0 mismatches** (the old file has 0 duplicate (ticker, date) keys).
+
+**Named filings: PASS.**
+- Dimon/JPM: raw 2016q1 zip, accession 0001225208-16-026145, owner CIK
+  1195345, issuer CIK 19617, filed 2016-02-11, $26.59M. JPM `ins_buyers_90`
+  is 1 on 2016-02-10 and 2 on 2016-02-11 (step +1 on the filing date).
+- Added (never-cap2000) names, WO-6 A1 list, first O/D purchases:
+  - NGS (CIK 1084991): filed 2007-05-18 → 0 to 1 on 2007-05-18; filed
+    2008-12-01 → 0 to 1.
+  - WTBA (1166928): filed 2007-02-14 → 0 to 1; 2007-05-10 → 1 to 2.
+  - NRIM (1163370): filed 2007-02-22 ($140k) → 0 to 1; 2007-05-24 → 0 to 1.
+  - ACHN (1070336): filed 2008-09-02 → 0 to 1; 2008-09-09 → 1 to 2.
+  - ANIK (898437): filed 2008-03-12 → 0 to 2 (two owners the same day).
+    Its 2008-03-19 filing does not step, correctly: that owner (CIK
+    1209114) was already counted from 2008-03-12 (distinct owners).
+
+**Fire rate, old vs added (2007-2019): literal outcome, with the mapping
+follow-up the pre-registration requires.**
+
+| cap150 rows (non-SPAC) | rows | fire rate (`ins_buyers_90 > 0`) |
+|---|---:|---:|
+| old | 6,768,536 | 19.7% |
+| added | 2,987,605 | **24.2%** |
+
+| mutually exclusive band | old | added |
+|---|---:|---:|
+| cap2000 | 16.8% | — (none, by construction) |
+| cap500 not cap2000 | 21.8% | 20.2% |
+| cap150 not cap500 | 29.5% | 26.5% |
+
+- Aggregated over cap150, added names fire MORE (24.2% vs 19.7%), and in
+  both groups the fire rate falls as cap rises, so "small caps show more
+  insider buying" holds.
+- **Within a band, and at matched market cap, added names fire 2.5-4pp
+  LESS** (e.g. $300-500M: 25.2% vs 29.0%; $1-2B: 17.2% vs 20.2%). Taken
+  literally, the pre-registered rule reads this as a possible mapping bug,
+  so it was tested before proceeding:
+  - *Is the CIK live?* Any Form 3/4/5 filed under the mapped CIK within the
+    ticker's cap150 date range: added 98.2%, old 97.9%.
+  - *Is it the right company?* The most common `ISSUERTRADINGSYMBOL` filed
+    under the mapped CIK in that range equals the ticker (trailing digit/Q
+    stripped): added 82.3% vs old 85.8% strict, 87.0% vs 89.7% loose
+    (prefix). The mismatches inspected are renames where Sharadar keys on
+    the latest ticker (ACGN/IDRA Idera, ACR/RSO, ALNT/AMOT Allient,
+    ACHV/OGXI), in both groups at similar rates.
+  - *Does the gap survive on symbol-verified tickers only?* Yes, unchanged
+    (e.g. $300-500M: 25.2% vs 29.4%).
+  - Reading: the mapping is not the cause. The residual gap is what the old
+    grid's selection predicts: old-grid small-cap rows belong to names that
+    were cap2000 at some other date (later winners, fallen angels), and
+    insider buying concentrates in both. This is selection on the outcome.
+    It is **not** evidence for the signal, and the COO should accept or
+    reject this reading.
+- 61 CIKs are shared by more than one column-c ticker (share classes,
+  renames with overlapping histories); those tickers carry identical
+  series. The same was true on the old grid.
+- SPACs (excluded from column c) fire at 0-13%.
