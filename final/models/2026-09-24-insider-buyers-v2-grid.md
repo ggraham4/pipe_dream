@@ -275,7 +275,7 @@ insider number was computed:
   (sd 0.022pp/yr primary, 0.061pp/yr added), because permuting one column
   in nine barely moves the book. Beating it shows the column is not pure
   noise inside the composite. It does not show a material gain: the
-  +0.05-0.06pp/yr is about a fifth of the book's own offset-to-offset sd.
+  +0.063pp/yr (primary) is about a ninth of the split-half icw8 book's own offset-to-offset sd (0.54pp/yr), and the added slice's +0.054pp/yr is about a thirteenth of that slice's book sd (0.72pp/yr).
 - **OOS IC with and without the column.** icw9 +0.0490 vs icw8 +0.0485
   (primary); +0.0752 vs +0.0752 (added).
 
