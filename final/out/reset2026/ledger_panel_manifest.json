@@ -1,0 +1,21 @@
+{
+  "note": "Working panel switched v1 -> v2 on 2026-09-25 (Gabe; WO-11). Records dated 2026-09-08 in the v1/v2/v3/ext ledgers were made on composite_panel.parquet and are never rewritten. New v3/ext records from the next record date on use composite_panel_v2.parquet. The hedge ledger (WO-10) is on v2 from its first record. Doc: final/models/2026-09-25-forward-hedged-icw8.md",
+  "working_panel": "composite_panel_v2.parquet",
+  "ledgers": {
+    "prediction_ledger.csv": {
+      "2026-09-08": "composite_panel.parquet"
+    },
+    "prediction_ledger_v2.csv": {
+      "2026-09-08": "composite_panel.parquet"
+    },
+    "prediction_ledger_v3.csv": {
+      "2026-09-08": "composite_panel.parquet"
+    },
+    "prediction_ledger_ext.csv": {
+      "2026-09-08": "composite_panel.parquet"
+    },
+    "prediction_ledger_hedge.csv": {
+      "2026-09-08": "composite_panel_v2.parquet"
+    }
+  }
+}

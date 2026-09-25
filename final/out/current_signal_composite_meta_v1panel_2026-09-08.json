@@ -1,8 +1,8 @@
 {
   "as_of_date": "2026-09-08",
   "tier": "cap150",
-  "n_eligible_universe": 3065,
-  "n_picks": 305,
+  "n_eligible_universe": 2214,
+  "n_picks": 220,
   "construction": "decile_volq: top decile by IC-weighted composite score within each of 5 trailing-volatility quintiles, inverse-vol weighted, 40-trading-day hold, no stop-loss",
   "factor_signs": {
     "momentum_12_1": 1,
@@ -34,8 +34,6 @@
   },
   "writeup": "final/models/2026-09-22-composite-model-full-specification.md",
   "preregistration": "final/src/reset2026/PREREGISTRATION.md",
-  "panel_source": "composite_panel_v2",
-  "universe_rule": "v2 eligible_cap150, SPACs excluded unless in the old 4,011-ticker grid (19 eligible SPAC rows dropped)",
   "role": "candidate",
   "note": "TRACKED, NOT ACTED ON AS A VALIDATED EDGE -- a theoretical, zero-fitted-parameter rank model (only the 8 factor SIGNS and the IC-weights' shrinkage formula are decisions; no return target was ever fit). Fails leave-one-year-out on the 2020-2026 hold-out across all three tested versions. See the write-up."
 }

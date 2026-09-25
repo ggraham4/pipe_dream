@@ -82,6 +82,10 @@ sys.path.insert(0, str(RESET_SRC))
 from current_signal_pit import AUGMENTED_FEATURE_COLS  # noqa: E402
 from continuous_walkforward_pit import load_pit_universe  # noqa: E402
 import composite as C  # noqa: E402  (only rank_z / pick_decile_volq used -- NOT FACTOR_SIGNS/compute_composite)
+# working_panel (WO-11) is resolved next to THIS file, appended so every
+# other import above keeps resolving to the main checkout exactly as before.
+sys.path.append(str(Path(__file__).resolve().parent / "reset2026"))
+import working_panel as W  # noqa: E402
 
 # Frozen copy of composite.py's ORIGINAL (2026-09-19) 9-factor equal-weight
 # scoring -- see the module docstring above for why this can't just call
@@ -117,7 +121,14 @@ def _compute_composite_frozen(df_date: pd.DataFrame) -> pd.DataFrame:
 
 
 BASE_PANEL = MAIN_ROOT / "out" / "features_with_fundamentals_sharadar_pit.parquet"
-COMPOSITE_PANEL = MAIN_ROOT / "out" / "reset2026" / "composite_panel.parquet"
+# WO-11 (2026-09-25, Gabe: "all models should use it"): the composite leg
+# reads the WORKING panel (composite_panel_v2) with the v2 universe rule
+# (old 4,011-ticker grid OR not a SPAC) applied before rank_z. The q75 leg
+# and the cap2000 eligibility (load_pit_universe) are unchanged. v2 has NO
+# refresh path yet (build_downcap_grid_v2.py never overwrites): once the base
+# panel moves past v2's last date (2026-09-08) this script stops with the
+# "no eligible rows" error below until a v2 refresh builder exists.
+COMPOSITE_PANEL = W.WORKING_PANEL
 Q75_MODEL = MAIN_ROOT / "out" / "models" / "xgb_pit_augmented_model.json"
 OUT_CSV = MAIN_ROOT / "out" / "current_signal_blend.csv"
 OUT_META = MAIN_ROOT / "out" / "current_signal_blend_meta.json"
@@ -166,13 +177,11 @@ def main():
     print("loading composite panel + scoring composite (frozen 9-factor original) ...")
     comp_needed = list(dict.fromkeys(
         ["ticker", "date", "sector", "volatility_60", f"eligible_{TIER}"] + _ORIGINAL_FACTOR_COLS))
-    comp_panel = pd.read_parquet(COMPOSITE_PANEL, columns=comp_needed)
-    comp_panel["date"] = pd.to_datetime(comp_panel["date"])
-    comp_panel["ticker"] = comp_panel["ticker"].astype(str)
-    comp_today = comp_panel[(comp_panel["date"] == as_of) & (comp_panel[f"eligible_{TIER}"])].reset_index(drop=True)
+    comp_panel, uinfo = W.working_cross_section(comp_needed, date=as_of, path=COMPOSITE_PANEL)
+    comp_today = comp_panel[comp_panel[f"eligible_{TIER}"]].reset_index(drop=True)
     if comp_today.empty:
-        raise SystemExit(f"no eligible_{TIER} rows in composite panel on {as_of.date()} -- "
-                         f"rebuild reset2026/build_panel.py first.")
+        raise SystemExit(f"no eligible_{TIER} rows in {COMPOSITE_PANEL.name} on {as_of.date()} -- "
+                         f"the working panel (v2) has no refresh path yet; see WO-11.")
     comp_scored = _compute_composite_frozen(comp_today)
 
     merged = elig.merge(
@@ -270,6 +279,10 @@ def main():
         "q75_weight": 0.5,
         "composite_weight": 0.5,
         "backtest_summary": BACKTEST_SUMMARY,
+        "composite_panel_source": W.WORKING_PANEL_SOURCE,
+        "universe_rule": "composite leg: v2 eligible_cap2000, SPACs excluded unless in the old "
+                         f"4,011-ticker grid ({uinfo.get('spac_rows_dropped_eligible_' + TIER, 0)} "
+                         "eligible SPAC rows dropped)",
         "role": "primary",
         "note": "Promoted to primary 2026-09-19 on a SINGLE-GRID backtest (not this "
                 "project's usual 40-offset average) that still shows negative absolute "

@@ -51,7 +51,12 @@ MAIN_ROOT = Path("/Users/ggraham/pipe_dream/final")
 BULK_EVENTS = MAIN_ROOT / "out" / "insider" / "insider_events.parquet"
 LIVE_EVENTS = MAIN_ROOT / "out" / "insider" / "insider_events_live.parquet"
 STATE_DIR = MAIN_ROOT / "out" / "insider" / "form4_refresh_state"
-PANEL = MAIN_ROOT / "out" / "reset2026" / "composite_panel.parquet"
+# WO-11 (2026-09-25): the issuers refreshed are the WORKING panel's recent
+# cap150 names (composite_panel_v2, v2 universe rule), because that is the
+# cross-section every forward ext record from here on is scored on.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src" / "reset2026"))
+import working_panel as W  # noqa: E402
+PANEL = W.WORKING_PANEL
 TICKERS_MASTER = MAIN_ROOT / "data" / "sharadar" / "tickers_master.csv"
 
 USER_AGENT = "pipe_dream research sirduckingtoniii@gmail.com"  # scripts/edgar_8k_events_pull.py convention
@@ -111,6 +116,7 @@ def universe_ciks():
     p = pd.read_parquet(PANEL, columns=["ticker", "date", "eligible_cap150"])
     p["date"] = pd.to_datetime(p["date"])
     recent = p[(p["date"] >= p["date"].max() - pd.Timedelta(days=400)) & p["eligible_cap150"]]
+    recent = recent[W.universe_keep(recent["ticker"].astype(str))]
     tickers = set(recent["ticker"].astype(str))
     tm = pd.read_csv(TICKERS_MASTER, usecols=["ticker", "secfilings"])
     tm["cik"] = pd.to_numeric(tm["secfilings"].str.extract(r"CIK=0*(\d+)")[0], errors="coerce")

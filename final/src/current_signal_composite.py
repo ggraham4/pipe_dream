@@ -49,13 +49,17 @@ CONSTRUCTION (matches the full-specification doc's section 2 exactly):
 
 This script does NOT retrain anything (there is nothing to train -- the
 composite has no fitted parameters; the IC weights are a frozen constant,
-not fit here). It scores the MOST RECENT complete date in
-reset2026/composite_panel.parquet. Refreshing this signal means refreshing
-that panel: re-run, in order,
-    downcap_universe.py -> quality_factors.py -> build_panel.py
-(final/src/reset2026/), which themselves depend on the base
-features_with_fundamentals_sharadar_pit.parquet being current (the app's
-existing "Retrain ALL models" pipeline).
+not fit here). It scores the MOST RECENT date in the WORKING panel,
+reset2026/working_panel.WORKING_PANEL (composite_panel_v2.parquet since
+2026-09-25, WO-11, per Gabe: "all models should use it"), with the v2
+universe rule (old 4,011-ticker grid OR not a SPAC) applied BEFORE scoring
+-- see working_panel.py's docstring for why that order matters.
+
+KNOWN GAP (WO-11): composite_panel_v2 has NO refresh path yet.
+build_downcap_grid_v2.py refuses to overwrite, and the app's Retrain chain
+(downcap_universe.py -> quality_factors.py -> build_panel.py) rebuilds the v1
+panel only. Until a v2 refresh builder exists, this signal stays at the v2
+panel's last date (2026-09-08).
 
 OUTPUT
     final/out/current_signal_composite.csv
@@ -82,8 +86,9 @@ RESET_SRC = Path(__file__).resolve().parent / "reset2026"
 sys.path.insert(0, str(RESET_SRC))
 import composite as C  # noqa: E402
 import ic_weighted_composite as ICW  # noqa: E402
+import working_panel as W  # noqa: E402
 
-PANEL = MAIN_ROOT / "out" / "reset2026" / "composite_panel.parquet"
+PANEL = W.WORKING_PANEL
 OUT_CSV = MAIN_ROOT / "out" / "current_signal_composite.csv"
 OUT_META = MAIN_ROOT / "out" / "current_signal_composite_meta.json"
 
@@ -106,19 +111,15 @@ BACKTEST_SUMMARY = {
 
 def main():
     if not PANEL.exists():
-        raise SystemExit(f"{PANEL} not found -- run downcap_universe.py, "
-                         f"quality_factors.py, then build_panel.py first "
-                         f"(final/src/reset2026/).")
+        raise SystemExit(f"{PANEL} not found -- it is built by "
+                         f"reset2026/build_downcap_grid_v2.py (WO-6).")
 
     needed = list(dict.fromkeys(
         ["ticker", "date", "sector", "close", "market_cap", "volatility_60",
          f"eligible_{TIER}"] + C.FACTOR_COLS))
-    panel = pd.read_parquet(PANEL, columns=needed)
-    panel["date"] = pd.to_datetime(panel["date"])
-    panel["ticker"] = panel["ticker"].astype(str)
-
-    as_of = panel["date"].max()
-    df_date = panel[panel["date"] == as_of]
+    # latest date only, universe rule applied before scoring (working_panel.py)
+    df_date, uinfo = W.working_cross_section(needed, path=PANEL)
+    as_of = df_date["date"].max()
     elig = df_date[df_date[f"eligible_{TIER}"]].reset_index(drop=True)
     if len(elig) < 20:
         raise SystemExit(f"only {len(elig)} eligible names on {as_of.date()} -- "
@@ -153,6 +154,9 @@ def main():
         "backtest_summary": BACKTEST_SUMMARY,
         "writeup": "final/models/2026-09-22-composite-model-full-specification.md",
         "preregistration": "final/src/reset2026/PREREGISTRATION.md",
+        "panel_source": W.WORKING_PANEL_SOURCE,
+        "universe_rule": "v2 eligible_cap150, SPACs excluded unless in the old 4,011-ticker grid "
+                         f"({uinfo.get('spac_rows_dropped_eligible_' + TIER, 0)} eligible SPAC rows dropped)",
         "role": "candidate",
         "note": "TRACKED, NOT ACTED ON AS A VALIDATED EDGE -- a theoretical, "
                 "zero-fitted-parameter rank model (only the 8 factor SIGNS and "

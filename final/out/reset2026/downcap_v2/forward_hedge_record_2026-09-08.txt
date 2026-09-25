@@ -1,0 +1,69 @@
+[14:55:25] appended 472 rows to /Users/ggraham/pipe_dream/final/out/reset2026/prediction_ledger_hedge.csv for 2026-09-08
+{
+  "panel_date": "2026-09-08",
+  "universe": {
+    "date": "2026-09-08",
+    "rows": 3901,
+    "spac_rows_dropped_eligible_cap150": 19,
+    "spac_rows_dropped_eligible_cap2000": 0,
+    "rows_dropped_spac_rule": 201
+  },
+  "tiers": {
+    "cap150": {
+      "n_eligible": 3065,
+      "n_valid": 3033,
+      "n_book": 305,
+      "n_per_bucket": {
+        "0": 607,
+        "1": 606,
+        "2": 607,
+        "3": 606,
+        "4": 607
+      },
+      "book_per_bucket": {
+        "0": 61,
+        "1": 61,
+        "2": 61,
+        "3": 61,
+        "4": 61
+      },
+      "guards": {
+        "no_nonfinite_vol": true,
+        "no_nonfinite_score": true,
+        "vol_positive": true,
+        "weights_sum_1": true,
+        "book_frac_of_valid": 0.10056050115397297,
+        "book_frac_ok": true
+      },
+      "role": "REGISTERED"
+    },
+    "cap2000": {
+      "n_eligible": 1665,
+      "n_valid": 1655,
+      "n_book": 165,
+      "n_per_bucket": {
+        "0": 331,
+        "1": 331,
+        "2": 331,
+        "3": 331,
+        "4": 331
+      },
+      "book_per_bucket": {
+        "0": 33,
+        "1": 33,
+        "2": 33,
+        "3": 33,
+        "4": 33
+      },
+      "guards": {
+        "no_nonfinite_vol": true,
+        "no_nonfinite_score": true,
+        "vol_positive": true,
+        "weights_sum_1": true,
+        "book_frac_of_valid": 0.09969788519637462,
+        "book_frac_ok": true
+      },
+      "role": "DESCRIPTIVE"
+    }
+  }
+}
