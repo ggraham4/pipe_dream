@@ -1,0 +1,140 @@
+[22:47:36] working panel ends 2026-09-08; SEP/DAILY on disk end 2026-09-24; target 2026-09-24
+[22:47:36] step universe (downcap_universe.py, v1 builder == v2 flags since 2026-09-22) ...
+domestic common stock in master: 17,045 of 20,965
+filed share counts: 630,008 rows, 13,861 tickers
+261 months, 2005-01 .. 2026-09
+
+  loaded  60/261 2009-12  rows so far 4,103,143  (4s)
+  loaded 120/261 2014-12  rows so far 7,937,570  (7s)
+  loaded 180/261 2019-12  rows so far 11,980,570  (10s)
+  loaded 240/261 2024-12  rows so far 16,400,145  (13s)
+  loaded 261/261 2026-09  rows so far 17,792,809  (14s)
+
+loosest-pool rows: 17,792,809, 9,573 tickers (14s)
+dropped 14,980 rows on the cxs_marketcap disagreement rule (17s)
+computed trailing 20d median dollar volume (23s)
+  cap2000: marketcap>=$2000M, closeunadj>$10  -> 6,908,297 rows
+  cap500: marketcap>=$500M, 20d-median-$vol>=$0.50M  -> 12,537,665 rows
+  cap150: marketcap>=$150M, 20d-median-$vol>=$0.25M  -> 16,757,420 rows
+
+final rows: 16,776,987, 9,272 distinct tickers
+-> /Users/ggraham/pipe_dream/final/out/reset2026/downcap_v2/refresh_tmp_2026-09-24/universe.parquet
+
+universe size at a few dates:
+  2008-06-30  cap2000=947  cap500=1993  cap150=2953
+  2011-06-30  cap2000=1076  cap500=2112  cap150=2919
+  2014-06-30  cap2000=1382  cap500=2449  cap150=3213
+  2017-06-30  cap2000=1378  cap500=2418  cap150=3100
+  2020-06-30  cap2000=1299  cap500=2259  cap150=3005
+  2023-06-30  cap2000=1498  cap500=2454  cap150=3156
+  2026-06-30  cap2000=1648  cap500=2515  cap150=3128
+
+total wall time: 30s
+[22:48:07] overlap compare 2026-06-01..2026-09-08: 173 rows differ; split-like 8, revised 80, stale 8
+[22:48:07] tickers to extend 3,908 (new tickers 6, revised 80, BLOCKED split-like ['CTSO', 'GOSS', 'GTBP', 'JAGX', 'NFE', 'NXXT', 'OPTT', 'VWAV']); buffer from 2026-06-12
+[22:48:07] step prices ...
+[22:48:19]   prices 1,000 tickers
+[22:48:25]   prices 2,000 tickers
+[22:48:30]   prices 3,000 tickers
+[22:48:37] prices: 3,908 tickers full history (12,904,741 rows); kept 502,844 rows
+[22:48:37] step fundamentals ...
+SF1 -> tidy long format...
+  7,950,789 fact rows, 13,864 tickers, filed 2004-01-02 .. 2026-09-08
+  per concept: {'total_assets': 631008, 'total_liabilities': 631026, 'stockholders_equity': 631053, 'cash': 631057, 'long_term_debt': 508224, 'shares_outstanding': 630960, 'revenue': 615518, 'net_income': 615478, 'gross_profit': 615517, 'operating_income': 615517, 'operating_cash_flow': 604920, 'capex': 605014, 'rnd_expense': 615497}
+
+loading price panel...
+  502,844 rows, 3,908 tickers
+  500/3,908 tickers, 86,169 rows
+  1,000/3,908 tickers, 137,091 rows
+  1,500/3,908 tickers, 214,181 rows
+  2,000/3,908 tickers, 275,125 rows
+  2,500/3,908 tickers, 344,697 rows
+  3,000/3,908 tickers, 415,530 rows
+  3,500/3,908 tickers, 456,769 rows
+  3,908/3,908 tickers, 502,844 rows
+
+502,844 rows -> /Users/ggraham/pipe_dream/final/out/reset2026/downcap_v2/refresh_tmp_2026-09-24/fund.parquet
+tickers with any fundamentals: 3,908 of 3,908 (100.0%)
+
+coverage of each derived ratio (non-null share of all rows):
+  market_cap               99.8%
+  pe_ratio                 65.1%
+  pb_ratio                 90.2%
+  ps_ratio                 89.8%
+  debt_to_equity           67.9%
+  roe                      89.8%
+  roa                      98.4%
+  gross_margin             89.8%
+  operating_margin         89.8%
+  fcf_margin               89.8%
+  revenue_growth_yoy       87.9%
+  earnings_growth_yoy      94.6%
+  rnd_intensity            89.8%
+  fundamentals_age_days    98.4%
+
+Compare these against models/fundamentals-beta-results.md. A large
+drop would mean the SF1 translation is losing facts the old CSV
+pipeline captured; a large rise is expected, since the old panel
+simply had no fundamentals for half the universe.
+[22:50:23] step issuance / short / events ...
+/Users/ggraham/pipe_dream/.claude/worktrees/agent-aa98b33b56140c58d/final/src/sweep/short_interest.py:35: DtypeWarning: Columns (0: revisionFlag) have mixed types. Specify dtype option on import or set low_memory=False.
+  df = pd.read_csv(path or RAW)
+  dropping 18 filings dated on/before their own report period (impossible)
+[22:50:33] issuance / short interest / events done
+[22:50:33] step quality ...
+loading price panel (ticker, date, close) ...
+  12,904,741 rows, 3,908 tickers (0s)
+momentum_12_1 (skip-month, per-ticker) ...
+  coverage 92.6% (1s)
+loading SF1 facts (assets/gp/netinc/ncfo, ARQ+ARY, filed-date keyed) ...
+  assets: 498,982 filed observations, 13,864 tickers
+  gp: 138,571 filed observations, 13,666 tickers
+  netinc: 138,562 filed observations, 13,665 tickers
+  ncfo: 137,219 filed observations, 13,661 tickers
+as-of joins (current) ...
+  done (10s)
+as-of join (assets, 365 days back, for asset_growth) ...
+  done (12s)
+  gross_profitability: coverage 98.6%, median 0.1877
+  accruals: coverage 98.6%, median -0.03682
+  asset_growth: coverage 95.4%, median 0.05031
+  momentum_12_1: coverage 92.6%, median 0.03591
+
+-> /Users/ggraham/pipe_dream/final/out/reset2026/downcap_v2/refresh_tmp_2026-09-24/quality.parquet  (12,904,741 rows, 15s total)
+[22:50:48] step panel ...
+loading base panel (fund.parquet) ...
+  502,844 rows, 3,908 tickers (0s)
+  + issuance ['net_issuance_pct']: coverage 94.5% (0s)
+  + short interest ['short_interest_days_to_cover']: coverage 70.3% (0s)
+  + events ['days_to_next_filing_seasonal']: coverage 99.8% (0s)
+  + quality ['gross_profitability', 'accruals', 'asset_growth', 'momentum_12_1']: coverage 98.4% (3s)
+merging sector (tickers_master.csv, current classification) ...
+  sector coverage 100.0%, 11 distinct sectors (3s)
+merging down-cap universe eligibility (separate source grid -- match rate matters) ...
+  eligible_cap2000: 227,217 eligible rows (45.2% of panel)
+  eligible_cap500: 330,580 eligible rows (65.7% of panel)
+  eligible_cap150: 400,457 eligible rows (79.6% of panel)
+  400,778 of 16,776,987 downcap_universe rows found a matching (ticker, date) in the feature panel (2.4%)
+
+-> /Users/ggraham/pipe_dream/final/out/reset2026/downcap_v2/refresh_tmp_2026-09-24/panel_part.parquet  (502,844 rows, 7s total)
+[22:50:57] step beta ...
+[22:50:57] loading composite_panel (ticker, date, close) ...
+[22:50:57]   12,904,741 rows, 3,908 tickers (0s)
+[22:50:57] loading SPY daily returns (market proxy) ...
+[22:50:57] computing per-ticker daily returns ...
+[22:50:58] merging market return onto panel ...
+[22:50:58]   376,618 rows with no SPY return that date (outside SPY's own history)
+[22:50:58] computing rolling 252-day beta via the moments identity ...
+[22:51:00]   coverage: 93.3% (3s)
+[22:51:00]   beta distribution: median=1.00, p10=0.37, p90=1.68
+[22:51:02] 
+-> /Users/ggraham/pipe_dream/final/out/reset2026/downcap_v2/refresh_tmp_2026-09-24/beta.parquet (12,904,741 rows, 5s total)
+[22:51:02] step outcome ...
+[22:51:04] splicing panel ...
+[22:51:12] splicing beta ...
+[22:51:15] splicing outcome cache ...
+[22:51:42] swapping in (dated hard-link backups first) ...
+[22:51:43] DONE: panel 2026-09-08 -> 2026-09-24, +48,285 rows; label fills {'forward_return_40': 45571, 'forward_return_tradable_40': 45571}; BLOCKED ['CTSO', 'GOSS', 'GTBP', 'JAGX', 'NFE', 'NXXT', 'OPTT', 'VWAV']; 246.9s
+real 247.59
+user 241.15
+sys 17.06

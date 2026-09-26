@@ -152,8 +152,10 @@ def build_record_rows(date=None):
     return out[HEDGE_COLS], pdate, report
 
 
-def record_hedge():
-    out, pdate, report = build_record_rows()
+def record_hedge(date=None):
+    """date=None: latest working-panel date. date=YYYY-MM-DD: that date
+    (WO-14 weekly catch-up via record_weekly.py); same guards either way."""
+    out, pdate, report = build_record_rows(date)
     iso = pdate.date().isoformat()
     if iso in _recorded_dates():
         raise SystemExit(f"REFUSING: {HEDGE_CSV.name} already has panel_date {iso} (duplicate-date guard)")
@@ -329,7 +331,23 @@ def status():
     sc = pd.read_csv(HEDGE_SCORES_CSV)
     sc = sc[sc["tier"] == "cap150"]
     iwm = load_iwm(IWM_LIVE_CSV)
-    cd = {d.date().isoformat() for d in counted_dates(_recorded_dates(), iwm["date"])}
+    # WO-14 addendum (Gabe, 2026-09-25, weekly cadence): records flagged
+    # recorded_late in ledger_record_log.csv are descriptive only and can
+    # never be counted dates. The greedy rule itself is unchanged.
+    late = set()
+    rec_log = R26 / "ledger_record_log.csv"
+    if rec_log.exists():
+        lg = pd.read_csv(rec_log)
+        lg = lg[(lg["ledger"] == HEDGE_CSV.name) & lg["recorded_late"].astype(bool)]
+        late = set(lg["panel_date"].astype(str))
+    # COO 2026-09-25: rows annotated incomplete_week (ledger_record_annotations.csv)
+    # are descriptive only too.
+    ann = R26 / "ledger_record_annotations.csv"
+    if ann.exists():
+        an = pd.read_csv(ann)
+        an = an[(an["ledger"] == HEDGE_CSV.name) & an["annotation"].astype(str).str.startswith("incomplete_week")]
+        late |= set(an["panel_date"].astype(str))
+    cd = {d.date().isoformat() for d in counted_dates(_recorded_dates() - late, iwm["date"])}
     m = sc[sc["panel_date"].astype(str).isin(cd)]
     n, mean = len(m), float(m["hedged"].mean()) if len(m) else float("nan")
     state = ("INSUFFICIENT (<6 matured counted dates)" if n < MIN_MATURED else

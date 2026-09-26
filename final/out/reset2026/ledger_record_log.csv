@@ -1,0 +1,7 @@
+ledger,panel_date,iso_week,recorded_at,recorded_late,rows
+prediction_ledger_v3.csv,2026-09-18,2026-W38,2026-09-25T22:54:39.264509,False,3053
+prediction_ledger_ext.csv,2026-09-18,2026-W38,2026-09-25T22:54:40.178151,False,3053
+prediction_ledger_v3.csv,2026-09-24,2026-W39,2026-09-25T22:54:43.020990,False,3048
+prediction_ledger_ext.csv,2026-09-24,2026-W39,2026-09-25T22:54:43.923284,False,3048
+prediction_ledger_hedge.csv,2026-09-18,2026-W38,2026-09-25T22:54:44.330783,False,464
+prediction_ledger_hedge.csv,2026-09-24,2026-W39,2026-09-25T22:54:44.726007,False,462

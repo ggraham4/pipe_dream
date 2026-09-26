@@ -1,0 +1,96 @@
+/Users/ggraham/pipe_dream/.claude/worktrees/agent-aa98b33b56140c58d/final/src/sweep/short_interest.py:35: DtypeWarning: Columns (0: revisionFlag) have mixed types. Specify dtype option on import or set low_memory=False.
+  df = pd.read_csv(path or RAW)
+1 {"columns": {"open": {"mismatches": 0}, "close": {"mismatches": 0}, "market_cap": {"mismatches": 0}, "volatility_60": {"mismatches": 0}, "pct_from_high_252": {"mismatches": 0}, "forward_return_40": {"nan_to_value": 45571, "other_changes": 0}, "forward_return_tradable_40": {"nan_to_value": 45571, "other_changes": 0}, "net_issuance_pct": {"mismatches": 0}, "short_interest_days_to_cover": {"mismatches": 0}, "days_to_next_filing_seasonal": {"mismatches": 0}, "gross_profitability": {"mismatches": 0}, "accruals": {"mismatches": 0}, "asset_growth": {"mismatches": 0}, "momentum_12_1": {"mismatches": 0}, "sector": {"mismatches": 0}, "eligible_cap2000": {"mismatches": 0}, "eligible_cap500": {"mismatches": 0}, "eligible_cap150": {"mismatches": 0}, "eligible_cap2000_v1": {"mismatches": 0}, "eligible_cap500_v1": {"mismatches": 0}, "eligible_cap150_v1": {"mismatches": 0}}, "rows_backup": 22535814, "rows_refreshed_le_old_end": 22537241, "rows_compared": 22309377, "row_set_equal": true, "excluded_rows_backup": 226437, "excluded_rows_refreshed": 227864, "PASS": true}
+3 {"rows_per_date": {"2026-09-09": 3904, "2026-09-10": 3905, "2026-09-11": 3905, "2026-09-14": 3904, "2026-09-15": 3904, "2026-09-16": 3904, "2026-09-17": 3905, "2026-09-18": 3906, "2026-09-21": 3906, "2026-09-22": 3905, "2026-09-23": 3906, "2026-09-24": 3904}, "rows_ok": true, "named": {"AAPL": {"dates_present": 12, "n_new_dates": 12, "eligible_cap150_all": true, "spac_rule_keep": true}, "MSFT": {"dates_present": 12, "n_new_dates": 12, "eligible_cap150_all": true, "spac_rule_keep": true}, "NVDA": {"dates_present": 12, "n_new_dates": 12, "eligible_cap150_all": true, "spac_rule_keep": true}, "NATH": {"dates_present": 12, "n_new_dates": 12, "eligible_cap150_all": true, "spac_rule_keep": true}, "WLKP": {"dates_present": 12, "n_new_dates": 12, "eligible_cap150_all": true, "spac_rule_keep": true}}, "named_ok": true, "raw_close": {"rows_checked": 36, "mismatches": 0, "example": [{"ticker": "WLKP", "date": "2026-09-22", "close": 21.38, "close_raw": 21.38}, {"ticker": "WLKP", "date": "2026-09-23", "close": 21.35, "close_raw": 21.35}, {"ticker": "WLKP", "date": "2026-09-24", "close": 21.51, "close_raw": 21.51}]}, "fundamentals_asof": [{"ticker": "AAPL", "row_date": "2026-09-24", "filing_date_used": "2026-07-31", "reportperiod": "2026-06-27", "filing_le_row_date": true, "market_cap_panel": 4902476945600.0, "close_x_sharesbas": 4902476945600.0, "match": true}, {"ticker": "NATH", "row_date": "2026-09-24", "filing_date_used": "2026-08-07", "reportperiod": "2026-06-28", "filing_le_row_date": true, "market_cap_panel": 386368455.69, "close_x_sharesbas": 386368455.69, "match": true}, {"ticker": "WLKP", "row_date": "2026-09-24", "filing_date_used": "2026-08-05", "reportperiod": "2026-06-30", "filing_le_row_date": true, "market_cap_panel": 758138857.2900001, "close_x_sharesbas": 758138857.2900001, "match": true}], "sf1_max_filing_date": "2026-09-08", "PASS": true}
+universe:
+  1 tickers ever eligible
+prices:
+  loaded 60/261 months, 1,259 rows
+  loaded 120/261 months, 2,517 rows
+  loaded 180/261 months, 3,775 rows
+  loaded 240/261 months, 5,033 rows
+  loaded 261/261 months, 5,466 rows
+  5,466 rows, 1 tickers, 2005-01-03 .. 2026-09-24
+spy: 5,215 rows, 2006-01-03 .. 2026-09-25
+  1/1 tickers, 5,466 rows
+
+5,466 rows -> /var/folders/ws/0qs1m7tj41s4v7vgg7rdycv00000gn/T/tmpf_snuuor/price.parquet
+SF1 -> tidy long format...
+  7,950,789 fact rows, 13,864 tickers, filed 2004-01-02 .. 2026-09-08
+  per concept: {'total_assets': 631008, 'total_liabilities': 631026, 'stockholders_equity': 631053, 'cash': 631057, 'long_term_debt': 508224, 'shares_outstanding': 630960, 'revenue': 615518, 'net_income': 615478, 'gross_profit': 615517, 'operating_income': 615517, 'operating_cash_flow': 604920, 'capex': 605014, 'rnd_expense': 615497}
+
+loading price panel...
+  5,466 rows, 1 tickers
+  1/1 tickers, 5,466 rows
+
+5,466 rows -> /var/folders/ws/0qs1m7tj41s4v7vgg7rdycv00000gn/T/tmpf_snuuor/fund.parquet
+tickers with any fundamentals: 1 of 1 (100.0%)
+
+coverage of each derived ratio (non-null share of all rows):
+  market_cap               100.0%
+  pe_ratio                 100.0%
+  pb_ratio                 48.1%
+  ps_ratio                 100.0%
+  debt_to_equity           48.1%
+  roe                      48.1%
+  roa                      100.0%
+  gross_margin             100.0%
+  operating_margin         100.0%
+  fcf_margin               100.0%
+  revenue_growth_yoy       97.8%
+  earnings_growth_yoy      97.8%
+  rnd_intensity            100.0%
+  fundamentals_age_days    100.0%
+
+Compare these against models/fundamentals-beta-results.md. A large
+drop would mean the SF1 translation is losing facts the old CSV
+pipeline captured; a large rise is expected, since the old panel
+simply had no fundamentals for half the universe.
+  dropping 18 filings dated on/before their own report period (impossible)
+loading price panel (ticker, date, close) ...
+  5,466 rows, 1 tickers (0s)
+momentum_12_1 (skip-month, per-ticker) ...
+  coverage 95.4% (0s)
+loading SF1 facts (assets/gp/netinc/ncfo, ARQ+ARY, filed-date keyed) ...
+  assets: 498,982 filed observations, 13,864 tickers
+  gp: 138,571 filed observations, 13,666 tickers
+  netinc: 138,562 filed observations, 13,665 tickers
+  ncfo: 137,219 filed observations, 13,661 tickers
+as-of joins (current) ...
+  done (0s)
+as-of join (assets, 365 days back, for asset_growth) ...
+  done (0s)
+  gross_profitability: coverage 100.0%, median 0.413
+  accruals: coverage 100.0%, median -0.01569
+  asset_growth: coverage 99.5%, median 0.07265
+  momentum_12_1: coverage 95.4%, median 0.144
+
+-> /var/folders/ws/0qs1m7tj41s4v7vgg7rdycv00000gn/T/tmpf_snuuor/q.parquet  (5,466 rows, 0s total)
+loading base panel (fund.parquet) ...
+  5,466 rows, 1 tickers (0s)
+  + issuance ['net_issuance_pct']: coverage 99.5% (0s)
+  + short interest ['short_interest_days_to_cover']: coverage 29.5% (0s)
+  + events ['days_to_next_filing_seasonal']: coverage 100.0% (0s)
+  + quality ['gross_profitability', 'accruals', 'asset_growth', 'momentum_12_1']: coverage 100.0% (0s)
+merging sector (tickers_master.csv, current classification) ...
+  sector coverage 100.0%, 1 distinct sectors (0s)
+merging down-cap universe eligibility (separate source grid -- match rate matters) ...
+  eligible_cap2000: 0 eligible rows (0.0% of panel)
+  eligible_cap500: 0 eligible rows (0.0% of panel)
+  eligible_cap150: 3,146 eligible rows (57.6% of panel)
+  5,466 of 22,584,099 downcap_universe rows found a matching (ticker, date) in the feature panel (0.0%)
+
+-> /var/folders/ws/0qs1m7tj41s4v7vgg7rdycv00000gn/T/tmpf_snuuor/panel.parquet  (5,466 rows, 5s total)
+[22:52:37] loading composite_panel (ticker, date, close) ...
+[22:52:37]   5,466 rows, 1 tickers (0s)
+[22:52:37] loading SPY daily returns (market proxy) ...
+[22:52:37] computing per-ticker daily returns ...
+[22:52:37] merging market return onto panel ...
+[22:52:37]   253 rows with no SPY return that date (outside SPY's own history)
+[22:52:37] computing rolling 252-day beta via the moments identity ...
+[22:52:37]   coverage: 93.1% (0s)
+[22:52:37]   beta distribution: median=0.47, p10=0.07, p90=0.94
+[22:52:37] 
+-> /var/folders/ws/0qs1m7tj41s4v7vgg7rdycv00000gn/T/tmpf_snuuor/beta.parquet (5,466 rows, 0s total)
+4 {"ticker": "NATH", "panel": {"new_date_rows_rebuilt": 12, "rows_refreshed": 12, "matched": 12, "mismatches": {"open": 0, "close": 0, "market_cap": 0, "volatility_60": 0, "pct_from_high_252": 0, "forward_return_40": 0, "forward_return_tradable_40": 0, "net_issuance_pct": 0, "short_interest_days_to_cover": 0, "days_to_next_filing_seasonal": 0, "gross_profitability": 0, "accruals": 0, "asset_growth": 0, "momentum_12_1": 0, "sector": 0}}, "beta": {"new_date_rows_rebuilt": 12, "rows_refreshed": 12, "matched": 12, "mismatches": {"beta_252": 0, "market_return": 0}}, "PASS": true}
+ALL PASS

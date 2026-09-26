@@ -1,0 +1,4 @@
+ledger,panel_date,iso_week,annotation,annotated_at,source
+prediction_ledger_v3.csv,2026-09-24,2026-W39,"incomplete_week: recorded before W39 closed (09-25 trades); descriptive only, never a counted date; COO 2026-09-25",2026-09-25,WO-14
+prediction_ledger_ext.csv,2026-09-24,2026-W39,"incomplete_week: recorded before W39 closed (09-25 trades); descriptive only, never a counted date; COO 2026-09-25",2026-09-25,WO-14
+prediction_ledger_hedge.csv,2026-09-24,2026-W39,"incomplete_week: recorded before W39 closed (09-25 trades); descriptive only, never a counted date; COO 2026-09-25",2026-09-25,WO-14
