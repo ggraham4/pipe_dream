@@ -1,0 +1,28 @@
+[15:34:24] panel hash 4baff1d7e9478829 (prereg 4baff1d7e9478829)
+[15:34:29] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[15:35:46] harness reconcile OK: {'decile_icw8_frozen': [0.028541632641009042, 0.028541632641009042], 'oos_fit_odd_test_even': [0.04041110565685588, 0.040411105656855885], 'oos_fit_even_test_odd': [0.055397983383733786, 0.055397983383733786]}
+[15:36:03] IC +0.01320 t +2.17 | odd +0.01680 (t +1.82) even +0.00899 (t +1.22) | sector both +2.09 factor-only +2.09 | offset flips 0/40 | max year share 0.3353897883014305 (2015)
+[15:37:13] [primary] icw8 +0.02368  icw9 +0.02441  ins t fit-odd +1.82 fit-even +1.22  w +0.0602/+0.0257
+[15:37:28] [primary] null 0: +0.02344 (ins t +0.59/-0.40)
+[15:37:43] [primary] null 1: +0.02350 (ins t -0.91/-0.23)
+[15:37:58] [primary] null 2: +0.02338 (ins t -0.16/+1.11)
+[15:38:14] [primary] null 3: +0.02312 (ins t +1.34/-1.75)
+[15:38:29] [primary] null 4: +0.02357 (ins t +0.39/-0.51)
+[15:38:44] [primary] null 5: +0.02349 (ins t -0.09/-0.32)
+[15:38:59] [primary] null 6: +0.02351 (ins t +0.59/-0.34)
+[15:39:14] [primary] null 7: +0.02344 (ins t -0.31/+0.63)
+[15:39:30] [primary] null 8: +0.02348 (ins t +1.17/-0.34)
+[15:39:45] [primary] null 9: +0.02349 (ins t -0.69/+0.14)
+[15:40:00] [primary] null 10: +0.02354 (ins t -1.34/+0.03)
+[15:40:16] [primary] null 11: +0.02286 (ins t -0.90/-1.59)
+[15:40:31] [primary] null 12: +0.02369 (ins t +0.63/+0.41)
+[15:40:46] [primary] null 13: +0.02344 (ins t +1.01/-0.97)
+[15:41:01] [primary] null 14: +0.02340 (ins t -0.92/-0.89)
+[15:41:17] [primary] null 15: +0.02320 (ins t +0.09/-0.74)
+[15:41:32] [primary] null 16: +0.02322 (ins t -1.19/-1.72)
+[15:41:47] [primary] null 17: +0.02330 (ins t +0.06/+0.04)
+[15:42:02] [primary] null 18: +0.02339 (ins t +1.38/-0.60)
+[15:42:18] [primary] null 19: +0.02314 (ins t +1.83/-0.02)
+[15:42:18] gates {'g1_pooled_t': True, 'g2_both_halves_positive': True, 'g3_sector_both_sides_t': True, 'g4_zero_offset_flips': True, 'g5_year_share': True, 'g6_beats_null_p80': True} -> PASS-nomination
+[15:42:55] descriptive {"median_spearman_sue_vs_icw8": 0.0624257960840961, "median_spearman_sue_vs_momentum_12_1": 0.261818502569949, "median_spearman_sue_vs_gross_profitability": 0.035631861010104696, "median_spearman_sue_vs_volatility_60": -0.08272669607875405, "h40_reconstruction": {"rows_compared": 9678148, "share_within_1e-6": 1.0, "label_coverage_ratio": 1.0}, "ic_h20_DESCRIPTIVE_NOT_A_TRIAL": {"pooled": {"mean": 0.014024923363590664, "t": 3.2169930980319035, "n": 3272, "n_dates": 3272}, "odd": {"mean": 0.019227248248365122, "t": 3.0873922811634564, "n": 1762}, "even": {"mean": 0.00795439591526444, "t": 1.3785945453519752, "n": 1510}}, "ic_h40_same_rows_for_comparison": {"mean": 0.013195804127452044, "t": 2.169917640299337, "n": 3272}}
+[15:42:55] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a82cc71ecb09661f5/final/out/sue/sue_screen_report.json (512s)
