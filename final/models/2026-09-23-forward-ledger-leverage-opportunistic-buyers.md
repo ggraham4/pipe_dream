@@ -384,9 +384,19 @@ column are identical):
   - 0001181431-08-031743: 04-MAR-2008 → 11-FEB-2008
   - 0000712534-17-000046: 01-FEB-2017 → 31-JAN-2017
   - 0001144204-09-011901: 02-MAR-2009 → 27-FEB-2009
-- Known residual: 3 changed rows now take a mistyped raw year as their minimum,
-  for example "08-MAY-0013". These come from the SEC data, not from this fix. We
-  left them alone.
+- Known residual: the raw SEC data has some mistyped years, such as
+  "08-MAY-0013". The true minimum now picks one of these in 3 changed rows. The
+  old string-min happened to avoid them.
+  - 2 of the 3 are new garbage dates, and only 1 is an O/D P: accession
+    0001214659-13-006636, whose issuer CIK maps to no ticker.
+  - Altogether the fixed file has 10 event rows dated before 1990.
+  - None of the O/D P rows among them maps to a ticker in the ledger universe.
+    The ones that do map (TAP, CWT, GS) are sells, and sells don't enter
+    classification.
+  - A year-13 purchase would set that pair's `first_y = 13` and make every
+    later purchase "classifiable". So this matters only if such a row ever
+    lands on a universe name.
+  - Left as-is, because the fix is scoped to the min only.
 
 **Effect on the 2026-09-08 blind record: zero flips.**
 - Using the old events, the classifier reproduces the recorded
@@ -429,3 +439,10 @@ versus the fixed dates flips 1,185 of 327,456 events (0.36%):
 in-era opportunistic-buyer lead in `2026-09-23-insider-congress-results.md` was
 measured on the old dates. Re-running that would be the insider owner's call
 (and the COO's). This fix does not re-run it.
+
+**Reproducibility.** Re-running `posthoc_insider.py` or `screen_insider.py` now
+reads the fixed events. To reproduce the published in-era numbers exactly, point
+the events path at `out/insider/insider_events_prefix_2026-09-24.parquet`.
+
+The hand count in `prediction_ledger.py selftest` (`_raw_zip_od_buys`) already
+parses TRANS_DATE before its min, so it does not have this bug.
