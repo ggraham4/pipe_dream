@@ -188,4 +188,121 @@ reportperiod). No row has a null date or reportperiod.
 
 ## Results
 
-(Appended after the pre-registration commit.)
+Written after the pre-registration commit 76d0e1f (15:34:03). The screen ran
+15:34:24–15:42:55 on 2026-09-25 and was not rerun.
+- Script: `final/src/sue/screen_sue.py`.
+- Report: `final/out/sue/sue_screen_report.json`; log:
+  `final/out/sue/screen_sue.log`.
+- composite_panel_v2 sha256 at screen start: `4baff1d7…62dc`, identical to
+  the pre-registration hash.
+
+**Verdict: PASS (nomination only).** All six registered gates pass. Promotion
+is Gabe's call. Nothing was added to any live list or to the forward ledger.
+
+### Universe
+
+- Rows: column c, cap150, 2007-01-02..2019-12-31. That is 9,756,141 rows
+  across 6,508 tickers, of which 2,987,605 rows are on added tickers.
+- Coverage of finite `sue`: **82.5% overall**, **84.9% on old-grid tickers**,
+  **77.0% on added tickers**.
+- Coverage by year is in the Data validation section above: above 60% in
+  every year, 83.4% for 2009+.
+
+### Harness reconciliation (run before any SUE number; hard assert)
+
+| check | harness | readout.json | diff |
+|---|---|---|---|
+| icw8 decile_volq net 15bp, mean of 40 offsets | +0.028541633 | +0.028541633 | 0 |
+| split-half OOS IC, fit odd → test even | 0.0404111057 | 0.0404111057 | <1e-15 |
+| split-half OOS IC, fit even → test odd | 0.0553979834 | 0.0553979834 | 0 |
+
+### Gates
+
+| # | gate | value | bar | pass |
+|---|---|---|---|---|
+| 1 | pooled NW(39) Spearman IC t, sign +1 | IC +0.01320, **t +2.17** (3,272 dates) | t ≥ +1.96 | yes |
+| 2 | odd-year / even-year mean IC | +0.01680 (t +1.82) / +0.00899 (t +1.22) | both > 0 | yes |
+| 3 | both-sides sector-demeaned IC t | **+2.09** (IC +0.01086) | ≥ +1.0 | yes |
+| 3 (reported, not gated) | factor-only sector-demeaned IC t | +2.09 (IC +0.00939) | — | — |
+| 4 | grid-offset sign flips of the daily IC | **0/40**; offset means range +0.0112 .. +0.0162 | 0/40 | yes |
+| 5 | max single-year share of summed daily IC | **0.335** (2015; 2007 is also 0.335) | ≤ 0.45 | yes |
+| 6 | icw9 vs icw8, decile_volq net 15bp, split-half OOS; 20-draw within-date shuffle null of `sue` | icw9 +2.4412%/yr vs null p80 +2.3504% (p50 +2.3436%, sd 0.019pp); real beats 20/20 draws | > null p80 | yes |
+
+Only 0.03% of rows have an Unknown sector.
+
+**Year shares of the summed daily IC:**
+
+| 2007 | 2008 | 2009 | 2010 | 2011 | 2012 | 2013 |
+|---|---|---|---|---|---|---|
+| +0.335 | +0.167 | **−0.410** | +0.033 | +0.225 | +0.089 | +0.082 |
+
+| 2014 | 2015 | 2016 | 2017 | 2018 | 2019 |
+|---|---|---|---|---|---|
+| +0.196 | +0.335 | −0.140 | +0.150 | −0.030 | −0.031 |
+
+**Leave-one-year-out NW t (the year shown is the one dropped):**
+
+| 2007 | 2008 | 2009 | 2010 | 2011 | 2012 | 2013 |
+|---|---|---|---|---|---|---|
+| 1.56 | 2.00 | 3.81 | 2.12 | 1.72 | 2.00 | 2.00 |
+
+| 2014 | 2015 | 2016 | 2017 | 2018 | 2019 |
+|---|---|---|---|---|---|
+| 1.77 | 1.52 | 2.55 | 1.86 | 2.26 | 2.28 |
+
+**Gate 6 detail:**
+
+| quantity | value |
+|---|---|
+| icw8 (split-half OOS weights) | +2.3683%/yr; sd over 40 offsets 0.54pp; 40/40 offsets positive |
+| icw9 | +2.4412%/yr; sd 0.48pp; 40/40 offsets positive |
+| icw9 − icw8 | **+0.073pp/yr** |
+| null − icw8 | median −0.025pp; p80 −0.018pp |
+| `sue` t used for the weights | fit-odd +1.82; fit-even +1.22 |
+| `sue` weight in icw9 | +0.060 (fit on odd years) / +0.026 (fit on even years) |
+| OOS IC of the score | icw9 +0.04869 (t 6.63) vs icw8 +0.04848 (t 6.65) |
+| rows dropped as icw8-NaN | 2,812 |
+
+### Descriptive only (not gates, not trials)
+
+**Median cross-sectional Spearman of `sue` with:**
+
+| icw8 score (frozen weights) | momentum_12_1 | gross_profitability | volatility_60 |
+|---|---|---|---|
+| +0.062 | **+0.262** | +0.036 | −0.083 |
+
+`sue` overlaps partly with momentum, which is expected (the post-announcement
+return feeds 12-1 momentum). It barely overlaps with the composite.
+
+**IC at h = 20 (DESCRIPTIVE, NOT A TRIAL; NW lag 19):**
+- Pooled IC is +0.01402, t +3.22.
+- Odd years: +0.01923 (t +3.09). Even years: +0.00795 (t +1.38).
+- For comparison, h = 40 on the same rows gives IC +0.01320, t +2.17.
+- The per-date IC is about the same at 20 and 40 days, but the t-stat is
+  higher at 20 days. That fits drift concentrated in the first month after
+  the filing.
+
+**Label reconstruction check (label used for h = 20):**
+- The h = 20 label is close[t+20]/open[t+1] − 1, built from the panel's own
+  open/close.
+- The same construction at 40 days matches `forward_return_tradable_40` to
+  1e-6 on 100% of 9,678,148 rows. Coverage ratio 1.0.
+
+### Caveats (COO)
+
+- (a) The portfolio contribution is small. icw9 − icw8 is +0.073pp/yr. The null median is −0.025pp and p80 is −0.018pp, so the null band is narrow because the added weight is only 0.03–0.06.
+- (b) The halves are thin (t +1.82 / +1.22). LOYO t falls to 1.52 if 2015 is dropped and 1.56 if 2007 is dropped. 2009 is −41% of the sum. It passes the registered ≤ 45% share gate, but the pooled t of 2.17 depends on 2007 and 2015.
+- (c) SF1 ARQ EPS is retroactively split-adjusted (AAPL FY16Q1 shows 0.82 = 3.28/4). SUE is a within-ticker ratio, so it is scale-invariant and there is no look-ahead in the value.
+- (d) icw8 on the finite-sue rows earns +2.37%/yr, against +2.85 on all of column c, because the comparison runs on the finite-sue universe.
+  - *Worker correction to (d), from the report JSON:* the gate-6 books run
+    on all 9,756,141 column-c cap150 rows, not only the finite-sue rows.
+    Only 2,812 rows (icw8-NaN) are dropped. Rows with a NaN `sue` are still
+    scored, because the coverage-aware composite averages the factors each
+    row has. The +2.37% vs +2.85% gap comes from the weights:
+    - gate 6's icw8 uses split-half out-of-sample refit weights (fit on odd
+      years, score even years, and vice versa), as WO-4 did;
+    - +2.85% is icw8 with the frozen full-era PRODUCTION_WEIGHTS (the
+      reconciliation row).
+    The comparison is still like-for-like. icw8 and icw9 use the same rows
+    and the same OOS scheme.
+- (e) This is a nomination only. Confirmation is forward-only and Gabe's call.
