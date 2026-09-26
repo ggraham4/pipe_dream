@@ -53,6 +53,20 @@ ROWS KEPT
       move with vendor volume/marketcap revisions and are kept as stored.
     * outcome cache: old rows with truncated=True are replaced; others kept.
 
+WO-16 (2026-09-26): SF1 TOP-UP + THE 7-DAY FUNDAMENTALS WINDOW
+    * Before the panel step, sf1_topup.py appends new SF1 filings (append-only,
+      restatements logged not applied) to sf1_fundamentals.parquet / sf1_shares.csv.
+      Runs even when the panel is up to date; never under --check / --no-swap;
+      --no-sf1-topup skips it. A top-up failure fails the refresh (exit 1).
+    * Gabe 2026-09-26, "fundamentals may change on rows < 7 days old": on
+      FUND_COLS, rows with date >= run date - 7 days take the recomputed value
+      when it is explained by an appended SF1 key (datekey <= row date);
+      older rows keep the stored value (logged). Unexplained differences
+      still fail. Logs: downcap_v2/sf1_window_changes.csv, sf1_kept_stored.csv.
+    * --no-swap may proceed at through == old_end when appended SF1 keys exist
+      (temps only), to show what the window would change. A real run never
+      rewrites the panel in place at the same end date.
+
 CORPORATE ACTIONS / VENDOR REVISIONS (compared over the last COMPARE_MONTHS
 months <= old_end, stored panel open/close vs SEP on disk)
     split-like  (a close ratio outside [0.8, 1.25]): the months before the
@@ -116,6 +130,42 @@ COMPARE_MONTHS = 3
 SPLIT_BAND = (0.8, 1.25)
 ROWS_PER_DATE_REF = 3901   # 2026-09-08
 OHLC_COLS = ["date", "open", "high", "low", "close", "volume"]
+
+# WO-16 (Gabe 2026-09-26: "fundamentals may change on rows < 7 days old")
+FUND_COLS = ["market_cap", "net_issuance_pct", "days_to_next_filing_seasonal",
+             "gross_profitability", "accruals", "asset_growth"]
+FUND_WINDOW_DAYS = 7
+SF1_APPENDED = SH / "sf1_topup_appended.csv"
+FUND_LOG_FIELDS = ["ticker", "date", "column", "stored", "recomputed", "table", "kind", "run_date", "through"]
+FUND_WINDOW_LOG = V2DIR / "sf1_window_changes.csv"      # kind window_changed (value taken)
+FUND_KEPT_LOG = V2DIR / "sf1_kept_stored.csv"           # older rows: stored kept / revised-ticker restores
+
+
+def sf1_explained_from():
+    """{ticker: earliest SF1 datekey appended by sf1_topup.py} (both files)."""
+    if not SF1_APPENDED.exists():
+        return {}
+    a = pd.read_csv(SF1_APPENDED, dtype=str, usecols=["ticker", "date"])
+    return a.groupby("ticker")["date"].min().to_dict()
+
+
+def write_fund_logs(logs, run_date, through, dest_dir=None):
+    """Append (deduplicated) the WO-16 fundamentals logs. Returns rows added per file."""
+    from sf1_topup import _append_csv
+    if not logs:
+        return {}
+    df = pd.concat(logs, ignore_index=True)
+    df["run_date"], df["through"] = run_date, through
+    for c in ("stored", "recomputed"):
+        df[c] = df[c].map(repr)
+    out = {}
+    for path, sel in ((FUND_WINDOW_LOG, df["kind"] == "window_changed"), (FUND_KEPT_LOG, df["kind"] != "window_changed")):
+        if dest_dir is not None:
+            path = Path(dest_dir) / path.name
+        rows = df[sel].to_dict("records")
+        out[path.name] = _append_csv(path, FUND_LOG_FIELDS, rows,
+                                     ["ticker", "date", "column", "recomputed", "table", "kind"])
+    return out
 
 
 class RefreshError(Exception):
@@ -238,7 +288,9 @@ def step_prices(work, tickers, full_tickers, buf_start, through):
 def step_fundamentals(work):
     import build_features_fundamentals_sharadar as FF
     FF.PRICE_PANEL, FF.OUT = work / "prices.parquet", work / "fund.parquet"
-    FF.main()
+    # WO-16: the reset landing (d7d257d, global-asof builder) renamed main() -> build();
+    # WO-14 called FF.main(), which now raises AttributeError on any real refresh.
+    (getattr(FF, "main", None) or FF.build)()
 
 
 def step_addons(work):
@@ -324,15 +376,47 @@ def _to_arrow(df, schema):
     return pa.Table.from_pandas(df[[f.name for f in plain]], schema=plain, preserve_index=False)
 
 
+def _explained(tickers, dates, explained_from):
+    """WO-16: True where the ticker has an SF1 key appended by sf1_topup.py with
+    datekey <= the row date (so a fundamentals change on that row is explained)."""
+    out = np.zeros(len(tickers), dtype=bool)
+    for i, (t, d) in enumerate(zip(tickers, dates)):
+        lo = explained_from.get(t)
+        out[i] = lo is not None and str(d) >= lo
+    return out
+
+
+def _fund_log(m, mask, c, name, kind):
+    if not mask.any():
+        return None
+    return pd.DataFrame({"ticker": m.loc[mask, "ticker"].to_numpy(), "date": m.loc[mask, "date"].astype(str).to_numpy(),
+                         "column": c, "stored": m.loc[mask, c].to_numpy(np.float64),
+                         "recomputed": m.loc[mask, c + "__n"].to_numpy(np.float64), "table": name, "kind": kind})
+
+
 def splice(old_path, part, key_date_str, replace_tickers, new_tickers, buf_start, old_end, label_cols,
-           frozen_cols, report, name):
-    """part: recomputed rows (ticker, date as in file). Returns the new arrow table."""
+           frozen_cols, report, name, fund=None):
+    """part: recomputed rows (ticker, date as in file). Returns the new arrow table.
+
+    fund (WO-16, Gabe 2026-09-26: "fundamentals may change on rows < 7 days old"):
+    {"cols": fundamental-derived columns, "window_start": iso date,
+     "explained_from": {ticker: min appended SF1 datekey}, "logs": list to append to}.
+    On those columns a recomputed value that differs from the stored one is
+      * taken, if the row date >= window_start and the change is explained;
+      * NOT taken (stored value kept, logged), if the row is older and explained;
+      * a hard failure if unexplained (the WO-14 rule)."""
     T = pq.read_table(old_path)
     schema = T.schema
     date_is_str = pa.types.is_large_string(schema.field("date").type) or pa.types.is_string(schema.field("date").type)
     tick = T.column("ticker")
     drop_t = pa.array(sorted(replace_tickers | new_tickers), type=pa.large_string())
     keep_mask = pc.invert(pc.is_in(tick, value_set=drop_t))
+    fcols = [c for c in (fund or {}).get("cols", ()) if c in schema.names]
+    stored_repl = None
+    if fund is not None and fcols and replace_tickers:
+        rp = pc.is_in(tick, value_set=pa.array(sorted(replace_tickers), type=pa.large_string()))
+        stored_repl = T.filter(rp).select(["ticker", "date", "close"] + fcols).to_pandas()
+        stored_repl["ticker"] = stored_repl["ticker"].astype(str)
     bs = buf_start.date().isoformat() if date_is_str else pa.scalar(buf_start, type=schema.field("date").type)
     in_tail = pc.greater_equal(T.column("date"), bs)
     body = T.filter(pc.and_(keep_mask, pc.invert(in_tail)))
@@ -360,13 +444,55 @@ def splice(old_path, part, key_date_str, replace_tickers, new_tickers, buf_start
             rep["label_fill"][c] = int(fill.sum())
             rep["column_mismatch"][c] = int(bad.sum())
             tail.loc[fill, c] = m.loc[fill, c + "__n"].to_numpy()
+        elif c in fcols:
+            mism = both & ~eq
+            expl = mism & _explained(m["ticker"].to_numpy(), m["date"].astype(str).to_numpy(),
+                                     fund["explained_from"])
+            in_win = (m["date"].astype(str) >= fund["window_start"]).to_numpy()
+            take, keep = expl & in_win, expl & ~in_win
+            rep.setdefault("fund_window_changed", {})[c] = int(take.sum())
+            rep.setdefault("fund_kept_stored", {})[c] = int(keep.sum())
+            rep["column_mismatch"][c] = int((mism & ~expl).sum())
+            for mask, kind in ((take, "window_changed"), (keep, "kept_stored")):
+                lg = _fund_log(m, mask, c, name, kind)
+                if lg is not None:
+                    fund["logs"].append(lg)
+            tail.loc[take, c] = m.loc[take, c + "__n"].to_numpy().astype(tail[c].dtype)
         else:
             rep["column_mismatch"][c] = int((both & ~eq).sum())
-    hard = {c: v for c, v in rep["column_mismatch"].items() if v and c not in frozen_cols}
+    hard ={c: v for c, v in rep["column_mismatch"].items() if v and c not in frozen_cols}
     if hard:
         raise RefreshError(f"{name}: recomputed old rows disagree with stored values {hard} -- "
                            f"not a pure extension; refusing to write")
     newrows = part[(part["date"] > oe) | part["ticker"].isin(replace_tickers | new_tickers)]
+    if stored_repl is not None and len(stored_repl):
+        # WO-16: a revised ticker's full recompute must not carry late filings into
+        # rows older than the window. Restore the stored SF1-derived values there.
+        newrows = newrows.copy()
+        mm = newrows.reset_index().merge(stored_repl, on=["ticker", "date"], how="left",
+                                         suffixes=("__n", ""), indicator=True)
+        hit = (mm["_merge"] == "both").to_numpy()
+        old_row = (mm["date"].astype(str) < fund["window_start"]).to_numpy()
+        expl = _explained(mm["ticker"].to_numpy(), mm["date"].astype(str).to_numpy(), fund["explained_from"])
+        same_close = _eq(mm["close"].to_numpy(), mm["close__n"].to_numpy())
+        rr = rep.setdefault("fund_revised", {})
+        for c in fcols:
+            diff = hit & ~_eq(mm[c].to_numpy(), mm[c + "__n"].to_numpy())
+            restore = diff & old_row & expl
+            if c == "market_cap":
+                restore = restore & same_close
+            mixed = diff & old_row & expl & ~restore
+            win = diff & ~old_row & expl
+            rr[c] = {"restored_stored": int(restore.sum()), "mixed_kept_recomputed": int(mixed.sum()),
+                     "window_changed": int(win.sum())}
+            for mask, kind in ((restore, "revised_restored_stored"), (mixed, "revised_mixed_kept_recomputed"),
+                               (win, "window_changed")):
+                lg = _fund_log(mm, mask, c, name, kind)
+                if lg is not None:
+                    fund["logs"].append(lg)
+            if restore.any():
+                newrows.loc[mm.loc[restore, "index"].to_numpy(), c] = \
+                    mm.loc[restore, c].to_numpy().astype(newrows[c].dtype)
     rep["rows_replaced_tickers"] = int(part["ticker"].isin(replace_tickers).sum())
     rep["rows_new_tickers"] = int(part["ticker"].isin(new_tickers).sum())
     rep["rows_new_dates"] = int((part["date"] > oe).sum())
@@ -481,12 +607,28 @@ def run(args):
         if _max_date(p, col) != old_end:
             raise RefreshError(f"{p.name} ends {_max_date(p, col).date()}, panel ends {old_end.date()}: "
                                "companions out of step, refusing")
+    run_date = pd.Timestamp(args.run_date) if args.run_date else pd.Timestamp.today().normalize()
+    window_start = (run_date - pd.Timedelta(days=FUND_WINDOW_DAYS)).date().isoformat()
+    explained_from = sf1_explained_from()
+    fund = {"cols": FUND_COLS, "window_start": window_start, "explained_from": explained_from, "logs": []}
+    window_only = False
     if through <= old_end:
-        log("up to date: nothing to do (no file written)")
-        return 0
+        # WO-16: --no-swap may still rebuild the window to show what late SF1 filings
+        # would change (temps only). A real run never swaps in place at the same end:
+        # it would collide with the next extension's dated backup name.
+        win_t = {t for t, d in explained_from.items() if d <= old_end.date().isoformat()}
+        if args.no_swap and not args.check and win_t:
+            window_only = True
+            log(f"up to date, but --no-swap and {len(win_t):,} tickers have appended SF1 keys: "
+                f"rebuilding the buffer into temps only (window starts {window_start})")
+        else:
+            log("up to date: nothing to do (no panel file written)")
+            return 0
     if args.check:
         log("--check: new data available; not writing")
         return 0
+    log(f"fundamentals window (Gabe 2026-09-26): rows >= {window_start} may take late SF1 filings; "
+        f"{len(explained_from):,} tickers have appended SF1 keys")
 
     work = V2DIR / f"refresh_tmp_{through.date().isoformat()}"
     if work.exists():
@@ -517,6 +659,8 @@ def run(args):
                                f"{old_end.date()}: {sorted(hit['ticker'].unique())}. Re-pull their SEP "
                                f"history first (see the WO-14 doc); refusing to refresh.")
     affected =((grid | new_tickers) & after) - blocked
+    if window_only:
+        affected = (grid & set(explained_from)) - blocked
     full = (set(revised) | new_tickers) - blocked
     dates = sorted(pq.read_table(PANEL_V2, columns=["date"],
                                  filters=[("date", ">=", (old_end - pd.Timedelta(days=150)).date().isoformat())])
@@ -550,7 +694,16 @@ def run(args):
     frozen = {"eligible_cap2000", "eligible_cap500", "eligible_cap150",
               "eligible_cap2000_v1", "eligible_cap500_v1", "eligible_cap150_v1"}
     panel_t = splice(PANEL_V2, part, True, set(revised), new_tickers, buf_start, old_end, LABELS,
-                     frozen, report, "panel")
+                     frozen, report, "panel", fund=fund)
+    report["sf1_window"] = {"run_date": run_date.date().isoformat(), "window_start": window_start,
+                            "tickers_with_appended_sf1": len(explained_from),
+                            "revised_and_appended": sorted(set(revised) & set(explained_from)),
+                            "window_only_no_swap": window_only,
+                            "eligible_flags_differ_in_buffer_kept_stored": {
+                                c: int(v) for c, v in report["panel"]["column_mismatch"].items()
+                                if c.startswith("eligible_")}}
+    log(f"fundamentals: window changes {report['panel'].get('fund_window_changed')}, "
+        f"kept stored {report['panel'].get('fund_kept_stored')}, revised {report['panel'].get('fund_revised')}")
     log("splicing beta ...")
     # beta rows exist exactly where panel rows exist
     keyp = part[["ticker", "date"]]
@@ -588,6 +741,8 @@ def run(args):
             tmp.unlink()
         report["no_swap"] = True
         report["ohlc_csvs_would_write"] = len(staged)
+        report["sf1_logs_written"] = write_fund_logs(fund["logs"], run_date.date().isoformat(),
+                                                     through.date().isoformat(), dest_dir=work)
         (work / "report.json").write_text(json.dumps(report, indent=2, default=str))
         log(f"--no-swap: validated temps left at {tmp_p.name}, {tmp_b.name}, {tmp_o.name}; "
             f"report {work / 'report.json'}; {time.time() - t0:.0f}s")
@@ -601,6 +756,8 @@ def run(args):
     report["ohlc_backup_dir"] = str(bkdir)
     report["backups"].append(str(swap(tmp_p, PANEL_V2, old_end)))
     report["new_end"] = W.latest_date(PANEL_V2).date().isoformat()
+    report["sf1_logs_written"] = write_fund_logs(fund["logs"], run_date.date().isoformat(),
+                                                 through.date().isoformat())
     report["runtime_s"] = round(time.time() - t0, 1)
     (V2DIR / f"refresh_report_{through.date().isoformat()}.json").write_text(json.dumps(report, indent=2, default=str))
     shutil.rmtree(work)
@@ -618,6 +775,10 @@ def main():
                     help="test run: build + validate temps, never replace the live files")
     ap.add_argument("--record-weekly", action="store_true",
                     help="WO-14 weekly cadence: insider refresh -> panel refresh -> record_weekly.py")
+    ap.add_argument("--no-sf1-topup", action="store_true",
+                    help="WO-16: skip the append-only SF1 top-up (sf1_topup.py) that otherwise runs first")
+    ap.add_argument("--run-date", default=None,
+                    help="WO-16: date the 7-day fundamentals window counts back from (default: today)")
     a = ap.parse_args()
     import subprocess
     if a.record_weekly and not (a.check or a.no_swap):
@@ -625,6 +786,13 @@ def main():
         log(f"step insider refresh ({ins.name}) ...")
         if subprocess.run([sys.executable, str(ins)]).returncode != 0:
             print("REFRESH FAILED: insider refresh failed; panel and ledgers untouched", file=sys.stderr)
+            return 1
+    if not (a.check or a.no_swap or a.no_sf1_topup):
+        # WO-16: append-only SF1 top-up before the panel step (runs even when the
+        # panel is already up to date, so SF1 never goes stale between refreshes)
+        log("step SF1 top-up (sf1_topup.py) ...")
+        if subprocess.run([sys.executable, str(HERE / "sf1_topup.py")]).returncode != 0:
+            print("REFRESH FAILED: SF1 top-up failed; SF1 files, panel and ledgers untouched", file=sys.stderr)
             return 1
     try:
         rc = run(a)
