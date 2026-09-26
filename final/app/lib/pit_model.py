@@ -31,7 +31,9 @@ labelled as guidance everywhere it appears.
 from __future__ import annotations
 
 import json
+import os
 import sys
+from datetime import date
 from pathlib import Path
 
 import pandas as pd
@@ -504,7 +506,7 @@ def comparison_frame(era: str = "holdout") -> pd.DataFrame | None:
 # retrain
 # --------------------------------------------------------------------------
 PIT_STEP_LABELS = [
-    "Top up the Sharadar price/marketcap panel (needs SHARADAR_API_KEY)",
+    "Top up the Sharadar price/marketcap panel from the newest month on disk (needs SHARADAR_API_KEY)",
     "Rebuild the point-in-time universe",
     "Rebuild price features",
     "Rebuild fundamental features",
@@ -512,6 +514,44 @@ PIT_STEP_LABELS = [
     "Retrain BOTH signals + compute today's picks",
     "Rebuild the benchmark comparison (SPY / USMV curves)",
 ]
+
+
+def _sharadar_panel_dir() -> Path:
+    """Same resolution as sharadar_pull_pit_panel.py's PANEL."""
+    env = os.environ.get("SHARADAR_PANEL_DIR")
+    return Path(env) if env else paths.SHARADAR_DIR / "panel"
+
+
+def sharadar_resume_month(panel_dir: Path | None = None) -> str | None:
+    """The month the Sharadar top-up should re-pull from (YYYY-MM), or None
+    when either table has no month files yet.
+
+    2026-09-26 (WO-14, Gabe OK'd): the plain no-arg pull skips every month
+    already on disk, so the CURRENT month -- written partially on the last
+    run -- was never refreshed and new trading days never arrived. The fix is
+    to re-pull, with --force, from the newest month on disk. Taking the
+    OLDER of the two tables' newest months (daily vs stocks) keeps a lagging
+    table from being skipped; re-pulling from there (not from "this month")
+    also covers month rollover (last run on the 28th -> that month is still
+    partial) and multi-month gaps. Capped at today's month."""
+    panel = panel_dir or _sharadar_panel_dir()
+    newest = []
+    for table in ("daily", "stocks"):
+        months = sorted(p.stem for p in (panel / table).glob("[0-9][0-9][0-9][0-9]-[0-9][0-9].parquet"))
+        if not months:
+            return None
+        newest.append(months[-1])
+    return min(min(newest), date.today().strftime("%Y-%m"))
+
+
+def sharadar_pull_command() -> list[str]:
+    """Computed when the button is clicked, so the resume month is current."""
+    py = sys.executable
+    script = str(paths.SRC_DIR / "sharadar_pull_pit_panel.py")
+    start = sharadar_resume_month()
+    if start is None:   # empty panel: the no-arg pull backfills from 2005-01
+        return [py, script]
+    return [py, script, "--start", start, "--force"]
 
 
 def retrain_commands() -> list[list[str]]:
@@ -530,7 +570,7 @@ def retrain_commands() -> list[list[str]]:
     chart is simply drawn without the USMV line and says why."""
     py = sys.executable
     return [
-        [py, str(paths.SRC_DIR / "sharadar_pull_pit_panel.py")],
+        sharadar_pull_command(),
         [py, str(paths.SRC_DIR / "build_pit_universe.py")],
         [py, str(paths.SRC_DIR / "build_features_sharadar.py")],
         [py, str(paths.SRC_DIR / "build_features_fundamentals_sharadar.py")],
