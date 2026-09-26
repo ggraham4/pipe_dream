@@ -5,7 +5,9 @@ last refreshed **2026-09-26** after WO-9, WO-10/WO-11, WO-13 and WO-14 landed,
 the 10bfb19 app layout became official, and the ext ledger was committed
 (integration `079fa26`); run 6 (same day) folds in the reset-branch landing
 (`d7d257d`), the WO-8 addendum (`ddb2773`), the live-checkout sync (`6a1823d`)
-and Gabe's 2026-09-26 decisions (integration `d7d257d`).
+and Gabe's 2026-09-26 decisions (integration `d7d257d`); run 7 (same day)
+folds in WO-16, the SF1 top-up (landed `defcc23`, deployed to the live
+checkout as `500a4a5`).
 This is the one current-state document. It merges every branch's docs, the
 coordination ledger, handoffs and project memory, and the newest source wins
 where two disagree. Everything that lost is listed in [Superseded](#superseded)
@@ -13,7 +15,7 @@ at the bottom.
 
 How to read the tags:
 
-- **landed** means the claim is on `integration` (d7d257d).
+- **landed** means the claim is on `integration` (defcc23).
 - **in flight** means it comes from an unlanded branch or from uncommitted files
   in a worktree. In-flight claims never describe current state. They live in
   [In flight](#5-in-flight).
@@ -97,7 +99,14 @@ change takes effect on the next app restart or rerun (LEDGER landing log).
 **Gap:** `final/scripts/edgar_form4_refresh.py` was not synced. A live Retrain
 ALL therefore stops safely at the insider-refresh step, with no v1 revert and
 no weekly records, until `final/scripts` is synced too. That needs Gabe's OK
-(APP.md, 2026-09-26; §6 #12). Insider buy/sell counts are a certified dead end (2026-09-23), and the
+(APP.md, 2026-09-26; §6 #12). **WO-16 landed and deployed (2026-09-26):**
+the append-only SF1 top-up, the 7-day fundamentals window and the
+`FF.main()` → `build()` crash fix landed as integration defcc23 and were
+deployed to the live checkout as 500a4a5 (not pushed). The worker already
+topped up the live SF1 files once (max datekey 2026-09-08 → 2026-09-25). A
+Retrain ALL runs the insider step *before* the top-up, so until
+`final/scripts` is synced, a live Retrain ALL still stops before the top-up
+runs (§4.7; [WO-16 doc](final/models/2026-09-26-wo16-sf1-topup.md)). Insider buy/sell counts are a certified dead end (2026-09-23), and the
 down-cap reopen was used by WO-4 (DEAD, 2026-09-24), so the family is spent
 in-era. Congress is forward-only. The earnings-timing family is closed (8-K
 test DEAD, 2026-09-23). The Alpha Vantage options pull on the Mac **crashed**
@@ -314,7 +323,8 @@ which now lives in §7 below.
   [SUE screen](final/models/2026-09-25-sue-drift-screen.md).
 - **Next (COO.md, 2026-09-26):** score the forward ledgers from about
   2026-11-03 (WO-1; needs Gabe's machine for the price pull). Land WO-15. The
-  WO-16 SF1 top-up is Gabe-approved top priority and in flight (§5). Laddered rebalancing was **not launched**: it only changes
+  WO-16 SF1 top-up landed (defcc23) and was deployed live (500a4a5) on
+  2026-09-26 (§4.7). Laddered rebalancing was **not launched**: it only changes
   variance and can't fix the 2020 concentration (COO.md; corrections §15). The
   open composite questions for Gabe are COO decision #7.
 
@@ -390,9 +400,12 @@ which now lives in §7 below.
   **`refresh_working_panel.py`** (WO-14) extends it incrementally. It is now
   through 2026-09-24. Known gaps: 8 reverse-split micro-caps (CTSO, GOSS, GTBP,
   JAGX, NFE, NXXT, OPTT, VWAV) are not extended, and the refresh exits 1 if one
-  becomes eligible. `sf1_fundamentals.parquet`, `sf1_shares.csv`,
-  `tickers_master.csv` and `actions.csv` end at 2026-09-08, and no Retrain step
-  refreshes them. The v1 panel is kept only to reproduce past results.
+  becomes eligible. `sf1_fundamentals.parquet` and `sf1_shares.csv`
+  get the WO-16 append-only top-up (landed defcc23, 2026-09-26; live copy
+  through 2026-09-25). `tickers_master.csv` and `actions.csv` still end at
+  2026-09-08, and nothing refreshes them. `tickers_master.csv` is a live
+  reader (domestic-common filter, sector), so no post-09-08 listing can enter
+  the universe. Refreshing it needs its own WO (WO-16 doc). The v1 panel is kept only to reproduce past results.
 - Approved data-sourcing order (Gabe, 2026-09-17): sector-neutral features →
   net issuance (done, Round 20) → insider buys (**done 2026-09-23**, SEC Form
   345, plain counts a dead end, see §4.6) → options liquidity bucketing (AV
@@ -432,7 +445,7 @@ which now lives in §7 below.
   [Results](final/models/2026-09-23-insider-congress-results.md),
   [pre-registration](final/models/2026-09-23-insider-congress-preregistration.md).
 
-### 4.7 Live pipeline and forward ledgers: landed (9dd0852) and deployed to the live checkout (6a1823d), 2026-09-26
+### 4.7 Live pipeline and forward ledgers: landed (9dd0852, WO-16 defcc23) and deployed to the live checkout (6a1823d, WO-16 500a4a5), 2026-09-26
 
 - **The Retrain ALL chain that should run** (WO-14 doc): the v1 data steps
   (`sharadar_pull_pit_panel.py` … `export_sharadar_ohlc.py`), then
@@ -454,9 +467,43 @@ which now lives in §7 below.
   `features_with_fundamentals_sharadar_pit.parquet` (built 2026-09-25) came
   from the float32 builder, and the next Retrain ALL rewrites it as float64
   (LEDGER landing log, 2026-09-26).
-- **SF1 is frozen at 2026-09-08 for every live reader** (COO.md decision #8,
-  2026-09-26). No Retrain step refreshes `sf1_fundamentals.parquet`. Gabe
-  approved the fix as top priority, and it is in flight as WO-16 (§5, §6 #16).
+- **SF1 top-up (WO-16): landed defcc23, deployed to the live checkout 500a4a5,
+  2026-09-26** ([WO-16 doc](final/models/2026-09-26-wo16-sf1-topup.md); LEDGER
+  landing log). New `final/src/reset2026/sf1_topup.py` appends new ARQ/ARY
+  keys to `sf1_fundamentals.parquet` and `sf1_shares.csv` (4 Sharadar calls a
+  run). Rows already on disk stay byte-identical, restatements are logged to
+  `sf1_topup_restatements.csv` and never applied, and each run keeps dated
+  backups and is idempotent. `refresh_working_panel.py` runs it by default
+  (`--no-sf1-topup` skips it; never under `--check`/`--no-swap`).
+  - **Acceptance exception** (Gabe, 2026-09-26: "fundamentals may change on
+    rows < 7 days old"): the 6 fundamental-derived columns may take recomputed
+    values on panel rows dated ≥ run date − 7 days (logged to
+    `sf1_window_changes.csv`). On older rows an explained difference keeps the
+    stored value (logged to `sf1_kept_stored.csv`), and an unexplained one is
+    still a hard failure.
+  - **Bug fix:** the reset landing (d7d257d) renamed
+    `build_features_fundamentals_sharadar.main()` to `build()`, but the WO-14
+    refresh still called `FF.main()`. The first real refresh with a new SEP
+    day would have crashed. The refresh now calls `main()` if it exists, else
+    `build()` (verified at `refresh_working_panel.py:293` on the live checkout).
+  - **Live data, 2026-09-26:** the worker topped up the live SF1 once:
+    +475 rows (sf1_fundamentals), +471 (sf1_shares), max datekey
+    2026-09-08 → **2026-09-25**. No real panel refresh ran (SEP ends
+    2026-09-24 = panel end), so the panel and every ledger are unchanged
+    (sha256). A full-grid `--no-swap` rehearsal (9,250 tickers) showed
+    0 unexplained mismatches.
+  - **Not yet active through Retrain ALL:** with `--record-weekly`, the
+    refresh runs `final/scripts/edgar_form4_refresh.py` *before* the top-up,
+    and that script is still missing from the live checkout. So a live
+    Retrain ALL stops at the insider step and skips both the top-up and the
+    window until `final/scripts` is synced (§6 #12).
+  - **Coupling:** the live SF1 is already topped up, so the pre-WO-16 refresh
+    code fails on it ("recomputed old rows disagree"). Rolling back means
+    restoring `sf1_fundamentals_through_2026-09-08.parquet` and
+    `sf1_shares_through_2026-09-08.csv` *before* any refresh.
+  - **v1 side effect:** the v1 steps are full rebuilds. The next Retrain
+    absorbs every appended key into v1 history (no window), one run behind
+    v2. No ledger is affected.
 - **Pull-script gap:** `sharadar_pull_pit_panel.py` skips any month already on
   disk, so the current month is never re-pulled, and every Retrain was a no-op
   for September. WO-14 used `--start 2026-09 --end 2026-09 --force` (21
@@ -476,9 +523,8 @@ Nothing below is current state until it lands.
 
 | branch / worktree | what it will change | state | source |
 |---|---|---|---|
-| `worktree-agent-a505179eca9ed9bf2` (COO WO-15, SUE forward column) | A new side ledger, `final/out/reset2026/prediction_ledger_sue.csv` (icw9_sue next to icw8, weekly, live data only), hooked into `record_weekly.py` and `prediction_ledger.py`; new `final/src/sue/` live files, including `sf1_eps_live_pull.py` (SUE-only SF1 ARQ EPS top-up); pre-registration `final/models/2026-09-26-sue-forward-ledger.md`. Nobody else touches `record_weekly.py` / `prediction_ledger.py` until it lands | in flight, **uncommitted** (branch tip is still 079fa26; the pre-reg doc, `sf1_eps_live_pull.py` and a `build_sue.py` edit are on disk only, mtime 2026-09-26). The integrator's commit and push of the pre-reg was denied by the permission classifier and needs Gabe (LEDGER, 2026-09-26). The pre-reg says it is committed before any record is written, so the commit has to come first | LEDGER WO-15 row; COO.md decisions log and In flight; the worktree's pre-reg doc |
-| `worktree-agent-a2aadeb16c0d0ca8f` (COO WO-16, SF1 top-up) | New `final/src/reset2026/sf1_topup.py`, an append-only incremental top-up of `sf1_fundamentals.parquet` (restatements logged, never overwritten), hooked into `refresh_working_panel.py`; the WO-14 acceptance exception "fundamentals may change on rows < 7 days old"; doc `final/models/2026-09-26-wo16-sf1-topup.md` | in flight: launched 2026-09-26 (Gabe: "this needs to be fixed ASAP, make it happen"), based on integration d7d257d, no commits yet. The COO supervises it to landing, then deploys it to live | LEDGER WO-16 row; COO.md decisions log 2026-09-26 and In flight |
-| main checkout `round18-app-two-models` (live) @ 6a1823d | `final/src` + `final/app` equal integration d7d257d, except `final/src/fly/*` (9 files kept). **Not pushed**: 10bfb19 in its history carries 4.3 GB of FUSE temp files and >100MB blobs. A clean mirror is on origin as `round18-app-two-models-clean` @ 78f8c34, and it lacks 02be838 and 6a1823d | Repointing the local branch onto the clean line is a history rewrite: Gabe's call (§6 #12). Not to be merged into integration | LEDGER landing log 2026-09-26; LEDGER round18 row |
+| `worktree-agent-a505179eca9ed9bf2` (COO WO-15, SUE forward column) | A new side ledger, `final/out/reset2026/prediction_ledger_sue.csv` (icw9_sue next to icw8, weekly, live data only), hooked into `record_weekly.py` and `prediction_ledger.py`; new `final/src/sue/` live files, including `sf1_eps_live_pull.py` (SUE-only SF1 ARQ EPS top-up); pre-registration `final/models/2026-09-26-sue-forward-ledger.md`. Nobody else touches `record_weekly.py` / `prediction_ledger.py` until it lands | in flight. Pre-reg **committed 9dc2d03 and pushed** (doc only, on Gabe's "integrate the relevant files", 2026-09-26; it adds a pre-registered `datekey<=prev_td(t)` fallback in §2). The code is still **uncommitted** in the worktree: `record_weekly.py` and `build_sue.py` edits, plus new `sf1_eps_live_pull.py` and `sue_forward.py` (LEDGER, 2026-09-26). Branch base 079fa26, behind integration defcc23 | LEDGER WO-15 row; COO.md decisions log and In flight; the worktree's pre-reg doc |
+| main checkout `round18-app-two-models` (live) @ 500a4a5 | `final/src` + `final/app` equal integration d7d257d plus the 3 WO-16 paths from defcc23 (500a4a5, 2026-09-26), except `final/src/fly/*` (9 files kept). `final/scripts` is not synced. **Not pushed**: 10bfb19 in its history carries 4.3 GB of FUSE temp files and >100MB blobs. A clean mirror is on origin as `round18-app-two-models-clean` @ 78f8c34, and it lacks 02be838, 6a1823d and 500a4a5 | Repointing the local branch onto the clean line is a history rewrite: Gabe's call (§6 #12). Not to be merged into integration | LEDGER landing log 2026-09-26; LEDGER round18 row |
 | `worktree-alpha-vantage-spin` @ 6ca32f3 | Updated Windows runbook, `av_pull_windows_prep.py`, `av_merge_pull_roots.py`, a pull retry fix in `av_options_pull.py`, a `downcap_universe.py` path override | committed and pushed, **not landed**: excluded from the 2026-09-26 merge (Gabe: "merge everything but AV") | LEDGER landing log; COO.md decisions log 2026-09-26 |
 | `worktree-papermoney-order-sheet` | paper-broker order sheet | **not to land** (Gabe, 2026-09-23; reaffirmed 2026-09-26) | LEDGER; COO.md decisions log |
 
@@ -564,7 +610,8 @@ Nothing below is current state until it lands.
     (a) **sync `final/scripts`** (at least `edgar_form4_refresh.py`; 8
     integration-only scripts are missing). Until then a live Retrain ALL
     stops safely at the insider-refresh step and writes no weekly records
-    (APP.md, 2026-09-26). (b) 6a1823d is not pushed, because the local round18
+    (APP.md, 2026-09-26). Since WO-16 (deployed 500a4a5, 2026-09-26) it also
+    skips the SF1 top-up, which runs after the insider step. (b) 6a1823d is not pushed, because the local round18
     history carries >100MB blobs. Repointing the local branch onto
     `round18-app-two-models-clean` is a history rewrite. COO.md (2026-09-26)
     says it is "NOT treated as approved".
@@ -587,9 +634,10 @@ Nothing below is current state until it lands.
 16. ~~SF1 is frozen at 2026-09-08 for every live reader (COO decision #8).~~
     **Approved by Gabe 2026-09-26** as top priority ("this needs to be fixed
     ASAP, make it happen"), including the WO-14 acceptance exception
-    "fundamentals may change on rows < 7 days old". WO-16 is in flight (§5).
-    Until it lands and deploys, the working panel's fundamentals and ext's
-    `leverage` go stale through the Q3 filing season (late Oct-Nov). One
+    "fundamentals may change on rows < 7 days old". **Resolved 2026-09-26:**
+    WO-16 landed (defcc23) and was deployed to the live checkout (500a4a5),
+    and the live SF1 now runs through 2026-09-25 (§4.7). Automatic top-ups
+    through Retrain ALL still wait on the `final/scripts` sync (#12). One
     caveat: Gabe answered "3", and the coordinator mapped that to WO-16 rather
     than to the COO's own item 3, the round18 history rewrite (COO.md).
 
@@ -640,6 +688,7 @@ unreachable from agent sandboxes, and keys (`SHARADAR_API_KEY`,
 | Insider panel, screen, post-hoc (download 81 SEC quarterly zips first) | `build_insider_panel.py` → `screen_insider.py` → `posthoc_insider.py` | [insider results](final/models/2026-09-23-insider-congress-results.md) "Reproduction" |
 | Down-cap grid v2 and its read-outs (nomination era only) | `build_downcap_grid_v2.py --all` → `downcap_grid_acceptance.py` → `downcap_v2_readout.py` → `noscore_control_v2.py`; insider re-test `build_insider_panel_v2grid.py` → `screen_insider_v2grid.py`. Optional SF1 top-up: `final/scripts/sharadar_downcap_pull.py` (key needed; added nothing) | [grid rebuild](final/models/2026-09-24-downcap-grid-rebuild.md); [no-score control](final/models/2026-09-24-noscore-control-v2.md); [insider v2](final/models/2026-09-24-insider-buyers-v2-grid.md) |
 | v2 working-panel refresh + weekly forward records | `sharadar_pull_pit_panel.py --start <this month> --end <this month> --force` (the default skips the current month), then `refresh_working_panel.py --through latest --record-weekly` (`--check`, `--no-swap`, `record_weekly.py --plan` write nothing). 8 split-blocked tickers: `sharadar_downcap_pull.py --pull-list final/out/reset2026/downcap_v2/wo14_split_pull_list.csv` (8 calls; not run, and folding the CSVs in is a missing step) | [WO-14 doc](final/models/2026-09-25-wo14-v2-incremental-refresh.md) |
+| SF1 incremental top-up (WO-16) | runs inside `refresh_working_panel.py`; standalone `python final/src/reset2026/sf1_topup.py` (key from the environment or `~/.config/pipe_dream/secrets.env`). Rollback: restore `sf1_fundamentals_through_2026-09-08.parquet` / `sf1_shares_through_2026-09-08.csv` before any refresh | [WO-16 doc](final/models/2026-09-26-wo16-sf1-topup.md) |
 | IWM-hedged composite (nomination era) | IWM from yfinance (`auto_adjust=False`, plus Adj Close) into `final/data/benchmarks/IWM.csv` (gitignored), then `hedged_composite.py` → `hedged_tradable.py` (dividends from the Sharadar SEP panel's closeadj/close) | [hedged composite](final/models/2026-09-25-hedged-composite.md) §1.2, §3.6 |
 | Forward hedged ledger | `forward_hedge.py record` / `selftest` / `score` / `status` (scoring needs `final/data/benchmarks/IWM_live.csv`, pulled after maturity) | [forward hedged icw8](final/models/2026-09-25-forward-hedged-icw8.md) §2, §4 |
 | SUE screen | `build_sue.py` (about 1 min) → `validate_sue.py` → `hand_check_sue.py` → `screen_sue.py`; reads `sf1_fundamentals.parquet` (ARQ only) | [SUE screen](final/models/2026-09-25-sue-drift-screen.md) |
@@ -697,6 +746,8 @@ not superseded by anything newer):
 | v2 `eligible_cap*` flags include SPACs | a SPAC at trust value has `volatility_60` near 0 and would top an inverse-vol book; 19 cap150 SPAC rows on 2026-09-08 | WO-11 tracing why every v2 measurement dropped them at analysis time | [v2 working panel](final/models/2026-09-25-v2-working-panel-switch.md) §1 |
 | `sharadar_pull_pit_panel.py` skips months already on disk | the current month was never re-pulled, so every Retrain was a no-op for September | WO-14 | [WO-14 doc](final/models/2026-09-25-wo14-v2-incremental-refresh.md) |
 | Weekly hook recorded an open ISO week (W39 at 09-24) | a daily Retrain could lock in a mid-week date | WO-14 disclosing its own deviation | same, "Deviation, disclosed" |
+| `FF.main()` called after the reset renamed it to `build()` (**fixed 2026-09-26**, WO-16) | the first real v2 refresh with a new SEP day would have crashed with AttributeError; the live checkout carried it from 6a1823d to 500a4a5 | WO-16 reading the refresh code path | [WO-16 doc](final/models/2026-09-26-wo16-sf1-topup.md) §2 |
+| SF1 restatements are logged, not applied (WO-16 append-only, by design) | after a reverse split, `market_cap` and `net_issuance_pct` are off by the split ratio until the next filing (e.g. RML 67x, looks like a vendor share-count error); none eligible on 2026-09-24 | WO-16 share-basis screen | same, Addendum; `sf1_topup_restatements.csv` |
 | `actions.csv` covers only 2025-09-09..2026-09-10 | no 2007-2019 dividends (and no pre-2025 splits) | WO-9 inspecting it before use | [hedged composite](final/models/2026-09-25-hedged-composite.md) §3.6 |
 
 **Standing rule** (Round 16/17): verify by naming what should be there, with
@@ -828,7 +879,8 @@ the file is on `integration`.
 | [`final/models/2026-09-25-forward-hedged-icw8.PREREG-PREIMAGE.md`](final/models/2026-09-25-forward-hedged-icw8.PREREG-PREIMAGE.md) | 2026-09-25 | landed | byte-exact pre-image of WO-10 §1-2 (sha256 29438c7a…) |
 | [`final/models/2026-09-25-sue-drift-screen.md`](final/models/2026-09-25-sue-drift-screen.md) | 2026-09-25 | landed (026e3b7) | WO-13: SUE/PEAD pre-registration and results, PASS-nomination |
 | [`final/models/2026-09-25-wo14-v2-incremental-refresh.md`](final/models/2026-09-25-wo14-v2-incremental-refresh.md) | 2026-09-25 | landed (f0e750a) | WO-14: v2 refresh builder, acceptance, split-blocked tickers, weekly-record rules and first run, WO-10 addendum |
-| `worktree-agent-a505179eca9ed9bf2:final/models/2026-09-26-sue-forward-ledger.md` | 2026-09-26 (mtime; uncommitted) | in flight | WO-15: icw9_sue forward ledger pre-registration (frozen weights, kill rule) |
+| [`final/models/2026-09-26-wo16-sf1-topup.md`](final/models/2026-09-26-wo16-sf1-topup.md) | 2026-09-26 | landed (defcc23) | WO-16: SF1 append-only top-up pre-reg + results, 7-day window, `FF.main()` fix, full-grid rehearsal, share-basis screen, deploy coupling and rollback |
+| `worktree-agent-a505179eca9ed9bf2:final/models/2026-09-26-sue-forward-ledger.md` | 2026-09-26 (commit 9dc2d03; unlanded) | in flight | WO-15: icw9_sue forward ledger pre-registration (frozen weights, kill rule) |
 | [`final/app/README.md`](final/app/README.md) | 2026-09-24 (commit) | landed; header stale vs the 10bfb19 app.py (app-manager) | how to run the app, tab guide |
 | [`final/models/pit_integration/README.md`](final/models/pit_integration/README.md) | 2026-09-02 | landed | options PIT-integration reproduction |
 | [`final/models/hyperparameter_retune/README.md`](final/models/hyperparameter_retune/README.md) | 2026-09-02 | landed | options Tweedie/GAM retune |
@@ -914,3 +966,7 @@ Old claim, its source and date → what replaced it, with source and date.
 - SUE promotion is Gabe's open call (README Open conflicts #13, 2026-09-26 run 5) → approved by Gabe 2026-09-26 (COO.md decisions log); its scope is flagged in Open conflicts #15.
 - SF1 frozen at 2026-09-08, proposed WO-16 needs Gabe's OK (COO.md decision #8, 2026-09-26, first entry) → approved as top priority, WO-16 launched in `worktree-agent-a2aadeb16c0d0ca8f` (COO.md decisions log; LEDGER, 2026-09-26).
 - Deploy gate cleared by the 6a1823d sync (APP.md, first 2026-09-26 entry) → only partly cleared: `final/scripts/edgar_form4_refresh.py` is missing in the live checkout, so a live Retrain ALL stops at the insider-refresh step (APP.md, later 2026-09-26 entry).
+- WO-16 in flight in `worktree-agent-a2aadeb16c0d0ca8f`, no commits (README §5, 2026-09-26 run 6) → landed defcc23, deployed to the live checkout 500a4a5 (LEDGER landing log, 2026-09-26).
+- SF1 frozen at 2026-09-08 for every live reader (README §4.5/§4.7 and Open conflicts #16, 2026-09-26) → WO-16 top-up; live SF1 through 2026-09-25 (WO-16 doc, 2026-09-26).
+- Live checkout @ 6a1823d (README §5, 2026-09-26 run 6) → 500a4a5 with the WO-16 paths (LEDGER, 2026-09-26).
+- WO-15 pre-reg uncommitted, commit denied by the classifier (README §5, 2026-09-26 run 6) → committed 9dc2d03 and pushed; code still uncommitted (LEDGER, 2026-09-26).
