@@ -3,7 +3,9 @@
 **Consolidated 2026-09-23 by `pipe-dream-readme-manager`** (first full sweep),
 last refreshed **2026-09-26** after WO-9, WO-10/WO-11, WO-13 and WO-14 landed,
 the 10bfb19 app layout became official, and the ext ledger was committed
-(integration `079fa26`).
+(integration `079fa26`); run 6 (same day) folds in the reset-branch landing
+(`d7d257d`), the WO-8 addendum (`ddb2773`), the live-checkout sync (`6a1823d`)
+and Gabe's 2026-09-26 decisions (integration `d7d257d`).
 This is the one current-state document. It merges every branch's docs, the
 coordination ledger, handoffs and project memory, and the newest source wins
 where two disagree. Everything that lost is listed in [Superseded](#superseded)
@@ -11,7 +13,7 @@ at the bottom.
 
 How to read the tags:
 
-- **landed** means the claim is on `integration` (079fa26).
+- **landed** means the claim is on `integration` (d7d257d).
 - **in flight** means it comes from an unlanded branch or from uncommitted files
   in a worktree. In-flight claims never describe current state. They live in
   [In flight](#5-in-flight).
@@ -80,16 +82,22 @@ from holding the universe. The caveat: from 2011-10-20 to 2019, icw8 only
 (WO-11). WO-14 added its refresh path (panel now through 2026-09-24) and the
 **weekly** forward records Gabe chose. The SUE/post-earnings-drift screen (WO-13,
 2026-09-25) is a **PASS-nomination**, but its portfolio contribution is noise-sized,
-so the COO recommends confirming it forward only. On rank accuracy the
+so the COO recommends confirming it forward only. Gabe approved the item on
+2026-09-26. What exists so far is WO-15's forward-only SUE column, in flight
+(§6 #13, #15). On rank accuracy the
 IC-weighted composite beats q75 by a margin that is **not detectable** at 82
 dates (§19, MIDDLE), and its rank signal is essentially one factor,
 `gross_profitability`. **The app now runs the 10bfb19 layout** (Gabe,
 2026-09-25): the composite+q75 blend is Today's Picks, and the composite alone
-is the Theoretical Model tab. **Main-checkout caveat:** Gabe's live checkout
-still has `final/src` from integration 983a154 (pre-WO-11/14), so a live
-Retrain ALL reverts the outputs to v1 and writes no weekly records until the
-src sync and the Retrain hook are deployed together, which needs Gabe's OK (§6
-#12). Insider buy/sell counts are a certified dead end (2026-09-23), and the
+is the Theoretical Model tab. **Live checkout:** on 2026-09-26, with Gabe's
+OK, the main checkout's `final/src` and `final/app` were synced to integration
+d7d257d (commit 6a1823d, not pushed). That deploys the v2 working panel, the
+WO-14 refresh and the Retrain ALL hook. Streamlit was not restarted, so the
+change takes effect on the next app restart or rerun (LEDGER landing log).
+**Gap:** `final/scripts/edgar_form4_refresh.py` was not synced. A live Retrain
+ALL therefore stops safely at the insider-refresh step, with no v1 revert and
+no weekly records, until `final/scripts` is synced too. That needs Gabe's OK
+(APP.md, 2026-09-26; §6 #12). Insider buy/sell counts are a certified dead end (2026-09-23), and the
 down-cap reopen was used by WO-4 (DEAD, 2026-09-24), so the family is spent
 in-era. Congress is forward-only. The earnings-timing family is closed (8-K
 test DEAD, 2026-09-23). The Alpha Vantage options pull on the Mac **crashed**
@@ -113,7 +121,7 @@ Buy/No-Buy, Options Premium, Data & Updates). Stock has **four sub-tabs**:
 | sub-tab | what it shows | role |
 |---|---|---|
 | Today's Picks | the composite+q75 blend, cap2000 (`final/src/current_signal_blend.py`). Its composite half is the **frozen original 9-factor equal-weight** version, now read from the v2 panel | `"role": "primary"` in its meta. Not a validated edge |
-| Theoretical Model | the icw8 composite alone, cap150, v2 panel + SPAC rule (`final/src/current_signal_composite.py`) | `"role": "candidate"`, "tracked, not acted on" |
+| Theoretical Model | the icw8 composite alone, cap150, v2 panel + SPAC rule (`final/src/current_signal_composite.py`) | `"role": "candidate"`, note "TRACKED, NOT ACTED ON AS A VALIDATED EDGE" |
 | Query a Ticker | per-ticker answers from both models plus a "Both models pick it" column (2026-09-24) | — |
 | Universe | the eligible universe | — |
 
@@ -154,7 +162,7 @@ frozen 9-factor equal-weight composite and Theoretical uses icw8.
 | **Survivorship-safe down-cap grid v2 built (WO-6), BUILD SUCCESS.** 22,535,814 rows, 9,266 tickers; the old 4,011 tickers reproduce `composite_panel.parquet` exactly on 20 dates. Re-measured (nomination era 2007-2019, `decile_volq` net 15bp, mean of 40 offsets, column c = v2 grid): cap150 icw8 **+2.85%** (v1: +5.25%), ew8 **+1.80%** (v1: +4.32%); cap500 icw8 +2.66%; cap2000 icw8 +2.84%. 40/40 offsets positive in every cell; LOYO min cap150 icw8 +1.71%. The survivorship fix alone is −1.8 to −2.6pp; the liquidity-flag fix is about 0. **No longer monotonic in cap.** Split-half OOS IC at cap150 *rises*, +0.0400 → +0.0479 | landed; COO-verified. "Monotonic in cap" is a certified dead end | 2026-09-24 | [down-cap grid rebuild](final/models/2026-09-24-downcap-grid-rebuild.md) "Phase 2 read-out" |
 | **No-score control on v2 (WO-7): SELECTION MATERIAL.** cap150, column c, 2007-2019, net 15bp, 40 offsets, vs SPY: icw8 **+2.85**, random same-size book (icw8 score permuted within date, 20 draws) median **−1.09** (p95 −0.93), whole eligible universe with no score **−0.25** (6/40 offsets > 0; the old grid gave +2.40). Selection (icw8 − null median) **+3.95pp/yr**, 40/40 offsets, LOYO min +3.32 (2018). So on the honest grid all of the composite's excess is the ranking, not universe beta. Of the +3.95, about 0.65pp is lower turnover than a random book: the gross (0bp) selection is **+3.28**. **Caveat: on the common window 2011-10-20 to 2019-12-31, icw8 is +0.00 vs SPY (19/40 offsets) and +0.59 vs USMV (37/40).** All full-era excess over SPY comes from before 2011-10-20; the universe lagged SPY by about 2pp/yr afterwards and the ranking made that up. Descriptive, not a trial | landed; COO verdict SELECTION MATERIAL | 2026-09-24 | [no-score control v2](final/models/2026-09-24-noscore-control-v2.md) |
 | **IWM-hedged composite (WO-9): MIDDLE**, recorded as a forward bet and **not promoted** (Gabe, 2026-09-25). Composite-family trial 14, v2 column c, cap150, 2007-2019, hedged = icw8 `decile_volq` net 15bp − IWM 40-day return − 10bp short leg, ETF borrow ≈ 0. **Price-only IWM (primary):** full **+2.28** pp/yr (40/40, LOYO min +1.61), 2011-10-20..2019 **+0.92** (misses the +1.0 gate), beta to SPY −0.164 (t −5.01). **Tradable** (ITERATE #1, adds book dividends − IWM dividends; book out-yields IWM by +0.27 full / +0.16 2011-19): full **+2.56** (LOYO +1.88), 2011-19 **+1.08** (40/40), but the 2011-19 LOYO is −0.26 without 2018. Clearing every gate on the tradable basis is "for information only": it follows a post-hoc basis fix and the 2011-19 margin is 0.08pp. Six of 13 years are negative (2016 −12.5). WO-9's figures are on IWM-available dates (last 40 era dates masked), so the like-for-like unhedged icw8 is +3.10, not the +2.85 standard. COO ruled after the results that LOYO is read on the full window only | landed e11d37e; COO verdict MIDDLE; Gabe: forward bet (WO-10) | 2026-09-25 | [hedged composite](final/models/2026-09-25-hedged-composite.md) §3-4; COO.md "Gabe decisions log" |
-| **SUE / post-earnings-announcement drift (WO-13): PASS-nomination**, new family "earnings surprise / PEAD", k=1, v2 column c cap150, h=40, 2007-2019. All 6 gates pass: pooled NW IC **t +2.17** (bar 1.96), halves +1.82 / +1.22, both-sides sector-demeaned t +2.09, 0/40 offset flips, max single-year share 0.335. Gate 6: icw9 +2.4412%/yr vs a shuffle-null p80 of +2.3504%, so **icw9 − icw8 is +0.073pp/yr** against a null median of −0.025pp. That is noise against the book's offset sd (~0.47pp per COO.md; the doc gives 0.54 / 0.48). LOYO t falls to 1.52 without 2015; 2009 is −41% of the sum. Nearly new information (median Spearman with icw8 +0.062, with momentum +0.262). **Promotion is Gabe's call; the COO recommends forward confirmation only** (WO-15, held) | landed 026e3b7; COO verdict PASS-nomination | 2026-09-25 | [SUE screen](final/models/2026-09-25-sue-drift-screen.md) "Results"; COO.md WO-13, WO-15 |
+| **SUE / post-earnings-announcement drift (WO-13): PASS-nomination**, new family "earnings surprise / PEAD", k=1, v2 column c cap150, h=40, 2007-2019. All 6 gates pass: pooled NW IC **t +2.17** (bar 1.96), halves +1.82 / +1.22, both-sides sector-demeaned t +2.09, 0/40 offset flips, max single-year share 0.335. Gate 6: icw9 +2.4412%/yr vs a shuffle-null p80 of +2.3504%, so **icw9 − icw8 is +0.073pp/yr** against a null median of −0.025pp. That is noise against the book's offset sd (~0.47pp per COO.md; the doc gives 0.54 / 0.48). LOYO t falls to 1.52 without 2015; 2009 is −41% of the sum. Nearly new information (median Spearman with icw8 +0.062, with momentum +0.262). The COO recommended forward confirmation only. **Gabe approved the item 2026-09-26** (COO.md decisions log). The only implementation is WO-15's forward column, in flight and forward-only by its pre-registration. What "promotion" covers is open (§6 #15) | landed 026e3b7; COO verdict PASS-nomination | 2026-09-25 | [SUE screen](final/models/2026-09-25-sue-drift-screen.md) "Results"; COO.md WO-13, WO-15 |
 | **Up-market capture / upside beta: shelved by Gabe** before any run ("If the metric already exists then may not be worth the effort to include"). No trial spent, not a dead end. Reopen only if Gabe asks | recorded (no files) | 2026-09-25 | COO.md "Gabe decisions log" |
 | The composite is a strong low-beta bet: corr(score, beta_252) -0.2933. Beta-adjusted IC is sharper (t 2.53 → 4.25) | landed. v1 cap150 grid, not re-measured on v2 | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §9b |
 | **IC-shrinkage weights** (each factor weighted by sign × max(0.1, abs(t) − 1) of its own pooled-IC t, pre-registered, one run) beat equal weight out of sample on raw-return IC in both split-halves: fit-odd→test-even, weighted +0.0304 vs equal +0.0183; fit-even→test-odd, weighted +0.0496 vs equal +0.0434. On beta-adjusted IC the second split favours equal weight on the point estimate. No portfolio CAGR was computed for this step | landed. v1 cap150 grid, nomination era (v2 split-half IC in the WO-6 row) | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §12 (OOS figures as reproduced in §19's sanity gate) |
@@ -174,7 +182,7 @@ frozen 9-factor equal-weight composite and Theoretical uses icw8.
 | **Earnings announcement premium via 8-K Item 2.02 is DEAD** under its pre-registered rule (trial 6 of 6): pooled raw IC −0.0065, **NW t −1.71 vs a 2.64 bar**, and **2015 = 48.5%** of the effect (limit 45%). Passed: both halves negative, both-sides sector-neutral t −1.82, 0/40 grid flips. **The earnings-timing family (6 trials) is a COO-certified dead end.** Reopen only with a point-in-time source of *announced* dates, tested forward. COO ruling: the doc's Part 2 sentence on moving a portfolio is struck, because the icw9−icw8 book gap is +0.10%/yr on in-sample weights | landed; COO certified dead end | 2026-09-23 | [EAP 8-K doc](final/models/2026-09-23-earnings-announcement-premium-8k.md) Part 2; COO.md dead-end table |
 | **Two forward-only bets pre-registered and recording** (WO-2+3): `icw9` (the frozen icw8 rule plus `leverage`, sign −1, weight −0.1582) vs icw8, and CMP-2012 opportunistic insider buyers (`opp_buyers_90`, with the plain count as control). First blind record: panel date **2026-09-08**, 2,214 rows. Decision after **6 non-overlapping matured dates**; the first matures around **2026-11-03**. No backtest was run. Cadence is now **weekly** (WO-14 row). The side-ledger CSV `prediction_ledger_ext.csv` itself was committed only on 2026-09-26 (079fa26); before that it existed only untracked in the main checkout | code and doc landed 2026-09-24 (f3233bd); ext CSV landed 2026-09-26 (079fa26) | 2026-09-23/24 | [forward ledger doc](final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md) §1-5; COO.md report log 2026-09-26 |
 | **Forward IWM-hedged icw8 bet (WO-10) recording** on the v2 panel: long the icw8 `decile_volq` book, cap150 (registered; cap2000 descriptive), short IWM at equal notional, tradable basis (dividends on both legs), full 15bp round trip on every record (heavier than WO-9's backtest) plus 10bp for the short. First blind record 2026-09-08: 472 rows (cap150 305 long + IWM, cap2000 165 + IWM). Kill if the mean hedged return over counted dates is ≤ 0 after ≥ 6 matured counted dates; > 0 goes to Gabe as a PROMOTE-CANDIDATE question. No verdict before about mid-2027. The top 3 names (SLAB, RAMP, PEN, 7.4% of the book) look like pending-acquisition targets, a known `decile_volq` property | landed 8f47808 | 2026-09-25 | [forward hedged icw8](final/models/2026-09-25-forward-hedged-icw8.md) |
-| **v2 is the working panel** (Gabe, 2026-09-25: "Lets make the v2 panel the working panel going forward, all models should use it."). `final/src/reset2026/working_panel.py` holds the constants and the SPAC rule. The live scorers, `prediction_ledger.py`, `edgar_form4_refresh.py` and `forward_hedge.py` read v2. Research that reproduces published numbers stays on v1. ICW8/ICW9 weights and the v3 ledger's FM slope are frozen, not re-derived. Existing 2026-09-08 v1/v2/v3/ext records stay as recorded on v1 (`ledger_panel_manifest.json`) | landed 8f47808 (WO-11). The main checkout's `final/src` does not have it yet (§6 #12) | 2026-09-25 | [v2 working panel](final/models/2026-09-25-v2-working-panel-switch.md); COO.md "Gabe decisions log" |
+| **v2 is the working panel** (Gabe, 2026-09-25: "Lets make the v2 panel the working panel going forward, all models should use it."). `final/src/reset2026/working_panel.py` holds the constants and the SPAC rule. The live scorers, `prediction_ledger.py`, `edgar_form4_refresh.py` and `forward_hedge.py` read v2. Research that reproduces published numbers stays on v1. ICW8/ICW9 weights and the v3 ledger's FM slope are frozen, not re-derived. Existing 2026-09-08 v1/v2/v3/ext records stay as recorded on v1 (`ledger_panel_manifest.json`) | landed 8f47808 (WO-11); deployed to the live checkout 2026-09-26 (6a1823d) | 2026-09-25 | [v2 working panel](final/models/2026-09-25-v2-working-panel-switch.md); COO.md "Gabe decisions log" |
 | **v2 refresh path + weekly forward records (WO-14)**: `refresh_working_panel.py --through latest --record-weekly` extended v2 from 2026-09-08 to **2026-09-24** (12 new dates, 22,535,814 → 22,584,099 rows), with acceptance checks 1-6 all passing. Weekly records written for W38 (2026-09-18) and W39 (2026-09-24) in v3, ext and hedge. W39 was recorded before the week closed, so it is annotated `incomplete_week`: descriptive only, never a counted date. The WO-10 kill rule is unchanged: counted dates are greedy, each ≥ 40 trading days after the last, and on-time records only | landed f0e750a; engineering, no trial | 2026-09-25 | [WO-14 doc](final/models/2026-09-25-wo14-v2-incremental-refresh.md) |
 | LCID was **not** a data bug. It was a real 1-for-10 reverse split on 2025-09-02 | landed | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §6d |
 
@@ -208,14 +216,16 @@ The certified dead ends list is owned by the COO (`~/.claude/pipe_dream-coordina
   3. 2026-09-22: IC-weighted, +2.44%/yr, drop 2020 → -3.95%/yr
      (corrections §16, landed 2026-09-23).
 
-  The composite+q75 blend was also read once (-0.36%, reset branch). COO.md
+  The composite+q75 blend was also read once (-0.36%; its `blend_q75.py`
+  and report landed with the reset branch, d7d257d). COO.md
   counts all four as hold-out reads; the full-spec doc §5 counts the three
   composite versions only. Both are right about what they count.
 - **The only unspent test surface is the forward ledgers.** Any further
   hold-out look needs Gabe's explicit OK (COO.md). There are three live ledgers,
   all first recorded on panel date 2026-09-08. Records are never rewritten, and
   `ledger_panel_manifest.json` maps each record to its panel (the 2026-09-08
-  v3/ext records are on v1, everything later is on v2):
+  v3/ext records are on v1; the hedge ledger, including its 2026-09-08
+  record, and everything later are on v2):
   - `prediction_ledger_v3.csv`: icw and ew columns (`prediction_ledger.py`,
     started 2026-09-22, landed 2026-09-23).
   - `prediction_ledger_ext.csv`: icw9 leverage + opportunistic buyers. Code
@@ -228,8 +238,9 @@ The certified dead ends list is owned by the COO (`~/.claude/pipe_dream-coordina
   days after the last, and on-time only. Weekly records in between are
   descriptive, because their windows overlap. The first maturity is about
   2026-11-03, and every bet needs at least 6 counted dates before a verdict
-  (COO.md WO-1; WO-10 §1). The live checkout can't record weekly until the src
-  sync (§6 #12).
+  (COO.md WO-1; WO-10 §1). The weekly-record step reached the live checkout
+  on 2026-09-26 (6a1823d). It can't run there until `final/scripts` is synced
+  (§6 #12).
 - All three hold-out reads above were on the **v1** grid. The v2-grid work
   (WO-6, WO-7, WO-4, 2026-09-24; WO-9, WO-13, 2026-09-25) is nomination-era
   only and asserts `max(date) < 2020-01-01`, so it spent nothing. No v2
@@ -294,14 +305,16 @@ which now lives in §7 below.
   [hedged composite](final/models/2026-09-25-hedged-composite.md),
   [forward hedged icw8](final/models/2026-09-25-forward-hedged-icw8.md).
 - **SUE (WO-13, landed 2026-09-25): PASS-nomination** as a 9th factor
-  candidate. Its in-era book gain is noise-sized. **WO-15** (COO, ready, not
-  launched) would add `sue`/`icw9_sue` columns to the weekly side ledger (kill:
-  forward paired rho(icw9_sue) − rho(icw8) ≤ 0 after ≥ 6 counted dates). It is
-  held until the main-checkout src sync, to avoid a third divergent `src` copy.
+  candidate. Its in-era book gain is noise-sized. Gabe approved the item on
+  2026-09-26. **WO-15** (Gabe: "yes add the SUE column", launched 2026-09-26,
+  in flight) records an `icw9_sue` score in a new side ledger,
+  `prediction_ledger_sue.csv`, on live data only (kill: forward rank-IC gain
+  of icw9_sue over icw8 ≤ 0 after 6 counted dates). Its pre-registration says
+  "No promotion ever rests on the 2007-2019 result" (§5, §6 #15).
   [SUE screen](final/models/2026-09-25-sue-drift-screen.md).
 - **Next (COO.md, 2026-09-26):** score the forward ledgers from about
-  2026-11-03 (WO-1; needs Gabe's machine for the price pull). Launch WO-15 after
-  the src sync. Laddered rebalancing was **not launched**: it only changes
+  2026-11-03 (WO-1; needs Gabe's machine for the price pull). Land WO-15. The
+  WO-16 SF1 top-up is Gabe-approved top priority and in flight (§5). Laddered rebalancing was **not launched**: it only changes
   variance and can't fix the 2020 concentration (COO.md; corrections §15). The
   open composite questions for Gabe are COO decision #7.
 
@@ -419,19 +432,35 @@ which now lives in §7 below.
   [Results](final/models/2026-09-23-insider-congress-results.md),
   [pre-registration](final/models/2026-09-23-insider-congress-preregistration.md).
 
-### 4.7 Live pipeline and forward ledgers: landed on integration, not yet live (2026-09-25/26)
+### 4.7 Live pipeline and forward ledgers: landed (9dd0852) and deployed to the live checkout (6a1823d), 2026-09-26
 
 - **The Retrain ALL chain that should run** (WO-14 doc): the v1 data steps
   (`sharadar_pull_pit_panel.py` … `export_sharadar_ohlc.py`), then
   `refresh_working_panel.py --through latest --record-weekly`, then
-  `current_signal_blend.py` and `current_signal_composite.py`. The hook is
-  **queued with the app manager, not built** (APP.md, 2026-09-25). It has a
-  deploy gate: it deploys only together with the main checkout's `final/src`
-  sync, on Gabe's OK.
+  `current_signal_blend.py` and `current_signal_composite.py`. The app hook
+  landed as 783cc12 → integration 9dd0852, and it was deployed together with
+  the `final/src` sync as 6a1823d on 2026-09-26, on Gabe's OK (APP.md; LEDGER).
+  Streamlit was not restarted then. **Gap** (APP.md, 2026-09-26):
+  `refresh_working_panel.py --record-weekly` first calls
+  `final/scripts/edgar_form4_refresh.py`. That script is on integration but
+  missing in the main checkout (8 integration-only scripts are missing
+  there). So a live Retrain ALL stops at "insider refresh failed; panel and
+  ledgers untouched" until `final/scripts` is synced (Gabe's OK, §6 #12).
+- **Retrain speedup** (reset branch, landed d7d257d): the merged
+  `build_features_fundamentals_sharadar.py` keeps the global-asof speedup
+  (2:42 → 59s on that step) but writes all 14 fundamental columns, including
+  `market_cap`, as float64. On 80 sampled in-universe tickers (218,698 rows)
+  it is bit-identical to `process_ticker`. The live panel
+  `features_with_fundamentals_sharadar_pit.parquet` (built 2026-09-25) came
+  from the float32 builder, and the next Retrain ALL rewrites it as float64
+  (LEDGER landing log, 2026-09-26).
+- **SF1 is frozen at 2026-09-08 for every live reader** (COO.md decision #8,
+  2026-09-26). No Retrain step refreshes `sf1_fundamentals.parquet`. Gabe
+  approved the fix as top priority, and it is in flight as WO-16 (§5, §6 #16).
 - **Pull-script gap:** `sharadar_pull_pit_panel.py` skips any month already on
   disk, so the current month is never re-pulled, and every Retrain was a no-op
   for September. WO-14 used `--start 2026-09 --end 2026-09 --force` (21
-  calls). The queued app change also forces the current-month re-pull.
+  calls). The deployed app change also forces the current-month re-pull.
 - **Forward ledgers** (§3.4): v3, ext and hedge, weekly, with sidecars
   `ledger_record_log.csv` (`recorded_late`) and `ledger_record_annotations.csv`
   (`incomplete_week`). `forward_hedge.py status` drops both kinds before
@@ -447,13 +476,11 @@ Nothing below is current state until it lands.
 
 | branch / worktree | what it will change | state | source |
 |---|---|---|---|
-| `worktree-factor-composite-reset` (5 commits) | "Merge whole branch, nothing dropped" (Gabe, 2026-09-23): the Retrain-ALL speedup (`build_features_fundamentals_sharadar.py`, 2:42 → 59s, verify-pass), the `blend_q75.py` backtest and report, and `current_signal_blend_full.csv` (per-ticker query statuses). Its `current_signal_blend.py` must not be taken (it drops the frozen-factor guard). Its app.py reorg (blend primary, tabs retired) is close to the now-official 10bfb19 layout. Whether it adds anything beyond 10bfb19 is the app manager's call | blocked on app-manager reconciliation. **Correctness risk (COO, open):** its retrain speedup (0ad9c8f) swaps `build_features_fundamentals_sharadar.py` for a float32 version whose `market_cap` differs from `composite_panel` in 43,250 of 43,743 sampled rows. Before or at landing, show that eligibility flags and composite ranks are unchanged, or keep float64. (WO-11 found that the v1 and v2 panels themselves carry full float64 `market_cap`.) | `worktree-factor-composite-reset:final/models/2026-09-22-session-handoff.md`; LEDGER; COO.md "Open correctness items"; [v2 working panel](final/models/2026-09-25-v2-working-panel-switch.md) §1 |
-| `app` (queued change, no commit yet) | The WO-14 Retrain ALL hook: a `refresh_working_panel.py --through latest --record-weekly` step between the q75 and blend steps, a missing-script guard, and a Sharadar current-month re-pull | QUEUED in APP.md (the pinned-cwd run couldn't edit). Deploy only together with the main-checkout src sync, on Gabe's OK | APP.md queue 2026-09-25; LEDGER `app` row |
-| main checkout `round18-app-two-models` (live) | Needs integration's `final/src` (WO-11/14: `working_panel.py`, `refresh_working_panel.py`, `record_weekly.py`, v2 scorers); it has 983a154's `src` (f5584db). ccddf1a deployed the 10bfb19-layout app there on 2026-09-25 | Gabe's OK needed (§6 #12). Local branch is unpushable (10bfb19 carries 4.3 GB of FUSE temp files); a clean mirror is on origin as `round18-app-two-models-clean` @ 78f8c34 (it lacks 02be838). Repointing the local branch is a history rewrite: Gabe's call. Not to be merged into integration | LEDGER round18 row and "Integration target" |
-| `worktree-alpha-vantage-spin` @ 6ca32f3 | Updated Windows runbook, `av_pull_windows_prep.py`, `av_merge_pull_roots.py`, a pull retry fix in `av_options_pull.py`, a `downcap_universe.py` path override | committed and pushed, **not landed** (integrator, 2026-09-25) | LEDGER landing log |
-| `worktree-agent-a62e372d5c3f442a3` (WO-8) | An uncommitted refinement to the landed TRANS_DATE section: 3 changed rows now take a mistyped raw year (e.g. "08-MAY-0013"), none on a ledger-universe purchase; plus a reproducibility note (point `posthoc_insider.py` at the `_prefix_2026-09-24` backup to reproduce the published lead) | still uncommitted (checked 2026-09-26); the commit was classifier-denied. Needs Gabe | COO.md report log 2026-09-26 |
-| COO WO-15 (no branch yet) | `sue` / `icw9_sue` columns in the weekly side ledger (§4.1) | written, held until the src sync | COO.md "Work orders ready to launch" |
-| `worktree-papermoney-order-sheet` | paper-broker order sheet | **not to land** (Gabe, 2026-09-23) | LEDGER |
+| `worktree-agent-a505179eca9ed9bf2` (COO WO-15, SUE forward column) | A new side ledger, `final/out/reset2026/prediction_ledger_sue.csv` (icw9_sue next to icw8, weekly, live data only), hooked into `record_weekly.py` and `prediction_ledger.py`; new `final/src/sue/` live files, including `sf1_eps_live_pull.py` (SUE-only SF1 ARQ EPS top-up); pre-registration `final/models/2026-09-26-sue-forward-ledger.md`. Nobody else touches `record_weekly.py` / `prediction_ledger.py` until it lands | in flight, **uncommitted** (branch tip is still 079fa26; the pre-reg doc, `sf1_eps_live_pull.py` and a `build_sue.py` edit are on disk only, mtime 2026-09-26). The integrator's commit and push of the pre-reg was denied by the permission classifier and needs Gabe (LEDGER, 2026-09-26). The pre-reg says it is committed before any record is written, so the commit has to come first | LEDGER WO-15 row; COO.md decisions log and In flight; the worktree's pre-reg doc |
+| `worktree-agent-a2aadeb16c0d0ca8f` (COO WO-16, SF1 top-up) | New `final/src/reset2026/sf1_topup.py`, an append-only incremental top-up of `sf1_fundamentals.parquet` (restatements logged, never overwritten), hooked into `refresh_working_panel.py`; the WO-14 acceptance exception "fundamentals may change on rows < 7 days old"; doc `final/models/2026-09-26-wo16-sf1-topup.md` | in flight: launched 2026-09-26 (Gabe: "this needs to be fixed ASAP, make it happen"), based on integration d7d257d, no commits yet. The COO supervises it to landing, then deploys it to live | LEDGER WO-16 row; COO.md decisions log 2026-09-26 and In flight |
+| main checkout `round18-app-two-models` (live) @ 6a1823d | `final/src` + `final/app` equal integration d7d257d, except `final/src/fly/*` (9 files kept). **Not pushed**: 10bfb19 in its history carries 4.3 GB of FUSE temp files and >100MB blobs. A clean mirror is on origin as `round18-app-two-models-clean` @ 78f8c34, and it lacks 02be838 and 6a1823d | Repointing the local branch onto the clean line is a history rewrite: Gabe's call (§6 #12). Not to be merged into integration | LEDGER landing log 2026-09-26; LEDGER round18 row |
+| `worktree-alpha-vantage-spin` @ 6ca32f3 | Updated Windows runbook, `av_pull_windows_prep.py`, `av_merge_pull_roots.py`, a pull retry fix in `av_options_pull.py`, a `downcap_universe.py` path override | committed and pushed, **not landed**: excluded from the 2026-09-26 merge (Gabe: "merge everything but AV") | LEDGER landing log; COO.md decisions log 2026-09-26 |
+| `worktree-papermoney-order-sheet` | paper-broker order sheet | **not to land** (Gabe, 2026-09-23; reaffirmed 2026-09-26) | LEDGER; COO.md decisions log |
 
 ---
 
@@ -474,8 +501,8 @@ Nothing below is current state until it lands.
 3. ~~The live composite still reads the v1 grid.~~ **Resolved 2026-09-25 by
    Gabe:** "Lets make the v2 panel the working panel going forward, all models
    should use it." Implemented by WO-11 (landed 8f47808): the scorers and forward
-   ledgers read v2, and existing records stay as recorded (manifest). What's
-   left is deploying it to the live checkout (#12).
+   ledgers read v2, and existing records stay as recorded (manifest). Deployed
+   to the live checkout 2026-09-26 (6a1823d, #12).
 4. **IC's role (methodology, for the COO).** Round 19 (2026-09-16) retired IC as
    a feature-admission gate (rank correlation with earnings +0.019). Gabe's
    2026-09-22 reframe made pooled IC the composite's *target metric*, and the
@@ -499,12 +526,17 @@ Nothing below is current state until it lands.
    (not launched; DEAD). The WO-10 doc §2 C10 and COO.md's WO-9 decision bullet
    say the cadence is pending, and it is now weekly. The ledger's AV row says
    new commits after e58dfd5 need landing, but `de4fdb5` is in integration
-   (6ca32f3 is the unlanded one). Project memory
+   (6ca32f3 is the unlanded one). The ledger's round18 row (dated 2026-09-24)
+   still gives the local tip as ccddf1a; it is 6a1823d since 2026-09-26.
+   COO.md "Active bets" still says the main checkout's `final/src` is 983a154,
+   and its "Open correctness items" still lists the float32 builder as open
+   (both closed 2026-09-26 per its own decisions log). Project memory
    (`project_thin_liquidity_options_edge_idea.md`) still says the AV bulk pull
    is RUNNING.
 7. **Earlier decisions still pending** (COO.md): why the HMM regime gate was
    retired; whether to renew AV premium (around 2026-10-22; the COO's
-   threshold is about 120 monthly dates pulled); whether the integrator may
+   threshold is about 120 monthly dates pulled; Gabe, 2026-09-26: "in
+   progress", he will send the Windows monthly-date count); whether the integrator may
    fast-forward `main` to `integration` (origin/main is 1f81de2 after the
    2026-09-25 docs push, still far behind); the composite open questions (COO
    decision #7: is 2020 regime or luck, adopt `leverage`, a
@@ -524,19 +556,42 @@ Nothing below is current state until it lands.
 11. ~~What the composite's post-2011 result means for promotion.~~
     **Answered 2026-09-25:** WO-9 (hedged) came out MIDDLE, and Gabe had it
     recorded as a forward bet (WO-10), not promoted.
-12. **Deploy the v2 pipeline to the live checkout (Gabe's OK).** The main
-    checkout's `final/src` is integration 983a154, which predates WO-11/14 (it
-    has no `working_panel.py`). Until the src sync and the queued Retrain hook
-    deploy together, a live Retrain ALL rewrites the outputs back to v1, and no
-    weekly forward records are written. That costs counted dates, and the first
-    countable date is about 2026-11-03 (COO.md report log 2026-09-26; APP.md
-    deploy gate). Related: repointing the unpushable local round18 branch onto
-    its clean mirror is a history rewrite, also Gabe's call.
-13. **SUE promotion (Gabe).** WO-13 is a PASS-nomination. The COO recommends
-    forward confirmation only (WO-15), because the in-era gain (+0.073pp/yr) is
-    within noise. Gabe decides whether to promote, confirm forward, or drop it.
-14. **The WO-8 doc addendum** is still uncommitted in its worktree (§5). Gabe
-    decides whether to commit it or drop it.
+12. **Live checkout: history rewrite still open (Gabe).** The src/app deploy
+    is **done**: on 2026-09-26, with Gabe's OK, the main checkout's `final/src`
+    and `final/app` were synced to integration d7d257d as 6a1823d, which
+    deploys the WO-14 Retrain hook (LEDGER landing log; APP.md "DEPLOY GATE
+    PARTLY CLEARED"). Still open, both Gabe's call:
+    (a) **sync `final/scripts`** (at least `edgar_form4_refresh.py`; 8
+    integration-only scripts are missing). Until then a live Retrain ALL
+    stops safely at the insider-refresh step and writes no weekly records
+    (APP.md, 2026-09-26). (b) 6a1823d is not pushed, because the local round18
+    history carries >100MB blobs. Repointing the local branch onto
+    `round18-app-two-models-clean` is a history rewrite. COO.md (2026-09-26)
+    says it is "NOT treated as approved".
+13. ~~SUE promotion (Gabe).~~ **Decided 2026-09-26:** COO.md's decisions log
+    records "SUE/PEAD promotion approved" (Gabe OK'd all open items). The only
+    implementation is WO-15 (§5, in flight): a forward-only column. See #15
+    for what "promotion" covers.
+14. ~~The WO-8 doc addendum is uncommitted.~~ **Resolved 2026-09-26:**
+    committed 547ae48 and landed in integration as ddb2773 (Gabe-requested via
+    the COO).
+15. **What "SUE promotion approved" means (for the COO to confirm with
+    Gabe).** The 2026-09-26 summary line in COO.md says "SUE/PEAD promotion
+    approved". The same day's quoted Gabe decision ("yes add the SUE column")
+    launched WO-15, whose ruling says "**No promotion on the 2007-2019
+    result.**" Nothing on integration d7d257d adds `sue` to a live scorer, the
+    blend or the Theoretical Model tab. This README records the approval as
+    WO-15 forward confirmation, and it does not describe SUE as part of the
+    live model. If Gabe meant adding SUE to the live composite weights now,
+    that needs its own work order.
+16. ~~SF1 is frozen at 2026-09-08 for every live reader (COO decision #8).~~
+    **Approved by Gabe 2026-09-26** as top priority ("this needs to be fixed
+    ASAP, make it happen"), including the WO-14 acceptance exception
+    "fundamentals may change on rows < 7 days old". WO-16 is in flight (§5).
+    Until it lands and deploys, the working panel's fundamentals and ext's
+    `leverage` go stale through the Q3 filing season (late Oct-Nov). One
+    caveat: Gabe answered "3", and the coordinator mapped that to WO-16 rather
+    than to the COO's own item 3, the round18 history rewrite (COO.md).
 
 ---
 
@@ -636,7 +691,7 @@ not superseded by anything newer):
 | IC-weighted score without renormalising | missing-factor rows compressed | re-run after the fix | corrections §12 |
 | Sector-neutral t from demeaning the factor only | insider buyers t +3.10 "within sector"; both sides demeaned gives 0.65 | fire rate vs sector return, corr −0.79 | insider results §3 |
 | `build_insider_panel.py` min of `TRANS_DATE` as a string (**fixed 2026-09-24**, WO-8) | "04-MAR-2008" sorted before "11-FEB-2008"; 17 of 320 validation rows mismatched; 25,081 event rows wrong | live-vs-bulk Form 4 validation | forward ledger doc §5c and "Implementation fix 2026-09-24" |
-| Main-checkout builder swapped to float32 (not a bug yet, a risk) | `market_cap` differs from `composite_panel` in 43,250 of 43,743 sampled rows | WO-6 naming its reproduction target explicitly | [grid rebuild](final/models/2026-09-24-downcap-grid-rebuild.md); COO.md |
+| Main-checkout builder swapped to float32 (a risk, **resolved 2026-09-26**: the landed builder writes float64) | `market_cap` differs from `composite_panel` in 43,250 of 43,743 sampled rows; float32 would have changed 216,864 `market_cap` values | WO-6 naming its reproduction target explicitly; bit-identity check at landing | [grid rebuild](final/models/2026-09-24-downcap-grid-rebuild.md); COO.md; LEDGER landing log d7d257d |
 | AV pull `IncompleteRead` not retried | bulk pull died at 2010-08-18 | `pull.out` traceback | COO.md; `final/scripts/av_options_pull.py:151` |
 | LCID "bug", **retracted** | adjusted vs raw price compared | split-signature scanner | corrections §6d |
 | v2 `eligible_cap*` flags include SPACs | a SPAC at trust value has `volatility_60` near 0 and would top an inverse-vol book; 19 cap150 SPAC rows on 2026-09-08 | WO-11 tracing why every v2 measurement dropped them at analysis time | [v2 working panel](final/models/2026-09-25-v2-working-panel-switch.md) §1 |
@@ -746,24 +801,24 @@ the file is on `integration`.
 
 | doc | date | status | one line |
 |---|---|---|---|
-| [`AGENTS.md`](AGENTS.md) | 2026-09-23 | landed after this lands | standing constraints + pointer |
+| [`AGENTS.md`](AGENTS.md) | 2026-09-23 | landed | standing constraints + pointer |
 | [`DATA-PIPELINE-HANDOFF.md`](DATA-PIPELINE-HANDOFF.md) | 2026-09-09 | landed | Round 11 point-in-time Sharadar rebuild, reproduction, acceptance tests |
 | [`final/src/sweep/RUNBOOK.md`](final/src/sweep/RUNBOOK.md) | 2026-09-18 (commit) | landed | sweep package, Rounds 12-19, shuffle-null gate, bug ledger (§10 git rule stale) |
 | [`final/models/2026-09-17-model-architecture-research.md`](final/models/2026-09-17-model-architecture-research.md) | 2026-09-17 | landed | 15 ranked model-architecture options |
 | [`final/models/2026-09-17-new-data-sourcing-research.md`](final/models/2026-09-17-new-data-sourcing-research.md) | 2026-09-17 | landed | 15 ranked data sources; Gabe approved the top 5 order |
 | [`final/models/2026-09-19-factor-composite-reset.md`](final/models/2026-09-19-factor-composite-reset.md) | 2026-09-19 (+09-22 correction) | landed, protected | the reset: model, results, survivorship audit, reproduction |
-| [`final/src/reset2026/PREREGISTRATION.md`](final/src/reset2026/PREREGISTRATION.md) | 2026-09-18 → 09-22 | landed, protected | append-only record of every composite decision and spend |
+| [`final/src/reset2026/PREREGISTRATION.md`](final/src/reset2026/PREREGISTRATION.md) | 2026-09-18 → 09-22 | landed, protected | append-only record of every composite decision and spend; "Future avenues (2026-09-19)" section landed with the reset branch (d7d257d) |
 | [`final/out/reset2026/REPORT_nominate.md`](final/out/reset2026/REPORT_nominate.md), [`REPORT_holdout.md`](final/out/reset2026/REPORT_holdout.md) | 2026-09-19 | landed; **stale** (9(8)-factor, pre-`asset_growth` drop, pre-survivorship finding) | offset-averaged headline tables |
 | [`final/models/2026-09-22-composite-model-physics.md`](final/models/2026-09-22-composite-model-physics.md) | 2026-09-22 | landed | physics-style audit of the composite (§6 recommendation refuted by corrections §1) |
 | [`final/models/2026-09-22-composite-model-corrections.md`](final/models/2026-09-22-composite-model-corrections.md) | 2026-09-22 → 09-23 | landed (§0-19) | corrections, LCID retraction, beta term, safeguards, IC weighting, extensions, turnover, third hold-out spend, options overlay, §19 cross-model MIDDLE |
 | [`final/models/2026-09-22-composite-model-full-specification.md`](final/models/2026-09-22-composite-model-full-specification.md) | 2026-09-22 | landed | clean spec of the IC-weighted 8-factor composite: start here (§4 lacks the survivorship caveat; §6 points to the old AGENTS.md table) |
 | [`final/models/2026-09-22-alpha-vantage-spin.md`](final/models/2026-09-22-alpha-vantage-spin.md) | 2026-09-22 | landed | AV coverage, options pull, **down-cap survivorship finding** |
 | [`final/scripts/AV_PULL_WINDOWS.md`](final/scripts/AV_PULL_WINDOWS.md) | 2026-09-23 | landed | moving the AV pull to Windows |
-| `worktree-factor-composite-reset:final/models/2026-09-22-session-handoff.md` | 2026-09-22 | in flight | blend promotion (UI part superseded), query fix, retrain speedup |
+| [`final/models/2026-09-22-session-handoff.md`](final/models/2026-09-22-session-handoff.md) | 2026-09-22 | landed (d7d257d) | blend promotion (UI part superseded by 10bfb19), query fix, retrain speedup (its float32 builder not taken) |
 | [`final/models/2026-09-23-insider-congress-preregistration.md`](final/models/2026-09-23-insider-congress-preregistration.md) | 2026-09-23 | landed | insider k=2 trials, congress ruled untestable before any return |
 | [`final/models/2026-09-23-insider-congress-results.md`](final/models/2026-09-23-insider-congress-results.md) | 2026-09-23 | landed | insider counts fail; sector-neutral artefact; opportunistic-buyer lead; congress forward-only |
 | [`final/models/2026-09-23-earnings-announcement-premium-8k.md`](final/models/2026-09-23-earnings-announcement-premium-8k.md) | 2026-09-23 | landed | WO-5: 8-K Item 2.02 EAP, DEAD; closes the earnings-timing family (Part 2 "Reading" first sentence struck by the COO) |
-| [`final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md`](final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md) | 2026-09-23/24 | landed | WO-2+3: forward pre-registration of icw9 leverage and opportunistic buyers; first blind record 2026-09-08; TRANS_DATE bug and its WO-8 fix (2026-09-24 section) |
+| [`final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md`](final/models/2026-09-23-forward-ledger-leverage-opportunistic-buyers.md) | 2026-09-23/24 (+09-26 addendum, ddb2773) | landed | WO-2+3: forward pre-registration of icw9 leverage and opportunistic buyers; first blind record 2026-09-08; TRANS_DATE bug and its WO-8 fix (2026-09-24 section) |
 | [`final/models/2026-09-24-downcap-grid-rebuild.md`](final/models/2026-09-24-downcap-grid-rebuild.md) | 2026-09-24 | landed | WO-6: survivorship-safe v2 grid, BUILD SUCCESS; icw8 cap150 +5.25 → +2.85%/yr; flat across tiers |
 | [`final/models/2026-09-24-noscore-control-v2.md`](final/models/2026-09-24-noscore-control-v2.md) | 2026-09-24 | landed | WO-7: SELECTION MATERIAL on v2; universe −0.25 vs SPY; +0.00 vs SPY on 2011-10-20..2019 |
 | [`final/models/2026-09-24-insider-buyers-v2-grid.md`](final/models/2026-09-24-insider-buyers-v2-grid.md) | 2026-09-24 | landed | WO-4: plain insider buyers on v2, DEAD; insider family k=4 spent |
@@ -773,6 +828,7 @@ the file is on `integration`.
 | [`final/models/2026-09-25-forward-hedged-icw8.PREREG-PREIMAGE.md`](final/models/2026-09-25-forward-hedged-icw8.PREREG-PREIMAGE.md) | 2026-09-25 | landed | byte-exact pre-image of WO-10 §1-2 (sha256 29438c7a…) |
 | [`final/models/2026-09-25-sue-drift-screen.md`](final/models/2026-09-25-sue-drift-screen.md) | 2026-09-25 | landed (026e3b7) | WO-13: SUE/PEAD pre-registration and results, PASS-nomination |
 | [`final/models/2026-09-25-wo14-v2-incremental-refresh.md`](final/models/2026-09-25-wo14-v2-incremental-refresh.md) | 2026-09-25 | landed (f0e750a) | WO-14: v2 refresh builder, acceptance, split-blocked tickers, weekly-record rules and first run, WO-10 addendum |
+| `worktree-agent-a505179eca9ed9bf2:final/models/2026-09-26-sue-forward-ledger.md` | 2026-09-26 (mtime; uncommitted) | in flight | WO-15: icw9_sue forward ledger pre-registration (frozen weights, kill rule) |
 | [`final/app/README.md`](final/app/README.md) | 2026-09-24 (commit) | landed; header stale vs the 10bfb19 app.py (app-manager) | how to run the app, tab guide |
 | [`final/models/pit_integration/README.md`](final/models/pit_integration/README.md) | 2026-09-02 | landed | options PIT-integration reproduction |
 | [`final/models/hyperparameter_retune/README.md`](final/models/hyperparameter_retune/README.md) | 2026-09-02 | landed | options Tweedie/GAM retune |
@@ -849,3 +905,12 @@ Old claim, its source and date → what replaced it, with source and date.
 - SUE/PEAD as a proposed work order (COO.md, 2026-09-25) → screened, PASS-nomination (SUE doc; 026e3b7, 2026-09-25).
 - `main` 7898b52 is far behind (README Open conflicts #7, 2026-09-23) → origin/main 1f81de2 after the 2026-09-25 docs push, still far behind integration (LEDGER, 2026-09-25).
 - AV pull restart is Gabe's call (README §4.4, 2026-09-23) → Gabe will move it to another machine himself, not restart it on the Mac (COO.md, 2026-09-24).
+- Reset branch in flight, "blocked on app-manager reconciliation", with a float32 `market_cap` correctness risk (README §5, 2026-09-25/26) → landed as d7d257d; its app.py reorg was superseded by the 10bfb19 layout, and the builder keeps float64 and is bit-identical on 218,698 sampled rows (LEDGER landing log, 2026-09-26).
+- `2026-09-22-session-handoff.md` exists only on the reset branch (README §9, 2026-09-23) → landed (d7d257d, 2026-09-26).
+- The live checkout runs 983a154 `src`, so a live Retrain ALL reverts to v1, pending Gabe's OK (README §3.1 and Open conflicts #12, 2026-09-26 run 5) → synced to integration d7d257d as 6a1823d, Retrain hook deployed (Gabe's OK; LEDGER, APP.md, 2026-09-26).
+- The WO-14 Retrain ALL hook is "queued with the app manager, not built" (README §4.7/§5, 2026-09-25/26) → landed 783cc12/9dd0852, deployed 6a1823d (APP.md; LEDGER, 2026-09-26).
+- The WO-8 doc addendum is uncommitted in its worktree (README §5 and Open conflicts #14, 2026-09-25/26) → committed 547ae48, landed ddb2773 (LEDGER, 2026-09-26).
+- WO-15 is "written, held until the src sync" (README §4.1/§5, 2026-09-26 run 5) → Gabe approved it and it launched in `worktree-agent-a505179eca9ed9bf2`; it is still uncommitted (COO.md, LEDGER, 2026-09-26).
+- SUE promotion is Gabe's open call (README Open conflicts #13, 2026-09-26 run 5) → approved by Gabe 2026-09-26 (COO.md decisions log); its scope is flagged in Open conflicts #15.
+- SF1 frozen at 2026-09-08, proposed WO-16 needs Gabe's OK (COO.md decision #8, 2026-09-26, first entry) → approved as top priority, WO-16 launched in `worktree-agent-a2aadeb16c0d0ca8f` (COO.md decisions log; LEDGER, 2026-09-26).
+- Deploy gate cleared by the 6a1823d sync (APP.md, first 2026-09-26 entry) → only partly cleared: `final/scripts/edgar_form4_refresh.py` is missing in the live checkout, so a live Retrain ALL stops at the insider-refresh step (APP.md, later 2026-09-26 entry).
