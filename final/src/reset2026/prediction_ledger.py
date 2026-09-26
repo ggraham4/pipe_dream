@@ -236,11 +236,14 @@ def fama_macbeth_slope_nomination():
     return slope
 
 
-def record():
+def record(date=None):
+    """date=None: the working panel's latest date (unchanged behaviour).
+    date=YYYY-MM-DD: that panel date (WO-14 weekly catch-up, record_weekly.py);
+    the blindness guard below applies to it exactly the same way."""
     need = list(dict.fromkeys(["ticker", "date", "sector", "volatility_60",
                                 "eligible_cap150", LABEL] + C.FACTOR_COLS))
-    # latest date of the working panel, universe rule applied BEFORE scoring
-    df, uinfo = W.working_cross_section(need, path=PANEL_PATH)
+    # latest (or the requested) date of the working panel, universe rule applied BEFORE scoring
+    df, uinfo = W.working_cross_section(need, date=date, path=PANEL_PATH)
     latest_date = df.loc[df["eligible_cap150"], "date"].max()
     cross = df[(df["date"] == latest_date) & df["eligible_cap150"]].reset_index(drop=True)
     log(f"working panel {PANEL_PATH.name}: {uinfo}")

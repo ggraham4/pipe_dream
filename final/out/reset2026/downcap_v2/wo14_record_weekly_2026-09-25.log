@@ -1,0 +1,23 @@
+[22:54:34] weeks after 2026-09-08 in the working panel: 2026-W37->2026-09-11, 2026-W38->2026-09-18, 2026-W39->2026-09-24
+[22:54:34] prediction_ledger_v3.csv: missing weeks [('2026-W38', '2026-09-18'), ('2026-W39', '2026-09-24')]
+[22:54:34] prediction_ledger_ext.csv: missing weeks [('2026-W38', '2026-09-18'), ('2026-W39', '2026-09-24')]
+[22:54:34] prediction_ledger_hedge.csv: missing weeks [('2026-W38', '2026-09-18'), ('2026-W39', '2026-09-24')]
+[22:54:36] preflight passed (blind, guards, insider freshness)
+[22:54:36] working panel composite_panel_v2.parquet: {'date': '2026-09-18', 'rows': 3906, 'spac_rows_dropped_eligible_cap150': 36, 'rows_dropped_spac_rule': 218}
+[22:54:36] most recent eligible cross-section: 2026-09-18, 3053 names, 0 already have a realized 40-day outcome (should be 0 for a genuinely blind record)
+[22:54:39] beta_252 coverage on this cross-section: 97.6%
+[22:54:39] appended 3053 rows to /Users/ggraham/pipe_dream/final/out/reset2026/prediction_ledger_v3.csv for panel_date=2026-09-18 (blind -- outcome does not exist yet)
+[22:54:40] appended 3053 rows to /Users/ggraham/pipe_dream/final/out/reset2026/prediction_ledger_ext.csv for 2026-09-18: leverage coverage 79.4%, icw9 finite 100.0%, insider max filing 2026-09-25 (opp fire rate 3.60%)
+[22:54:40] working panel composite_panel_v2.parquet: {'date': '2026-09-24', 'rows': 3904, 'spac_rows_dropped_eligible_cap150': 27, 'rows_dropped_spac_rule': 216}
+[22:54:40] most recent eligible cross-section: 2026-09-24, 3048 names, 0 already have a realized 40-day outcome (should be 0 for a genuinely blind record)
+[22:54:43] beta_252 coverage on this cross-section: 97.6%
+[22:54:43] appended 3048 rows to /Users/ggraham/pipe_dream/final/out/reset2026/prediction_ledger_v3.csv for panel_date=2026-09-24 (blind -- outcome does not exist yet)
+[22:54:43] appended 3048 rows to /Users/ggraham/pipe_dream/final/out/reset2026/prediction_ledger_ext.csv for 2026-09-24: leverage coverage 79.3%, icw9 finite 100.0%, insider max filing 2026-09-25 (opp fire rate 3.58%)
+[22:54:44] appended 464 rows to /Users/ggraham/pipe_dream/final/out/reset2026/prediction_ledger_hedge.csv for 2026-09-18
+[22:54:44] appended 462 rows to /Users/ggraham/pipe_dream/final/out/reset2026/prediction_ledger_hedge.csv for 2026-09-24
+[22:54:44] recorded prediction_ledger_v3.csv 2026-09-18 (2026-W38): 3053 rows, late=False
+[22:54:44] recorded prediction_ledger_ext.csv 2026-09-18 (2026-W38): 3053 rows, late=False
+[22:54:44] recorded prediction_ledger_v3.csv 2026-09-24 (2026-W39): 3048 rows, late=False
+[22:54:44] recorded prediction_ledger_ext.csv 2026-09-24 (2026-W39): 3048 rows, late=False
+[22:54:44] recorded prediction_ledger_hedge.csv 2026-09-18 (2026-W38): 464 rows, late=False
+[22:54:44] recorded prediction_ledger_hedge.csv 2026-09-24 (2026-W39): 462 rows, late=False

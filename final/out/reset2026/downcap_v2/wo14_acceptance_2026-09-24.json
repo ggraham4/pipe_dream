@@ -1,0 +1,311 @@
+{
+  "old_end": "2026-09-08",
+  "new_end": "2026-09-24",
+  "1_overlap": {
+    "excluded_tickers": [
+      "AAC",
+      "ACAA",
+      "ADBE",
+      "AEAQ",
+      "AGNC",
+      "AGYS",
+      "AIFC",
+      "ALDF",
+      "AMACU",
+      "AMZN",
+      "ARAY",
+      "ARCB",
+      "AUBN",
+      "BAFN",
+      "BCTX",
+      "BEBE",
+      "BG",
+      "BID",
+      "BREZ",
+      "BRTMU",
+      "BURU",
+      "CAES",
+      "CAII",
+      "CALX",
+      "CATLU",
+      "CCAQ",
+      "CIFR",
+      "CLX",
+      "CMTV",
+      "CRAN",
+      "CVNA",
+      "DBRG",
+      "DLX",
+      "ETON",
+      "ETSS",
+      "ETSY",
+      "EXPO",
+      "FMCC",
+      "FNLC",
+      "FNMA",
+      "FNWD",
+      "FSP",
+      "GSRV",
+      "GTES",
+      "HAS",
+      "HCIC",
+      "HLXC",
+      "IAUX",
+      "IGAC",
+      "INTU",
+      "IPHXU",
+      "JBLU",
+      "KCAC.U",
+      "KR",
+      "LAB",
+      "LEN",
+      "LWLG",
+      "META",
+      "MSEX",
+      "MTAKU",
+      "MUZE",
+      "NBTB",
+      "NEE",
+      "NOW",
+      "OTLK",
+      "OVBC",
+      "OVLY",
+      "PAA",
+      "PCAR",
+      "PFE",
+      "PONO",
+      "PTAC",
+      "RBLX",
+      "REZI",
+      "RITM",
+      "SHOT",
+      "STRR",
+      "TCGX",
+      "TMTS",
+      "VII",
+      "VSTS",
+      "WDC",
+      "WFC",
+      "WWR",
+      "XIIIU",
+      "YICC"
+    ],
+    "columns": {
+      "open": {
+        "mismatches": 0
+      },
+      "close": {
+        "mismatches": 0
+      },
+      "market_cap": {
+        "mismatches": 0
+      },
+      "volatility_60": {
+        "mismatches": 0
+      },
+      "pct_from_high_252": {
+        "mismatches": 0
+      },
+      "forward_return_40": {
+        "nan_to_value": 45571,
+        "other_changes": 0
+      },
+      "forward_return_tradable_40": {
+        "nan_to_value": 45571,
+        "other_changes": 0
+      },
+      "net_issuance_pct": {
+        "mismatches": 0
+      },
+      "short_interest_days_to_cover": {
+        "mismatches": 0
+      },
+      "days_to_next_filing_seasonal": {
+        "mismatches": 0
+      },
+      "gross_profitability": {
+        "mismatches": 0
+      },
+      "accruals": {
+        "mismatches": 0
+      },
+      "asset_growth": {
+        "mismatches": 0
+      },
+      "momentum_12_1": {
+        "mismatches": 0
+      },
+      "sector": {
+        "mismatches": 0
+      },
+      "eligible_cap2000": {
+        "mismatches": 0
+      },
+      "eligible_cap500": {
+        "mismatches": 0
+      },
+      "eligible_cap150": {
+        "mismatches": 0
+      },
+      "eligible_cap2000_v1": {
+        "mismatches": 0
+      },
+      "eligible_cap500_v1": {
+        "mismatches": 0
+      },
+      "eligible_cap150_v1": {
+        "mismatches": 0
+      }
+    },
+    "rows_backup": 22535814,
+    "rows_refreshed_le_old_end": 22537241,
+    "rows_compared": 22309377,
+    "row_set_equal": true,
+    "excluded_rows_backup": 226437,
+    "excluded_rows_refreshed": 227864,
+    "PASS": true
+  },
+  "3_new_dates": {
+    "rows_per_date": {
+      "2026-09-09": 3904,
+      "2026-09-10": 3905,
+      "2026-09-11": 3905,
+      "2026-09-14": 3904,
+      "2026-09-15": 3904,
+      "2026-09-16": 3904,
+      "2026-09-17": 3905,
+      "2026-09-18": 3906,
+      "2026-09-21": 3906,
+      "2026-09-22": 3905,
+      "2026-09-23": 3906,
+      "2026-09-24": 3904
+    },
+    "rows_ok": true,
+    "named": {
+      "AAPL": {
+        "dates_present": 12,
+        "n_new_dates": 12,
+        "eligible_cap150_all": true,
+        "spac_rule_keep": true
+      },
+      "MSFT": {
+        "dates_present": 12,
+        "n_new_dates": 12,
+        "eligible_cap150_all": true,
+        "spac_rule_keep": true
+      },
+      "NVDA": {
+        "dates_present": 12,
+        "n_new_dates": 12,
+        "eligible_cap150_all": true,
+        "spac_rule_keep": true
+      },
+      "NATH": {
+        "dates_present": 12,
+        "n_new_dates": 12,
+        "eligible_cap150_all": true,
+        "spac_rule_keep": true
+      },
+      "WLKP": {
+        "dates_present": 12,
+        "n_new_dates": 12,
+        "eligible_cap150_all": true,
+        "spac_rule_keep": true
+      }
+    },
+    "named_ok": true,
+    "raw_close": {
+      "rows_checked": 36,
+      "mismatches": 0,
+      "example": [
+        {
+          "ticker": "WLKP",
+          "date": "2026-09-22",
+          "close": 21.38,
+          "close_raw": 21.38
+        },
+        {
+          "ticker": "WLKP",
+          "date": "2026-09-23",
+          "close": 21.35,
+          "close_raw": 21.35
+        },
+        {
+          "ticker": "WLKP",
+          "date": "2026-09-24",
+          "close": 21.51,
+          "close_raw": 21.51
+        }
+      ]
+    },
+    "fundamentals_asof": [
+      {
+        "ticker": "AAPL",
+        "row_date": "2026-09-24",
+        "filing_date_used": "2026-07-31",
+        "reportperiod": "2026-06-27",
+        "filing_le_row_date": true,
+        "market_cap_panel": 4902476945600.0,
+        "close_x_sharesbas": 4902476945600.0,
+        "match": true
+      },
+      {
+        "ticker": "NATH",
+        "row_date": "2026-09-24",
+        "filing_date_used": "2026-08-07",
+        "reportperiod": "2026-06-28",
+        "filing_le_row_date": true,
+        "market_cap_panel": 386368455.69,
+        "close_x_sharesbas": 386368455.69,
+        "match": true
+      },
+      {
+        "ticker": "WLKP",
+        "row_date": "2026-09-24",
+        "filing_date_used": "2026-08-05",
+        "reportperiod": "2026-06-30",
+        "filing_le_row_date": true,
+        "market_cap_panel": 758138857.2900001,
+        "close_x_sharesbas": 758138857.2900001,
+        "match": true
+      }
+    ],
+    "sf1_max_filing_date": "2026-09-08",
+    "PASS": true
+  },
+  "4_repro": {
+    "ticker": "NATH",
+    "panel": {
+      "new_date_rows_rebuilt": 12,
+      "rows_refreshed": 12,
+      "matched": 12,
+      "mismatches": {
+        "open": 0,
+        "close": 0,
+        "market_cap": 0,
+        "volatility_60": 0,
+        "pct_from_high_252": 0,
+        "forward_return_40": 0,
+        "forward_return_tradable_40": 0,
+        "net_issuance_pct": 0,
+        "short_interest_days_to_cover": 0,
+        "days_to_next_filing_seasonal": 0,
+        "gross_profitability": 0,
+        "accruals": 0,
+        "asset_growth": 0,
+        "momentum_12_1": 0,
+        "sector": 0
+      }
+    },
+    "beta": {
+      "new_date_rows_rebuilt": 12,
+      "rows_refreshed": 12,
+      "matched": 12,
+      "mismatches": {
+        "beta_252": 0,
+        "market_return": 0
+      }
+    },
+    "PASS": true
+  }
+}
