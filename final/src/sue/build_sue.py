@@ -53,8 +53,14 @@ def sha256(path, chunk=1 << 24):
     return h.hexdigest()
 
 
-def load_arq():
-    df = pd.read_parquet(SF1, columns=["ticker", "dimension", "date", "reportperiod", "eps"])
+def load_arq(src=None, raw=None):
+    """src: SF1 file to read (default: the frozen SF1 path). raw: an already
+    loaded frame with the same columns (WO-15 live path: the live pull after
+    its point-in-time row filters). Default behaviour is unchanged."""
+    if raw is None:
+        raw = pd.read_parquet(SF1 if src is None else src,
+                              columns=["ticker", "dimension", "date", "reportperiod", "eps"])
+    df = raw[["ticker", "dimension", "date", "reportperiod", "eps"]].copy()
     dims = set(df["dimension"].unique())
     assert "MRQ" not in dims and "MRT" not in dims and "MRY" not in dims, f"restated dims present: {dims}"
     n_all = int((df["dimension"] == "ARQ").sum())
@@ -119,6 +125,14 @@ def build_panel_factor(fil):
     cal = np.sort(p["date"].unique())
     p = p[(p["date"] >= START) & (p["date"] <= END)].reset_index(drop=True)
     assert p["date"].max() < HOLDOUT
+    return factor_asof(fil, p, cal)
+
+
+def factor_asof(fil, p, cal):
+    """The panel-level rule for any (ticker, date) rows `p` on trading
+    calendar `cal` (sorted unique dates; prev_td = the calendar date before
+    each row's date). Shared by build_panel_factor and the WO-15 live path."""
+    p = p[["ticker", "date"]].reset_index(drop=True)
     pos = np.searchsorted(cal, p["date"].to_numpy()) - 1
     assert (pos >= 0).all()
     p["prev_td"] = cal[pos]
