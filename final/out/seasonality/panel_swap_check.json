@@ -1,0 +1,44 @@
+{
+  "composite_panel_v2": {
+    "backup": "/Users/ggraham/pipe_dream/final/out/reset2026/composite_panel_v2_through_2026-09-24.parquet",
+    "backup_file_sha256": "796eb808a414f65435b3f61f05ac7526f581317f4ac76078b2b8758ef4a644f0",
+    "backup_slice": {
+      "rows": 13253466,
+      "sha256": "75c2f61c2eaaf9a9453b61d01e2e05a8ba1b4c76000824158731085664cd15cb",
+      "max_date": "2019-12-31"
+    },
+    "current": "/Users/ggraham/pipe_dream/final/out/reset2026/composite_panel_v2.parquet",
+    "current_file_sha256": "30f636fd4802b4f13278322bc0c6e766a4623853edf15e92b60c2b672e97e0ff",
+    "current_slice": {
+      "rows": 13253466,
+      "sha256": "75c2f61c2eaaf9a9453b61d01e2e05a8ba1b4c76000824158731085664cd15cb",
+      "max_date": "2019-12-31"
+    },
+    "in_era_slice_identical": true
+  },
+  "outcome_cache_v2": {
+    "backup": "/Users/ggraham/pipe_dream/final/out/reset2026/outcome_cache_v2_through_2026-09-24.parquet",
+    "backup_file_sha256": "7b6cf598d39be6cca633857a6bb007d79de08785cfd64a7aaf9cc79bb41b83f1",
+    "backup_slice": {
+      "rows": 13258800,
+      "sha256": "4a40cd1f960a672a6886777a33c599d083462bcc9ddd221f3a7023f45f0217a9",
+      "max_date": "2019-12-31"
+    },
+    "current": "/Users/ggraham/pipe_dream/final/out/reset2026/outcome_cache_v2.parquet",
+    "current_file_sha256": "ccceacc827626721d804c9289232b05111a5c11e00e63929f20a0c61f5281ad8",
+    "current_slice": {
+      "rows": 13258800,
+      "sha256": "4a40cd1f960a672a6886777a33c599d083462bcc9ddd221f3a7023f45f0217a9",
+      "max_date": "2019-12-31"
+    },
+    "in_era_slice_identical": true
+  },
+  "old_grid_ticker_set": {
+    "n_current": 4013,
+    "n_reference_4011": 4011,
+    "identical": false
+  },
+  "tickers_master_mtime": "2026-09-27T02:27:36.584638834",
+  "spac_count_current": 1653,
+  "all_identical": false
+}

@@ -218,4 +218,116 @@ Both cases match to 1e-9, with all 10 years finite.
 
 ## Results
 
-(Appended after the screen runs.)
+These were written after the pre-registration commit `51795c9` (22:44:26). The
+screen ran 22:44:41–22:54:32 on 2026-09-26 and was not rerun. No bug fixes
+were needed (0 of 3 iterations used).
+- Script: `final/src/seasonality/screen_seas.py`
+- Report: `final/out/seasonality/seas_screen_report.json`
+- Log: `final/out/seasonality/screen_seas.log`
+
+**Verdict: PASS (nomination only).** All seven registered gates pass. The COO
+recommends a forward column; promotion is Gabe's call. Nothing was added to
+any live list or to the forward ledger.
+
+### Panel swap verification (COO request; a check, not a definition change)
+
+Gabe's Retrain ALL replaced `composite_panel_v2.parquet` at 22:44:48 and
+`outcome_cache_v2.parquet` at 22:44:53. The replacement appended 2026-09-25
+and filled 40d labels on recent dates. This happened while the screen was
+starting: the hash was logged at 22:44:41 and column c was loaded by 22:44:50.
+
+`check_panel_swap.py` hashes the sorted 2007-01-01..2019-12-31 slice of every
+column the screen reads, in the pre-refresh backup and in the current file.
+The panel columns hashed are ticker, date, `forward_return_tradable_40`, the
+8 factors, sector and eligible_cap150/500/2000; the outcome cache columns are
+ticker, date and `gross_return_40`. Output: `out/seasonality/panel_swap_check.json`.
+
+| file | backup (`*_through_2026-09-24`) whole-file sha | current whole-file sha | in-era slice sha (both) | identical |
+|---|---|---|---|---|
+| composite_panel_v2 | `796eb808…44f0` (= pre-reg hash) | `30f636fd…e0ff` | `75c2f61c…15cb`, 13,253,466 rows | **yes** |
+| outcome_cache_v2 | `7b6cf598…83f1` | `ccceacc8…1ad8` | `4a40cd1f…17a9`, 13,258,800 rows | **yes** |
+
+- **Which file the screen read.** Its hash was logged as `796eb808…` (the
+  backup). The column-c load finished 2 seconds after the swap, so it may
+  have opened either file. The in-era slices are byte-identical, so this
+  makes no difference to any number.
+- **Same universe.** The screen's universe matches the pre-reg validation run
+  (22:41, entirely before the swap): 9,756,141 rows, 6,508 tickers, 2,987,605
+  added rows, and 79.24% coverage.
+- **Harness reconcile.** It reproduced +0.028541633 exactly again.
+- **Old-grid ticker set.** `composite_panel.parquet` was also rewritten, at
+  22:46:51. It now lists 4,013 tickers against the 4,011 reference; the
+  extras are CLGX and SECZ. Neither has any in-era v2 row, so the old-grid
+  flag of every screened row is unchanged.
+- **`tickers_master.csv`** (the SPAC rule) was last written at 22:27, before
+  both the validation run and the screen.
+- **Conclusion: the in-era slice is identical and the result stands.**
+
+### Gates
+
+| # | gate | value | bar | pass |
+|---|---|---|---|---|
+| 1 | pooled NW(39) Spearman IC t, sign +1 | IC +0.01132, **t +2.84** (3,272 dates) | t ≥ +1.96 | yes |
+| 2 | odd-year / even-year mean IC | +0.00977 (t +1.61) / +0.01312 (t +2.67) | both > 0 | yes |
+| 3 | both-sides sector-demeaned IC t | **+2.87** (IC +0.00924) | ≥ +1.0 | yes |
+| 3 (reported, not gated) | factor-only sector-demeaned IC t | +2.23 (IC +0.00672) | — | — |
+| 4 | grid-offset sign flips | **0/40**; offset means +0.0028 .. +0.0206 | 0/40 | yes |
+| 5 | max single-year share of summed daily IC | **0.271** (2008) | ≤ 0.45 | yes |
+| 6 | icw9 vs icw8, decile_volq net 15bp, split-half OOS; 20-draw within-date shuffle null | icw9 +2.5496%/yr vs null p80 +2.3617% (p50 +2.3494%, sd 0.059pp); real beats 20/20 draws | > null p80 | yes |
+| 7 | frozen weight rule reproduces PRODUCTION_WEIGHTS to 4dp | all 8 equal | exact at 4dp | yes |
+
+Only 0.03% of rows have an Unknown sector.
+
+**Year shares of the summed daily IC:**
+
+| 2007 | 2008 | 2009 | 2010 | 2011 | 2012 | 2013 |
+|---|---|---|---|---|---|---|
+| +0.110 | +0.271 | +0.077 | +0.101 | +0.218 | +0.017 | +0.131 |
+
+| 2014 | 2015 | 2016 | 2017 | 2018 | 2019 |
+|---|---|---|---|---|---|
+| +0.147 | +0.084 | +0.028 | **−0.146** | −0.029 | −0.008 |
+
+**Leave-one-year-out NW t** (the year shown is the one dropped). The minimum is 2.16, when 2008 is dropped.
+
+| 2007 | 2008 | 2009 | 2010 | 2011 | 2012 | 2013 |
+|---|---|---|---|---|---|---|
+| 2.69 | 2.16 | 2.93 | 2.64 | 2.32 | 2.93 | 2.55 |
+
+| 2014 | 2015 | 2016 | 2017 | 2018 | 2019 |
+|---|---|---|---|---|---|
+| 2.44 | 2.68 | 2.79 | 3.44 | 2.99 | 2.92 |
+
+**Gate 6 detail:**
+
+| quantity | value |
+|---|---|
+| icw8 (split-half OOS weights) | +2.3683%/yr; sd over 40 offsets 0.54pp; 40/40 offsets positive |
+| icw9 | +2.5496%/yr; sd 0.47pp; 40/40 offsets positive |
+| icw9 − icw8 | **+0.181pp/yr** |
+| null − icw8 | median −0.019pp; p80 −0.007pp |
+| `seas` t used for the weights | fit on odd years +1.61; fit on even years +2.67 |
+| `seas` weight in icw9 | +0.046 (fit on odd years) / +0.169 (fit on even years) |
+| OOS IC of the score | icw9 +0.04831 (t 6.90) vs icw8 +0.04848 (t 6.65) |
+| rows dropped as icw8-NaN | 2,812 |
+
+### Descriptive only (not gates, not trials)
+
+- Coverage of finite `seas`: 79.2% overall, 82.2% on old-grid tickers and 72.5% on added tickers. By-year coverage is in Data validation above.
+- Median cross-sectional Spearman of `seas` with:
+
+| icw8 score (frozen weights) | momentum_12_1 | volatility_60 |
+|---|---|---|
+| +0.047 | +0.064 | +0.007 |
+
+  `seas` is nearly orthogonal to the composite and to its risk factors.
+- A full-era icw9 weight for `seas` can be computed by adding its pooled t of 2.84 to the 8 stored full-era t's. It comes to +0.193. This is descriptive only: it is an in-sample figure, not a promotion weight.
+
+### Caveats (worker; for the COO)
+
+- **(a) Signal decay in the last three years.** 2017, 2018 and 2019 are all negative: −14.6%, −2.9% and −0.8% of the sum. Every year from 2007 to 2016 is positive. This fits the published post-2010 weakening of seasonality in large caps, and it is the main reason to treat this as a forward-column nomination and not a promotion.
+- **(b) The OOS IC of the composite does not improve.** icw9 is 0.04831 and icw8 is 0.04848. The +0.18pp/yr book gain comes from the top-decile tail and is not a broad improvement in ranking. It still beat all 20 shuffle draws, and it is about 2.5× the WO-13 `sue` increment (+0.073pp).
+- **(c) The fit-even weight of 0.169 is large** compared with the 0.03–0.06 of past additions. That is because the even-year t is 2.67. The frozen rule is unchanged.
+- **(d) Price basis.** The factor uses SEP `closeadj`, which is dividend adjusted, while the labels exclude dividends (see Implementation note 3). A seasonal dividend month could put a small same-month bias into `seas`. It is not a look-ahead, because every month used ends before t. It is also not tested here, since a close-based variant would be a second trial.
+- **(e) Pre-2005 prices** come from a new pull on 2026-09-26 that was spliced onto the 2026-09-09 basis. 238 tickers (3.9%) were rescaled. The hand checks and the PIT assert pass.
+- **(f)** This is a nomination only. Confirmation is forward-only and Gabe's call.

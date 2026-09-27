@@ -1,0 +1,29 @@
+[22:44:41] panel hash 796eb808a414f654
+[22:44:41] frozen weight rule reproduces PRODUCTION_WEIGHTS to 4dp
+[22:44:50] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[22:47:12] harness reconcile OK: {'decile_icw8_frozen': [0.028541632641009042, 0.028541632641009042], 'oos_fit_odd_test_even': [0.04041110565685588, 0.040411105656855885], 'oos_fit_even_test_odd': [0.055397983383733786, 0.055397983383733786]}
+[22:47:37] IC +0.01132 t +2.84 | odd +0.00977 (t +1.61) even +0.01312 (t +2.67) | sector both +2.87 factor-only +2.23 | offset flips 0/40 | max year share 0.2706951075095704 (2008)
+[22:48:51] [primary] icw8 +0.02368  icw9 +0.02550  ins t fit-odd +1.61 fit-even +2.67  w +0.0457/+0.1691
+[22:49:09] [primary] null 0: +0.02343 (ins t +1.23/-0.22)
+[22:49:27] [primary] null 1: +0.02348 (ins t +1.25/-0.14)
+[22:49:43] [primary] null 2: +0.02371 (ins t -1.51/+1.64)
+[22:50:03] [primary] null 3: +0.02348 (ins t -0.60/-0.97)
+[22:50:27] [primary] null 4: +0.02331 (ins t +1.83/-1.19)
+[22:50:44] [primary] null 5: +0.02364 (ins t -1.39/+0.22)
+[22:51:00] [primary] null 6: +0.02365 (ins t +0.45/+0.79)
+[22:51:15] [primary] null 7: +0.02364 (ins t +1.64/-1.02)
+[22:51:31] [primary] null 8: +0.02361 (ins t -0.84/-1.48)
+[22:51:46] [primary] null 9: +0.02342 (ins t -0.92/+1.13)
+[22:52:01] [primary] null 10: +0.02088 (ins t -3.51/-1.37)
+[22:52:16] [primary] null 11: +0.02328 (ins t -0.11/+0.35)
+[22:52:31] [primary] null 12: +0.02332 (ins t +0.13/-0.33)
+[22:52:46] [primary] null 13: +0.02350 (ins t +0.96/-1.26)
+[22:53:01] [primary] null 14: +0.02360 (ins t -0.54/-0.80)
+[22:53:16] [primary] null 15: +0.02358 (ins t +1.38/-1.18)
+[22:53:31] [primary] null 16: +0.02354 (ins t -0.38/-1.79)
+[22:53:46] [primary] null 17: +0.02300 (ins t -1.45/-1.88)
+[22:54:01] [primary] null 18: +0.02331 (ins t +1.31/-0.90)
+[22:54:16] [primary] null 19: +0.02355 (ins t -0.98/+0.86)
+[22:54:16] gates {'g1_pooled_t': True, 'g2_both_halves_positive': True, 'g3_sector_both_sides_t': True, 'g4_zero_offset_flips': True, 'g5_year_share': True, 'g6_beats_null_p80': True, 'g7_weight_rule_reproduces_production_4dp': True} -> PASS-nomination
+[22:54:32] descriptive {"median_spearman_seas_vs_icw8": 0.04675497414191361, "median_spearman_seas_vs_momentum_12_1": 0.0638015378512087, "median_spearman_seas_vs_volatility_60": 0.006741216447742978, "full_era_icw9_weight_of_seas_DESCRIPTIVE": 0.19278849072397938}
+[22:54:32] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-ad57ef9f38454d99d/final/out/seasonality/seas_screen_report.json (592s)
