@@ -274,16 +274,48 @@ def render_stock_pit():
                 "composite_factor_signs": meta["factors"]})
     with st.expander("Backtest summary (single grid — see the warning above)"):
         st.json(meta["backtest_summary"])
+    # Sort control (Gabe, 2026-09-26, "aggressive trading mode"): default to
+    # most-volatile-first. DISPLAY ONLY -- the rows and their weights are the
+    # CSV's, untouched; only the row order changes.
+    sort_choice = st.segmented_control(
+        "Sort picks by", PICKS_SORT_OPTIONS, default=PICKS_SORT_OPTIONS[0],
+        key="picks_sort")
+    ticker_filter = st.text_input(
+        "Filter by ticker", key="picks_ticker_filter",
+        placeholder="e.g. TXG (substring match, case-insensitive)")
+    st.caption("Sort order only — portfolio weights are unchanged "
+               "(inverse-volatility, per the decile_volq construction).")
+    view = sort_picks(df, sort_choice)
+    if ticker_filter.strip():
+        view = view[view["ticker"].astype(str).str.upper()
+                    .str.contains(ticker_filter.strip().upper(), regex=False)]
     st.dataframe(
-        df[["ticker", "sector", "close", "market_cap", "volatility_60",
-            "q75_score", "composite_score", "blend_score", "weight"]]
+        view[["ticker", "sector", "close", "market_cap", "volatility_60",
+              "q75_score", "composite_score", "blend_score", "weight"]]
           .style.format({"close": "${:.2f}", "market_cap": "${:,.0f}",
                           "volatility_60": "{:.2%}", "q75_score": "{:.3f}",
                           "composite_score": "{:.3f}", "blend_score": "{:.3f}",
                           "weight": "{:.2%}"}),
-        use_container_width=True, height=480,
+        width="stretch", height=480, hide_index=True,
     )
     st.caption(meta["note"])
+
+
+# Today's Picks sort options (display only; see render_stock_pit).
+PICKS_SORT_OPTIONS = ["Most volatile first", "Blend score", "Portfolio weight"]
+_PICKS_SORT_COL = {"Most volatile first": "volatility_60",
+                   "Blend score": "blend_score",
+                   "Portfolio weight": "weight"}
+
+
+def sort_picks(df, choice):
+    """Return df re-ordered for display, descending by the chosen column
+    (ties broken by ticker). None (segmented control deselected) falls back to
+    the default. Never modifies values -- the weights stay the CSV's."""
+    col = _PICKS_SORT_COL.get(choice or PICKS_SORT_OPTIONS[0], "volatility_60")
+    return (df.sort_values([col, "ticker"], ascending=[False, True],
+                           na_position="last", kind="mergesort")
+              .reset_index(drop=True))
 
 
 def render_stock_theoretical():
