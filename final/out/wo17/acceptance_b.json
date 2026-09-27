@@ -1,0 +1,311 @@
+{
+  "base": "tickers_master_through_2026-09-08.csv",
+  "eligible_after_0908_tickers": 3130,
+  "label_change_eligible_after_0908": [],
+  "label_change_in_panel": [
+    "AACC",
+    "ACAS",
+    "AMACU",
+    "BRTMU",
+    "CATLU",
+    "MCGC",
+    "MTAKU",
+    "NFE",
+    "RML",
+    "XIIIU",
+    "ZEP"
+  ],
+  "label_change_all_count": 38,
+  "spac_flag_change_eligible": [],
+  "spac_flag_change_in_panel": [],
+  "domestic_membership_change_eligible": [],
+  "domestic_membership_change_in_panel": [
+    "RML"
+  ],
+  "missing_from_pull_in_panel": [
+    "ANY",
+    "AT",
+    "BBCQ",
+    "BRR",
+    "BTAI",
+    "CHUC",
+    "CYCN",
+    "DICE",
+    "DOMO",
+    "KWM",
+    "PCPC",
+    "PHGE"
+  ],
+  "missing_from_pull_eligible": [
+    "DOMO"
+  ],
+  "ticker_reused_new_permaticker": [
+    "AMACU",
+    "BRTMU",
+    "CATLU",
+    "HYAC.U",
+    "MTAKU",
+    "OCLTU",
+    "RML",
+    "RNAQU",
+    "TLACU",
+    "XIIIU"
+  ],
+  "ticker_reused_in_panel": [
+    "AMACU",
+    "BRTMU",
+    "CATLU",
+    "MTAKU",
+    "RML",
+    "XIIIU"
+  ],
+  "new_domestic_tickers_vs_base": 40,
+  "new_domestic_with_sep_after_0908": [
+    "AMAC",
+    "ASBH",
+    "BRTM",
+    "CATL",
+    "DRK",
+    "ESYN",
+    "ETRA",
+    "HLSQ",
+    "HOST",
+    "KRSA",
+    "LEDRU",
+    "LOVIU",
+    "MTAK",
+    "NXAT",
+    "OCLT",
+    "OIG",
+    "QVCG",
+    "RCBC",
+    "RNAQ",
+    "SNYRQ",
+    "SVIA",
+    "SWRD",
+    "TLAC",
+    "TRXS",
+    "XIII",
+    "XTND"
+  ],
+  "new_domestic_with_sep_and_mcap150_after_0908": [
+    "AMAC",
+    "ASBH",
+    "BRTM",
+    "CATL",
+    "ETRA",
+    "LEDRU",
+    "LOVIU",
+    "MTAK",
+    "OIG",
+    "QVCG",
+    "SVIA",
+    "SWRD",
+    "XIII",
+    "XTND"
+  ],
+  "blocked_8": {
+    "CTSO": {
+      "actions": [
+        [
+          "2026-09-08",
+          "split",
+          "0.05"
+        ]
+      ],
+      "observed_close_ratio": [
+        19.989583333333332,
+        20.005714285714287
+      ],
+      "implied_ratio_from_value": [
+        20.0
+      ]
+    },
+    "GOSS": {
+      "actions": [
+        [
+          "2026-09-11",
+          "split",
+          "0.0125"
+        ]
+      ],
+      "observed_close_ratio": [
+        79.86127167630059,
+        80.19161676646706
+      ],
+      "implied_ratio_from_value": [
+        80.0
+      ]
+    },
+    "GTBP": {
+      "actions": [
+        [
+          "2026-09-08",
+          "split",
+          "0.04"
+        ]
+      ],
+      "observed_close_ratio": [
+        25.0,
+        25.000000000000004
+      ],
+      "implied_ratio_from_value": [
+        25.0
+      ]
+    },
+    "JAGX": {
+      "actions": [
+        [
+          "2026-09-17",
+          "split",
+          "0.06667"
+        ]
+      ],
+      "observed_close_ratio": [
+        15.0,
+        15.000000000000002
+      ],
+      "implied_ratio_from_value": [
+        14.9993
+      ]
+    },
+    "NFE": {
+      "actions": [
+        [
+          "2026-09-14",
+          "split",
+          "0.02"
+        ]
+      ],
+      "observed_close_ratio": [
+        49.99999999999999,
+        50.03649635036496
+      ],
+      "implied_ratio_from_value": [
+        50.0
+      ]
+    },
+    "NXXT": {
+      "actions": [
+        [
+          "2026-09-14",
+          "split",
+          "0.1"
+        ]
+      ],
+      "observed_close_ratio": [
+        10.0,
+        10.0
+      ],
+      "implied_ratio_from_value": [
+        10.0
+      ]
+    },
+    "OPTT": {
+      "actions": [
+        [
+          "2026-09-14",
+          "split",
+          "0.03333"
+        ]
+      ],
+      "observed_close_ratio": [
+        29.925925925925924,
+        30.06417112299465
+      ],
+      "implied_ratio_from_value": [
+        30.003
+      ]
+    },
+    "VWAV": {
+      "actions": [
+        [
+          "2026-09-22",
+          "split",
+          "0.05"
+        ]
+      ],
+      "observed_close_ratio": [
+        19.993115318416525,
+        20.003278688524592
+      ],
+      "implied_ratio_from_value": [
+        20.0
+      ]
+    }
+  },
+  "wo15_12_in_actions": {
+    "BNTC": [],
+    "BRTX": [
+      [
+        "2026-09-08",
+        "split",
+        "0.05"
+      ]
+    ],
+    "BURU": [
+      [
+        "2026-09-02",
+        "split",
+        "0.025"
+      ]
+    ],
+    "GAUZ": [
+      [
+        "2026-09-11",
+        "split",
+        "0.05"
+      ]
+    ],
+    "HUBC": [
+      [
+        "2026-09-14",
+        "split",
+        "0.04"
+      ]
+    ],
+    "IPDN": [
+      [
+        "2026-09-14",
+        "split",
+        "0.03333"
+      ]
+    ],
+    "KITT": [
+      [
+        "2026-09-25",
+        "split",
+        "0.16667"
+      ]
+    ],
+    "LRHC": [
+      [
+        "2026-09-08",
+        "split",
+        "0.16667"
+      ]
+    ],
+    "NRSN": [
+      [
+        "2026-09-14",
+        "split",
+        "0.05"
+      ]
+    ],
+    "TNMG": [
+      [
+        "2026-09-08",
+        "split",
+        "0.125"
+      ]
+    ],
+    "WHLR": [
+      [
+        "2026-09-22",
+        "split",
+        "0.11111"
+      ]
+    ],
+    "ASX": []
+  }
+}

@@ -164,6 +164,215 @@ non-time column. The run reuses the staged 09-26 22:3x pull
 
 ---
 
-## Results
+## Results (2026-09-26, iteration 2 of 3)
 
-(to be filled after the run)
+**Verdict: SUCCESS.**
+- Both tables are refreshed.
+- (a) holds: 12/12 hashes are unchanged.
+- The named checks pass.
+- For eligible tickers, 0 held-back label changes would have touched
+  already-stored rows. The other held-back changes are reported below, not
+  applied.
+
+### Run
+
+- **Iteration 1** was a dry run that failed G6 (AAPL `firstpricedate`). It
+  led to Addendum A (commit 134fbf5).
+- **Iteration 2** ran the staged pull with `--reuse-pull`: dry run, then the
+  live write, then a rerun. The rerun wrote nothing: both files were already
+  current and both backups already existed. The run is idempotent.
+- **Pulls, two only:**
+  - TICKERS `table=stocks`: 20,989 rows, 3 pages. No duplicate rows or
+    permatickers. Every base permaticker is present.
+  - ACTIONS `date.gte=2026-09-01`: 6,050 rows covering 2026-09-01..2026-09-29.
+    That includes 12 rows dated after today: announced dividends and splits.
+- **tickers_master.csv**: 20,965 → 21,014 rows.
+  - All 20,989 pulled rows are in it.
+  - 25 base tickers the vendor has since renamed are kept verbatim.
+  - 50 tickers are new against the base; 40 of them are DOMESTIC.
+- **Held back.** 7,936 differences on 7,889 tickers were held back, all in
+  `final/out/wo17/master_label_changes_pending.csv`:
+  - `firstpricedate`: 7,876;
+  - `industry`: 27;
+  - `category`: 13;
+  - `sector`: 6;
+  - `siccode` / `sicsector` / `sicindustry`: 4 each;
+  - `famaindustry`: 2.
+- **actions.csv**: 48,558 → 51,625 rows. That is 45,575 base rows dated
+  before 09-01 plus the 6,050 pulled rows.
+- **Overlap 09-01..09-10** (`final/out/wo17/actions_overlap_diff.csv`):
+  - 1,977 rows are only in the base: 1,966 of them are `relation` snapshot
+    rows, which the vendor re-dates to its latest snapshot (2,011 rows dated
+    09-25).
+  - 277 rows are only in the pull, mostly 09-09/09-10 dividends and listings
+    the base had not yet seen.
+  - Real vendor edits:
+    - IONZ split 0.2 → 0.1;
+    - MGN split 0.025 (09-08) is gone;
+    - CYCN's 09-09 split is gone (CYCN was renamed KRSA);
+    - BURU 09-02 split added;
+    - IGR 09-08 split added;
+    - HLSQ 09-09 split added.
+- **Consumer simulation on the written master:**
+  - The DOMESTIC set loses nothing and gains 40.
+  - The SPAC (Blank Check) set loses nothing and gains 11 (new SPAC common
+    lines such as CATL and XIII).
+  - Stored panel `sector` against the new master: **0 mismatches over all
+    9,272 panel (ticker, sector) pairs**. So the next
+    `refresh_working_panel.py` splice will not hit a sector RefreshError.
+
+### (a) sha1, before → after (main checkout, final/)
+
+| file | before | after |
+|---|---|---|
+| out/reset2026/composite_panel_v2.parquet | 0b69d8e5b483 | same |
+| out/reset2026/beta_feature_v2.parquet | 592f7fdac0c4 | same |
+| out/reset2026/outcome_cache_v2.parquet | 367a048e35fb | same |
+| out/reset2026/backtest_equity_curve.csv | 00e905d1617e | same |
+| out/reset2026/ledger_record_annotations.csv | 9c7130ee973b | same |
+| out/reset2026/ledger_record_log.csv | 7ca3c8ada287 | same |
+| out/reset2026/prediction_ledger.csv | 04b36814f9ee | same |
+| out/reset2026/prediction_ledger_v2.csv | 3414fd8cbd9f | same |
+| out/reset2026/prediction_ledger_v3.csv | 963d5e3b489b | same |
+| out/reset2026/prediction_ledger_ext.csv | 1eba78b329e5 | same |
+| out/reset2026/prediction_ledger_hedge.csv | 1c0738be12cd | same |
+| out/reset2026/ledger_panel_manifest.json | 349f5605e771 | same |
+| data/sharadar/tickers_master.csv | ff3703fdf67d | 5b5ae81e44d0 |
+| data/sharadar/actions.csv | b81acccfb03e | d1aa663067ae |
+| data/sharadar/tickers_master_through_2026-09-08.csv | (new) | ff3703fdf67d (= old live) |
+| data/sharadar/actions_through_2026-09-10.csv | (new) | b81acccfb03e (= old live) |
+
+Full hashes are in `final/out/wo17/wo17_sha1_{before,after}.txt` and `run_report.json`.
+
+### (b) Stored-row label and eligibility changes
+
+Scope: the 3,130 tickers eligible (any `eligible_cap*`, v2 or v1 flags) on
+any panel date after 09-08.
+- Label change (any held-back column): **0**.
+- SPAC-flag change: **0**.
+- DOMESTIC-membership change: **0**.
+- Missing from the pull: **1, DOMO**. The vendor renamed it HUCK on
+  2026-09-24 (tickerchange rows, same permaticker 116453). DOMO is kept
+  verbatim, so its stored rows do not move. See the flag below.
+
+Across all panel tickers (any date), held back and not applied:
+- 11 tickers have label changes:
+  - industry only: ACAS, MCGC, AACC (Asset Management → Credit Services) and
+    ZEP;
+  - category DCS → DCS Primary/Secondary Class, which stays DOMESTIC: NFE and
+    the unit lines CATLU, XIIIU, MTAKU, AMACU, BRTMU;
+  - RML: every label changes.
+- 6 in-panel tickers were reused with a new permaticker. The SPAC units moved
+  their old permaticker to the common line. RML went from Russell Corp
+  (delisted 2006, now RML1) to Resolution Minerals (ADR, listed 2026-09-09).
+  Because of the hold-back, **the new RML and HYAC.U carry the old company's
+  labels**, and RML stays DOMESTIC. Correcting that is part of the
+  exception below.
+
+**Applying any of the held-back changes needs a WO-16-style acceptance
+exception. That is Gabe's decision.** The data is in
+`master_label_changes_pending.csv` and `acceptance_b_tickers.csv`.
+
+**What the next Retrain will do anyway** (not a WO-17 write; reported as the
+pre-reg requires). New DOMESTIC tickers enter the universe on the next
+`refresh_working_panel.py` as `new_tickers`, and `splice` writes their rows
+on every date, including dates ≤ 2026-09-24 that are already stored.
+- 26 of them have SEP rows after 09-08.
+- 14 of those also have DAILY marketcap ≥ $150M after 09-08: AMAC, ASBH, BRTM,
+  CATL, ETRA, LEDRU, LOVIU, MTAK, OIG, QVCG, SVIA, SWRD, XIII, XTND.
+- Existing rows are untouched, and the ledger CSVs are not written by this.
+- 10 of the 26 are SPACs (AMAC, BRTM, CATL, LEDRU, LOVIU, MTAK, OCLT, RNAQ,
+  TLAC, XIII), which the column-c rule drops at read time.
+
+**Flag, DOMO → HUCK (an eligible name).**
+- From 09-24, SEP rows arrive as HUCK. HUCK is a new ticker with no history
+  under that symbol, and DOMO will go stale.
+- This comes from the ticker-keyed panel design, not from this refresh.
+- It is worth a COO look if continuity matters. The same pattern holds for
+  WO-14's 8 "stale, kept" tickers.
+
+### (c) Named checks. PASS
+
+The internal check covers the new master row, the actions row, and the SEP
+panel's first or last date. External sources are named.
+
+| kind | ticker | Sharadar (master / actions / SEP) | external source | match |
+|---|---|---|---|---|
+| IPO | OIG | firstpricedate 09-18; `listed` 09-18; SEP from 09-18 | Nasdaq trading 2026-09-18 ([SEC 424B4](https://www.sec.gov/Archives/edgar/data/0002124472/000162828026062794/orion180-424b4.htm), [Investing.com](https://www.investing.com/news/stock-market-news/orion180-prices-ipo-at-12-per-share-on-nasdaq-432SI-4906558)) | yes |
+| IPO | ETRA | 09-18 / `listed` 09-18 / SEP from 09-18 | Nasdaq trading 2026-09-18 ([SEC 424B4](https://www.sec.gov/Archives/edgar/data/0002088082/000119312526395670/d61940d424b4.htm), [Nasdaq PR](https://www.nasdaq.com/press-release/electra-therapeutics-announces-pricing-upsized-3500-million-initial-public-offering)) | yes |
+| listing (uplist) | SWRD | 09-10 / `listed` 09-10 / SEP from 09-10 | Nasdaq open 2026-09-10 ([SEC 8-K](https://www.sec.gov/Archives/edgar/data/0001795851/000166357726000266/swrd_8k090926.htm), [GlobeNewswire](https://www.globenewswire.com/news-release/2026/09/09/3359111/0/en/stewards-to-begin-trading-on-nasdaq-capital-market-under-symbol-swrd.html)) | yes |
+| acquisition | ATAI | isdelisted Y, last 09-11; `acquisitionby` LLY 09-11; SEP ends 09-11 | Lilly closed 2026-09-11 ([Lilly IR](https://investor.lilly.com/news-releases/news-release-details/lilly-completes-acquisition-ataibeckley-advance-therapies)) | yes |
+| voluntary delisting | CSANY (was CSAN) | Y, last 09-18; `voluntarydelisting` 09-18; SEP ends 09-18 | last NYSE day 2026-09-18 ([Globe and Mail / company PR](https://www.theglobeandmail.com/investing/markets/stocks/CSAN-N/pressreleases/4523943/cosan-to-delist-nyse-adss-maintain-level-i-adr-in-u-s-otc-market/)) | yes |
+| regulatory delisting | SOBR | Y, last 09-16; `regulatorydelisting` 09-16; SEP ends 09-16 | delisted at open 2026-09-16 ([SEC 8-K](https://www.sec.gov/Archives/edgar/data/0001425627/000147793226005610/sobr_8k.htm)) | yes |
+| split | WHLR | `split` 2026-09-22, 0.11111 (1:9) | 1-for-9, split-adjusted open 2026-09-22 ([Nasdaq ECA2026-666](https://www.nasdaqtrader.com/TraderNews.aspx?id=ECA2026-666), [SEC 8-K](https://www.sec.gov/Archives/edgar/data/0001527541/000152754126000349/whlr-20260917.htm)) | yes |
+| split | HUBC | `split` 2026-09-14, 0.04 (1:25) | 1-for-25, split-adjusted open 2026-09-14 ([GlobeNewswire](https://www.globenewswire.com/news-release/2026/09/10/3359495/0/en/hub-announces-reverse-share-split.html)) | yes |
+| split | NRSN | `split` 2026-09-14, 0.05 (1:20) | 1-for-20, first post-split day 2026-09-14 ([SEC 6-K](https://www.sec.gov/Archives/edgar/data/0001875091/000121390026098414/ea0304823-6k_neurosense.htm)) | yes |
+| mega caps | AAPL / MSFT / NVDA | G6: no non-time column differs; only lastupdated/lastpricedate moved (09-08 → 09-25) | — | yes |
+
+The external sources were checked through web-search summaries of the linked
+pages.
+- Not counted: BRNS. Sharadar has its acquisition by Clywedog on 09-16 (SEP
+  ends 09-16), but the company's August notice expected the scheme to take
+  effect around 09-03. That is unresolved.
+- WO-15's 12 names in the refreshed actions:
+  - **10 are present**: BRTX 09-08 1:20, BURU 09-02 1:40, GAUZ 09-11 1:20,
+    HUBC 09-14 1:25, IPDN 09-14 1:30, KITT 09-25 1:6, LRHC 09-08 1:6,
+    NRSN 09-14 1:20, TNMG 09-08 1:8, WHLR 09-22 1:9.
+  - **Absent**: BNTC and ASX (ADR-ratio change), even as `adrratiosplit`.
+  - BRTX, LRHC, TNMG (09-08) and BURU (09-02) are dated inside the base
+    window. The vendor posted them after the 09-08/09-10 pull.
+
+### (d) The 8 split-blocked tickers
+
+The refreshed actions list all 8 splits, and each matches the close ratio
+WO-14 observed:
+
+| ticker | actions | ratio | WO-14 observed |
+|---|---|---|---|
+| CTSO | 09-08 | 1:20 | ×20 |
+| GOSS | 09-11 | 1:80 | ×80 |
+| GTBP | 09-08 | 1:25 | ×25 |
+| JAGX | 09-17 | 1:15 | ×15 |
+| NFE | 09-14 | 1:50 | ×50 |
+| NXXT | 09-14 | 1:10 | ×10 |
+| OPTT | 09-14 | 1:30 | ×30 |
+| VWAV | 09-22 | 1:20 | ×20 |
+
+**This does NOT let `refresh_working_panel.py` extend them.**
+- The refresh never reads `actions.csv`. Its block is price-based:
+  `detect_changes` compares stored close with SEP on disk, band [0.8, 1.25].
+- The Retrain SEP top-up only re-pulls from the resume month
+  (`sharadar_pull_pit_panel.py --start <resume> --force`), so the months
+  before September on disk stay on the old basis.
+- Gabe's Retrain ALL will run this sequence unchanged and still block the 8:
+  1. `features.py`
+  2. `sharadar_pull_pit_panel.py --start <resume> --force`
+  3. `build_pit_universe.py` … `build_app_benchmarks.py`
+  4. `reset2026/refresh_working_panel.py --through latest --record-weekly`
+  5. `downcap_universe.py`, `quality_factors.py`, `build_panel.py`,
+     `current_signal_blend.py`
+  6. `current_signal_composite.py`, `build_backtest_equity_curve.py`
+
+  Every step that reads the master (`build_pit_universe`, `downcap_universe`,
+  `build_panel`, the refresh) now gets the refreshed file.
+- Unblocking needs WO-14's per-ticker re-pull (8 calls), plus a
+  fold-into-`panel/stocks` step that doesn't exist yet. It is a new pull, so
+  it is Gabe's call:
+  `python3 final/scripts/sharadar_downcap_pull.py --pull-list final/out/reset2026/downcap_v2/wo14_split_pull_list.csv`
+
+### Coupling and notes for the COO
+
+- **WO-15.** `sue/sue_forward.split_names_since_basis()` reads live
+  `actions.csv` splits after 09-08.
+  - That set now also contains BRTX, BURU, GAUZ, HUBC, IPDN, KITT, LRHC,
+    NRSN, TNMG and WHLR, plus the 8 above.
+  - BNTC and ASX are still not listed.
+  - This changes WO-15's allowed-split set. Recheck WO-15 before it deploys.
+- **Vendor `firstpricedate`.** It is now clamped at 1997-12-31 for 7,860
+  tickers. If the Sharadar plan's history window has changed, full-history
+  SEP re-pulls, including the unblock recipe above, may also come back
+  truncated. Check this before any bulk re-pull.
+- **Other readers.** The v1 blend panel rebuild (`build_panel.py` in
+  `bm.retrain_commands`) and `build_pit_universe.py` read the new master on
+  the next Retrain. The hold-back keeps their labels identical for every
+  existing ticker. Only new tickers add rows.
