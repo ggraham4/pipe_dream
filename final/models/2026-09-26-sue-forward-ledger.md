@@ -261,4 +261,90 @@ later than this document's commit time.
 
 ## Results
 
-(Written after the pre-registration commit. Not yet filled in.)
+(Written after the pre-registration commit 9dc2d03. Sections 1-8 above are unchanged.)
+
+### 2026-09-26 evening: first live pull. STOPPED at basis validation (section 4); no record written
+
+**Status: BLOCKED, awaiting a COO/Gabe ruling.** No SUE record was written,
+nothing was appended to any ledger or sidecar, and W38/W39 are not backfilled.
+
+**Live pull** (`sf1_eps_live_pull.py`, run once): pulled_at
+2026-09-26T21:58:25, 10 API calls (cap 15), `date` ≥ 2022-09-26, 91,310 ARQ
+rows, 7,305 tickers, date max 2026-09-25, lastupdated max 2026-09-26, no
+validation problems. File `final/data/sharadar/sf1_arq_eps_live.parquet`
+(new, sha256 fd6264e2…). `sf1_fundamentals.parquet` was not read for SUE and
+not modified. Re-stamping diagnostic: 64.7% of tickers with more than one row
+carry a single `lastupdated` on all their rows. This confirms the wholesale
+re-stamping seen in the AAPL probe; AAPL's six latest rows all carry
+2026-07-31.
+
+**Section 2 fallback decision (lastupdated), made once, now.** Check (b)
+metric on the live pull:
+- W38 2026-09-18: 2 of 3,053 v3 tickers change `sue` (0.066%). 435 rows
+  are excluded by lastupdated (not already by datekey). Coverage is 90.17%
+  (90.24% without the filter).
+- W39 2026-09-24: 0 of 3,048 (0.000%). 120 rows are excluded. Coverage
+  is 90.35% either way.
+
+Both are ≤ 5%, so **no fallback**. The `lastupdated ≤ t` filter stays for
+every record (`USE_LASTUPDATED_FILTER = True`, frozen in `sue_forward.py`).
+
+**Other checks (all pass):**
+- ICW rule reproduces PRODUCTION_WEIGHTS 8/8 at 4 dp, and the sue weight is
+  +0.1321.
+- The selftest on 2015-06-15, using the literal 09-08 file
+  `sf1_fundamentals_through_2026-09-08.parquet` (631,185 rows), gives 4,100
+  rows with max |d| 0 and 0 NaN mismatches vs `sue_factor_v2`. Filing date,
+  rp and age are identical.
+- AAPL live cadence: gaps of 91 days, lag 34 days.
+- Pairing (a): the ticker lists equal v3 on both dates, and icw8 vs v3
+  `ic_weighted_score` has max |d| 1.0e-16 on both.
+- Freshness passes on both dates.
+
+**Basis validation (section 4): FAILED → STOP.** There are 176 eps mismatches
+on 15 tickers that are on neither split list. The allowed lists hold
+`actions.csv` splits after 09-08 (the file ends 2026-09-10) and WO-14's
+`split_like_blocked`: 20 names in all, which explain 151 further mismatches
+on 9 names. The 15 unexplained tickers:
+- **12 look like corporate actions after `actions.csv` ends.** Each has a
+  uniform ratio on all of its rows: BNTC ×87-120, BRTX ×20, BURU ×40,
+  GAUZ ×20, HUBC ×25, IPDN ×30, KITT ×6, LRHC ×6, NRSN ×20, TNMG ×8,
+  WHLR ×9 (reverse splits), and ASX ×0.4 (ADR-ratio change). Their
+  lastupdated falls between 09-09 and 09-25.
+- **3 are vendor edits of historical eps, not splits:**
+  - BNC 2026-06-23: NaN → −1.51.
+  - SKIL 2023-04-14 and 2024-04-15: NaN → −6.00 and −30.46.
+  - XCH 2024-08-30: 0 → NaN.
+- Of the 15, only BNC and BNTC are in v3's post-09-08 rows.
+
+Under section 7, backfill gate (c) fails, so **W38/W39 are declined**
+(`BACKFILL_DECISION = "declined"`, which drops them from the SUE dates).
+Under section 4, the same rule stops every future SUE record, and under
+section 5 that stops the whole record_weekly run (v3/ext/hedge too), for as
+long as these keys mismatch. Every future pull will keep mismatching,
+because the 09-08 file is frozen. **The WO-15 hook must not be deployed live
+until this is ruled on.** Ruling options (for the COO/Gabe; nothing here
+chooses one):
+1. Widen the allowed split source: refresh `actions.csv`, or detect a
+   uniform per-ticker ratio. This would leave the 3 NaN-edit names still
+   failing.
+2. Restrict the check to ratio disagreements between two finite, non-zero
+   eps values, with NaN↔value edits reported and not failed.
+3. Validate only against names in the recorded cross-section.
+
+**No single option passes on its own.** Option 1 still fails BNC, SKIL and
+XCH, which are NaN↔value edits. Option 2 still fails the 12 ratio names.
+Option 3 still fails BNC (an edit) and BNTC (a ratio). Passing needs a
+combination: for example, per-ticker uniform-ratio detection (checkable from
+the data on hand; a refreshed `actions.csv` has not been shown to list these
+12) plus NaN↔value edits that are reported but not failed. BNTC's ratio is
+not exactly uniform (×86.7-120, probably rounding of small eps). Any such
+change is an amendment to section 4. It needs a dated addendum,
+committed before the first record.
+
+Main-store hashes after this session (sha1, all unchanged): v3 963d5e3b,
+ext 1eba78b3, hedge 1c0738be, record_log 7ca3c8ad, annotations 9c7130ee,
+panel_manifest 349f5605. There is no `prediction_ledger_sue.csv`.
+`record_weekly.py --plan`: nothing missing for any ledger. score/status:
+NO RECORDS.
+
