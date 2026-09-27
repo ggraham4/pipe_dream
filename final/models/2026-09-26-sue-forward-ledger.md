@@ -438,3 +438,34 @@ The test found two bugs, both fixed:
 - `record_weekly.py --plan` on the main store: nothing missing for any
   ledger, since W38/W39 are declined. `todo_dates` with a W40 v3 date
   (2026-10-02) returns [2026-10-02].
+
+### Addendum A: isolation hardening (2026-09-26, after c69b942, before any record)
+
+The review found SUE paths that could still stop v3/ext/hedge, and these are
+now guarded:
+- a failed SUE plan or import (`todo_dates`);
+- a failing sidecar step after a SUE record (annotation, guard log,
+  accepted-pull log).
+
+A failed sidecar step no longer blocks hedge. The run still returns rc 1
+with the reason, so it isn't silent. If `record_sue` raises after it has
+already appended, it is reported the same way.
+
+The harness is committed as `final/src/sue/wo15_isolation_test.py`. Rerun
+on scratch copies, every mode leaves the main store's sha1s unchanged and
+all prefix hashes hold:
+
+| mode | SUE outcome | v3 / ext / hedge 09-18 | rc |
+|---|---|---|---|
+| force_stop (pull raises) | skipped + logged | 3,053 / 3,053 / 464 appended | 0 |
+| cap_stop (cap 0%) | date skipped + logged | 3,053 / 3,053 / 464 appended | 0 |
+| plan_fail (`todo_dates` raises) | skipped | 3,053 / 3,053 / 464 appended | 0 |
+| guard_fail (`log_guard` raises after the record) | 3,053 written, sidecar step reported | 3,053 / 3,053 / 464 appended | 1 (reported) |
+| happy | 3,053 written | 3,053 / 3,053 / 464 appended | 0 |
+| happy, rerun | nothing to record | none | 0 |
+
+**Worker's reading, which needs COO confirmation.** Addendum A1(b) says the
+section-4 split lists "no longer exempt anything". That was my reading of
+"non-uniform tickers get NaN". The COO ruling's items (a)-(e) do not say it.
+On current data it changes no v3 row: the split-list names that are now
+non-uniform (ALP, GOSS, GTBP, JAGX, NFE, NXXT) are not in v3 on W38 or W39.

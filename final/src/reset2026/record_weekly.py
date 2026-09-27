@@ -143,8 +143,12 @@ def plan():
         have = recorded_weeks(led)
         p[led.name] = [(w, d) for w, d in sorted(targets.items()) if w not in have]
     # WO-15: SUE dates = v3 dates after 2026-09-08 (existing + this run's) without a SUE record
-    SF = _sue_forward()
-    p[SUE.name] = [(iso_week(d), d) for d in SF.todo_dates([d for _w, d in p[V3.name]])]
+    try:        # isolation: a SUE failure here never blocks v3/ext/hedge
+        SF = _sue_forward()
+        p[SUE.name] = [(iso_week(d), d) for d in SF.todo_dates([d for _w, d in p[V3.name]])]
+    except (Exception, SystemExit) as e:   # noqa: BLE001
+        log(f"SUE plan FAILED (SUE skipped this run; v3/ext/hedge unaffected): {type(e).__name__}: {e}")
+        p[SUE.name] = []
     return targets, p
 
 
@@ -243,9 +247,10 @@ def run(dry=False):
     # SUE date BEFORE anything is written. ISOLATION: any SUE failure skips only
     # the SUE record (whole run or one date) and is logged to
     # ledger_sue_guard_log.csv; it never stops v3/ext/hedge.
-    SF = _sue_forward()
     sue_dates = [d for _w, d in todo[SUE.name]]
     sue_rows, sue_nan, sue_skipped = {}, {}, {}
+    sue_deferred = []                      # a half-written SUE record: raised AFTER hedge
+    SF = _sue_forward() if sue_dates else None     # plan() already imported it successfully
     live = pulled_at = None
     if sue_dates:
         try:
@@ -300,21 +305,32 @@ def run(dry=False):
         iso = d.date().isoformat()
         if iso not in sue_rows:
             continue
+        size0 = SUE.stat().st_size if SUE.exists() else 0
         try:
             out = SF.record_sue(d, sue_rows[iso])
         except (Exception, SystemExit) as e:   # noqa: BLE001
             sue_skipped[iso] = f"record: {type(e).__name__}: {e}"
             log(f"SUE SKIPPED for {iso} at record (v3/ext/hedge unaffected): {e}")
+            if (SUE.stat().st_size if SUE.exists() else 0) != size0:
+                sue_deferred.append(f"{SUE.name} {iso}: record_sue raised AFTER appending ({e}); "
+                                    f"half-written record, fix by hand")
             continue
-        ra = str(out["recorded_at"].iloc[0])
-        logrows.append([SUE.name, iso, iso_week(d), ra, _late(iso, ra), int(len(out))])
-        if v3_incomplete(iso):
-            append_annotation(SUE.name, iso, SUE_INCOMPLETE_NOTE, "WO-15")
-        for tk in sue_nan[iso]:
-            SF.log_guard(iso, "nonuniform_sue_nan", tk, "Addendum A (b): eps vs reference not one constant ratio")
-        SF.accept_pull(pulled_at, iso)
+        try:
+            ra = str(out["recorded_at"].iloc[0])
+            logrows.append([SUE.name, iso, iso_week(d), ra, _late(iso, ra), int(len(out))])
+            if v3_incomplete(iso):
+                append_annotation(SUE.name, iso, SUE_INCOMPLETE_NOTE, "WO-15")
+            for tk in sue_nan[iso]:
+                SF.log_guard(iso, "nonuniform_sue_nan", tk, "Addendum A (b): eps vs reference not one constant ratio")
+            SF.accept_pull(pulled_at, iso)
+        except (Exception, SystemExit) as e:   # noqa: BLE001
+            sue_deferred.append(f"{SUE.name} {iso}: sidecar step after the record failed: {type(e).__name__}: {e}")
+            log(f"SUE sidecar step FAILED for {iso} (hedge still records; run will report it): {e}")
     for iso, why in sorted(sue_skipped.items()):
-        SF.log_guard(iso, "sue_skipped", "", why)
+        try:
+            SF.log_guard(iso, "sue_skipped", "", why)
+        except (Exception, SystemExit) as e:   # noqa: BLE001
+            log(f"could not write SUE guard log for {iso}: {type(e).__name__}: {e}")
     for _w, d in todo[HEDGE.name]:
         iso = d.date().isoformat()
         FH.record_hedge(date=iso)
@@ -324,6 +340,8 @@ def run(dry=False):
         append_log(logrows)
     check_prefixes(before)
     check_manifest(man_before)
+    if sue_deferred:
+        raise SystemExit("SUE post-record problem (v3/ext/hedge recorded): " + " | ".join(sue_deferred))
     # one record per ISO week per ledger (weeks after START_AFTER)
     for led in (V3, EXT, HEDGE, SUE):
         for w, ds in recorded_weeks(led).items():
