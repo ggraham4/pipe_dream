@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import signal
 import subprocess
 import sys
@@ -36,6 +37,8 @@ class JobState:
     current_step: str | None = None
     total_steps: int | None = None
     return_code: int | None = None
+    failed_step: str | None = None   # 2026-09-26: label of the step that exited non-zero
+    meta: dict | None = None         # 2026-09-26: caller data taken at start (e.g. log baselines)
 
 
 def _job_dir(job_name: str) -> Path:
@@ -113,7 +116,24 @@ def tail_log(job_name: str, n_lines: int = 200) -> str:
     if not p.exists():
         return "(no log yet)"
     lines = p.read_text(errors="replace").splitlines()
-    return "\n".join(lines[-n_lines:])
+    return redact_secrets("\n".join(lines[-n_lines:]))
+
+
+# 2026-09-26: job logs capture raw stdout/stderr of the Sharadar pull scripts,
+# which pass api_key as a URL query param; a requests error message (e.g.
+# "Max retries exceeded with url: ...?api_key=...") would print it into
+# run.log and from there onto the page. Redact before anything is shown.
+_API_KEY_PARAM = re.compile(r"(api_key=)[^&\s\"'<>]+", re.IGNORECASE)
+_SECRET_ENV_VARS = ("SHARADAR_API_KEY",)
+
+
+def redact_secrets(text: str) -> str:
+    text = _API_KEY_PARAM.sub(r"\1***", text)
+    for name in _SECRET_ENV_VARS:
+        val = (os.environ.get(name) or "").strip()
+        if len(val) >= 6:          # read only to redact; never displayed
+            text = text.replace(val, "***")
+    return text
 
 
 def refresh_status(job_name: str) -> JobState:
@@ -126,13 +146,23 @@ def refresh_status(job_name: str) -> JobState:
         # real outcome, written by run_step_sequence() below.
         log = tail_log(job_name, 5)
         state.status = "done" if "PIPELINE_OK" in log else "failed"
+        # 2026-09-26: the wrapper now writes the failing step and its exit code.
+        state.return_code = 0 if state.status == "done" else None
+        for line in log.splitlines():
+            if line.startswith("PIPELINE_FAILED rc="):
+                try:
+                    state.return_code = int(line.split("=", 1)[1].split()[0])
+                except ValueError:
+                    pass
+            elif line.startswith("=== FAILED STEP: "):
+                state.failed_step = line[len("=== FAILED STEP: "):].rsplit(" (exit", 1)[0]
         state.finished_at = time.strftime("%Y-%m-%d %H:%M:%S")
         _write_state(state)
     return state
 
 
 def run_step_sequence(job_name: str, commands: list[list[str]], step_labels: list[str] | None = None,
-                       cwd: Path | None = None):
+                       cwd: Path | None = None, meta: dict | None = None):
     """Launch a sequence of commands as ONE detached background process
     (a small wrapper shell loop), so the UI only has to track one pid per
     job even though several scripts run in order. Any failing step aborts
@@ -148,7 +178,10 @@ def run_step_sequence(job_name: str, commands: list[list[str]], step_labels: lis
     for label, cmd in zip(step_labels, commands):
         quoted = " ".join(f'"{c}"' for c in cmd)
         lines.append(f'echo "=== STEP: {label} ==="')
-        lines.append(quoted)
+        # 2026-09-26: record which step failed and its exit code instead of
+        # a bare set -e exit, so the UI can show "exit N at step X".
+        lines.append(f'{quoted} || {{ rc=$?; echo "=== FAILED STEP: {label} (exit $rc) ==="; '
+                     f'echo "PIPELINE_FAILED rc=$rc"; exit $rc; }}')
     lines.append('echo "PIPELINE_OK"')
     wrapper_path.write_text("\n".join(lines) + "\n")
     wrapper_path.chmod(0o755)
@@ -166,6 +199,7 @@ def run_step_sequence(job_name: str, commands: list[list[str]], step_labels: lis
         started_at=time.strftime("%Y-%m-%d %H:%M:%S"),
         current_step=step_labels[0] if step_labels else None,
         total_steps=len(commands),
+        meta=meta,
     )
     _write_state(state)
     return state

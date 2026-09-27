@@ -43,6 +43,10 @@ BENCHMARKS_DIR = FINAL_DIR / "data" / "benchmarks"
 OUT_DIR = FINAL_DIR / "out"
 STOCK_MODELS_DIR = OUT_DIR / "models"
 FEATURES_PARQUET = OUT_DIR / "features.parquet"
+# WO-15 (2026-09-26): append-only log of skipped SUE forward records, written
+# by final/src/sue/sue_forward.py log_guard() during record_weekly.py.
+# Columns: logged_at, panel_date, iso_week, event, ticker, detail.
+SUE_GUARD_LOG = OUT_DIR / "reset2026" / "ledger_sue_guard_log.csv"
 
 # options premium model
 OPTIONS_SRC_DIR = FINAL_DIR / "models"          # the scripts Gabe's chats produced (live_score.py etc.) live here
