@@ -1,0 +1,177 @@
+{
+  "dry_run": false,
+  "live_sha1_before": {
+    "tickers_master.csv": "5b5ae81e44d05a2d5e22fc05c29f24af0e1a2cbf",
+    "actions.csv": "d1aa663067ae268216077ffbfa80ed9c8b81fe4e"
+  },
+  "master": {
+    "pulled_rows": 20989,
+    "pulled_rows_dedup": 20989,
+    "output_rows": 21014,
+    "base_rows": 20965,
+    "base_tickers_kept_verbatim": [
+      "PHGE",
+      "GLMD",
+      "HCWC",
+      "RITR",
+      "HWH",
+      "CSAN",
+      "SNYR",
+      "KWM",
+      "CYCN",
+      "ANY",
+      "RAY",
+      "DOMO",
+      "BRR",
+      "BTAI",
+      "BBCQ",
+      "CHUC",
+      "DICE",
+      "AMNI",
+      "PCPC",
+      "AT",
+      "AIMG",
+      "TPLQ",
+      "PALX",
+      "CSEP",
+      "SEPC"
+    ],
+    "new_tickers_vs_base": [
+      "AGT1",
+      "AMAC",
+      "ASBH",
+      "AT2",
+      "ATTT",
+      "AUXX",
+      "BRTM",
+      "BTAIQ",
+      "BZI",
+      "CATL",
+      "CHAD",
+      "CLGX",
+      "CSANY",
+      "CSEP1",
+      "DICE2",
+      "DRK",
+      "EOCN",
+      "ESYN",
+      "ETRA",
+      "HLSQ",
+      "HOST",
+      "HUCK",
+      "HYAC.U1",
+      "IFNY",
+      "KRSA",
+      "LEDRU",
+      "LOVIU",
+      "MTAK",
+      "NFEGP",
+      "NXAT",
+      "OCLT",
+      "OIG",
+      "PALX1",
+      "PCPC1",
+      "PSQL",
+      "QVCG",
+      "RCBC",
+      "RITRF",
+      "RML1",
+      "RNAQ",
+      "SEPC1",
+      "SNYRQ",
+      "SVIA",
+      "SWRD",
+      "TLAC",
+      "TREO",
+      "TRXS",
+      "VNCI",
+      "XIII",
+      "XTND"
+    ],
+    "label_diffs_held_back": 7936,
+    "held_back_by_column": {
+      "category": 13,
+      "siccode": 4,
+      "sicsector": 4,
+      "sicindustry": 4,
+      "famaindustry": 2,
+      "sector": 6,
+      "industry": 27,
+      "firstpricedate": 7876
+    },
+    "tickers_with_held_back_diffs": 7889,
+    "mega": [
+      {
+        "ticker": "AAPL",
+        "diff_non_time_cols": {},
+        "time_cols": {
+          "lastpricedate": [
+            "2026-09-08",
+            "2026-09-25"
+          ],
+          "lastupdated": [
+            "2026-09-08",
+            "2026-09-25"
+          ]
+        }
+      },
+      {
+        "ticker": "MSFT",
+        "diff_non_time_cols": {},
+        "time_cols": {
+          "lastpricedate": [
+            "2026-09-08",
+            "2026-09-25"
+          ],
+          "lastupdated": [
+            "2026-09-08",
+            "2026-09-25"
+          ]
+        }
+      },
+      {
+        "ticker": "NVDA",
+        "diff_non_time_cols": {},
+        "time_cols": {
+          "lastpricedate": [
+            "2026-09-08",
+            "2026-09-25"
+          ],
+          "lastupdated": [
+            "2026-09-08",
+            "2026-09-25"
+          ]
+        }
+      }
+    ]
+  },
+  "actions": {
+    "pulled_rows": 6050,
+    "pulled_span": [
+      "2026-09-01",
+      "2026-09-29"
+    ],
+    "base_rows_kept_pre_0901": 45575,
+    "output_rows": 51625,
+    "overlap_0901_0910_base_only": 1977,
+    "overlap_0901_0910_pull_only": 277
+  },
+  "output_sha1": {
+    "tickers_master.csv": "5b5ae81e44d05a2d5e22fc05c29f24af0e1a2cbf",
+    "actions.csv": "d1aa663067ae268216077ffbfa80ed9c8b81fe4e"
+  },
+  "backups": {
+    "tickers_master_through_2026-09-08.csv": "exists",
+    "actions_through_2026-09-10.csv": "exists"
+  },
+  "already_current": [
+    "tickers_master.csv",
+    "actions.csv"
+  ],
+  "live_sha1_after": {
+    "tickers_master.csv": "5b5ae81e44d05a2d5e22fc05c29f24af0e1a2cbf",
+    "actions.csv": "d1aa663067ae268216077ffbfa80ed9c8b81fe4e",
+    "tickers_master_through_2026-09-08.csv": "ff3703fdf67d62d76a661ba3efd01cef796d830f",
+    "actions_through_2026-09-10.csv": "b81acccfb03e2131a0b9bfc3956a65cbee6f97ee"
+  }
+}
