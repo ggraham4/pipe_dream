@@ -142,6 +142,26 @@ Write: temp file in the same directory → re-read and re-validate → `os.repla
 KILL / BLOCKED: a needed pull falls outside the two above, or (a) cannot be
 guaranteed. Iteration cap 3.
 
+### Addendum A (iteration 2 of 3; committed before any live write)
+
+Iteration 1 was a dry run with no live write, and it failed G6:
+`AAPL firstpricedate 1986-01-01 -> 1997-12-31`. The 09-26 TICKERS pull
+clamps `firstpricedate` at 1997-12-31 for 7,860 tickers: every base value
+before that date becomes 1997-12-31, and the pull's minimum is 1997-12-31.
+Examples: AAPL, MSFT, MMM, KMB. That is a vendor-side change (possibly the
+subscription's history window), not a real revision.
+- Nothing in the live refresh or Retrain path reads `firstpricedate`. Its
+  only readers are the identity-map scripts and the downcap_grid research
+  harness.
+- Taking the new value would destroy the pre-1998 first-price information.
+
+Amendment: `firstpricedate` joins the hold-back set for base tickers. The
+hold-back set is now `category, siccode, sicsector, sicindustry,
+famaindustry, sector, industry, firstpricedate`. G5 and G6 are checked
+against that set. Nothing else changes: G6 still fails on any other
+non-time column. The run reuses the staged 09-26 22:3x pull
+(`--reuse-pull`), so the dry run and the live write see the same bytes.
+
 ---
 
 ## Results
