@@ -31,9 +31,20 @@ import streamlit as st
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lib import (paths, stock_model as sm, options_model as om, data_refresh as dr,
                  pit_model as pm, blend_model as bm, composite_model as cm,
-                 model_agreement as ma)
+                 model_agreement as ma, key_guard as kg)
 
 st.set_page_config(page_title="pipe_dream — Model Dashboard", layout="wide", page_icon="📈")
+
+# 2026-09-26 (Gabe: "have it tell me if SHARADAR_API_KEY is missing or lost for
+# whatever reason"): top-of-page banner, above every tab. Presence check only;
+# the key's value is never read into the page, logged or displayed.
+if not kg.sharadar_key_present():
+    st.error(
+        f"**`{kg.KEY_NAME}` is missing from this Streamlit process's environment.** "
+        f"Without it these break: {kg.BREAKS}. \"Retrain ALL models\" is blocked until "
+        f"it's fixed.\n\n{kg.FIX}",
+        icon=":material/key_off:",
+    )
 
 MISSING_DEPS = []
 for _mod in ["xgboost", "torch", "sklearn", "pyarrow"]:
@@ -107,6 +118,9 @@ with st.sidebar:
         st.caption(f"{ousumm['chain']['date_min'].date()} → {ousumm['chain']['date_max'].date()} (options history)")
 
     st.divider()
+    # 2026-09-26: presence only, never the value.
+    st.caption("Data keys: Sharadar " + (":green[:material/check: set]" if kg.sharadar_key_present()
+                                         else ":red[:material/close: MISSING]"))
     st.caption("Data freshness")
     for label, p in [
         ("Stock prices", paths.STOCK_DATA_DIR),
@@ -919,9 +933,13 @@ def render_data_updates():
                     "predates WO-14; update it to `integration` first."
                 )
             elif _sharadar_key_preflight(cmds):
-                dr.run_step_sequence("retrain_all_models", cmds, labels, cwd=paths.SRC_DIR)
+                # 2026-09-26: baseline for "SUE guard rows written during this
+                # run" (the log is append-only, so rows past this count are new).
+                dr.run_step_sequence("retrain_all_models", cmds, labels, cwd=paths.SRC_DIR,
+                                     meta={"sue_guard_rows_before": kg.sue_guard_row_count()})
                 st.rerun()
         _job_status_block("retrain_all_models")
+        _sue_guard_report("retrain_all_models")
 
     st.divider()
     st.subheader("1. Refresh stock price data + retrain both signals")
@@ -979,20 +997,23 @@ def render_data_updates():
 # has to be exported in the shell that launched Streamlit. 2026-09-24: "Retrain
 # ALL models" failed at step 2 for exactly this reason. The app never reads the
 # key from a file and never displays it; it only checks that the name is set.
-NEEDS_SHARADAR_KEY = ("sharadar_pull_pit_panel.py",)
+NEEDS_SHARADAR_KEY = ("sharadar_pull_pit_panel.py",
+                      # 2026-09-26: refresh_working_panel.py runs sf1_topup.py (WO-16)
+                      # and record_weekly.py -> sf1_eps_live_pull.py (WO-15 SUE).
+                      "refresh_working_panel.py", "sf1_topup.py", "sf1_eps_live_pull.py",
+                      "record_weekly.py")
 
 
 def _sharadar_key_preflight(cmds: list[list[str]]) -> bool:
     """True if the job may start. Shows a blocking error and returns False if a
     step needs SHARADAR_API_KEY and this Streamlit process doesn't have it."""
     needs = any(Path(arg).name in NEEDS_SHARADAR_KEY for cmd in cmds for arg in cmd)
-    if needs and not os.environ.get("SHARADAR_API_KEY"):
+    if needs and not kg.sharadar_key_present():
         st.error(
-            "Not started: this job pulls from Sharadar, and `SHARADAR_API_KEY` is not set in "
-            "the environment Streamlit was launched from, so the Sharadar step would fail "
-            "(this is why the last \"Retrain ALL models\" failed at step 2). Stop Streamlit, "
-            "then relaunch it from a shell where the key is exported:\n\n"
-            "```\nexport SHARADAR_API_KEY=...\nstreamlit run app.py\n```"
+            f"**Not started:** this job pulls from Sharadar, and `{kg.KEY_NAME}` is not set in "
+            f"the environment Streamlit was launched from. Running it now would break "
+            f"{kg.BREAKS}.\n\n{kg.FIX}",
+            icon=":material/key_off:",
         )
         return False
     return True
@@ -1009,9 +1030,48 @@ def _job_status_block(job_name: str):
         time.sleep(2)
         st.rerun()
     else:
-        (st.success if state.status == "done" else st.error)(f"{state.status} at {state.finished_at}")
+        msg = f"{state.status} at {state.finished_at}"
+        if state.status != "done":
+            # 2026-09-26: say which step failed and its exit code.
+            if state.failed_step:
+                msg += f" -- step \"{state.failed_step}\""
+            if state.return_code not in (None, 0):
+                msg += f" exited with code {state.return_code}"
+        (st.success if state.status == "done" else st.error)(msg)
         with st.expander("Log"):
             st.code(dr.tail_log(job_name))
+
+
+def _sue_guard_report(job_name: str):
+    """2026-09-26: after a finished Retrain ALL, show the rows WO-15's
+    record_weekly.py appended to ledger_sue_guard_log.csv during that run
+    (columns per final/src/sue/sue_forward.py log_guard())."""
+    state = dr.refresh_status(job_name)
+    if state.status not in ("done", "failed") or not state.meta \
+            or "sue_guard_rows_before" not in state.meta:
+        return
+    new = kg.sue_guard_rows_since(int(state.meta["sue_guard_rows_before"]))
+    if new.empty:
+        st.caption("SUE forward record: no rows were written to `ledger_sue_guard_log.csv` "
+                   "during this run (no SUE skips or guard events).")
+        return
+    skipped = new[new["event"] == "sue_skipped"]
+    for _, r in skipped.iterrows():
+        why = r["detail"]
+        if kg.looks_like_key_or_pull_failure(why):
+            st.warning(f"SUE forward record SKIPPED for {r['panel_date']} ({r['iso_week']}): the "
+                       f"SF1 live pull failed or `{kg.KEY_NAME}` is missing. That week's SUE record "
+                       f"may not be recoverable later. "
+                       f"Reason: {why}", icon=":material/warning:")
+        else:
+            st.warning(f"SUE forward record SKIPPED for {r['panel_date']} ({r['iso_week']}). "
+                       f"Reason: {why}", icon=":material/warning:")
+    other = new[new["event"] != "sue_skipped"]
+    if not other.empty:
+        st.info(f"SUE guard: {len(other)} other event(s) this run (e.g. names set to NaN by the "
+                f"non-uniform-ratio check). v3/ext/hedge records are unaffected.")
+    with st.expander(f"SUE guard log rows written this run ({len(new)})"):
+        st.dataframe(new[[c for c in kg.GUARD_COLS if c in new.columns]], hide_index=True)
 
 
 # --------------------------------------------------------------------------
