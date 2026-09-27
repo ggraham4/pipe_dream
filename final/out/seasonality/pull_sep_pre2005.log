@@ -1,0 +1,197 @@
+
+=== stocks: 84 months 1998-01 .. 2004-12
+  [  1/84] 1998-01  157,741 rows   20 days   7,917 tickers   [0.2m]
+  [  2/84] 1998-02  150,810 rows   19 days   7,966 tickers   [0.3m]
+  [  3/84] 1998-03  175,609 rows   22 days   8,012 tickers   [0.5m]
+  [  4/84] 1998-04  168,520 rows   21 days   8,061 tickers   [0.8m]
+  [  5/84] 1998-05  161,477 rows   20 days   8,114 tickers   [0.9m]
+  [  6/84] 1998-06  178,570 rows   22 days   8,167 tickers   [1.1m]
+  [  7/84] 1998-07  179,562 rows   22 days   8,207 tickers   [1.3m]
+  [  8/84] 1998-08  172,035 rows   21 days   8,219 tickers   [1.5m]
+      retry 1/4 in 1s -- HTTP 429: {"error":"Too many requests in progress.","description":"This account already has a large query running. Wait for it to finish, request one ticker at 
+  [  9/84] 1998-09  171,965 rows   21 days   8,209 tickers   [1.7m]
+  [ 10/84] 1998-10  179,176 rows   22 days   8,200 tickers   [1.9m]
+  [ 11/84] 1998-11  161,756 rows   20 days   8,140 tickers   [2.1m]
+  [ 12/84] 1998-12  177,248 rows   22 days   8,117 tickers   [2.3m]
+  [ 13/84] 1999-01  152,491 rows   19 days   8,077 tickers   [2.5m]
+  [ 14/84] 1999-02  152,152 rows   19 days   8,061 tickers   [2.6m]
+  [ 15/84] 1999-03  183,582 rows   23 days   8,056 tickers   [2.8m]
+  [ 16/84] 1999-04  166,987 rows   21 days   8,024 tickers   [3.0m]
+  [ 17/84] 1999-05  159,322 rows   20 days   8,027 tickers   [3.2m]
+  [ 18/84] 1999-06  175,261 rows   22 days   8,045 tickers   [3.4m]
+  [ 19/84] 1999-07  167,283 rows   21 days   8,051 tickers   [3.6m]
+  [ 20/84] 1999-08  175,197 rows   22 days   8,019 tickers   [3.8m]
+  [ 21/84] 1999-09  166,459 rows   21 days   7,995 tickers   [4.0m]
+  [ 22/84] 1999-10  166,637 rows   21 days   8,008 tickers   [4.1m]
+  [ 23/84] 1999-11  166,734 rows   21 days   8,016 tickers   [4.3m]
+  [ 24/84] 1999-12  174,345 rows   22 days   7,982 tickers   [4.5m]
+  [ 25/84] 2000-01  157,867 rows   20 days   7,944 tickers   [4.7m]
+  [ 26/84] 2000-02  157,723 rows   20 days   7,953 tickers   [4.8m]
+  [ 27/84] 2000-03  181,360 rows   23 days   7,968 tickers   [5.1m]
+  [ 28/84] 2000-04  149,809 rows   19 days   7,937 tickers   [5.2m]
+  [ 29/84] 2000-05  173,187 rows   22 days   7,925 tickers   [5.4m]
+  [ 30/84] 2000-06  172,617 rows   22 days   7,922 tickers   [5.6m]
+  [ 31/84] 2000-07  156,549 rows   20 days   7,888 tickers   [5.8m]
+  [ 32/84] 2000-08  180,783 rows   23 days   7,921 tickers   [6.0m]
+  [ 33/84] 2000-09  156,386 rows   20 days   7,887 tickers   [6.2m]
+  [ 34/84] 2000-10  171,475 rows   22 days   7,856 tickers   [6.4m]
+  [ 35/84] 2000-11  162,441 rows   21 days   7,794 tickers   [6.6m]
+  [ 36/84] 2000-12  153,223 rows   20 days   7,711 tickers   [6.7m]
+  [ 37/84] 2001-01  159,134 rows   21 days   7,624 tickers   [6.9m]
+  [ 38/84] 2001-02  143,057 rows   19 days   7,564 tickers   [7.1m]
+  [ 39/84] 2001-03  164,740 rows   22 days   7,524 tickers   [7.3m]
+  [ 40/84] 2001-04  148,450 rows   20 days   7,467 tickers   [7.4m]
+  [ 41/84] 2001-05  162,026 rows   22 days   7,404 tickers   [7.6m]
+  [ 42/84] 2001-06  153,579 rows   21 days   7,353 tickers   [7.8m]
+  [ 43/84] 2001-07  152,457 rows   21 days   7,302 tickers   [8.0m]
+      retry 1/4 in 1s -- ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+  [ 44/84] 2001-08  165,505 rows   23 days   7,245 tickers   [9.9m]
+  [ 45/84] 2001-09  107,112 rows   15 days   7,163 tickers   [10.0m]
+  [ 46/84] 2001-10  163,090 rows   23 days   7,127 tickers   [10.2m]
+  [ 47/84] 2001-11  147,759 rows   21 days   7,088 tickers   [10.4m]
+  [ 48/84] 2001-12  139,864 rows   20 days   7,028 tickers   [10.6m]
+  [ 49/84] 2002-01  145,947 rows   21 days   6,974 tickers   [10.7m]
+  [ 50/84] 2002-02  131,248 rows   19 days   6,936 tickers   [10.9m]
+  [ 51/84] 2002-03  137,456 rows   20 days   6,903 tickers   [11.0m]
+  [ 52/84] 2002-04  150,293 rows   22 days   6,868 tickers   [11.2m]
+  [ 53/84] 2002-05  149,887 rows   22 days   6,848 tickers   [11.4m]
+  [ 54/84] 2002-06  135,789 rows   20 days   6,813 tickers   [11.5m]
+  [ 55/84] 2002-07  148,824 rows   22 days   6,796 tickers   [11.7m]
+  [ 56/84] 2002-08  148,070 rows   22 days   6,760 tickers   [11.9m]
+  [ 57/84] 2002-09  134,027 rows   20 days   6,718 tickers   [12.0m]
+  [ 58/84] 2002-10  153,341 rows   23 days   6,703 tickers   [12.2m]
+  [ 59/84] 2002-11  132,787 rows   20 days   6,667 tickers   [12.4m]
+  [ 60/84] 2002-12  139,046 rows   21 days   6,646 tickers   [12.5m]
+  [ 61/84] 2003-01  138,203 rows   21 days   6,608 tickers   [12.7m]
+  [ 62/84] 2003-02  124,516 rows   19 days   6,571 tickers   [12.8m]
+  [ 63/84] 2003-03  136,884 rows   21 days   6,541 tickers   [13.0m]
+  [ 64/84] 2003-04  136,218 rows   21 days   6,499 tickers   [13.2m]
+  [ 65/84] 2003-05  135,656 rows   21 days   6,474 tickers   [13.3m]
+  [ 66/84] 2003-06  135,342 rows   21 days   6,468 tickers   [13.5m]
+  [ 67/84] 2003-07  141,498 rows   22 days   6,456 tickers   [13.7m]
+  [ 68/84] 2003-08  134,841 rows   21 days   6,442 tickers   [13.8m]
+  [ 69/84] 2003-09  134,630 rows   21 days   6,432 tickers   [14.0m]
+  [ 70/84] 2003-10  147,634 rows   23 days   6,464 tickers   [14.2m]
+  [ 71/84] 2003-11  121,839 rows   19 days   6,443 tickers   [14.3m]
+  [ 72/84] 2003-12  140,958 rows   22 days   6,445 tickers   [14.5m]
+  [ 73/84] 2004-01  127,918 rows   20 days   6,417 tickers   [14.6m]
+  [ 74/84] 2004-02  121,401 rows   19 days   6,420 tickers   [14.8m]
+  [ 75/84] 2004-03  146,728 rows   23 days   6,409 tickers   [14.9m]
+  [ 76/84] 2004-04  133,691 rows   21 days   6,399 tickers   [15.1m]
+  [ 77/84] 2004-05  127,219 rows   20 days   6,389 tickers   [15.2m]
+  [ 78/84] 2004-06  133,485 rows   21 days   6,396 tickers   [15.4m]
+      retry 1/4 in 1s -- HTTP 429: {"error":"Too many requests in progress.","description":"This account already has a large query running. Wait for it to finish, request one ticker at 
+      retry 1/4 in 1s -- HTTP 429: {"error":"Too many requests in progress.","description":"This account already has a large query running. Wait for it to finish, request one ticker at 
+      retry 2/4 in 2s -- HTTP 429: {"error":"Too many requests in progress.","description":"This account already has a large query running. Wait for it to finish, request one ticker at 
+      retry 3/4 in 4s -- HTTP 429: {"error":"Too many requests in progress.","description":"This account already has a large query running. Wait for it to finish, request one ticker at 
+  [ 79/84] 2004-07  133,317 rows   21 days   6,387 tickers   [15.7m]
+  [ 80/84] 2004-08  139,666 rows   22 days   6,372 tickers   [15.8m]
+  [ 81/84] 2004-09  133,082 rows   21 days   6,362 tickers   [16.0m]
+  [ 82/84] 2004-10  133,304 rows   21 days   6,381 tickers   [16.1m]
+  [ 83/84] 2004-11  133,307 rows   21 days   6,375 tickers   [16.3m]
+  [ 84/84] 2004-12  139,593 rows   22 days   6,378 tickers   [16.5m]
+
+done in 16.5 min
+marketcap units: USD_MILLIONS   universe screen: marketcap >= 2,000
+NOTE: raw panel. Corrupt rows are recorded, not removed -- run validate_marketcap_panel.py before using it as a universe.
+
+daily: nothing on disk
+
+stocks: 84 months, 12,758,757 rows, 1,760 trading days, 1998-01-02 .. 2004-12-31
+  no missing months
+
+=== stocks: 85 months 1998-01 .. 2005-01
+  [  1/85] 1998-01  skip (on disk)
+  [  2/85] 1998-02  skip (on disk)
+  [  3/85] 1998-03  skip (on disk)
+  [  4/85] 1998-04  skip (on disk)
+  [  5/85] 1998-05  skip (on disk)
+  [  6/85] 1998-06  skip (on disk)
+  [  7/85] 1998-07  skip (on disk)
+  [  8/85] 1998-08  skip (on disk)
+  [  9/85] 1998-09  skip (on disk)
+  [ 10/85] 1998-10  skip (on disk)
+  [ 11/85] 1998-11  skip (on disk)
+  [ 12/85] 1998-12  skip (on disk)
+  [ 13/85] 1999-01  skip (on disk)
+  [ 14/85] 1999-02  skip (on disk)
+  [ 15/85] 1999-03  skip (on disk)
+  [ 16/85] 1999-04  skip (on disk)
+  [ 17/85] 1999-05  skip (on disk)
+  [ 18/85] 1999-06  skip (on disk)
+  [ 19/85] 1999-07  skip (on disk)
+  [ 20/85] 1999-08  skip (on disk)
+  [ 21/85] 1999-09  skip (on disk)
+  [ 22/85] 1999-10  skip (on disk)
+  [ 23/85] 1999-11  skip (on disk)
+  [ 24/85] 1999-12  skip (on disk)
+  [ 25/85] 2000-01  skip (on disk)
+  [ 26/85] 2000-02  skip (on disk)
+  [ 27/85] 2000-03  skip (on disk)
+  [ 28/85] 2000-04  skip (on disk)
+  [ 29/85] 2000-05  skip (on disk)
+  [ 30/85] 2000-06  skip (on disk)
+  [ 31/85] 2000-07  skip (on disk)
+  [ 32/85] 2000-08  skip (on disk)
+  [ 33/85] 2000-09  skip (on disk)
+  [ 34/85] 2000-10  skip (on disk)
+  [ 35/85] 2000-11  skip (on disk)
+  [ 36/85] 2000-12  skip (on disk)
+  [ 37/85] 2001-01  skip (on disk)
+  [ 38/85] 2001-02  skip (on disk)
+  [ 39/85] 2001-03  skip (on disk)
+  [ 40/85] 2001-04  skip (on disk)
+  [ 41/85] 2001-05  skip (on disk)
+  [ 42/85] 2001-06  skip (on disk)
+  [ 43/85] 2001-07  skip (on disk)
+  [ 44/85] 2001-08  skip (on disk)
+  [ 45/85] 2001-09  skip (on disk)
+  [ 46/85] 2001-10  skip (on disk)
+  [ 47/85] 2001-11  skip (on disk)
+  [ 48/85] 2001-12  skip (on disk)
+  [ 49/85] 2002-01  skip (on disk)
+  [ 50/85] 2002-02  skip (on disk)
+  [ 51/85] 2002-03  skip (on disk)
+  [ 52/85] 2002-04  skip (on disk)
+  [ 53/85] 2002-05  skip (on disk)
+  [ 54/85] 2002-06  skip (on disk)
+  [ 55/85] 2002-07  skip (on disk)
+  [ 56/85] 2002-08  skip (on disk)
+  [ 57/85] 2002-09  skip (on disk)
+  [ 58/85] 2002-10  skip (on disk)
+  [ 59/85] 2002-11  skip (on disk)
+  [ 60/85] 2002-12  skip (on disk)
+  [ 61/85] 2003-01  skip (on disk)
+  [ 62/85] 2003-02  skip (on disk)
+  [ 63/85] 2003-03  skip (on disk)
+  [ 64/85] 2003-04  skip (on disk)
+  [ 65/85] 2003-05  skip (on disk)
+  [ 66/85] 2003-06  skip (on disk)
+  [ 67/85] 2003-07  skip (on disk)
+  [ 68/85] 2003-08  skip (on disk)
+  [ 69/85] 2003-09  skip (on disk)
+  [ 70/85] 2003-10  skip (on disk)
+  [ 71/85] 2003-11  skip (on disk)
+  [ 72/85] 2003-12  skip (on disk)
+  [ 73/85] 2004-01  skip (on disk)
+  [ 74/85] 2004-02  skip (on disk)
+  [ 75/85] 2004-03  skip (on disk)
+  [ 76/85] 2004-04  skip (on disk)
+  [ 77/85] 2004-05  skip (on disk)
+  [ 78/85] 2004-06  skip (on disk)
+  [ 79/85] 2004-07  skip (on disk)
+  [ 80/85] 2004-08  skip (on disk)
+  [ 81/85] 2004-09  skip (on disk)
+  [ 82/85] 2004-10  skip (on disk)
+  [ 83/85] 2004-11  skip (on disk)
+  [ 84/85] 2004-12  skip (on disk)
+  [ 85/85] 2005-01  126,639 rows   20 days   6,357 tickers   [0.1m]
+
+done in 0.1 min
+marketcap units: USD_MILLIONS   universe screen: marketcap >= 2,000
+NOTE: raw panel. Corrupt rows are recorded, not removed -- run validate_marketcap_panel.py before using it as a universe.
+
+daily: nothing on disk
+
+stocks: 85 months, 12,885,396 rows, 1,780 trading days, 1998-01-02 .. 2005-01-31
+  no missing months
