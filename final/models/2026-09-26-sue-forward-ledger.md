@@ -348,3 +348,93 @@ panel_manifest 349f5605. There is no `prediction_ledger_sue.csv`.
 `record_weekly.py --plan`: nothing missing for any ledger. score/status:
 NO RECORDS.
 
+
+---
+
+## Addendum A (COO, 2026-09-26, before any record)
+
+This is the COO ruling on the section-4 STOP: ITERATE, iteration 1 of 3,
+within COO authority. It is a blind data-hygiene guard. No SUE record exists
+and no return has been seen. It changes no gate, threshold, universe, weight
+or cost rule, and the 70% coverage floor, the counted-date rule and the
+verdict (section 6) are unchanged. Everything above this line stays as
+committed. This addendum is committed before the first SUE record, so every
+`recorded_at` is later than its commit time.
+
+**A0. Isolation (amends section 5's "if SUE cannot be recorded, nothing is
+written").** Any SUE failure skips only the SUE record, either for the whole
+run (for example the pull or the reference file) or for one date (the cap,
+pairing or a guard). It never stops the v3, ext or hedge records. Each skip is
+appended to a new sidecar, `out/reset2026/ledger_sue_guard_log.csv`
+(`logged_at, panel_date, iso_week, event, ticker, detail`; event
+`sue_skipped`). A skipped date stays on the SUE to-do list and is retried on
+the next run, where it is `recorded_late` if it is more than 7 days old.
+
+**A1. Section 4 basis validation is replaced as follows.**
+- (a) **Uniform-ratio exemption.** A ticker with any eps mismatch passes if
+  live/reference eps is one constant ratio, to within 1e-9 relative, across
+  ALL of its common keys that are finite on both sides. It must also have
+  no value↔NaN key and no zero↔non-zero key. Rationale: SUE is
+  scale-invariant within one pull. This is detected in code
+  (`sue_forward.basis_validation`); no ticker is hand-listed.
+- (b) **Non-uniform tickers** pass the check but get `sue` = NaN on that
+  date. This covers per-key edits, value↔NaN edits and ratios that vary
+  from rounding. Each such name in the recorded rows is logged
+  (`nonuniform_sue_nan`). The section-4 split lists (`actions.csv`, WO-14
+  `split_like_blocked`) no longer exempt anything; they are reported only.
+- (c) **Cap.** If the non-uniform tickers exceed 1% of that date's v3
+  tickers, SUE is skipped for that date only (per A0).
+- (d) **Rolling reference.** Each run validates against the previous
+  ACCEPTED live pull. A pull is accepted when a SUE record written with it
+  is appended to the new append-only file
+  `data/sharadar/sf1_arq_eps_live_accepted.csv`. The first reference is
+  `sf1_fundamentals_through_2026-09-08.parquet` (asserted 631,185 rows,
+  end date 2026-09-08). An accepted pull lives on as the dated backup
+  `sf1_arq_eps_live_<pulled_at>.parquet` that `sf1_eps_live_pull.py`
+  writes when it replaces a pull. These backups are never pruned. A
+  missing reference file skips SUE (per A0).
+- (e) **W38 (09-18) and W39 (09-24) stay declined** (descriptive either
+  way). **W40 is the first countable date.**
+- The pull subprocess uses `sys.executable`, which the live Retrain also
+  uses. A missing key or a failed pull skips SUE (per A0).
+
+### Checks run for Addendum A (no writes to the main store)
+
+**Isolation test** on a scratch copy of the store (`/tmp/wo15_iso`). Every
+write path was redirected to the copy. The copy's v3/ext/hedge were
+byte-truncated before 2026-09-18 so the run had real appends to make, and
+09-18 was made a SUE date for the test only. The main store's sha1s were
+identical before and after every run.
+
+| mode | SUE outcome | v3 / ext / hedge 09-18 | prefix hashes | rc |
+|---|---|---|---|---|
+| forced STOP (pull raises) | skipped, one `sue_skipped` row | appended 3,053 / 3,053 / 464 | all hold | 0 |
+| cap forced to 0% | 09-18 skipped (non-uniform 0.07% > 0%) | appended 3,053 / 3,053 / 464 | all hold | 0 |
+| normal | 3,053 rows written, BNC and BNTC logged NaN, pull accepted | appended 3,053 / 3,053 / 464 | all hold | 0 |
+| normal, second run | nothing to record | none | all hold | 0 |
+
+The test found two bugs, both fixed:
+- `check_prefixes` re-read files by name from the main store dir. It would
+  have crashed on the accepted-pull log, which lives in `data/sharadar`.
+  It now keys by full path.
+- The backfill gate checked v3 pairing before a same-run v3 record
+  existed. Pairing is now asserted in `record_sue` after v3 is written, as
+  on a normal weekly date.
+
+**Dry run on W38/W39** (read-only, current live pull vs the 09-08 reference):
+- 90,761 overlapping keys, 327 eps mismatches on 24 tickers.
+- **Uniform (pass): 6.** ASX, CTSO, HUBC, NRSN, OPTT, VWAV.
+- **Non-uniform: 18.** ALP, BNC, BNTC, BRTX, BURU, GAUZ, GOSS, GTBP, IPDN,
+  JAGX, KITT, LRHC, NFE, NXXT, SKIL, TNMG, WHLR, XCH. Most are reverse
+  splits whose old, small eps were rounded, so the ratio varies (for
+  example BRTX ×19.3-20). BNC, SKIL and XCH are value↔NaN edits.
+- **Non-uniform among v3 tickers:**
+
+| date | v3 tickers | non-uniform in v3 | share | cap (1%) | pairing (icw8 max \|d\|) | `sue` coverage |
+|---|---|---|---|---|---|---|
+| W38 09-18 | 3,053 | 2 (BNC, BNTC) | 0.066% | under | 1.0e-16 | 90.17% |
+| W39 09-24 | 3,048 | 2 (BNC, BNTC) | 0.066% | under | 1.0e-16 | 90.32% |
+
+- `record_weekly.py --plan` on the main store: nothing missing for any
+  ledger, since W38/W39 are declined. `todo_dates` with a W40 v3 date
+  (2026-10-02) returns [2026-10-02].

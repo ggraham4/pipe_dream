@@ -75,7 +75,8 @@ TOL_ICW8 = 1e-12
 USE_LASTUPDATED_FILTER = True
 # BACKFILL (doc sec. 7): DECLINED 2026-09-26 at the first live pull. (a) passed
 # (icw8 max|d| 1.0e-16 both dates) and (b) passed, but (c) basis validation
-# FAILED: 176 eps mismatches on 15 names not on the split lists (see doc Results). "declined" drops BACKFILL_DATES from the SUE dates, so
+# FAILED: 176 eps mismatches on 15 names not on the split lists (see doc Results).
+# Addendum A (e), COO 2026-09-26: W38/W39 stay declined; W40 is the first countable date. "declined" drops BACKFILL_DATES from the SUE dates, so
 # the ledger starts at the next complete week and a failed gate cannot block
 # later weekly runs. "attempt" = the gate passed at measurement; the dates are
 # recorded through record_weekly (gate re-checked in preflight).
@@ -199,45 +200,132 @@ def split_names_since_basis():
     return s | wo14, {"actions_csv_splits_after_basis": sorted(s), "wo14_split_like_blocked": sorted(wo14)}
 
 
-def basis_validation(live):
-    """Doc sec. 4: overlapping (ticker, date, reportperiod) keys must agree on
-    eps except for names with a split since 2026-09-08. Raises on any other."""
-    old = load_basis()
-    old = old[old["dimension"] == "ARQ"].drop(columns="dimension")
-    old["date"] = pd.to_datetime(old["date"])
-    old["reportperiod"] = pd.to_datetime(old["reportperiod"])
-    old["ticker"] = old["ticker"].astype(str)
+REF_LOG = W.SH / "sf1_arq_eps_live_accepted.csv"   # append-only: accepted live pulls (Addendum A d)
+GUARD_CSV = OUT_DIR / "ledger_sue_guard_log.csv"      # append-only: SUE skips + non-uniform NaN'd names
+RATIO_TOL = 1e-9
+NONUNIFORM_CAP = 0.01
+
+
+def backup_path(pulled_at):
+    """The dated backup sf1_eps_live_pull.py writes when it replaces a pull."""
+    return LIVE.with_name(f"sf1_arq_eps_live_{pd.Timestamp(pulled_at).strftime('%Y-%m-%dT%H%M%S')}.parquet")
+
+
+def accepted_pulls():
+    if not REF_LOG.exists():
+        return []
+    return pd.read_csv(REF_LOG)["pulled_at"].astype(str).tolist()
+
+
+def load_reference(live_pulled_at=None):
+    """Addendum A (d): the previous ACCEPTED live pull; the first reference is
+    the literal 2026-09-08 SF1 file. Returns (ARQ frame ticker/date/reportperiod/eps, name)."""
+    acc = accepted_pulls()
+    if not acc:
+        ref = load_basis()
+        ref = ref[ref["dimension"] == "ARQ"].drop(columns="dimension")
+        name = SF1_BASIS.name
+    else:
+        last = pd.Timestamp(acc[-1])
+        if live_pulled_at is not None and pd.Timestamp(live_pulled_at) == last:
+            path = LIVE
+        else:
+            path = backup_path(last)
+        if not path.exists():
+            raise SystemExit(f"reference pull {last} not found at {path.name} (accepted pulls are never pruned)")
+        ref = pd.read_parquet(path, columns=["ticker", "date", "reportperiod", "eps", "pulled_at"])
+        if pd.Timestamp(ref["pulled_at"].iloc[0]) != last:
+            raise SystemExit(f"{path.name} has pulled_at {ref['pulled_at'].iloc[0]}, expected {last}")
+        ref = ref.drop(columns="pulled_at")
+        name = path.name
+    ref = ref.copy()
+    ref["date"] = pd.to_datetime(ref["date"])
+    ref["reportperiod"] = pd.to_datetime(ref["reportperiod"])
+    ref["ticker"] = ref["ticker"].astype(str)
+    return ref, name
+
+
+def basis_validation(live, live_pulled_at=None):
+    """Doc sec. 4 as amended by Addendum A (2026-09-26, COO, before any record).
+    Overlapping (ticker, date, reportperiod) keys of the live pull and the
+    reference (previous accepted pull; first = the 09-08 file) are compared.
+    A ticker with any eps mismatch is UNIFORM if live/ref is one constant
+    ratio (to 1e-9 relative) over ALL its common keys finite on both sides,
+    with no value<->NaN and no zero<->non-zero key; it passes (SUE is
+    scale-invariant within one pull). Otherwise it is NON-UNIFORM: it passes
+    the check but gets SUE = NaN (per date, logged). The per-date 1% cap is
+    applied by the caller (date_nonuniform). Never raises on mismatches; the
+    section-4 split lists are reported only."""
+    ref, ref_name = load_reference(live_pulled_at)
     key = ["ticker", "date", "reportperiod"]
-    o = old.drop_duplicates(key, keep="first")
+    o = ref[key + ["eps"]].drop_duplicates(key, keep="first")
     n = live[key + ["eps"]].drop_duplicates(key, keep="first")
     m = o.merge(n, on=key, how="inner", suffixes=("_old", "_live"))
     a, b = m["eps_old"].to_numpy(np.float64), m["eps_live"].to_numpy(np.float64)
     with np.errstate(divide="ignore", invalid="ignore"):
         same = ((np.isnan(a) & np.isnan(b)) | ((a == 0) & (b == 0))
-                | (np.abs(b / a - 1.0) <= 1e-9))
-    bad = m[~same]
-    allowed, src = split_names_since_basis()
-    unexplained = bad[~bad["ticker"].isin(allowed)]
-    live_win = live[live["date"] <= BASIS_DATE]
-    rep = {"overlap_keys": int(len(m)), "mismatch_rows": int(len(bad)),
-           "mismatch_tickers": sorted(bad["ticker"].unique().tolist()),
-           "unexplained_rows": int(len(unexplained)),
-           "unexplained_tickers": sorted(unexplained["ticker"].unique().tolist()),
-           "old_keys_in_live_window_not_in_live": int(len(
-               o[(o["date"] >= live["date"].min())].merge(n[key], on=key, how="left", indicator=True)
-               .query("_merge == 'left_only'"))),
-           "live_keys_to_basis_date_not_in_old": int(len(
-               live_win[key].drop_duplicates().merge(o[key], on=key, how="left", indicator=True)
-               .query("_merge == 'left_only'"))),
-           "split_sources": src}
-    if len(bad):
-        ratios = (bad["eps_live"] / bad["eps_old"]).groupby(bad["ticker"]).agg(["min", "max", "size"])
-        rep["mismatch_ratio_by_ticker"] = {t: [float(r["min"]), float(r["max"]), int(r["size"])]
-                                          for t, r in ratios.iterrows()}
-    if len(unexplained):
-        raise SystemExit(f"BASIS VALIDATION FAILED (STOP): {len(unexplained)} eps mismatches on "
-                         f"non-split names {rep['unexplained_tickers'][:30]}")
+                | (np.abs(b / a - 1.0) <= RATIO_TOL))
+    bad_t = set(m.loc[~same, "ticker"])
+    mm = m[m["ticker"].isin(bad_t)].copy()
+    ao, bl = mm["eps_old"].to_numpy(np.float64), mm["eps_live"].to_numpy(np.float64)
+    fin = np.isfinite(ao) & np.isfinite(bl)
+    both0 = fin & (ao == 0) & (bl == 0)
+    one_nan = np.isfinite(ao) != np.isfinite(bl)
+    one_zero = fin & ((ao == 0) != (bl == 0))
+    mm["_bad_edit"] = one_nan | one_zero
+    usable = fin & ~both0 & ~one_zero
+    with np.errstate(divide="ignore", invalid="ignore"):
+        mm["_r"] = np.where(usable, bl / ao, np.nan)
+    uniform, nonuni = {}, {}
+    for t, g in mm.groupby("ticker", sort=True):
+        r = g["_r"].dropna().to_numpy(np.float64)
+        if g["_bad_edit"].any() or len(r) == 0 or np.max(np.abs(r / r[0] - 1.0)) > RATIO_TOL:
+            nonuni[t] = {"keys": int(len(g)), "value_nan_or_zero_edits": int(g["_bad_edit"].sum()),
+                         "ratio_min": float(np.min(r)) if len(r) else None,
+                         "ratio_max": float(np.max(r)) if len(r) else None}
+        else:
+            uniform[t] = {"keys": int(len(g)), "ratio": float(r[0])}
+    _allowed, src = split_names_since_basis()
+    rep = {"reference": ref_name, "overlap_keys": int(len(m)), "mismatch_rows": int((~same).sum()),
+           "mismatch_tickers": sorted(bad_t), "uniform_tickers": sorted(uniform),
+           "nonuniform_tickers": sorted(nonuni), "uniform_detail": uniform, "nonuniform_detail": nonuni,
+           "split_sources_reported_only": src}
     return rep
+
+
+def date_nonuniform(basis, tickers):
+    """Addendum A (b)/(c): the non-uniform names among this date's v3 tickers
+    and their share; share > 1% stops SUE for this date only."""
+    tick = set(pd.Series(list(tickers), dtype=str))
+    hit = sorted(tick & set(basis["nonuniform_tickers"]))
+    share = len(hit) / max(len(tick), 1)
+    return hit, share, share > NONUNIFORM_CAP
+
+
+def log_guard(panel_date, event, ticker="", detail=""):
+    """Append-only sidecar (new file): SUE skips and non-uniform NaN'd names."""
+    if GUARD_CSV.exists() and not GUARD_CSV.read_bytes().endswith(b"\n"):
+        raise SystemExit(f"{GUARD_CSV.name} does not end in a newline; refusing to append")
+    iso = pd.Timestamp(panel_date).date().isoformat() if panel_date else ""
+    wk = ""
+    if iso:
+        c = pd.Timestamp(iso).isocalendar()
+        wk = f"{c[0]}-W{c[1]:02d}"
+    pd.DataFrame([[pd.Timestamp.now().isoformat(), iso, wk, event, ticker, str(detail)[:500]]],
+                 columns=["logged_at", "panel_date", "iso_week", "event", "ticker", "detail"]
+                 ).to_csv(GUARD_CSV, mode="a", header=not GUARD_CSV.exists(), index=False)
+
+
+def accept_pull(pulled_at, panel_date):
+    """Addendum A (d): the pull used by a written SUE record becomes the next reference."""
+    if accepted_pulls() and pd.Timestamp(accepted_pulls()[-1]) == pd.Timestamp(pulled_at):
+        return
+    if REF_LOG.exists() and not REF_LOG.read_bytes().endswith(b"\n"):
+        raise SystemExit(f"{REF_LOG.name} does not end in a newline; refusing to append")
+    pd.DataFrame([[pd.Timestamp(pulled_at).isoformat(), pd.Timestamp.now().isoformat(),
+                   pd.Timestamp(panel_date).date().isoformat()]],
+                 columns=["pulled_at", "accepted_at", "first_panel_date"]
+                 ).to_csv(REF_LOG, mode="a", header=not REF_LOG.exists(), index=False)
 
 
 # ------------------------------------------------------------------ rows
@@ -258,7 +346,8 @@ def v3_cross(t):
     return cross, np.isfinite(s)
 
 
-def build_sue_rows(t, live, pulled_at, cal):
+def build_sue_rows(t, live, pulled_at, cal, nan_tickers=()):
+    """nan_tickers: Addendum A (b) non-uniform names -> sue NaN on this date."""
     t = pd.Timestamp(t)
     cross, valid = v3_cross(t)
     _lu_rows, n_excl = pit_rows(live, t, cal, use_lastupdated=True)
@@ -266,6 +355,8 @@ def build_sue_rows(t, live, pulled_at, cal):
     sf = sue_asof(rows_pit, cross["ticker"], t, cal)
     cross = cross.copy()
     cross["sue"] = sf["sue"].to_numpy(np.float64)
+    n_nan_forced = int((cross["ticker"].astype(str).isin(set(nan_tickers)) & valid).sum())
+    cross.loc[cross["ticker"].astype(str).isin(set(nan_tickers)), "sue"] = np.nan
     s8 = ICW.compute_composite_ic_weighted(cross)["composite"].to_numpy(np.float64)
     s9 = ICW.compute_composite_ic_weighted(cross, weights=ICW9_SUE_WEIGHTS)["composite"].to_numpy(np.float64)
     out = pd.DataFrame({
@@ -294,7 +385,7 @@ def build_sue_rows(t, live, pulled_at, cal):
             "coverage_with_lastupdated_filter": float(np.isfinite(s1).mean()),
             "coverage_without_lastupdated_filter": float(np.isfinite(sf0).mean()),
             "use_lastupdated_filter": USE_LASTUPDATED_FILTER,
-            "rows_excluded_lastupdated": n_excl, "rows_datekey_eligible": int(len(rows_nolu)),
+            "rows_excluded_lastupdated": n_excl, "nonuniform_sue_nan": n_nan_forced, "rows_datekey_eligible": int(len(rows_nolu)),
             "tickers_sue_changed_by_lastupdated": int(changed.sum()),
             "share_sue_changed_by_lastupdated": float(changed.mean()),
             "prev_td": prev_td(t, cal).date().isoformat()}
@@ -322,9 +413,11 @@ def check_pairing(rows, t):
     return float(d.max())
 
 
-def backfill_gate(rows, info, t, basis_ok):
-    """Doc sec. 7, for BACKFILL_DATES only. Raises (nothing written) if any fails."""
-    d = check_pairing(rows, t)                                            # (a)
+def backfill_gate(rows, info, t, basis_ok, v3_exists=True):
+    """Doc sec. 7, for BACKFILL_DATES only. Raises (nothing written) if any fails.
+    (a) is checked here when v3's record already exists; otherwise record_sue
+    checks it right after v3 is written (same run), before the SUE append."""
+    d = check_pairing(rows, t) if v3_exists else None                     # (a)
     if info["share_sue_changed_by_lastupdated"] > BACKFILL_MAX_CHANGED_SHARE:   # (b)
         raise SystemExit(f"backfill gate (b) FAILED on {pd.Timestamp(t).date()}: "
                          f"{info['share_sue_changed_by_lastupdated']:.2%} of v3 tickers change sue "
@@ -568,22 +661,24 @@ if __name__ == "__main__":
         status_sue()
     elif cmd == "status":
         status_sue()
-    elif cmd == "measure":
-        # read-only: the sec. 2 fallback / sec. 7 gate metrics for W38/W39 (no writes)
+    elif cmd in ("measure", "dryrun"):
+        # read-only (no writes): Addendum A preflight on W38/W39
         cal = panel_calendar()
         live, pa = load_live()
-        try:
-            print(json.dumps({k: v for k, v in basis_validation(live).items() if k != "mismatch_ratio_by_ticker"}, default=str))
-        except SystemExit as e:
-            print(f"basis validation: {e}")
+        basis = basis_validation(live, pa)
+        print(json.dumps({k: v for k, v in basis.items() if not k.endswith("_detail")}, default=str))
+        print(json.dumps({"nonuniform_detail": basis["nonuniform_detail"]}, default=str))
         for d in sorted(BACKFILL_DATES):
-            ok, why = fresh_for(live, pa, d, cal)
-            rows, info = build_sue_rows(d, live, pa, cal)
+            v = v3_rows(d)
+            hit, share, stop = date_nonuniform(basis, v["ticker"])
+            rows, info = build_sue_rows(d, live, pa, cal, nan_tickers=hit)
             try:
                 info["pairing_icw8_max_abs_diff"] = check_pairing(rows, d)
             except SystemExit as e:
                 info["pairing_FAILED"] = str(e)
-            info["fresh"] = [ok, why]
+            info.update({"fresh": list(fresh_for(live, pa, d, cal)), "v3_tickers": int(len(v)),
+                         "nonuniform_in_v3": hit, "nonuniform_share": share, "cap_stop": stop,
+                         "uniform_in_v3": sorted(set(v["ticker"].astype(str)) & set(basis["uniform_tickers"]))})
             print(json.dumps(info, default=str))
     elif cmd == "plan":
         print([d.date().isoformat() for d in todo_dates()])

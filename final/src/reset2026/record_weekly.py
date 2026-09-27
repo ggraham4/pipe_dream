@@ -38,6 +38,11 @@ RULES (frozen; COO implementation of Gabe's ruling)
     blindness, v3 pairing (tickers + icw8 to 1e-12), backfill gate. The
     annotations sidecar joins the prefix-hash set; the panel manifest is
     checked entry by entry (record_manifest rewrites the JSON).
+    Addendum A (COO 2026-09-26, before any record): basis check vs the
+    previous ACCEPTED live pull (uniform-ratio exemption; non-uniform names
+    get sue NaN; > 1% non-uniform of a date's v3 tickers skips that date).
+    ISOLATION: any SUE failure skips only the SUE record (logged to
+    ledger_sue_guard_log.csv) and never stops v3/ext/hedge.
 """
 import argparse
 import hashlib
@@ -66,6 +71,8 @@ HEDGE = R26 / "prediction_ledger_hedge.csv"
 # after 2026-09-08 with no SUE record yet (final/src/sue/sue_forward.py).
 SUE = R26 / "prediction_ledger_sue.csv"
 ANN_CSV = R26 / "ledger_record_annotations.csv"
+SUE_GUARD_CSV = R26 / "ledger_sue_guard_log.csv"                      # WO-15 Addendum A
+SUE_REF_LOG = W.SH / "sf1_arq_eps_live_accepted.csv"                 # WO-15 Addendum A (d)
 ALL_LEDGERS = [R26 / n for n in ("prediction_ledger.csv", "prediction_ledger_v2.csv",
                                  "prediction_ledger_v3.csv", "prediction_ledger_ext.csv",
                                  "prediction_ledger_hedge.csv", "prediction_ledger_sue.csv")]
@@ -115,18 +122,18 @@ def recorded_weeks(csv):
 
 def prefix_hashes():
     h = {}
-    for p in ALL_LEDGERS + [LOG_CSV, ANN_CSV]:
+    for p in ALL_LEDGERS + [LOG_CSV, ANN_CSV, SUE_GUARD_CSV, SUE_REF_LOG]:
         if p.exists():
             b = p.read_bytes()
-            h[p.name] = (len(b), hashlib.sha256(b).hexdigest())
+            h[p] = (len(b), hashlib.sha256(b).hexdigest())   # keyed by full path (sidecars live in 2 dirs)
     return h
 
 
 def check_prefixes(before):
-    for name, (n, sha) in before.items():
-        b = (R26 / name).read_bytes()
+    for path, (n, sha) in before.items():
+        b = Path(path).read_bytes()
         if len(b) < n or hashlib.sha256(b[:n]).hexdigest() != sha:
-            raise SystemExit(f"PREFIX CHANGED: {name} -- existing rows were modified")
+            raise SystemExit(f"PREFIX CHANGED: {Path(path).name} -- existing rows were modified")
 
 
 def plan():
@@ -230,29 +237,50 @@ def run(dry=False):
         if (worst - maxf).days > PL.INSIDER_MAX_STALE_DAYS:
             raise SystemExit(f"preflight: insider data ends {maxf.date()}, stale for {worst.date()} "
                              f"(> {PL.INSIDER_MAX_STALE_DAYS}d). Run final/scripts/edgar_form4_refresh.py first.")
-    # WO-15 SUE preflight: SF1-live freshness (pulls once if needed), basis
-    # validation, blindness, backfill gate, and the full rows, for EVERY SUE
-    # date of this run (existing and new v3 dates) before anything is written.
+    # WO-15 SUE preflight (Addendum A, 2026-09-26): SF1-live freshness (pulls
+    # once if needed), basis check vs the previous accepted pull, blindness,
+    # pairing, backfill gate, 1% non-uniform cap, and the full rows, for every
+    # SUE date BEFORE anything is written. ISOLATION: any SUE failure skips only
+    # the SUE record (whole run or one date) and is logged to
+    # ledger_sue_guard_log.csv; it never stops v3/ext/hedge.
     SF = _sue_forward()
     sue_dates = [d for _w, d in todo[SUE.name]]
-    sue_rows = {}
+    sue_rows, sue_nan, sue_skipped = {}, {}, {}
+    live = pulled_at = None
     if sue_dates:
-        cal = SF.panel_calendar()
-        live, pulled_at = SF.ensure_live(sue_dates, cal)
-        basis = SF.basis_validation(live)
-        log(f"SUE basis validation: {basis['overlap_keys']:,} overlapping keys, {basis['mismatch_rows']} eps "
-            f"mismatches on split names {basis['mismatch_tickers']}, 0 unexplained")
-        v3_have = set(pd.read_csv(V3, usecols=["panel_date"])["panel_date"].astype(str)) if V3.exists() else set()
-        for d in sue_dates:
-            iso = d.date().isoformat()
-            rows, info = SF.build_sue_rows(d, live, pulled_at, cal)
-            if iso in v3_have:
-                SF.check_pairing(rows, d)
-            if iso in SF.BACKFILL_DATES:
-                info["backfill_gate"] = SF.backfill_gate(rows, info, d, basis_ok=True)
-            sue_rows[iso] = rows
-            log(f"SUE preflight {iso}: {info}")
-    log("preflight passed (blind, guards, insider freshness, SUE)")
+        try:
+            cal = SF.panel_calendar()
+            live, pulled_at = SF.ensure_live(sue_dates, cal)
+            basis = SF.basis_validation(live, pulled_at)
+            log(f"SUE basis check vs {basis['reference']}: {basis['overlap_keys']:,} overlapping keys, "
+                f"{basis['mismatch_rows']} eps mismatches; uniform {basis['uniform_tickers']}; "
+                f"non-uniform {basis['nonuniform_tickers']}")
+        except Exception as e:          # noqa: BLE001 (SystemExit is not an Exception; caught below)
+            sue_skipped = {d.date().isoformat(): f"preflight: {type(e).__name__}: {e}" for d in sue_dates}
+        except SystemExit as e:
+            sue_skipped = {d.date().isoformat(): f"preflight: {e}" for d in sue_dates}
+        if not sue_skipped:
+            v3_have = set(pd.read_csv(V3, usecols=["panel_date"])["panel_date"].astype(str)) if V3.exists() else set()
+            for d in sue_dates:
+                iso = d.date().isoformat()
+                try:
+                    rows0, _i0 = SF.build_sue_rows(d, live, pulled_at, cal)
+                    hit, share, stop = SF.date_nonuniform(basis, rows0["ticker"])
+                    if stop:
+                        raise SystemExit(f"non-uniform share {share:.2%} of {len(rows0)} tickers > "
+                                         f"{SF.NONUNIFORM_CAP:.0%} cap: {hit[:30]}")
+                    rows, info = SF.build_sue_rows(d, live, pulled_at, cal, nan_tickers=hit)
+                    if iso in v3_have:
+                        SF.check_pairing(rows, d)
+                    if iso in SF.BACKFILL_DATES:
+                        info["backfill_gate"] = SF.backfill_gate(rows, info, d, basis_ok=True, v3_exists=iso in v3_have)
+                    sue_rows[iso], sue_nan[iso] = rows, hit
+                    log(f"SUE preflight {iso}: {info}")
+                except (Exception, SystemExit) as e:   # noqa: BLE001
+                    sue_skipped[iso] = f"date: {type(e).__name__}: {e}"
+        for iso, why in sue_skipped.items():
+            log(f"SUE SKIPPED for {iso} (v3/ext/hedge unaffected): {why}")
+    log("preflight passed (blind, guards, insider freshness; SUE isolated)")
     man_before = manifest_snapshot()
 
     logrows = []
@@ -266,14 +294,27 @@ def run(dry=False):
             if n0 == 0 and n1 > 0:
                 ra = _recorded_at(csv, iso)
                 logrows.append([csv.name, iso, iso_week(d), ra, _late(iso, ra), n1])
-    # SUE, right after v3 (record_sue re-checks blindness, duplicates, pairing)
+    # SUE, right after v3 (record_sue re-checks blindness, duplicates, pairing).
+    # Isolated: a failure here is logged and skipped; hedge still records.
     for d in sue_dates:
         iso = d.date().isoformat()
-        out = SF.record_sue(d, sue_rows[iso])
+        if iso not in sue_rows:
+            continue
+        try:
+            out = SF.record_sue(d, sue_rows[iso])
+        except (Exception, SystemExit) as e:   # noqa: BLE001
+            sue_skipped[iso] = f"record: {type(e).__name__}: {e}"
+            log(f"SUE SKIPPED for {iso} at record (v3/ext/hedge unaffected): {e}")
+            continue
         ra = str(out["recorded_at"].iloc[0])
         logrows.append([SUE.name, iso, iso_week(d), ra, _late(iso, ra), int(len(out))])
         if v3_incomplete(iso):
             append_annotation(SUE.name, iso, SUE_INCOMPLETE_NOTE, "WO-15")
+        for tk in sue_nan[iso]:
+            SF.log_guard(iso, "nonuniform_sue_nan", tk, "Addendum A (b): eps vs reference not one constant ratio")
+        SF.accept_pull(pulled_at, iso)
+    for iso, why in sorted(sue_skipped.items()):
+        SF.log_guard(iso, "sue_skipped", "", why)
     for _w, d in todo[HEDGE.name]:
         iso = d.date().isoformat()
         FH.record_hedge(date=iso)
@@ -293,6 +334,8 @@ def run(dry=False):
     if not logrows:
         log("nothing to record (every week already has a record)")
     _, left = plan()
+    if sue_skipped:     # a skipped SUE date stays missing by design (isolation); logged above
+        left[SUE.name] = [x for x in left[SUE.name] if x[1].date().isoformat() not in sue_skipped]
     if any(left.values()):
         raise SystemExit(f"weeks still missing after run: {left}")
     return 0
