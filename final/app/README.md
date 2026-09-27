@@ -193,7 +193,15 @@ refresh actions (see below).
    they hard-code is replaced.
    Can take several minutes. The same sequence without the price pull is the
    "Retrain" button on the Today's Picks tab; "Retrain ALL models" (button 0)
-   is this plus a `features.py` rebuild for the sidebar and Universe tab.
+   is this plus a `features.py` rebuild for the sidebar and Universe tab, then
+   (since 2026-09-26, WO-14) `reset2026/refresh_working_panel.py --through latest
+   --record-weekly` (extends the v2 working panel and writes the weekly
+   forward-ledger records; needs SEC EDGAR network, no key), then the blend and
+   theoretical-model rescoring. It refuses to start if that script is missing.
+   The Sharadar step re-pulls, with `--force`, from the newest month already on
+   disk (the older of `panel/daily` and `panel/stocks`), so the current month
+   actually gets new days; with an empty panel it backfills from 2005-01.
+   The standalone blend/theoretical refresh buttons do NOT extend the v2 panel.
    **`SHARADAR_API_KEY` must be exported in the shell that launches Streamlit**
    (jobs inherit Streamlit's environment). Since 2026-09-24 both this button and
    "Retrain ALL models" refuse to start, with an error, when it isn't set; the

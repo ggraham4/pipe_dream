@@ -886,15 +886,39 @@ def render_data_updates():
             # history plot re-extends to include any newly-rolled-in
             # trading days. cm does NOT rebuild the panel itself -- it reads
             # the one bm just built.
+            #
+            # 2026-09-26 (WO-14, Gabe OK'd): refresh_working_panel.py runs
+            # between the base data steps (pm, which tops up Sharadar) and
+            # the blend. It extends the v2 working panel (composite_panel_v2
+            # + beta/outcome/ohlc companions) through the latest Sharadar day
+            # and writes the weekly forward-ledger records. The v2-switched
+            # scorers in bm/cm read that panel, so without this step they
+            # would rescore on a stale panel. Exit 0 = refreshed or no-op,
+            # 1 = failed (atomic swap, never partial); non-zero stops the
+            # sequence. Needs SEC EDGAR network for the Form 4 refresh, no
+            # key. Only here: bm.retrain_commands() also feeds the standalone
+            # blend button, which does no Sharadar pull and must not write
+            # weekly ledger records.
+            v2_refresh = paths.SRC_DIR / "reset2026" / "refresh_working_panel.py"
             cmds = ([[py, str(paths.SRC_DIR / "features.py")]] + pm.retrain_commands()
+                    + [[py, str(v2_refresh), "--through", "latest", "--record-weekly"]]
                     + bm.retrain_commands() + cm.retrain_commands())
             labels = (["Rebuild price features.parquet (sidebar + Universe tab)"]
                      + pm.PIT_STEP_LABELS
+                     + ["Refresh v2 working panel + weekly forward-ledger records"]
                      + ["Down-cap universe (blend)", "Quality factors (blend)",
                         "Composite panel (blend)", "Score today's blend"]
                      + ["Score today's theoretical model (composite alone)",
                         "Rebuild theoretical model's backtest-history plot"])
-            if _sharadar_key_preflight(cmds):
+            if not v2_refresh.exists():
+                # Don't skip the step: the blend would then rescore on the
+                # stale v1 panel and revert the live outputs.
+                st.error(
+                    f"Not started: `final/src/reset2026/{v2_refresh.name}` is missing, "
+                    "so the v2 working panel can't be refreshed. This checkout's `final/src` "
+                    "predates WO-14; update it to `integration` first."
+                )
+            elif _sharadar_key_preflight(cmds):
                 dr.run_step_sequence("retrain_all_models", cmds, labels, cwd=paths.SRC_DIR)
                 st.rerun()
         _job_status_block("retrain_all_models")
