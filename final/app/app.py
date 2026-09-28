@@ -164,7 +164,10 @@ def render_overview():
                 "**Composite + q75 blend** (rank-averaged 50/50, decile-within-vol-"
                 "quintile, inverse-vol weighted) — today's picks. Promoted 2026-09-19; "
                 "single-grid backtest, still negative vs SPY in absolute terms on the "
-                "2020-2026 hold-out. See the Today's Picks tab before acting on these."
+                "2020-2026 hold-out"
+                + (" (that number is the previous 9-factor blend's; the live blend "
+                   "adds seas and has no hold-out result)" if _blend_has_seas(blend_meta) else "")
+                + ". See the Today's Picks tab before acting on these."
             )
             show = blend_df[["ticker", "sector", "weight", "close"]].head(10).copy()
             show["weight"] = show["weight"].map(lambda v: f"{v:.2%}")
@@ -219,13 +222,37 @@ def render_overview():
 # --------------------------------------------------------------------------
 
 
+def _blend_meta():
+    """The blend's meta dict, or None (uncached file read, same as bm.get_signal)."""
+    return bm.get_signal()[1]
+
+
+def _theo_meta():
+    return cm.get_signal()[1]
+
+
+def _blend_has_seas(meta) -> bool:
+    """WO-20 (2026-09-27): True once the blend meta lists seas among its
+    composite-leg factors. Keyed on factor membership, not on the seas dict."""
+    return "seas" in ((meta or {}).get("factors") or {})
+
+
+def _theo_has_seas(meta) -> bool:
+    """WO-20: True once the Theoretical model's meta weights seas (icw9_seas)."""
+    return "seas" in ((meta or {}).get("factor_weights") or {})
+
+
 def render_stock_pit():
     """Today's Picks -- PRIMARY signal as of 2026-09-19: the composite+q75
     blend (final/src/current_signal_blend.py). Promoted over the prior
     q75/xrank display per Gabe's explicit instruction; the caveats below are
     not decorative -- read current_signal_blend.py's module docstring and
     final/models/2026-09-19-factor-composite-reset.md for the full context."""
-    st.warning(
+    df, meta = bm.get_signal()
+    # WO-20 (2026-09-27): the blend's composite leg may carry seas as a 10th
+    # factor. Factor counts come from the meta; old (9-factor) metas still render.
+    has_seas = _blend_has_seas(meta)
+    warning = (
         "**Read before acting on these picks.** The blend's backtest is a "
         "SINGLE-GRID result (q75's score cache has only one cadence -- this "
         "project's usual 40-offset average isn't available for it), and it "
@@ -235,8 +262,29 @@ def render_stock_pit():
         "instruction, over that recommendation. Full detail: "
         "`final/models/2026-09-19-factor-composite-reset.md`."
     )
-
-    df, meta = bm.get_signal()
+    if has_seas:
+        n = len(meta["factors"])
+        # Type-guarded: a draft WO-20 meta carried a placeholder string here.
+        def _d(x):
+            return x if isinstance(x, dict) else {}
+        pre = _d(_d(meta.get("backtest_summary")).get("wo20_seas_pre2020"))
+        old = _d(pre.get("blend_previous_9factor")).get("excess_cagr_vs_spy_pct")
+        new = _d(pre.get("blend_new_10factor_seas")).get("excess_cagr_vs_spy_pct")
+        if isinstance(old, (int, float)) and isinstance(new, (int, float)):
+            verb = "LOWERED" if new < old else "raised"
+            pre_txt = (f" On the pre-2020 single grid, adding seas {verb} the blend "
+                       f"({old:+.2f} -> {new:+.2f} %/yr excess vs SPY).")
+        else:
+            pre_txt = (" Its pre-2020 before/after is in the backtest summary "
+                       "(`wo20_seas_pre2020`).")
+        warning += (
+            f"\n\n**The -0.36% hold-out number is the PREVIOUS 9-factor blend's.** "
+            f"The live blend's composite leg has {n} equal-weight factors including "
+            f"seas (return seasonality, added 2026-09-27) and has **no hold-out "
+            f"result** of its own.{pre_txt} Seas was adopted by Gabe's decision, "
+            f"not on that backtest."
+        )
+    st.warning(warning)
     if st.button("🔁 Refresh the blend's picks", key="retrain_blend"):
         dr.run_step_sequence("stock_retrain_blend", bm.retrain_commands(),
                              ["down-cap universe", "quality factors", "build panel", "score blend"],
@@ -269,9 +317,18 @@ def render_stock_pit():
     c2.metric("Positions", meta["n_picks"])
     c3.metric("Eligible universe (cap2000 tier)", f"{meta['n_eligible_universe']:,}")
     st.write("**Construction:** " + meta["construction"])
-    with st.expander("The 9 composite factors, signs, and the q75/composite blend weight"):
+    with st.expander(f"The {len(meta['factors'])} composite factors, signs, and the "
+                     f"q75/composite blend weight"):
         st.json({"q75_weight": meta["q75_weight"], "composite_weight": meta["composite_weight"],
                 "composite_factor_signs": meta["factors"]})
+        if meta.get("model_version"):
+            st.caption(f"Model version: `{meta['model_version']}`")
+        if meta.get("seas"):
+            st.write("**seas (live score-time values)**")
+            st.json(meta["seas"])
+        if meta.get("picks_overlap_vs_previous_9factor_blend"):
+            st.write("**Today's picks vs the previous 9-factor blend's (monitoring only)**")
+            st.json(meta["picks_overlap_vs_previous_9factor_blend"])
     with st.expander("Backtest summary (single grid — see the warning above)"):
         st.json(meta["backtest_summary"])
     # Sort control (Gabe, 2026-09-26, "aggressive trading mode"): default to
@@ -328,18 +385,34 @@ def render_stock_theoretical():
     difference is that this signal has zero XGBoost/q75 contribution.
     Added 2026-09-22 per Gabe's request. See
     final/models/2026-09-22-composite-model-full-specification.md."""
-    st.info(
-        "**What this is.** The 8-factor composite (see Table 1 in the "
-        "full-specification doc), IC-shrinkage weighted, scored with ZERO "
-        "return-target fitting -- only the factor signs and the weighting "
-        "formula are decisions, both made before ever looking at a return. "
-        "This is the SAME composite that feeds the blend in Today's Picks; "
-        "shown alone here for direct before/after comparison. It fails "
-        "leave-one-year-out on the 2020-2026 hold-out (see below) -- treat "
-        "it as a tracked research candidate, not a recommendation."
-    )
-
     df, meta = cm.get_signal()
+    # WO-20 (2026-09-27): counts/weights come from the meta (8 factors = icw8,
+    # 9 with seas = icw9_seas). Old metas still render.
+    has_seas = _theo_has_seas(meta)
+    n_theo = len((meta or {}).get("factor_weights") or {})
+    n_blend = len((_blend_meta() or {}).get("factors") or {})
+    what = (f"The {n_theo}-factor composite" if n_theo else "The factor composite")
+    blend_leg = (f"its own frozen {n_blend}-factor equal-weight composite"
+                 if n_blend else "its own frozen equal-weight composite")
+    if has_seas:
+        holdout_txt = (
+            "seas (Heston-Sadka return seasonality) was added 2026-09-27 by Gabe's "
+            "decision; its weights are IN-SAMPLE and this model has **no hold-out "
+            "result** of its own (the hold-out is spent). The PREVIOUS 8-factor "
+            "version (icw8) fails leave-one-year-out on the 2020-2026 hold-out "
+            "(see below)")
+    else:
+        holdout_txt = ("It fails leave-one-year-out on the 2020-2026 hold-out "
+                       "(see below)")
+    st.info(
+        f"**What this is.** {what} (see Table 1 in the full-specification doc"
+        f"{' and the WO-20 doc for seas' if has_seas else ''}), IC-shrinkage "
+        "weighted, scored with ZERO return-target fitting -- only the factor "
+        "signs and the weighting formula are decisions. This is NOT the "
+        f"composite inside the blend in Today's Picks: the blend's leg is "
+        f"{blend_leg}, not this IC-weighted one. {holdout_txt} -- treat it as "
+        "a tracked research candidate, not a recommendation."
+    )
     if st.button("🔁 Refresh the theoretical model's picks", key="retrain_composite"):
         dr.run_step_sequence("stock_retrain_composite", cm.retrain_commands(),
                              ["score theoretical model", "rebuild backtest equity curve"],
@@ -380,30 +453,54 @@ def render_stock_theoretical():
     c2.metric("Positions", meta["n_picks"])
     c3.metric("Eligible universe (cap150 tier)", f"{meta['n_eligible_universe']:,}")
     st.write("**Construction:** " + meta["construction"])
-    with st.expander("The 8 factors: signs and IC-shrinkage weights"):
+    with st.expander(f"The {len(meta['factor_weights'])} factors: signs and IC-shrinkage weights"):
         st.json({"factor_signs": meta["factor_signs"], "factor_weights": meta["factor_weights"]})
+        if meta.get("model_version"):
+            st.caption(f"Model version: `{meta['model_version']}`")
+        if meta.get("seas"):
+            st.write("**seas (live score-time values)**")
+            st.json(meta["seas"])
+        if meta.get("picks_overlap_vs_icw8"):
+            st.write("**Today's picks vs the previous icw8 model's (monitoring only)**")
+            st.json(meta["picks_overlap_vs_icw8"])
     with st.expander("Backtest summary"):
         st.json(meta["backtest_summary"])
-    st.dataframe(
-        df[["ticker", "sector", "close", "market_cap", "volatility_60",
-            "composite_score", "weight"]]
-          .style.format({"close": "${:.2f}", "market_cap": "${:,.0f}",
-                          "volatility_60": "{:.2%}", "composite_score": "{:.3f}",
-                          "weight": "{:.2%}"}),
-        use_container_width=True, height=480,
-    )
+    cols = ["ticker", "sector", "close", "market_cap", "volatility_60",
+            "composite_score", "weight"] + (["seas"] if "seas" in df.columns else [])
+    fmt = {"close": "${:.2f}", "market_cap": "${:,.0f}", "volatility_60": "{:.2%}",
+           "composite_score": "{:.3f}", "weight": "{:.2%}"}
+    if "seas" in cols:
+        fmt["seas"] = "{:.2%}"
+    st.dataframe(df[cols].style.format(fmt, na_rep="—"), width="stretch", height=480)
     st.caption(meta["note"])
 
     st.divider()
-    st.subheader("Full backtest history: theoretical model vs SPY (2007–2026)")
+    # The curve is always the 8-factor icw8 model (build_backtest_equity_curve.py
+    # scores ICW.PRODUCTION_WEIGHTS). Once the live model is icw9_seas, say so.
+    if has_seas:
+        st.subheader("Full backtest history: PREVIOUS 8-factor model (icw8) vs SPY (2007–2026)")
+        curve_note = (
+            "**This curve is the PREVIOUS 8-factor model (icw8), not the live "
+            f"{meta.get('model_version', 'seas')} model.** The live {n_theo}-factor "
+            "version has no 2020+ curve: extending it into the hold-out era needs "
+            "Gabe's decision (the hold-out is spent). Its 2007-2019 in-era "
+            "comparison (in-sample weights) is in the backtest summary above, "
+            "under `in_era_backtest_2007_2019`. "
+        )
+        loyo_ptr = "the failed icw8 leave-one-year-out result (`icw8_holdout_loyo_status` above)"
+    else:
+        st.subheader("Full backtest history: theoretical model vs SPY (2007–2026)")
+        curve_note = ""
+        loyo_ptr = "the failed leave-one-year-out result above"
     st.caption(
+        curve_note +
         "Nomination era (2007-2019) and hold-out era (2020-2026) stitched "
-        "into one continuous compounding curve -- IC-weighted composite, "
-        "decile_volq construction, single offset, net of 15bp turnover cost. "
+        "into one continuous compounding curve -- IC-weighted 8-factor composite "
+        "(icw8), decile_volq construction, single offset, net of 15bp turnover cost. "
         "This is NOT a new hold-out spend: every number here reproduces an "
         "already-reported cell (see build_backtest_equity_curve.py's "
-        "docstring); this just makes it plottable and shows the 2019/2020 "
-        "boundary. Read the failed leave-one-year-out result above before "
+        f"docstring); this just makes it plottable and shows the 2019/2020 "
+        f"boundary. Read {loyo_ptr} before "
         "reading too much into how good this curve looks -- most of the "
         "hold-out-era gain concentrates in a single year (2020)."
     )
@@ -412,8 +509,10 @@ def render_stock_theoretical():
         st.info("No backtest_equity_curve.csv yet — run build_backtest_equity_curve.py "
                 "(final/src/reset2026/) or hit Refresh above.")
     else:
+        series = ("Previous 8-factor model, icw8 (net of costs)" if has_seas
+                  else "Theoretical model (net of costs)")
         chart_df = curve.set_index("date")[["composite_net_cum", "spy_cum"]].rename(
-            columns={"composite_net_cum": "Theoretical model (net of costs)", "spy_cum": "SPY"})
+            columns={"composite_net_cum": series, "spy_cum": "SPY"})
         st.line_chart(chart_df)
         boundary = curve[curve["era"] == "holdout"]["date"].min()
         if pd.notna(boundary):
@@ -421,7 +520,7 @@ def render_stock_theoretical():
                        f"Streamlit's line_chart doesn't draw boundary markers).")
         term = curve.iloc[-1]
         c1, c2, c3 = st.columns(3)
-        c1.metric("Terminal wealth (composite, net)", f"{term['composite_net_cum']:.2f}x")
+        c1.metric("Terminal wealth (icw8, net)" if has_seas else "Terminal wealth (composite, net)", f"{term['composite_net_cum']:.2f}x")
         c2.metric("Terminal wealth (SPY)", f"{term['spy_cum']:.2f}x")
         c3.metric("Windows", f"{len(curve)}")
 
@@ -490,11 +589,18 @@ def render_stock_query():
                 "theo_detail": "Theoretical detail",
             },
         )
-        st.caption(
-            "Neither model is a validated edge. The blend shows **-0.36%** excess vs SPY on "
-            "the 2020-2026 hold-out (single grid). The theoretical model **fails "
-            "leave-one-year-out** on the hold-out. Both are shown for tracking, not as proof."
-        )
+        # WO-20: per model, the hold-out numbers belong to the pre-seas versions.
+        b_txt = ("The **-0.36%** hold-out excess vs SPY (single grid) is the PREVIOUS "
+                 "9-factor blend's; the live blend (with seas, 2026-09-27) has **no hold-out "
+                 "result**." if _blend_has_seas(_blend_meta()) else
+                 "The blend shows **-0.36%** excess vs SPY on the 2020-2026 hold-out "
+                 "(single grid).")
+        t_txt = ("The leave-one-year-out **failure** is the PREVIOUS 8-factor theoretical "
+                 "model's (icw8); the live icw9_seas version has **no hold-out result**."
+                 if _theo_has_seas(_theo_meta()) else
+                 "The theoretical model **fails leave-one-year-out** on the hold-out.")
+        st.caption(f"Neither model is a validated edge. {b_txt} {t_txt} Both are shown "
+                   "for tracking, not as proof.")
 
         if feat is not None:
             for tk in tickers:
@@ -570,10 +676,14 @@ def render_model_agreement(mt: tuple):
                 "Composite score (theoretical, cap150)", format="%.3f"),
         },
     )
+    n_b = len((_blend_meta() or {}).get("factors") or {})
+    n_t = len((_theo_meta() or {}).get("factor_weights") or {})
+    b_txt = f"frozen {n_b}-factor" if n_b else "frozen"
+    t_txt = f"{n_t}-factor IC-weighted" if n_t else "IC-weighted"
     st.caption("Agreement is descriptive. Two models agreeing is not evidence either one is "
                "right. Some overlap is built in: both lean on the same composite factors (the "
-               "blend on the frozen 9-factor equal-weight composite plus q75, the theoretical "
-               "model on the 8-factor IC-weighted composite alone).")
+               f"blend on the {b_txt} equal-weight composite plus q75, the theoretical "
+               f"model on the {t_txt} composite alone).")
 
 
 def render_stock_universe():
