@@ -128,6 +128,18 @@ def month_bounds(ym):
     return f"{ym}-01", (last - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
 
 
+def _scrub(s, key=None):
+    """WO-19: strip the Sharadar key from text bound for stdout/logs.
+    requests' exception text carries the full URL, query string included."""
+    import re
+    from urllib.parse import quote
+    s = str(s)
+    for k in (key, os.environ.get("SHARADAR_API_KEY")):
+        if k:
+            s = s.replace(k, "***").replace(quote(k, safe=""), "***")
+    return re.sub(r"api_key=[^&\s'\"]+", "api_key=***", s)
+
+
 def fetch(table, params):
     last = None
     for attempt in range(RETRIES):
@@ -139,9 +151,9 @@ def fetch(table, params):
                 if not r.text.strip():
                     return []
                 return list(csv.DictReader(io.StringIO(r.text)))
-            last = f"HTTP {r.status_code}: {r.text[:150]}"
+            last = _scrub(f"HTTP {r.status_code}: {r.text[:150]}", API_KEY)
         except requests.RequestException as e:
-            last = f"{type(e).__name__}: {e}"
+            last = _scrub(f"{type(e).__name__}: {e}", API_KEY)
         wait = 2 ** attempt
         print(f"      retry {attempt + 1}/{RETRIES} in {wait}s -- {last}")
         time.sleep(wait)

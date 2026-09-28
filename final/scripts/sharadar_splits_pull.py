@@ -93,6 +93,18 @@ KNOWN_SPLITS = {
 }
 
 
+def _scrub(s, key=None):
+    """WO-19: strip the Sharadar key from text bound for stdout/logs.
+    requests' exception text carries the full URL, query string included."""
+    import re
+    from urllib.parse import quote
+    s = str(s)
+    for k in (key, os.environ.get("SHARADAR_API_KEY")):
+        if k:
+            s = s.replace(k, "***").replace(quote(k, safe=""), "***")
+    return re.sub(r"api_key=[^&\s'\"]+", "api_key=***", s)
+
+
 def fetch_table(table: str, ticker: str, extra_params: dict = None):
     params = {"api_key": API_KEY, "ticker": ticker, "format": "csv"}
     if extra_params:
@@ -100,7 +112,7 @@ def fetch_table(table: str, ticker: str, extra_params: dict = None):
     try:
         resp = requests.get(f"{BASE_URL}/{table}", params=params, timeout=30)
     except requests.RequestException as e:
-        print(f"    ERROR: request failed: {e}")
+        print(f"    ERROR: request failed: {_scrub(e, API_KEY)}")
         return None, None
     if resp.status_code != 200:
         print(f"    ERROR: HTTP {resp.status_code}: {resp.text[:300]}")

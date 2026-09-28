@@ -90,6 +90,18 @@ DEAD = {
 SIZE_DATES = ["2008-06-30", "2015-06-30", "2022-06-30"]
 
 
+def _scrub(s, key=None):
+    """WO-19: strip the Sharadar key from text bound for stdout/logs.
+    requests' exception text carries the full URL, query string included."""
+    import re
+    from urllib.parse import quote
+    s = str(s)
+    for k in (key, os.environ.get("SHARADAR_API_KEY")):
+        if k:
+            s = s.replace(k, "***").replace(quote(k, safe=""), "***")
+    return re.sub(r"api_key=[^&\s'\"]+", "api_key=***", s)
+
+
 def raw(table, params=None, timeout=120, fmt="csv"):
     p = {"api_key": API_KEY, "format": fmt}
     if params:
@@ -97,7 +109,7 @@ def raw(table, params=None, timeout=120, fmt="csv"):
     try:
         r = requests.get(f"{BASE_URL}/{table}", params=p, timeout=timeout)
     except requests.RequestException as e:
-        return None, f"request failed: {e}"
+        return None, f"request failed: {_scrub(e, API_KEY)}"
     if r.status_code != 200:
         return None, f"HTTP {r.status_code}: {r.text[:200].strip()}"
     return r, None
