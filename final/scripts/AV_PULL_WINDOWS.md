@@ -5,6 +5,8 @@ Windows box runs it exactly as fast as the Mac — and can stay on 24/7.
 Only the pull moves; building the chain/features and all modelling stay on
 the Mac.
 
+**2026-09-27 (WO-20):** the 2026-09-23 run died on `http.client.IncompleteRead` (not an OSError) at monthly 2010-08-18; `av_options_pull.py` now retries every `http.client.HTTPException` with the same backoff, and after 5 failed tries logs the name as `error` and moves on (re-tried on the next run). Resume on the Mac (skips every ok/no_data row already in pull_log.sqlite): `ALPHAVANTAGE_API_KEY=... AV_PULL_ARGS="--passes monthly --only-tier cap2000" zsh final/scripts/av_options_run_pull.sh`, run from a checkout that has this fix (the launcher copies its sibling `av_options_pull.py` into `final/data/alphavantage/bin/`).
+
 ## 1. One-time setup (PowerShell)
 ```powershell
 winget install -e --id Python.Python.3.11
