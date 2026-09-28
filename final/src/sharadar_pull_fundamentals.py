@@ -82,6 +82,18 @@ NUMERIC = [c for c in KEEP if c not in
            ("ticker", "dimension", "date", "calendardate", "reportperiod")]
 
 
+def _scrub(s, key=None):
+    """WO-19: strip the Sharadar key from text bound for stdout/logs.
+    requests' exception text carries the full URL, query string included."""
+    import re
+    from urllib.parse import quote
+    s = str(s)
+    for k in (key, os.environ.get("SHARADAR_API_KEY")):
+        if k:
+            s = s.replace(k, "***").replace(quote(k, safe=""), "***")
+    return re.sub(r"api_key=[^&\s'\"]+", "api_key=***", s)
+
+
 def get(params, timeout=180, tries=4):
     last = None
     for attempt in range(tries):
@@ -93,9 +105,9 @@ def get(params, timeout=180, tries=4):
                 if not r.text.strip():
                     return []
                 return list(csv.DictReader(io.StringIO(r.text)))
-            last = f"HTTP {r.status_code}: {r.text[:150]}"
+            last = _scrub(f"HTTP {r.status_code}: {r.text[:150]}", API_KEY)
         except requests.RequestException as e:
-            last = f"{type(e).__name__}: {e}"
+            last = _scrub(f"{type(e).__name__}: {e}", API_KEY)
         wait = 2 ** attempt
         print(f"      retry {attempt + 1}/{tries} in {wait}s -- {last}")
         time.sleep(wait)
