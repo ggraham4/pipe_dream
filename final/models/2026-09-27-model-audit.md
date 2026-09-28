@@ -169,6 +169,17 @@ about 3 minutes).
   −1.41 %/yr (blend10) vs −0.63 %/yr (blend9). 2020 is strongly positive and
   2021 and 2023–2025 are negative (per-year excess below). Adding seas changed
   B by −0.02 %/yr (Theoretical) and −0.78 %/yr (blend, single grid).
+  This is **not** evidence that the factors stopped working. In B the main
+  factors keep their signs: gross_profitability t +3.45, net_issuance_pct
+  −4.52, pct_from_high_252 +2.29 and short interest −2.89, all on cap150.
+  Excess vs SPY for a down-cap, vol-bucketed decile book also carries
+  universe and construction drag. WO-21 is decomposing that drag for A. No
+  p-value claim is made.
+- **Robustness of the flags.** F1, F2 and S1 do not depend on the reading
+  choices. If F2 is measured against each factor's own delta sd40 instead of
+  the full book's sd40, the only negative delta that clears it is
+  net_issuance_pct in A (−0.35 vs 0.16), and it fails in B (−0.28 vs 0.48).
+  S1 fails on the t half alone (+0.23), whatever the delta.
 - **In B, seas is about zero.** IC +0.0017 (t +0.23), sector t +0.67. Its
   per-year IC is mixed: 2020–2022 are negative, 2023–2024 positive, and 2026
   (Jan–Jul) is −3.6. In A it was +0.0113 (t +2.84). Its implied weight falls
