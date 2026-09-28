@@ -1,0 +1,86 @@
+{
+ "w9_full_precision": {
+  "momentum_12_1": 0.04015675154996681,
+  "pct_from_high_252": 0.010502876119001277,
+  "volatility_60": -0.010502876119001277,
+  "gross_profitability": 0.48077260302563174,
+  "accruals": -0.13137110561395068,
+  "net_issuance_pct": -0.11289954461046638,
+  "days_to_next_filing_seasonal": -0.010502876119001277,
+  "short_interest_days_to_cover": -0.010502876119001277,
+  "seas": 0.19278849072397938
+ },
+ "w9_frozen_4dp": {
+  "momentum_12_1": 0.0402,
+  "pct_from_high_252": 0.0105,
+  "volatility_60": -0.0105,
+  "gross_profitability": 0.4808,
+  "accruals": -0.1314,
+  "net_issuance_pct": -0.1129,
+  "days_to_next_filing_seasonal": -0.0105,
+  "short_interest_days_to_cover": -0.0105,
+  "seas": 0.1928
+ },
+ "seas_t": 2.83557806966033,
+ "scorer_agreement": {
+  "2008-03-14": {
+   "rows": 3027,
+   "max_abs_diff": 1.1102230246251565e-16,
+   "nan_pattern_equal": true,
+   "seas_coverage": 0.7717211760819292
+  },
+  "2012-07-02": {
+   "rows": 2861,
+   "max_abs_diff": 1.6653345369377348e-16,
+   "nan_pattern_equal": true,
+   "seas_coverage": 0.8444599790283118
+  },
+  "2016-11-15": {
+   "rows": 3007,
+   "max_abs_diff": 1.1102230246251565e-16,
+   "nan_pattern_equal": true,
+   "seas_coverage": 0.762221483205853
+  },
+  "2019-12-31": {
+   "rows": 3025,
+   "max_abs_diff": 1.1102230246251565e-16,
+   "nan_pattern_equal": true,
+   "seas_coverage": 0.7910743801652893
+  }
+ },
+ "in_sample_note": "weights fit on the same full-era t's the backtest is read on",
+ "icw8": {
+  "excess_cagr_vs_spy_mean40": 0.028541632641009042,
+  "sd40": 0.003042822312132165,
+  "min40": 0.019304177269202083,
+  "max40": 0.0340432647575399,
+  "offsets_positive": 40,
+  "loyo_min": 0.017058446009678114,
+  "loyo_min_dropped_year": 2009,
+  "loyo_max": 0.040696298155914086,
+  "post2011_10": 0.00012178267308571079
+ },
+ "icw9_seas_full_precision": {
+  "excess_cagr_vs_spy_mean40": 0.03487104914180321,
+  "sd40": 0.0022419032551743434,
+  "min40": 0.029514759801415123,
+  "max40": 0.03934894830921827,
+  "offsets_positive": 40,
+  "loyo_min": 0.02461970870518042,
+  "loyo_min_dropped_year": 2009,
+  "loyo_max": 0.04643286087792838,
+  "post2011_10": 0.0050964529336559785
+ },
+ "icw9_seas_frozen_4dp": {
+  "excess_cagr_vs_spy_mean40": 0.03486520057904396,
+  "sd40": 0.002231013616376442,
+  "min40": 0.029529683517546798,
+  "max40": 0.039397285694666176,
+  "offsets_positive": 40,
+  "loyo_min": 0.024612885740791055,
+  "loyo_min_dropped_year": 2009,
+  "loyo_max": 0.046428487638438765,
+  "post2011_10": 0.005091125577234209
+ },
+ "frozen_4dp_minus_coo_full_precision": -5.848562759251663e-06
+}
