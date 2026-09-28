@@ -247,20 +247,25 @@ ticker, date and `gross_return_40`. Output: `out/seasonality/panel_swap_check.js
 | composite_panel_v2 | `796eb808…44f0` (= pre-reg hash) | `30f636fd…e0ff` | `75c2f61c…15cb`, 13,253,466 rows | **yes** |
 | outcome_cache_v2 | `7b6cf598…83f1` | `ccceacc8…1ad8` | `4a40cd1f…17a9`, 13,258,800 rows | **yes** |
 
-- **Which file the screen read.** Its hash was logged as `796eb808…` (the
-  backup). The column-c load finished 2 seconds after the swap, so it may
-  have opened either file. The in-era slices are byte-identical, so this
-  makes no difference to any number.
+- **Which file the screen read.** The timeline shows it read a mix of old
+  and new files:
+  - `outcome_cache_v2`: the old file, `7b6cf598`. Its read finished by 22:44:50, before the 22:44:53 swap.
+  - v1 `composite_panel.parquet` (both old-grid reads): the old file. Both reads came before its 22:46:51 rewrite.
+  - `composite_panel_v2`, sector column: the new file, `30f636fd`. It was re-read after 22:44:50.
+  - `composite_panel_v2`, column-c load: this straddled the 22:44:48 swap. The refresh renames a temp file into place and keeps the old inode as the hard-linked backup, so a handle opened before the swap most likely read `796eb808`.
+  - Which file each read hit does not matter, because every in-era slice is identical.
 - **Same universe.** The screen's universe matches the pre-reg validation run
-  (22:41, entirely before the swap): 9,756,141 rows, 6,508 tickers, 2,987,605
-  added rows, and 79.24% coverage.
-- **Harness reconcile.** It reproduced +0.028541633 exactly again.
-- **Old-grid ticker set.** `composite_panel.parquet` was also rewritten, at
-  22:46:51. It now lists 4,013 tickers against the 4,011 reference; the
-  extras are CLGX and SECZ. Neither has any in-era v2 row, so the old-grid
-  flag of every screened row is unchanged.
-- **`tickers_master.csv`** (the SPAC rule) was last written at 22:27, before
-  both the validation run and the screen.
+  (22:41, before the swap): 9,756,141 rows, 6,508 tickers, 2,987,605 added
+  rows, and 79.24% coverage. The harness reconcile reproduced +0.028541633
+  exactly again.
+- **Old-grid ticker set, checked in era.** The rewritten
+  `composite_panel.parquet` lists 4,013 tickers across the whole file,
+  against the 4,011 reference. The two extras, CLGX and SECZ, have **0**
+  in-era v2 rows. Recomputed with the current set, column c cap150 has
+  9,756,141 rows and 2,987,605 added rows, both equal to the pre-reg values.
+  So `all_identical` is `true` in `panel_swap_check.json`.
+- **`tickers_master.csv`** (the SPAC rule) was last written at 2026-09-26
+  22:27 EDT, before both the validation run and the screen.
 - **Conclusion: the in-era slice is identical and the result stands.**
 
 ### Gates
@@ -328,6 +333,10 @@ Only 0.03% of rows have an Unknown sector.
 - **(a) Signal decay in the last three years.** 2017, 2018 and 2019 are all negative: −14.6%, −2.9% and −0.8% of the sum. Every year from 2007 to 2016 is positive. This fits the published post-2010 weakening of seasonality in large caps, and it is the main reason to treat this as a forward-column nomination and not a promotion.
 - **(b) The OOS IC of the composite does not improve.** icw9 is 0.04831 and icw8 is 0.04848. The +0.18pp/yr book gain comes from the top-decile tail and is not a broad improvement in ranking. It still beat all 20 shuffle draws, and it is about 2.5× the WO-13 `sue` increment (+0.073pp).
 - **(c) The fit-even weight of 0.169 is large** compared with the 0.03–0.06 of past additions. That is because the even-year t is 2.67. The frozen rule is unchanged.
-- **(d) Price basis.** The factor uses SEP `closeadj`, which is dividend adjusted, while the labels exclude dividends (see Implementation note 3). A seasonal dividend month could put a small same-month bias into `seas`. It is not a look-ahead, because every month used ends before t. It is also not tested here, since a close-based variant would be a second trial.
+- **(d) Price basis.**
+  - The factor uses SEP `closeadj`, which is dividend adjusted. The labels exclude dividends (see Implementation note 3).
+  - The one mechanical dividend link would favour the close-based variant. A close-based `seas` would share the recurring ex-dividend price drop with the close-based label, and that would add IC.
+  - `closeadj` strips that drop out, so the registered choice is conservative with respect to this mechanism.
+  - It is not a look-ahead, because every month used ends before t.
 - **(e) Pre-2005 prices** come from a new pull on 2026-09-26 that was spliced onto the 2026-09-09 basis. 238 tickers (3.9%) were rescaled. The hand checks and the PIT assert pass.
 - **(f)** This is a nomination only. Confirmation is forward-only and Gabe's call.

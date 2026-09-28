@@ -65,16 +65,32 @@ def main():
         r[name] = {"backup": str(old), "backup_file_sha256": file_sha(old), "backup_slice": a,
                    "current": str(new), "current_file_sha256": file_sha(new), "current_slice": b,
                    "in_era_slice_identical": a == b}
+    # old-grid set: compared IN ERA. The whole-file v1 set may carry post-2019
+    # names; what matters is the `added` flag of every screened column-c row.
     old_t = set(pd.read_parquet(R26 / "composite_panel.parquet", columns=["ticker"])["ticker"].astype(str))
-    ref = set((R26.parent.parent / "src" / "reset2026" / "old_grid_tickers_4011.txt").read_text().split()) \
-        if (Path(__file__).resolve().parents[1] / "reset2026" / "old_grid_tickers_4011.txt").exists() else None
-    if ref is None:
-        ref = set((Path(__file__).resolve().parents[1] / "reset2026" / "old_grid_tickers_4011.txt").read_text().split())
-    r["old_grid_ticker_set"] = {"n_current": len(old_t), "n_reference_4011": len(ref), "identical": old_t == ref}
+    ref = set((Path(__file__).resolve().parents[1] / "reset2026" / "old_grid_tickers_4011.txt").read_text().split())
+    extra, missing = sorted(old_t - ref), sorted(ref - old_t)
+    v2 = pd.read_parquet(R26 / "composite_panel_v2.parquet", columns=["ticker", "date", "eligible_cap150"],
+                         filters=FILT)
+    v2["ticker"] = v2["ticker"].astype(str)
+    diff_rows = {t: int((v2["ticker"] == t).sum()) for t in extra + missing}
+    import downcap_v2_readout as DR
+    p, _ = DR.load_column("c")
+    p = p[p["eligible_cap150"]]
+    added_now = int((~p["ticker"].isin(old_t)).sum())
+    val = json.loads((OUT / "validate_seas.json").read_text())
+    r["old_grid_ticker_set"] = {"n_current_whole_file": len(old_t), "n_reference_4011": len(ref),
+                                "extra": extra, "missing": missing,
+                                "in_era_v2_rows_of_differing_tickers": diff_rows,
+                                "colc_cap150_rows_now": int(len(p)), "colc_cap150_rows_prereg": val["rows"],
+                                "added_rows_now": added_now, "added_rows_prereg": val["added_rows"],
+                                "in_era_identical": bool(sum(diff_rows.values()) == 0 and added_now == val["added_rows"]
+                                                         and len(p) == val["rows"])}
+    mt = (SH / "tickers_master.csv").stat().st_mtime
+    r["tickers_master_mtime_local"] = pd.Timestamp(mt, unit="s", tz="UTC").tz_convert("America/New_York").isoformat()
     tm = pd.read_csv(SH / "tickers_master.csv", dtype=str, usecols=["ticker", "sicindustry"]).drop_duplicates("ticker")
-    r["tickers_master_mtime"] = pd.Timestamp((SH / "tickers_master.csv").stat().st_mtime, unit="s").isoformat()
     r["spac_count_current"] = int(tm["sicindustry"].fillna("").str.contains("Blank Check").sum())
-    r["all_identical"] = all(r[k]["in_era_slice_identical"] for k in pairs) and r["old_grid_ticker_set"]["identical"]
+    r["all_identical"] = all(r[k]["in_era_slice_identical"] for k in pairs) and r["old_grid_ticker_set"]["in_era_identical"]
     (OUT / "panel_swap_check.json").write_text(json.dumps(r, indent=2))
     print(json.dumps(r, indent=2))
 

@@ -34,11 +34,24 @@
     "in_era_slice_identical": true
   },
   "old_grid_ticker_set": {
-    "n_current": 4013,
+    "n_current_whole_file": 4013,
     "n_reference_4011": 4011,
-    "identical": false
+    "extra": [
+      "CLGX",
+      "SECZ"
+    ],
+    "missing": [],
+    "in_era_v2_rows_of_differing_tickers": {
+      "CLGX": 0,
+      "SECZ": 0
+    },
+    "colc_cap150_rows_now": 9756141,
+    "colc_cap150_rows_prereg": 9756141,
+    "added_rows_now": 2987605,
+    "added_rows_prereg": 2987605,
+    "in_era_identical": true
   },
-  "tickers_master_mtime": "2026-09-27T02:27:36.584638834",
+  "tickers_master_mtime_local": "2026-09-26T22:27:36.584638834-04:00",
   "spac_count_current": 1653,
-  "all_identical": false
+  "all_identical": true
 }
