@@ -116,6 +116,31 @@ PRODUCTION_WEIGHTS = {
     "short_interest_days_to_cover": -0.0130,
 }
 
+# WO-20 (2026-09-27, Gabe: "Seasonality looks very good so you should add it
+# to the model"): the LIVE Theoretical composite (current_signal_composite.py)
+# is icw9_seas = the 8 production factors + Heston-Sadka return seasonality
+# `seas` (WO-18 definition, final/src/seasonality/build_seas.py; live values
+# from final/src/seasonality/seas_live.py). Same frozen rule as above,
+# w_k = sign_k * max(0.1, |t_k|-1) / sum, on the 8 full-era t's of
+# ic_weighted_composite_report.json plus seas's WO-18 pooled NW t (sign +1).
+# IN-SAMPLE: the weights come from the same t's the backtest is read on.
+# PRODUCTION_WEIGHTS (icw8) above is unchanged -- the v3/ext/hedge/sue
+# ledgers reference it. `seas` is NOT added to composite.FACTOR_SIGNS.
+SEAS_T = 2.83557806966033          # WO-18 seas_screen_report.json ic.pooled.t
+MODEL_VERSION_V9_SEAS = "ic_weighted_seas_2026-09-27"
+SIGNS_V9_SEAS = {**C.FACTOR_SIGNS, "seas": +1}
+PRODUCTION_WEIGHTS_V9_SEAS = {
+    "momentum_12_1": 0.0402,
+    "pct_from_high_252": 0.0105,
+    "volatility_60": -0.0105,
+    "gross_profitability": 0.4808,
+    "accruals": -0.1314,
+    "net_issuance_pct": -0.1129,
+    "days_to_next_filing_seasonal": -0.0105,
+    "short_interest_days_to_cover": -0.0105,
+    "seas": 0.1928,
+}
+
 
 def compute_composite_ic_weighted(df_date, weights=None):
     """Drop-in analog to composite.compute_composite(), using
