@@ -167,6 +167,9 @@ noscore 0.048. Pre: 0.907 / 0.227 / 0.066.
 - (c) = 31.5 % < 1/3 → no turnover work order.
 - The gross basis gives the same triggers (a_g 70.3 %, b_g −1.7 %,
   c 31.5 %), so there is no disagreement between the bases.
+- The outcome holds on every one of the 5 draws, not only the mean. With
+  per-draw T in [−2.92, −2.70], the (a) share runs 0.68–0.74 (all ≥ 2/3)
+  and the (c) share runs 0.30–0.32 (all < 1/3).
 
 As expected in section 1.4:
 - (c) sits just under the 1/3 line (analytic ≈ 31 %).
@@ -187,11 +190,16 @@ As expected in section 1.4:
 Net selection exceeds gross selection by about 0.67, because the random
 book pays about 0.67 %/yr more in costs than the score book.
 
-Reading of the map's forward formula (descriptive, not a forecast), post
-window, net: universe −1.99 + score-book construction/selection over the
-no-score book +2.00 = +0.01 vs SPY. Measured against the random null, the
-selection of +2.78 sits on top of a −2.76 random book, and 0.77 of that
-random book's drag is null-only churn.
+**Map's forward formula, taken literally** (post, net, descriptive, not
+a forecast): selection − universe drag = +2.78 − 1.99 = **+0.79 %/yr**
+vs SPY.
+
+Caveat: the realised post-window score book was +0.01 vs SPY. The ≈ 0.77
+gap is (b), the random null's own churn cost (random cost −0.87 vs live
+cost −0.20), which the live book never pays. Net selection against the
+null therefore includes about 0.67 of cost difference; gross selection
+is +2.10. Which formula to use forward is for the COO and Gabe to decide.
+This doc does not choose one.
 
 ### 2.5 COO addendum: icw8 selection (score − random, net) across offsets
 
@@ -244,8 +252,12 @@ Random book (5-draw mean), common sample where IWM is finite.
   −1.79 %/yr (t −4.06). Pre: slope +0.71, alpha +0.25 %/yr (t +0.27).
 - **Raw return on IWM:** R² 0.97, alpha +0.60 %/yr post (t +1.19). The
   cap150 universe book behaves like about 0.8 × IWM.
-- About −0.7 of the post drag is the small-cap spread (0.64 × −1.10). Most
-  of the rest is the 0.87 null churn cost, plus a residual.
+- The OLS sample differs from the headline. It uses full-calendar chains
+  and the IWM-finite window ending 2019-11-01, so its mean post random
+  excess is −2.51 %/yr, not the headline −2.76.
+- Of that −2.51, about −0.7 is the small-cap spread (0.64 × −1.10). The
+  remainder is the −1.79 alpha, and the 0.87 null churn cost is about
+  half of it.
 
 Score book, post: on SPY slope −0.045 (t −1.12), alpha +0.90 % (t +0.60);
 on IWM slope +0.099, alpha −0.74 % (t −0.48).
