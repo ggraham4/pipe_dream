@@ -70,6 +70,12 @@ SEAS_MIN_COVERAGE = 0.60     # below this the SEP files look broken: the date is
 MIN_COUNTED = 6
 H = 40
 TOL_ICW8 = 1e-12
+# Addendum A (2026-09-27, before any record): a date whose side-ledger row set
+# has fewer than MIN_ROWS rows is SKIPPED (raised in the build step, so it is
+# isolated and logged), never appended as a 0-row / tiny record. A 0-row
+# append would be invisible to recorded_weeks and fail record_weekly's final
+# "weeks still missing" check after v3/ext/hedge recorded.
+MIN_ROWS = 100
 
 
 def log(m):
@@ -141,6 +147,8 @@ def build_seas_rows(t):
         "seas_nyears": sf["seas_nyears"].to_numpy(), "seas_target_month": info["target_month"],
         "icw8_score": s8, "icw9_seas_score": s9,
     })[valid].reset_index(drop=True)
+    if len(out) < MIN_ROWS:
+        raise SystemExit(f"seas: only {len(out)} rows on {t.date()} (< {MIN_ROWS}); skipped")
     out["icw9_seas_rank_pct"] = out["icw9_seas_score"].rank(pct=True, na_option="keep")
     fin = np.isfinite(out["seas"].to_numpy(np.float64))
     info.update({"rows": int(len(out)), "coverage_rows": float(fin.mean()) if len(out) else float("nan")})
@@ -222,6 +230,8 @@ def build_blend_rows(t):
     f, info = csb().blend_scores_at(t)
     ok = np.isfinite(f["blend_seas10_score"].to_numpy(np.float64)) | np.isfinite(f["blend_prev9_score"].to_numpy(np.float64))
     f = f[ok].reset_index(drop=True)
+    if len(f) < MIN_ROWS:
+        raise SystemExit(f"blend_seas: only {len(f)} rows on {t.date()} (< {MIN_ROWS}); skipped")
     f.insert(0, "panel_date", t.date().isoformat())
     f.insert(1, "recorded_at", "")
     f.insert(2, "blend_version", BLEND_VERSION)
@@ -431,7 +441,8 @@ def selftest():
     """Latest v3 date: seas rows build, pairing with v3 icw8 holds to 1e-12,
     icw9_seas equals an independent score over the same cross-section; blend
     rows build and equal blend_scores_at. Reads no label value (only the
-    blindness count), writes nothing.
+    blindness count). Writes nothing to the store; the CLI saves the result
+    to final/out/seasonality/seas_forward_selftest.json.
     Pairing is only meaningful against the panel the v3 record was made on:
     a later refresh can add tickers / revise rows of past dates (measured
     2026-09-27: the 09-26 refresh adds 5 names to 09-24). So the dated
@@ -477,7 +488,9 @@ if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "status"
     if mode == "selftest":
         r = selftest()
-        (HERE.parent.parent / "out" / "seasonality" / "seas_forward_selftest.json").write_text(json.dumps(r, indent=1, default=str))
+        od = HERE.parent.parent / "out" / "seasonality"
+        od.mkdir(parents=True, exist_ok=True)
+        (od / "seas_forward_selftest.json").write_text(json.dumps(r, indent=1, default=str))
     elif mode == "plan":
         log(f"seas: {[d.date().isoformat() for d in todo_dates()]}; "
             f"blend_seas: {[d.date().isoformat() for d in blend_todo_dates()]}")

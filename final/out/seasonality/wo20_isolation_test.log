@@ -16,11 +16,11 @@
   prediction_ledger_seas.csv dates: ['2026-09-18']
   prediction_ledger_blend_seas.csv dates: ['2026-09-18']
   log tail:
-prediction_ledger_v3.csv,2026-09-18,2026-W38,2026-09-27T22:02:35.200405,True,3057
-prediction_ledger_ext.csv,2026-09-18,2026-W38,2026-09-27T22:02:38.545053,True,3057
-prediction_ledger_seas.csv,2026-09-18,2026-W38,2026-09-27T22:02:39.706433,True,3057
-prediction_ledger_blend_seas.csv,2026-09-18,2026-W38,2026-09-27T22:02:40.113304,True,1632
-prediction_ledger_hedge.csv,2026-09-18,2026-W38,2026-09-27T22:02:41.273518,True,464
+prediction_ledger_v3.csv,2026-09-18,2026-W38,2026-09-27T22:10:45.223999,True,3057
+prediction_ledger_ext.csv,2026-09-18,2026-W38,2026-09-27T22:10:46.756598,True,3057
+prediction_ledger_seas.csv,2026-09-18,2026-W38,2026-09-27T22:10:47.281485,True,3057
+prediction_ledger_blend_seas.csv,2026-09-18,2026-W38,2026-09-27T22:10:47.555496,True,1632
+prediction_ledger_hedge.csv,2026-09-18,2026-W38,2026-09-27T22:10:48.190485,True,464
 MAIN STORE UNCHANGED: True []
 V3/EXT/HEDGE RECORDED 2026-09-18: True
 ######## plan_fail
@@ -94,14 +94,14 @@ V3/EXT/HEDGE RECORDED 2026-09-18: True
   prediction_ledger_blend_seas.csv dates: []
 --- ledger_seas_guard_log.csv
 logged_at,ledger,panel_date,iso_week,event,detail
-2026-09-27T22:03:59.101384,blend_seas,2026-09-18,2026-W38,blend_seas_skipped,date: RuntimeError: FORCED blend_scores_at failure (isolation test)
+2026-09-27T22:11:07.754890,blend_seas,2026-09-18,2026-W38,blend_seas_skipped,date: RuntimeError: FORCED blend_scores_at failure (isolation test)
 
   log tail:
 prediction_ledger_hedge.csv,2026-09-24,2026-W39,2026-09-25T22:54:44.726007,False,462
-prediction_ledger_v3.csv,2026-09-18,2026-W38,2026-09-27T22:03:56.479548,True,3057
-prediction_ledger_ext.csv,2026-09-18,2026-W38,2026-09-27T22:03:58.372923,True,3057
-prediction_ledger_seas.csv,2026-09-18,2026-W38,2026-09-27T22:03:59.070958,True,3057
-prediction_ledger_hedge.csv,2026-09-18,2026-W38,2026-09-27T22:03:59.905627,True,464
+prediction_ledger_v3.csv,2026-09-18,2026-W38,2026-09-27T22:11:05.666447,True,3057
+prediction_ledger_ext.csv,2026-09-18,2026-W38,2026-09-27T22:11:07.091032,True,3057
+prediction_ledger_seas.csv,2026-09-18,2026-W38,2026-09-27T22:11:07.734210,True,3057
+prediction_ledger_hedge.csv,2026-09-18,2026-W38,2026-09-27T22:11:08.573262,True,464
 MAIN STORE UNCHANGED: True []
 V3/EXT/HEDGE RECORDED 2026-09-18: True
 ######## seas_record
@@ -186,5 +186,34 @@ prediction_ledger_v3.csv,2026-09-18,2026-W38,2026-09-27T22:05:55.287586,True,305
 prediction_ledger_ext.csv,2026-09-18,2026-W38,2026-09-27T22:05:56.714769,True,3057
 prediction_ledger_blend_seas.csv,2026-09-18,2026-W38,2026-09-27T22:05:57.005020,True,1632
 prediction_ledger_hedge.csv,2026-09-18,2026-W38,2026-09-27T22:05:57.621448,True,464
+MAIN STORE UNCHANGED: True []
+V3/EXT/HEDGE RECORDED 2026-09-18: True
+######## blend_empty
+=== mode blend_empty: record_weekly rc=0
+  ledger_record_annotations.csv: 599 -> 599 bytes, prefix hash HOLDS
+  ledger_record_log.csv: 562 -> 895 bytes, prefix hash HOLDS
+  prediction_ledger.csv: 354337 -> 354337 bytes, prefix hash HOLDS
+  prediction_ledger_ext.csv: 336772 -> 799265 bytes, prefix hash HOLDS
+  prediction_ledger_hedge.csv: 100319 -> 198858 bytes, prefix hash HOLDS
+  prediction_ledger_v2.csv: 362853 -> 362853 bytes, prefix hash HOLDS
+  prediction_ledger_v3.csv: 450475 -> 1071849 bytes, prefix hash HOLDS
+  NEW ledger_seas_guard_log.csv: 200 bytes
+  NEW prediction_ledger_seas.csv: 481239 bytes
+  prediction_ledger_v3.csv dates: ['2026-09-08', '2026-09-18']
+  prediction_ledger_ext.csv dates: ['2026-09-08', '2026-09-18']
+  prediction_ledger_hedge.csv dates: ['2026-09-08', '2026-09-18']
+  prediction_ledger_sue.csv dates: []
+  prediction_ledger_seas.csv dates: ['2026-09-18']
+  prediction_ledger_blend_seas.csv dates: []
+--- ledger_seas_guard_log.csv
+logged_at,ledger,panel_date,iso_week,event,detail
+2026-09-27T22:10:17.071164,blend_seas,2026-09-18,2026-W38,blend_seas_skipped,date: SystemExit: blend_seas: only 0 rows on 2026-09-18 (< 100); skipped
+
+  log tail:
+prediction_ledger_hedge.csv,2026-09-24,2026-W39,2026-09-25T22:54:44.726007,False,462
+prediction_ledger_v3.csv,2026-09-18,2026-W38,2026-09-27T22:10:15.175434,True,3057
+prediction_ledger_ext.csv,2026-09-18,2026-W38,2026-09-27T22:10:16.563522,True,3057
+prediction_ledger_seas.csv,2026-09-18,2026-W38,2026-09-27T22:10:17.056093,True,3057
+prediction_ledger_hedge.csv,2026-09-18,2026-W38,2026-09-27T22:10:17.667504,True,464
 MAIN STORE UNCHANGED: True []
 V3/EXT/HEDGE RECORDED 2026-09-18: True

@@ -12,6 +12,7 @@ modes:
   blend_half   record_blend appends THEN raises -> reported half-written (rc 1) AFTER
                v3/ext/hedge/seas recorded
   guard_fail   seas_build forced AND log_guard raises -> still v3/ext/hedge/blend record
+  blend_empty  blend_scores_at returns 0 rows      -> blend_seas skipped (Addendum A MIN_ROWS), rc 0
 Every write path is patched to <scratch_dir>. v3/ext/hedge are truncated (byte
 prefix) to drop the 2026-09-18 and 2026-09-24 records so there is a week to
 record; START_AFTER of the side ledgers is set to 2026-09-08 (test only) so
@@ -110,6 +111,12 @@ elif mode == "blend_half":
         _orig(t, rows)
         raise RuntimeError("FORCED failure AFTER the blend_seas append (isolation test)")
     SS.record_blend = _half
+elif mode == "blend_empty":
+    _orig_bsa = SS.csb().blend_scores_at
+    def _empty(t, *a, **k):                               # noqa: E306
+        f, info = _orig_bsa(t, *a, **k)
+        return f.iloc[0:0].copy(), info
+    SS.csb().blend_scores_at = _empty
 elif mode != "happy":
     raise SystemExit(f"unknown mode {mode}")
 
