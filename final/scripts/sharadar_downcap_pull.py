@@ -81,6 +81,18 @@ def mark_done(key):
         fh.write(key + "\n")
 
 
+def _scrub(s, key=None):
+    """WO-19: strip the Sharadar key from text bound for stdout/logs.
+    requests' exception text carries the full URL, query string included."""
+    import re
+    from urllib.parse import quote
+    s = str(s)
+    for k in (key, os.environ.get("SHARADAR_API_KEY")):
+        if k:
+            s = s.replace(k, "***").replace(quote(k, safe=""), "***")
+    return re.sub(r"api_key=[^&\s'\"]+", "api_key=***", s)
+
+
 def fetch(endpoint, params, key):
     import requests
     last = None
@@ -96,11 +108,11 @@ def fetch(endpoint, params, key):
                 break  # 4xx other than 429: retrying will not help
         except Exception as e:  # network errors
             last = f"{type(e).__name__}: {e}"
-        last = last.replace(key, "<redacted>")
+        last = _scrub(last, key)
         wait = 2 ** attempt
         print(f"    retry {attempt + 1}/{TRIES} in {wait}s -- {last}", flush=True)
         time.sleep(wait)
-    raise RuntimeError(f"{endpoint} {params.get('ticker')}: {str(last).replace(key, '<redacted>')}")
+    raise RuntimeError(f"{endpoint} {params.get('ticker')}: {_scrub(last, key)}")
 
 
 def write_atomic(path, text):

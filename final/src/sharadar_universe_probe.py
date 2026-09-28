@@ -82,6 +82,18 @@ MARKETCAP_TABLE_CANDIDATES = ["daily", "metrics", "dailymetrics", "indicators",
                               "sf1", "fundamentals"]
 
 
+def _scrub(s, key=None):
+    """WO-19: strip the Sharadar key from text bound for stdout/logs.
+    requests' exception text carries the full URL, query string included."""
+    import re
+    from urllib.parse import quote
+    s = str(s)
+    for k in (key, os.environ.get("SHARADAR_API_KEY")):
+        if k:
+            s = s.replace(k, "***").replace(quote(k, safe=""), "***")
+    return re.sub(r"api_key=[^&\s'\"]+", "api_key=***", s)
+
+
 def get(table, params=None, timeout=60):
     p = {"api_key": API_KEY, "format": "csv"}
     if params:
@@ -89,7 +101,7 @@ def get(table, params=None, timeout=60):
     try:
         r = requests.get(f"{BASE_URL}/{table}", params=p, timeout=timeout)
     except requests.RequestException as e:
-        return None, f"request failed: {e}"
+        return None, f"request failed: {_scrub(e, API_KEY)}"
     if r.status_code != 200:
         return None, f"HTTP {r.status_code}: {r.text[:200].strip()}"
     if not r.text.strip():

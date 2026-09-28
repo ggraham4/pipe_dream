@@ -71,10 +71,25 @@ START = os.environ.get("SHARADAR_START", "2004-01-01")
 END = os.environ.get("SHARADAR_END", "2026-12-31")
 
 
+def _scrub(s, key=None):
+    """WO-19: strip the Sharadar key from text bound for stdout/logs.
+    requests' exception text carries the full URL, query string included."""
+    import re
+    from urllib.parse import quote
+    s = str(s)
+    for k in (key, os.environ.get("SHARADAR_API_KEY")):
+        if k:
+            s = s.replace(k, "***").replace(quote(k, safe=""), "***")
+    return re.sub(r"api_key=[^&\s'\"]+", "api_key=***", s)
+
+
 def get(params, timeout=180):
     p = {"api_key": API_KEY, "format": "csv"}
     p.update(params)
-    r = requests.get(f"{BASE_URL}/fundamentals", params=p, timeout=timeout)
+    try:
+        r = requests.get(f"{BASE_URL}/fundamentals", params=p, timeout=timeout)
+    except requests.RequestException as e:  # WO-19: same type, key-free text
+        raise type(e)(_scrub(e, API_KEY)) from None
     if r.status_code != 200:
         raise RuntimeError(f"HTTP {r.status_code}: {r.text[:200]}")
     if not r.text.strip():

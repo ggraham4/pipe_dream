@@ -109,6 +109,18 @@ def api_key():
     raise TopupError("SHARADAR_API_KEY not set (env or ~/.config/pipe_dream/secrets.env)")
 
 
+def _scrub(s, key=None):
+    """WO-19: strip the Sharadar key from text bound for stdout/logs.
+    requests' exception text carries the full URL, query string included."""
+    import re
+    from urllib.parse import quote
+    s = str(s)
+    for k in (key, os.environ.get("SHARADAR_API_KEY")):
+        if k:
+            s = s.replace(k, "***").replace(quote(k, safe=""), "***")
+    return re.sub(r"api_key=[^&\s'\"]+", "api_key=***", s)
+
+
 class Puller:
     def __init__(self, key):
         self.key, self.calls = key, 0
@@ -123,7 +135,7 @@ class Puller:
                 r = requests.get(BASE_URL, params=p, timeout=timeout)
                 if r.status_code == 200:
                     return list(csv.DictReader(io.StringIO(r.text))) if r.text.strip() else []
-                last = f"HTTP {r.status_code}: {r.text[:150]}"
+                last = _scrub(f"HTTP {r.status_code}: {r.text[:150]}", self.key)
             except requests.RequestException as e:
                 last = type(e).__name__
             time.sleep(2 ** attempt)

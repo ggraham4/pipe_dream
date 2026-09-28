@@ -44,6 +44,7 @@ Test a slice without touching the real store:
 from __future__ import annotations
 
 import argparse
+import http.client
 import json
 import os
 import re
@@ -127,6 +128,13 @@ def candidates(ticker: str, related: str | float) -> list[str]:
 
 
 # ----------------------------------------------------------------- AV client
+# Transient fetch failures that are retried. http.client.HTTPException covers
+# IncompleteRead / RemoteDisconnected / BadStatusLine, which are NOT OSError:
+# an IncompleteRead killed the 2026-09-23 run at monthly 2010-08-18 (WO-20).
+FETCH_ERRORS = (urllib.error.URLError, TimeoutError, json.JSONDecodeError,
+                ConnectionError, OSError, http.client.HTTPException)
+
+
 class AV:
     def __init__(self, key: str, per_min: int = RATE_PER_MIN):
         self.key = key
@@ -140,6 +148,10 @@ class AV:
             time.sleep(self.next_t - now)
         self.next_t = max(now, self.next_t) + self.gap
 
+    def _fetch(self, url: str) -> bytes:
+        with urllib.request.urlopen(url, timeout=60) as resp:
+            return resp.read()
+
     def chain(self, symbol: str, date: str) -> tuple[str, list]:
         """Return (status, rows): ok | no_data | error."""
         q = urllib.parse.urlencode({"function": "HISTORICAL_OPTIONS", "symbol": symbol,
@@ -147,8 +159,13 @@ class AV:
         for attempt in range(5):
             self._wait()
             try:
-                r = json.loads(urllib.request.urlopen(f"{AV_URL}?{q}", timeout=60).read())
-            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, ConnectionError, OSError):
+                r = json.loads(self._fetch(f"{AV_URL}?{q}"))
+            except FETCH_ERRORS:
+                # A truncated body raises here (IncompleteRead) before any
+                # parse, so nothing partial is returned; the loop re-requests.
+                time.sleep(5 * (attempt + 1))
+                continue
+            if not isinstance(r, dict):
                 time.sleep(5 * (attempt + 1))
                 continue
             if r.get("data"):

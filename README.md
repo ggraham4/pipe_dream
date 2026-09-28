@@ -1,7 +1,7 @@
 # pipe_dream: current state of the project
 
 **Consolidated 2026-09-23 by `pipe-dream-readme-manager`** (first full sweep),
-last refreshed **2026-09-26** after WO-9, WO-10/WO-11, WO-13 and WO-14 landed,
+last refreshed **2026-09-27** (run 10, below); run 5 (2026-09-26) followed WO-9, WO-10/WO-11, WO-13 and WO-14 landing,
 the 10bfb19 app layout became official, and the ext ledger was committed
 (integration `079fa26`); run 6 (same day) folds in the reset-branch landing
 (`d7d257d`), the WO-8 addendum (`ddb2773`), the live-checkout sync (`6a1823d`)
@@ -12,7 +12,11 @@ ledger with its Addendum A (landed `6ac64e6`, deployed live as `562dab9`),
 the `final/scripts` deploy (`db13243`) and the launch of WO-17 and WO-18;
 run 9 (same day) folds in WO-17, the Sharadar reference-table refresh
 (landed `a9344ef`), and the app's SHARADAR_API_KEY guard (landed `c50e0e4`,
-not deployed).
+not deployed); run 10 (**2026-09-27**) folds in WO-20, the AV options pull
+retry fix (landed `f380817`, pull still stopped), the app deploy of the key
+guard and the most-volatile-first sort (`c8dec17`, live `4ab4363`), Gabe's
+clean live Retrain ALL of 2026-09-26, and the COO's WO-18 seasonality
+PASS-nomination (branch `74e6e03`, not landed).
 This is the one current-state document. It merges every branch's docs, the
 coordination ledger, handoffs and project memory, and the newest source wins
 where two disagree. Everything that lost is listed in [Superseded](#superseded)
@@ -20,7 +24,7 @@ at the bottom.
 
 How to read the tags:
 
-- **landed** means the claim is on `integration` (a9344ef).
+- **landed** means the claim is on `integration` (f380817).
 - **in flight** means it comes from an unlanded branch or from uncommitted files
   in a worktree. In-flight claims never describe current state. They live in
   [In flight](#5-in-flight).
@@ -66,7 +70,7 @@ Two newer rules live outside the repo and interact with them. See
 
 ---
 
-## 3. Current state (as of 2026-09-26)
+## 3. Current state (as of 2026-09-27)
 
 ### 3.1 The one-paragraph version
 
@@ -86,7 +90,7 @@ from holding the universe. The caveat: from 2011-10-20 to 2019, icw8 only
 **ties SPY (+0.00)**. The IWM-hedged version (WO-9, 2026-09-25) came out
 **MIDDLE**. Gabe had it recorded as a **forward bet, not promoted** (WO-10). On
 2026-09-25 Gabe made **v2 the working panel** for every live and forward model
-(WO-11). WO-14 added its refresh path (panel now through 2026-09-24) and the
+(WO-11). WO-14 added its refresh path (panel now through 2026-09-25 live) and the
 **weekly** forward records Gabe chose. The SUE/post-earnings-drift screen (WO-13,
 2026-09-25) is a **PASS-nomination**, but its portfolio contribution is noise-sized,
 so the COO recommends confirming it forward only. Gabe approved the item on
@@ -107,8 +111,10 @@ change takes effect on the next app restart or rerun (LEDGER landing log).
 **Scripts gap closed (2026-09-26):** `final/scripts/edgar_form4_refresh.py`,
 which the weekly-record step calls first, was missing live. It was deployed
 as db13243 on Gabe's OK. A static trace of Retrain ALL found 0 missing
-scripts, but a real network run has not been exercised yet (LEDGER landing
-log; §4.7). **WO-16 landed and deployed (2026-09-26):**
+scripts. **Gabe then ran a live Retrain ALL (2026-09-26 22:36-22:47), and the
+COO verified it CLEAN** from the run log: insider refresh, SF1 top-up, panel
+09-24 → 09-25, weekly-record preflight, both signals (COO.md; §4.7).
+**WO-16 landed and deployed (2026-09-26):**
 the append-only SF1 top-up, the 7-day fundamentals window and the
 `FF.main()` → `build()` crash fix landed as integration defcc23 and were
 deployed to the live checkout as 500a4a5 (not pushed). The worker already
@@ -122,8 +128,13 @@ automatically. Insider buy/sell counts are a certified dead end (2026-09-23), an
 down-cap reopen was used by WO-4 (DEAD, 2026-09-24), so the family is spent
 in-era. Congress is forward-only. The earnings-timing family is closed (8-K
 test DEAD, 2026-09-23). The Alpha Vantage options pull on the Mac **crashed**
-on 2026-09-23 at 18:09. Gabe is moving it to another machine, and its progress
-there is unknown.
+on 2026-09-23 (last date logged 18:03, traceback by 18:09). **Its crash cause is
+fixed (WO-20, landed f380817, 2026-09-27), but the pull is still stopped.**
+Restarting it, or cancelling AV at the ~10-22 renewal, is Gabe's call (§4.4,
+§6 #21). Pending for Gabe: whether **WO-18** (Heston-Sadka return
+seasonality, a COO-verified PASS-nomination on an unlanded branch) gets a
+forward column (§5, §6 #22). Gabe has recorded that he has **more faith in the
+blend** (Today's Picks) than in the Theoretical model (2026-09-26, §3.2).
 
 ### 3.2 What the app shows: the 10bfb19 layout, official since 2026-09-25 (landed `e1f8f6f`, deployed `ccddf1a`)
 
@@ -163,6 +174,27 @@ The numbers each tab's meta carries (landed):
   panel, which WO-14 was not allowed to rebuild
   ([WO-14 doc](final/models/2026-09-25-wo14-v2-incremental-refresh.md) "Live
   scorers").
+- **After Gabe's live Retrain ALL (uncommitted outputs in the main checkout,
+  mtime 2026-09-26 22:47):** both signals are as of **2026-09-25**. The blend
+  has 160 picks of 1,615 eligible, and the composite has 300 of 3,048 (both
+  metas read; COO.md "Live Retrain ALL"). The Retrain's v1 steps rewrote the
+  v1 base panel (22:46:51, per the WO-18 doc's panel-swap check), so the blend
+  is no longer stuck at 2026-09-08.
+
+**Today's Picks sort (landed c8dec17, live 4ab4363, 2026-09-26):** a "Sort
+picks by" control defaults to "Most volatile first" (`volatility_60`), with
+"Blend score" and "Portfolio weight" (the old order) as options, plus a ticker
+filter. It is display only: rows and weights are unchanged (Gabe, "aggressive
+trading mode"; HANDOFF-app; COO.md decision #12). The same deploy made the
+SHARADAR_API_KEY guard live (§4.7).
+
+**Gabe's recorded preference (2026-09-26):** "for the record I have more faith
+in the blend than the theoretical because theoretical rejects TXG" (project
+memory; COO.md decisions log). Recorded, not argued. The COO adds one fact: in
+the blend's cap2000 universe the composite ranks TXG 29/323 in its vol
+quintile (cutoff 32), so it would pick it there. The Theoretical tab most
+likely misses it because of the cap150 universe (inferred, not recomputed),
+not the factors.
 
 App-owned inaccuracies are for `pipe-dream-app-manager` and are not fixed here
 (Open conflicts #5). `final/app/README.md` still opens with a 2026-09-16
@@ -393,6 +425,21 @@ which now lives in §7 below.
   2026-09-26 (§4.7). Laddered rebalancing was **not launched**: it only changes
   variance and can't fix the 2020 concentration (COO.md; corrections §15). The
   open composite questions for Gabe are COO decision #7.
+- **Book construction check (COO, 2026-09-27; descriptive, run read-only, no
+  trial counted; script in `/tmp/coo_ew/`, not in the repo; source COO.md).**
+  Gabe asked "out of curiosity". WO-18 harness, icw8 frozen, v2 column c
+  cap150, 2007-2019, 40 offsets, net 15bp (nomination era). Inverse-vol
+  +2.85%/yr (LOYO min +1.71, post-2011-10 +0.01, 5-draw shuffle null −1.01);
+  equal weight +2.73 (LOYO min +0.85, post-2011 −0.41, null −1.14);
+  vol-weighted +2.25 (LOYO min −0.42, post-2011 −1.17, null −1.79). Selection
+  over the matched null is ~+3.9 to +4.0 in all three arms, so **the weighting
+  does not create the edge**; more vol tilt adds noise and 2009 dependence.
+- **Why TDUP/MYGN are picked (COO, 2026-09-27, Gabe's question):** their
+  drawdowns came before the decision date and are in the model's view
+  (momentum 5th/8th pct), but gross_profitability (weight 0.596, 97th/96th
+  pct) and accruals (weight −0.163) dominate while momentum carries 0.05. An
+  unverified hypothesis: an impairment-driven loss (MYGN accruals −0.58)
+  scores as "high quality"; a possible work order would test it (COO.md).
 
 ### 4.2 Old XGBoost stock model (q75 / xrank): half of the blend, no validated edge
 
@@ -426,16 +473,34 @@ which now lives in §7 below.
 
 ### 4.4 Options
 
-- **AV options bulk pull: crashed 2026-09-23 18:09, not running** (landed
-  code). `http.client.IncompleteRead` is not in the retry tuple at
-  `final/scripts/av_options_pull.py:151`. It stopped at monthly 2010-08-18:
-  32 of 225 monthly dates, 0 of 750 weekly (COO.md; `final/data/alphavantage/pull.out`
-  ends in that traceback, mtime 18:09). Gabe will not restart it on the Mac;
-  he is moving it to another machine himself (COO.md, 2026-09-24), and the COO
-  doesn't know its progress there (COO.md report log, 2026-09-26). Data
-  in `final/data/alphavantage/`. The Windows runbook is
-  [`final/scripts/AV_PULL_WINDOWS.md`](final/scripts/AV_PULL_WINDOWS.md). An
-  updated runbook, a merge-back tool and a pull-retry fix are unlanded (§5).
+- **AV options bulk pull: crashed 2026-09-23, crash cause fixed 2026-09-27
+  (WO-20, landed f380817), still STOPPED.** The run died on
+  `http.client.IncompleteRead`, which subclasses `http.client.HTTPException`,
+  not `OSError`, so it escaped the retry tuple. It had logged monthly
+  2010-08-18 (last line 18:03:02): 33 of 225 monthly dates, 0 of 750 weekly
+  (`final/data/alphavantage/pull.out`, 33 unique dates, traceback, mtime 18:09).
+  The fix in `final/scripts/av_options_pull.py` retries every
+  `http.client.HTTPException` (and a non-dict JSON body) with the unchanged
+  backoff; after 5 failed tries the name is logged `error` and the loop moves
+  on, and the next run re-tries `error` rows. Offline monkeypatched test only
+  (`/tmp/wo20/test_retry.py`, not committed): ALL PASS; no AV calls made
+  ([WO-20 doc](final/models/2026-09-27-av-pull-retry-fix.md)).
+  - **Where the fix is and isn't:** the live checkout has no
+    `final/scripts/av_options_pull.py` or `av_options_run_pull.sh`, and the
+    copy the crashed run used (`final/data/alphavantage/bin/av_options_pull.py`)
+    is unfixed. Resuming needs the launcher run from a checkout that has the
+    fix, or the two scripts deployed live first (integrator + Gabe's OK). The
+    launcher copies its sibling script over `bin/` and writes to the live
+    `final/data/alphavantage/`; a resume skips every ok/no_data row in
+    `pull_log.sqlite` (WO-20 doc "Resuming";
+    [`AV_PULL_WINDOWS.md`](final/scripts/AV_PULL_WINDOWS.md) 2026-09-27 line).
+  - **Where to run it is Gabe's call.** His 2026-09-24 call was to move the
+    pull to another machine himself, not restart it on the Mac (COO.md), and
+    the COO doesn't know that machine's progress. The WO-20 runbook line
+    describes a Mac resume; that is a how-to, not a decision (§6 #21).
+  - Data in `final/data/alphavantage/`. An updated Windows runbook, a
+    merge-back tool and a *different* retry fix are unlanded on the AV-spin
+    branch (§5, §6 #23).
   A unified AV+DoltHub chain and option features are built
   (`build_option_chain_unified.py`, `build_av_options_features.py`).
 - **Pre-registered, not run.** Exp B (option factors, cap2000) needs ≥120
@@ -444,6 +509,17 @@ which now lives in §7 below.
   `final/src/reset2026/era_transfer.py`. **Do not** run `--exp B --stage confirm`
   or any cap500/cap150 tier before the grid rebuild.
 - **AV subscription:** $49.99/mo, renews around 2026-10-22 (COO decision #3).
+  **COO decision D-AV (2026-09-27):** restart the pull this week or cancel AV.
+  Mac pace: 33 monthly dates in 23.4h; Exp B needs ≥120 dates (~87 more ≈ 62h),
+  all 225 monthly ≈ 136h. It fits before 10-22 only if restarted by ~10-12. The
+  COO recommends restarting now with the fix, and cancelling at renewal if not
+  restarted by 10-12 (COO.md; §6 #21).
+- **Options program written, all BLOCKED on D-AV data (COO.md, 2026-09-27;
+  options dead-end trial count so far = 7):** WO-O1 sell cash-secured puts on
+  honest AV data at cap2000 with the stock score as a filter; WO-O2 an
+  exit-rule family (needs daily quotes per held contract); WO-O3 behavior
+  cloning of Gabe's own trades (step 1: is his record profitable after costs
+  vs a matched null; needs his broker export). None is launched.
 - **Earlier options model (2026-08/09):** long calls ≈ flat (Kelly −0.16%/mo,
   n=74). Long puts have no working model. Selling cash-secured puts is a
   **lead**: +3.32%/cohort, 70/85 months, a −33.5% COVID month, ad-hoc cleaning,
@@ -464,9 +540,11 @@ which now lives in §7 below.
   existing is overwritten.
 - **v2 is the working panel** (2026-09-25, WO-11; `working_panel.py`), and
   **`refresh_working_panel.py`** (WO-14) extends it incrementally. It is now
-  through 2026-09-24. Known gaps: 8 reverse-split micro-caps (CTSO, GOSS, GTBP,
-  JAGX, NFE, NXXT, OPTT, VWAV) are not extended, and the refresh exits 1 if one
-  becomes eligible. `sf1_fundamentals.parquet` and `sf1_shares.csv`
+  through 2026-09-25 in the live checkout (Gabe's Retrain ALL, 2026-09-26:
+  +3,999 rows, 3,855 label fills; COO.md). Known gaps: 8 reverse-split
+  micro-caps (CTSO, GOSS, GTBP, JAGX, NFE, NXXT, OPTT, VWAV) are not extended,
+  and **the BLOCKED list is now 9: KITT joined them** in that Retrain (COO.md).
+  The refresh exits 1 if a blocked name becomes eligible. `sf1_fundamentals.parquet` and `sf1_shares.csv`
   get the WO-16 append-only top-up (landed defcc23, 2026-09-26; live copy
   through 2026-09-25). The v1 panel is kept only to reproduce past results.
 - **Reference tables refreshed once (WO-17, landed a9344ef, 2026-09-26;
@@ -537,7 +615,7 @@ which now lives in §7 below.
   [Results](final/models/2026-09-23-insider-congress-results.md),
   [pre-registration](final/models/2026-09-23-insider-congress-preregistration.md).
 
-### 4.7 Live pipeline and forward ledgers: landed (9dd0852, WO-16 defcc23) and deployed to the live checkout (6a1823d, WO-16 500a4a5), 2026-09-26
+### 4.7 Live pipeline and forward ledgers: landed (9dd0852, WO-16 defcc23) and deployed to the live checkout (6a1823d, WO-16 500a4a5, app 4ab4363), 2026-09-26
 
 - **The Retrain ALL chain that should run** (WO-14 doc): the v1 data steps
   (`sharadar_pull_pit_panel.py` … `export_sharadar_ohlc.py`), then
@@ -551,12 +629,22 @@ which now lives in §7 below.
   Retrain ALL would have stopped at "insider refresh failed; panel and ledgers
   untouched" (APP.md). The integrator deployed that one script as db13243 on
   Gabe's OK. A static trace of all 15 Retrain ALL steps found 41 files, 0
-  missing scripts and 0 unresolved imports. A real network run (EDGAR, the
-  Sharadar key in Streamlit's env) has not been exercised. The other
+  missing scripts and 0 unresolved imports. The other
   integration-only `final/scripts` paths are still absent live, and Retrain
-  ALL doesn't call them: 9 as of a9344ef (checked with `git ls-tree`
-  integration vs the live HEAD, 2026-09-26 run 9), the 7 from before plus
-  WO-17's two operator tools.
+  ALL doesn't call them: 9 as of f380817 (checked with `git ls-tree`
+  integration vs the live HEAD 4ab4363, 2026-09-27 run 10), the 7 from before
+  plus WO-17's two operator tools. Two of the 9 are the WO-20-fixed
+  `av_options_pull.py` and its launcher `av_options_run_pull.sh` (§4.4).
+- **First real live Retrain ALL: CLEAN (Gabe, 2026-09-26 22:36-22:47;
+  COO-verified from `final/app/logs/retrain_all_models/run.log`, COO.md).**
+  Insider refresh ran (filings through 09-25). SF1 top-up: +0 rows, 21
+  restated keys NOT applied, 4 calls. Panel 09-24 → 09-25 (+3,999 rows, 3,855
+  label fills). BLOCKED list now 9 (KITT joined the 8 split names).
+  `record_weekly` preflight passed ("SUE isolated") and there was nothing to
+  record (W39 was not a complete week). Ledger shas unchanged. Signals as of
+  2026-09-25 (§3.2). The panel rewrite (22:44:48) raced WO-18's screen start;
+  the in-era slices are sha-identical before and after (WO-18 doc, panel swap
+  verification), so no result changed.
 - **Retrain speedup** (reset branch, landed d7d257d): the merged
   `build_features_fundamentals_sharadar.py` keeps the global-asof speedup
   (2:42 → 59s on that step) but writes all 14 fundamental columns, including
@@ -608,11 +696,16 @@ which now lives in §7 below.
   append-only files: `prediction_ledger_sue.csv` and `ledger_sue_guard_log.csv`
   (`out/reset2026`), and `sf1_arq_eps_live_accepted.csv` (`data/sharadar`).
   The SUE pull needs `SHARADAR_API_KEY` in the Retrain shell (§8.2).
-- **App key guard: landed c50e0e4 (app @ 31e3284), NOT deployed** (LEDGER app
-  row; COO.md decision #10). A startup banner when `SHARADAR_API_KEY` is
-  missing (presence only, the value is never shown), a Retrain ALL key
-  preflight, and after Retrain a report of SUE guard-log rows and refresh exit
-  codes. Deploying it needs Gabe's in-the-moment OK (§6 #19).
+- **App key guard: landed c50e0e4, deployed live 4ab4363 (2026-09-26, with
+  the Today's Picks sort, integration c8dec17)** on Gabe's "just deploy it
+  now" (COO.md decision #12; LEDGER landing log). A startup banner when
+  `SHARADAR_API_KEY` is missing (presence only, the value is never shown), a
+  Retrain ALL key preflight, and after Retrain a report of SUE guard-log rows
+  and refresh exit codes. Verified headless (AppTest, 0 exceptions).
+  **Streamlit was not restarted:** the new lib modules aren't hot-reloaded, so
+  Gabe must fully restart it from a shell that sourced
+  `~/.config/pipe_dream/secrets.env`, in the pipe_dream env (COO.md #12;
+  HANDOFF-app).
 - **Pull-script gap:** `sharadar_pull_pit_panel.py` skips any month already on
   disk, so the current month is never re-pulled, and every Retrain was a no-op
   for September. WO-14 used `--start 2026-09 --end 2026-09 --force` (21
@@ -632,9 +725,9 @@ Nothing below is current state until it lands.
 
 | branch / worktree | what it will change | state | source |
 |---|---|---|---|
-| `worktree-agent-ad57ef9f38454d99d` (COO WO-18, Heston-Sadka seasonality screen) | Screens same-calendar-month return seasonality (Heston-Sadka 2008, sign +1) as a new family, **trial 1, k=1**, in-era only (v2 column c, cap150, h=40, 2007-2019, asserts < 2020), WO-4 gate stack; a pass is a nomination for a forward column only. New `final/src/seasonality/`, `final/out/seasonality/`; pulls SEP 1998-2004 into a new gitignored `final/data/sharadar/sep_pre2005/` in the main checkout | in flight: no commits; uncommitted `final/src/seasonality/`, `final/out/seasonality/` and the pre-reg doc `final/models/2026-09-26-seasonality-screen.md` (mtime 2026-09-26 22:25, not yet committed, so not yet binding) | LEDGER WO-18 row; COO.md "Work orders" (WO-18 note 22:30: SEP 1998-2004 pull allowed) |
-| main checkout `round18-app-two-models` (live) @ 562dab9 | `final/src` + `final/app` equal integration d7d257d plus the 3 WO-16 paths from defcc23 (500a4a5), `final/scripts/edgar_form4_refresh.py` (db13243) and the 6 WO-15 paths from 6ac64e6 (562dab9), all 2026-09-26, except `final/src/fly/*` (9 files kept). The other integration-only `final/scripts` are not synced (9 at a9344ef, incl. WO-17's two operator tools, which only run by hand). WO-17's data write went straight into the live `final/data/sharadar/` (no commit). **Not pushed**: 10bfb19 in its history carries 4.3 GB of FUSE temp files and >100MB blobs. A clean mirror is on origin as `round18-app-two-models-clean` @ 78f8c34, and it lacks 02be838 and everything from 6a1823d on | Repointing the local branch onto the clean line is a history rewrite: Gabe's call (§6 #12). Not to be merged into integration | LEDGER landing log 2026-09-26; LEDGER round18 row |
-| `worktree-alpha-vantage-spin` @ 6ca32f3 | Updated Windows runbook, `av_pull_windows_prep.py`, `av_merge_pull_roots.py`, a pull retry fix in `av_options_pull.py`, a `downcap_universe.py` path override | committed and pushed, **not landed**: excluded from the 2026-09-26 merge (Gabe: "merge everything but AV") | LEDGER landing log; COO.md decisions log 2026-09-26 |
+| `worktree-agent-ad57ef9f38454d99d` (COO WO-18, Heston-Sadka seasonality screen) @ 74e6e03 | Adds `seas`, same-calendar-month return seasonality (Heston-Sadka 2008, sign +1), a new family, **trial 1, k=1**, in-era only (v2 column c, cap150, h=40, 2007-2019). **Result: PASS (nomination only), all 7 gates, COO-verified 2026-09-27:** NW t +2.84 (bar 1.96); halves t +1.61 / +2.67; both-sides sector t +2.87; 0/40 flips; max year share 0.271 (2008); icw9 +2.5496%/yr vs icw8 +2.3683% and shuffle-null p80 +2.3617% (+0.181pp/yr, beats 20/20 draws). Caveats: 2017-2019 all negative; the COO puts 2007-2012 at ≈ 79% of the summed IC; OOS IC does not improve (icw9 0.04831 vs icw8 0.04848, the gain is in the top-decile tail); fit-even weight 0.169. Panel-swap race with Gabe's Retrain ALL: in-era slices identical, result stands. New `final/src/seasonality/`, `final/out/seasonality/`, and a gitignored `final/data/sharadar/sep_pre2005/` in the main checkout (§7) | committed 51795c9 (pre-reg, before any IC) → a7aa44e (results) → 74e6e03 (panel-swap check), pushed; **NOT landed**: the COO recommends a forward column (the WO-15 pattern, kill rule: paired rho gain ≤ 0 after 6 counted dates), which needs Gabe's yes, a `record_weekly` change and a live deploy (§6 #22) | `worktree-agent-ad57ef9f38454d99d:final/models/2026-09-26-seasonality-screen.md` Results; COO.md "WO-18 VERDICT"; LEDGER 2026-09-27 |
+| main checkout `round18-app-two-models` (live) @ 4ab4363 | `final/src` + `final/app` equal integration d7d257d plus the 3 WO-16 paths from defcc23 (500a4a5), `final/scripts/edgar_form4_refresh.py` (db13243), the 6 WO-15 paths from 6ac64e6 (562dab9) and `final/app` from c8dec17 (4ab4363: key guard + picks sort), all 2026-09-26, except `final/src/fly/*` (9 files kept). The other integration-only `final/scripts` are not synced (9 at f380817, incl. WO-17's two operator tools and WO-20's fixed AV pull script and launcher, which only run by hand). WO-17's data write went straight into the live `final/data/sharadar/` (no commit). **Not pushed**: 10bfb19 in its history carries 4.3 GB of FUSE temp files and >100MB blobs. A clean mirror is on origin as `round18-app-two-models-clean` @ 78f8c34, and it lacks 02be838 and everything from 6a1823d on | Repointing the local branch onto the clean line is a history rewrite: Gabe's call (§6 #12). Not to be merged into integration | LEDGER landing log 2026-09-26; LEDGER round18 row |
+| `worktree-alpha-vantage-spin` @ 6ca32f3 | Updated Windows runbook, `av_pull_windows_prep.py`, `av_merge_pull_roots.py`, a pull retry fix in `av_options_pull.py` (a bare `except Exception`, not WO-20's `FETCH_ERRORS`; also `--only-tier downcap`), a `downcap_universe.py` path override | committed and pushed, **not landed**: excluded from the 2026-09-26 merge (Gabe: "merge everything but AV"). Its `av_options_pull.py` now conflicts with WO-20's landed version (f380817) on the same lines (§6 #23) | LEDGER landing log; COO.md decisions log 2026-09-26 |
 | `worktree-papermoney-order-sheet` | paper-broker order sheet | **not to land** (Gabe, 2026-09-23; reaffirmed 2026-09-26) | LEDGER; COO.md decisions log |
 
 ---
@@ -719,9 +812,10 @@ Nothing below is current state until it lands.
     deploys the WO-14 Retrain hook (LEDGER landing log). ~~(a) sync
     `final/scripts`~~ **done 2026-09-26:** `edgar_form4_refresh.py` deployed as
     db13243 on Gabe's OK ("1 yes do it", "3 make it happen"), so Retrain ALL
-    now reaches the weekly records and the SF1 top-up (static trace; §4.7).
+    now reaches the weekly records and the SF1 top-up (static trace, then a
+    clean live run 2026-09-26; §4.7).
     Still open, Gabe's call: (b) 6a1823d and everything after it (500a4a5,
-    db13243, 562dab9) is not pushed, because the local round18
+    db13243, 562dab9, 4ab4363) is not pushed, because the local round18
     history carries >100MB blobs. Repointing the local branch onto
     `round18-app-two-models-clean` is a history rewrite. COO.md (2026-09-26)
     says it is "NOT treated as approved".
@@ -751,27 +845,50 @@ Nothing below is current state until it lands.
     (#12). One
     caveat: Gabe answered "3", and the coordinator mapped that to WO-16 rather
     than to the COO's own item 3, the round18 history rewrite (COO.md).
-17. **WO-15's split allow-list changed under it (for the COO).** WO-15's
-    basis check (`sue_forward.split_names_since_basis()`) reads live
-    `actions.csv` splits after 09-08. WO-17's live write (file mtimes
-    2026-09-26 22:27, after WO-15 went live as 562dab9 at 22:21) added BRTX, BURU, GAUZ, HUBC, IPDN, KITT,
-    LRHC, NRSN, TNMG and WHLR plus the 8 split-blocked names; BNTC and ASX
-    are still absent. The WO-17 doc says "Recheck WO-15 before it deploys",
-    but WO-15 had already deployed. The COO's WO-17 verification (COO.md)
-    records no WO-15 recheck. First SUE record is W40.
+17. **RESOLVED 2026-09-26 (COO: CLOSED, no recheck needed).** WO-17's live
+    `actions.csv` write came after WO-15 deployed, but live `sue_forward.py`
+    reads `actions.csv` only in `split_names_since_basis()`, and that result
+    is reporting-only per Addendum A (`split_sources_reported_only`). The
+    rewrite cannot change any SUE value or decision (COO.md "WO-17 LANDED").
 18. **Held-back label changes (COO.md decision #11, Gabe).** 11 panel tickers'
     labels changed at the vendor (none eligible after 09-08), including the
     ticker reuse that leaves the new RML and HYAC.U carrying the old
     company's labels. Applying any needs a WO-16-style acceptance exception.
     COO recommends leaving them held back. Data:
     `final/out/wo17/master_label_changes_pending.csv`, `acceptance_b_tickers.csv`.
-19. **Deploy the app key guard? (COO.md decision #10, Gabe).** Landed c50e0e4,
-    not deployed (§4.7). The COO checked that `key_guard.py` tests presence
-    only. Needs Gabe's in-the-moment OK (constraint #1).
-20. **DOMO → HUCK continuity (for the COO).** DOMO (eligible) was renamed HUCK
-    on 2026-09-24 (same permaticker 116453). The panel is ticker-keyed, so
-    HUCK arrives as a new ticker with no history and DOMO goes stale. The
-    same pattern covers WO-14's 8 "stale, kept" tickers (WO-17 doc (b)).
+19. **RESOLVED 2026-09-26: deployed.** Gabe: "just deploy it now" (COO.md
+    #12). The key guard and the picks sort landed as c8dec17 and went live as
+    4ab4363 (§4.7). Still open for Gabe: a full Streamlit restart from a shell
+    that sourced `secrets.env`, or the new modules don't load.
+20. **DOMO → HUCK continuity: logged as a low-priority lead (COO,
+    2026-09-26).** DOMO (eligible) was renamed HUCK on 2026-09-24 (same
+    permaticker 116453; WO-17 doc). The panel is keyed on ticker, so a rename orphans
+    history: a general gap, one name now. Candidate fix: key or join on the
+    Sharadar permaticker in the refresh (COO.md). The same pattern covers
+    WO-14's 8 "stale, kept" tickers (WO-17 doc (b)).
+21. **D-AV: restart the AV options pull, or cancel AV (Gabe; COO.md,
+    2026-09-27, deadline ~10-22).** WO-20 fixed the crash cause (landed
+    f380817), and the pull is still stopped. The COO recommends restarting
+    now with the fix and cancelling at renewal if not restarted by ~10-12
+    (§4.4 for the pace). Gabe also decides where it runs: his 2026-09-24
+    call was to move it to another machine himself, while the WO-20 runbook
+    line describes a Mac resume. Either way it needs the fixed script: the
+    live checkout lacks it (deploy = integrator + Gabe's OK), or launch from
+    a checkout that has it. The COO doesn't know the other machine's
+    progress. Stale text: COO.md D-AV says the fix is "unfixed on
+    integration as of 09-27"; it landed as f380817 the same day.
+22. **WO-18 `seas` forward column? (Gabe; COO.md "WO-18 VERDICT",
+    2026-09-27).** PASS-nomination on an unlanded branch (§5). The COO
+    recommends a forward column on the WO-15 pattern, with kill rule
+    "paired rho gain ≤ 0 after 6 counted dates". It needs Gabe's yes, a
+    `record_weekly` change and a live deploy.
+23. **AV-spin's retry fix vs WO-20's (integrator/Gabe).** The unlanded
+    `worktree-alpha-vantage-spin` (6ca32f3) carries its own
+    `av_options_pull.py` retry change (`except Exception`, plus
+    `--only-tier downcap`) on the same lines WO-20 changed. If AV-spin is
+    ever landed, the merge must pick one. Gabe excluded AV-spin from the
+    2026-09-26 merge. Which checkout the other machine runs isn't recorded,
+    so it is unknown whether that copy has any fix.
 
 ---
 
@@ -819,7 +936,7 @@ unreachable from agent sandboxes, and keys (`SHARADAR_API_KEY`,
 | Sweep harness (XGBoost era) | `python3 -m sweep.cli …` | [`final/src/sweep/RUNBOOK.md`](final/src/sweep/RUNBOOK.md) |
 | Insider panel, screen, post-hoc (download 81 SEC quarterly zips first) | `build_insider_panel.py` → `screen_insider.py` → `posthoc_insider.py` | [insider results](final/models/2026-09-23-insider-congress-results.md) "Reproduction" |
 | Down-cap grid v2 and its read-outs (nomination era only) | `build_downcap_grid_v2.py --all` → `downcap_grid_acceptance.py` → `downcap_v2_readout.py` → `noscore_control_v2.py`; insider re-test `build_insider_panel_v2grid.py` → `screen_insider_v2grid.py`. Optional SF1 top-up: `final/scripts/sharadar_downcap_pull.py` (key needed; added nothing) | [grid rebuild](final/models/2026-09-24-downcap-grid-rebuild.md); [no-score control](final/models/2026-09-24-noscore-control-v2.md); [insider v2](final/models/2026-09-24-insider-buyers-v2-grid.md) |
-| v2 working-panel refresh + weekly forward records | `sharadar_pull_pit_panel.py --start <this month> --end <this month> --force` (the default skips the current month), then `refresh_working_panel.py --through latest --record-weekly` (`--check`, `--no-swap`, `record_weekly.py --plan` write nothing). 8 split-blocked tickers: `sharadar_downcap_pull.py --pull-list final/out/reset2026/downcap_v2/wo14_split_pull_list.csv` (8 calls; not run, and folding the CSVs in is a missing step) | [WO-14 doc](final/models/2026-09-25-wo14-v2-incremental-refresh.md) |
+| v2 working-panel refresh + weekly forward records | `sharadar_pull_pit_panel.py --start <this month> --end <this month> --force` (the default skips the current month), then `refresh_working_panel.py --through latest --record-weekly` (`--check`, `--no-swap`, `record_weekly.py --plan` write nothing). 8 split-blocked tickers: `sharadar_downcap_pull.py --pull-list final/out/reset2026/downcap_v2/wo14_split_pull_list.csv` (8 calls; not run, and folding the CSVs in is a missing step; KITT, blocked since the 2026-09-26 Retrain, is not on that list) | [WO-14 doc](final/models/2026-09-25-wo14-v2-incremental-refresh.md) |
 | Sharadar reference tables (`tickers_master.csv`, `actions.csv`), WO-17 | `final/scripts/sharadar_reference_refresh.py` (2 pulls, key from env only; builds from the dated backups, so a rerun just re-pulls; label hold-back for existing tickers), then `final/scripts/wo17_acceptance_report.py` (read-only). Not part of Retrain ALL; run by hand from the main checkout | [WO-17 doc](final/models/2026-09-26-wo17-reference-refresh.md) |
 | SF1 incremental top-up (WO-16) | runs inside `refresh_working_panel.py`; standalone `python final/src/reset2026/sf1_topup.py` (key from the environment or `~/.config/pipe_dream/secrets.env`). Rollback: restore `sf1_fundamentals_through_2026-09-08.parquet` / `sf1_shares_through_2026-09-08.csv` before any refresh | [WO-16 doc](final/models/2026-09-26-wo16-sf1-topup.md) |
 | IWM-hedged composite (nomination era) | IWM from yfinance (`auto_adjust=False`, plus Adj Close) into `final/data/benchmarks/IWM.csv` (gitignored), then `hedged_composite.py` → `hedged_tradable.py` (dividends from the Sharadar SEP panel's closeadj/close) | [hedged composite](final/models/2026-09-25-hedged-composite.md) §1.2, §3.6 |
@@ -827,7 +944,8 @@ unreachable from agent sandboxes, and keys (`SHARADAR_API_KEY`,
 | SUE screen | `build_sue.py` (about 1 min) → `validate_sue.py` → `hand_check_sue.py` → `screen_sue.py`; reads `sf1_fundamentals.parquet` (ARQ only) | [SUE screen](final/models/2026-09-25-sue-drift-screen.md) |
 | SUE forward ledger (WO-15) | runs inside `record_weekly.py` (Retrain ALL / `refresh_working_panel.py --record-weekly`); standalone pull `python final/src/sue/sf1_eps_live_pull.py` (key from the environment only); `python final/src/sue/sue_forward.py score` / `status`; isolation harness `final/src/sue/wo15_isolation_test.py` (scratch copies only). Use the pipe_dream env | [SUE forward ledger](final/models/2026-09-26-sue-forward-ledger.md) §4-6, Addendum A |
 | Composite, current spec (universe → factors → panel → outcomes → beta, then `ic_weighted_composite.py`, `prediction_ledger.py record/score`) | per the spec | [full spec](final/models/2026-09-22-composite-model-full-specification.md) §6 |
-| AV options pull + unified chain + features | `av_options_pull.py`, `build_option_chain_unified.py`, `build_av_options_features.py` | [AV spin doc](final/models/2026-09-22-alpha-vantage-spin.md) §C-E |
+| AV options pull + unified chain + features | `av_options_pull.py` (retry-fixed 2026-09-27, WO-20; resume with `ALPHAVANTAGE_API_KEY=... AV_PULL_ARGS="--passes monthly --only-tier cap2000" zsh <checkout>/final/scripts/av_options_run_pull.sh` from a checkout that has the fix; it skips every ok/no_data row already logged), `build_option_chain_unified.py`, `build_option_chain_unified.py`, `build_av_options_features.py` | [AV spin doc](final/models/2026-09-22-alpha-vantage-spin.md) §C-E; [WO-20 doc](final/models/2026-09-27-av-pull-retry-fix.md) "Resuming" |
+| Pre-2005 SEP for `seas` (WO-18, **in flight**, main checkout only) | `final/data/sharadar/sep_pre2005/` (SEP 1998-01..2005-01, 85 months, 12.9M rows, plus `_manifest.csv`; gitignored under `final/data/sharadar/`): `python final/src/seasonality/pull_sep_pre2005.py` (~17 min; needs `SHARADAR_API_KEY`). The script exists only on the WO-18 branch | `worktree-agent-ad57ef9f38454d99d:final/models/2026-09-26-seasonality-screen.md`; HANDOFF-worktree-agent-ad57ef9f38454d99d |
 | Live signals | `current_signal_pit.py`, `current_signal_composite.py`, `current_signal_blend.py` (the app's "Retrain ALL" runs them) | `final/app/README.md` |
 | Older gitignored paths (yfinance `td_data_local/`, EDGAR `fundamentals_raw/`, DoltHub options exports, GARCH, pre-Round-11 panels) | per-path commands | `git show integration:AGENTS.md` at 29eb67b, "Reproducing every gitignored path" (historical copy, see §Superseded) |
 
@@ -886,7 +1004,7 @@ not superseded by anything newer):
 | Sector-neutral t from demeaning the factor only | insider buyers t +3.10 "within sector"; both sides demeaned gives 0.65 | fire rate vs sector return, corr −0.79 | insider results §3 |
 | `build_insider_panel.py` min of `TRANS_DATE` as a string (**fixed 2026-09-24**, WO-8) | "04-MAR-2008" sorted before "11-FEB-2008"; 17 of 320 validation rows mismatched; 25,081 event rows wrong | live-vs-bulk Form 4 validation | forward ledger doc §5c and "Implementation fix 2026-09-24" |
 | Main-checkout builder swapped to float32 (a risk, **resolved 2026-09-26**: the landed builder writes float64) | `market_cap` differs from `composite_panel` in 43,250 of 43,743 sampled rows; float32 would have changed 216,864 `market_cap` values | WO-6 naming its reproduction target explicitly; bit-identity check at landing | [grid rebuild](final/models/2026-09-24-downcap-grid-rebuild.md); COO.md; LEDGER landing log d7d257d |
-| AV pull `IncompleteRead` not retried | bulk pull died at 2010-08-18 | `pull.out` traceback | COO.md; `final/scripts/av_options_pull.py:151` |
+| AV pull `IncompleteRead` not retried (**fixed 2026-09-27**, WO-20, f380817; the live `bin/` copy is still unfixed) | bulk pull died after monthly 2010-08-18 | `pull.out` traceback | [WO-20 doc](final/models/2026-09-27-av-pull-retry-fix.md) "What broke" |
 | LCID "bug", **retracted** | adjusted vs raw price compared | split-signature scanner | corrections §6d |
 | v2 `eligible_cap*` flags include SPACs | a SPAC at trust value has `volatility_60` near 0 and would top an inverse-vol book; 19 cap150 SPAC rows on 2026-09-08 | WO-11 tracing why every v2 measurement dropped them at analysis time | [v2 working panel](final/models/2026-09-25-v2-working-panel-switch.md) §1 |
 | `sharadar_pull_pit_panel.py` skips months already on disk | the current month was never re-pulled, so every Retrain was a no-op for September | WO-14 | [WO-14 doc](final/models/2026-09-25-wo14-v2-incremental-refresh.md) |
@@ -978,6 +1096,12 @@ permuted row.
     is skipped (logged) every week; v3/ext/hedge are unaffected. Streamlit
     must be launched from a shell that has the key (project memory,
     `reference_sharadar_api_key.md`).
+  - **Sharadar pull scripts can write the API key into disk logs**
+    (found by the app-manager 2026-09-26; COO.md WO-19 candidate, not
+    launched). `sf1_topup.py`, `sf1_eps_live_pull.py` and
+    `sharadar_pull_pit_panel.py` put the key in the request URL and print
+    exception text, so a connection error writes it to the job log. The app
+    redacts it on screen only, so job logs on disk may hold the key.
   - Base anaconda's pandas is broken. Use the pipe_dream env
     (`/opt/anaconda3/envs/pipe_dream/bin/python`). The live Retrain uses
     `sys.executable`, so it is unaffected (Streamlit runs in the pipe_dream
@@ -1046,7 +1170,7 @@ the file is on `integration`.
 | [`final/models/2026-09-22-composite-model-corrections.md`](final/models/2026-09-22-composite-model-corrections.md) | 2026-09-22 → 09-23 | landed (§0-19) | corrections, LCID retraction, beta term, safeguards, IC weighting, extensions, turnover, third hold-out spend, options overlay, §19 cross-model MIDDLE |
 | [`final/models/2026-09-22-composite-model-full-specification.md`](final/models/2026-09-22-composite-model-full-specification.md) | 2026-09-22 | landed | clean spec of the IC-weighted 8-factor composite: start here (§4 lacks the survivorship caveat; §6 points to the old AGENTS.md table) |
 | [`final/models/2026-09-22-alpha-vantage-spin.md`](final/models/2026-09-22-alpha-vantage-spin.md) | 2026-09-22 | landed | AV coverage, options pull, **down-cap survivorship finding** |
-| [`final/scripts/AV_PULL_WINDOWS.md`](final/scripts/AV_PULL_WINDOWS.md) | 2026-09-23 | landed | moving the AV pull to Windows |
+| [`final/scripts/AV_PULL_WINDOWS.md`](final/scripts/AV_PULL_WINDOWS.md) | 2026-09-23 (WO-20 line 2026-09-27) | landed | moving the AV pull to Windows; the 2026-09-27 line records the retry fix and a resume command |
 | [`final/models/2026-09-22-session-handoff.md`](final/models/2026-09-22-session-handoff.md) | 2026-09-22 | landed (d7d257d) | blend promotion (UI part superseded by 10bfb19), query fix, retrain speedup (its float32 builder not taken) |
 | [`final/models/2026-09-23-insider-congress-preregistration.md`](final/models/2026-09-23-insider-congress-preregistration.md) | 2026-09-23 | landed | insider k=2 trials, congress ruled untestable before any return |
 | [`final/models/2026-09-23-insider-congress-results.md`](final/models/2026-09-23-insider-congress-results.md) | 2026-09-23 | landed | insider counts fail; sector-neutral artefact; opportunistic-buyer lead; congress forward-only |
@@ -1064,7 +1188,8 @@ the file is on `integration`.
 | [`final/models/2026-09-26-wo16-sf1-topup.md`](final/models/2026-09-26-wo16-sf1-topup.md) | 2026-09-26 | landed (defcc23) | WO-16: SF1 append-only top-up pre-reg + results, 7-day window, `FF.main()` fix, full-grid rehearsal, share-basis screen, deploy coupling and rollback |
 | [`final/models/2026-09-26-sue-forward-ledger.md`](final/models/2026-09-26-sue-forward-ledger.md) | 2026-09-26 (pre-reg 9dc2d03; Addendum A c69b942) | landed (6ac64e6) | WO-15: icw9_sue forward ledger pre-registration (frozen weights, kill rule), first live pull (STOP at basis validation), Addendum A (isolation, uniform-ratio check, 1% cap, rolling reference, W38/W39 declined). Its §4 "ends 2026-09-08" for `sf1_fundamentals.parquet` predates WO-16 |
 | [`final/models/2026-09-26-wo17-reference-refresh.md`](final/models/2026-09-26-wo17-reference-refresh.md) | 2026-09-26 (pre-reg 7dd8066; Addendum A 134fbf5; results f88ae19) | landed (a9344ef) | WO-17: tickers_master/actions refresh, label hold-back (+`firstpricedate`), SUCCESS; acceptance (a)-(d), named checks, split-blocked 8 stay blocked, WO-15 coupling. Its consumer table's "`sue_forward.py` (WO-15, not landed)" and "Recheck WO-15 before it deploys" predate the 562dab9 deploy (§6 #17). Reports in `final/out/wo17/` |
-| `worktree-agent-ad57ef9f38454d99d:final/models/2026-09-26-seasonality-screen.md` | 2026-09-26 (mtime 22:25; uncommitted) | in flight | WO-18: Heston-Sadka seasonality pre-registration draft |
+| `worktree-agent-ad57ef9f38454d99d:final/models/2026-09-26-seasonality-screen.md` | 2026-09-26 (pre-reg 51795c9; results a7aa44e; panel-swap check 74e6e03, 2026-09-27) | in flight (committed, not landed) | WO-18: Heston-Sadka `seas` pre-registration + Results, PASS-nomination (7 gates), caveats (a)-(f), panel-swap verification |
+| [`final/models/2026-09-27-av-pull-retry-fix.md`](final/models/2026-09-27-av-pull-retry-fix.md) | 2026-09-27 (7b16662) | landed (f380817) | WO-20: why the AV pull died (IncompleteRead is an HTTPException), the retry fix, offline test, how to resume |
 | [`final/app/README.md`](final/app/README.md) | 2026-09-24 (commit) | landed; header stale vs the 10bfb19 app.py (app-manager) | how to run the app, tab guide |
 | [`final/models/pit_integration/README.md`](final/models/pit_integration/README.md) | 2026-09-02 | landed | options PIT-integration reproduction |
 | [`final/models/hyperparameter_retune/README.md`](final/models/hyperparameter_retune/README.md) | 2026-09-02 | landed | options Tweedie/GAM retune |
@@ -1166,3 +1291,12 @@ Old claim, its source and date → what replaced it, with source and date.
 - `actions.csv` covers 2025-09-09..2026-09-10 (README §8.1, 2026-09-25) → through 2026-09-29 (WO-17 doc, 2026-09-26).
 - "The other 7 integration-only scripts are absent live" (README §4.7, 2026-09-26 run 8, derived) → 9 at a9344ef, incl. WO-17's two tools (git ls-tree check, 2026-09-26 run 9).
 - WO-18 pre-reg doc does not exist yet (README §5, 2026-09-26 run 8) → exists uncommitted, mtime 2026-09-26 22:25 (WO-18 worktree).
+- AV pull stopped at monthly 2010-08-18 after "32 of 225" monthly dates (README §4.4, from COO.md, 2026-09-23) → 33 of 225 (WO-20 doc and COO.md D-AV, 2026-09-27; 33 unique dates in `pull.out`).
+- `IncompleteRead` is not in the retry tuple at `final/scripts/av_options_pull.py:151` (README §4.4/§8.1, 2026-09-23) → fixed: `FETCH_ERRORS` includes `http.client.HTTPException` (WO-20, landed f380817, 2026-09-27).
+- A real network run of Retrain ALL has not been exercised (README §3.1/§4.7, 2026-09-26 runs 8-9) → Gabe's live Retrain ALL 2026-09-26 22:36-22:47, COO-verified CLEAN (COO.md, 2026-09-27).
+- The working panel is through 2026-09-24 and 8 split names are blocked (README §4.5, 2026-09-25/26) → through 2026-09-25 in the live checkout; BLOCKED list 9 with KITT (COO.md, Retrain ALL 2026-09-26).
+- The blend stays as of 2026-09-08 because its `as_of` comes from the unrebuilt v1 base panel (README §3.2, from the WO-14 doc, 2026-09-25) → blend and composite both as of 2026-09-25 after Gabe's Retrain ALL (live metas, mtime 2026-09-26 22:47).
+- App key guard landed, not deployed; deploying it is Gabe's call (README §4.7 / Open conflicts #19, 2026-09-26 run 9) → deployed with the picks sort as 4ab4363 (c8dec17) on Gabe's "just deploy it now" (COO.md #12; LEDGER, 2026-09-26).
+- Live checkout @ 562dab9 (README §5, 2026-09-26 runs 8-9) → 4ab4363 (LEDGER landing log, 2026-09-26).
+- WO-15's split allow-list changed under it; recheck needed (README Open conflicts #17, 2026-09-26 run 9) → CLOSED, the split list is reporting-only (COO.md, 2026-09-26).
+- WO-18 in flight, uncommitted, no result (README §5, 2026-09-26 run 9) → committed 51795c9/a7aa44e/74e6e03, PASS-nomination, COO-verified, not landed (COO.md; LEDGER, 2026-09-27).

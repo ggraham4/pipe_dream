@@ -1,0 +1,42 @@
+{
+ "seas": {
+  "date": "2026-09-24",
+  "rows": 3048,
+  "icw8_vs_v3_max_abs": 9.974659986866641e-17,
+  "seas_info": {
+   "t": "2026-09-24",
+   "target_month": "2026-10",
+   "months_used": "2016-09..2025-10",
+   "files_used": 20,
+   "basis_mtime_span_days": 0.015,
+   "basis_flag": false,
+   "n": 3048,
+   "finite": 2630,
+   "coverage": 0.8628608923884514,
+   "rows": 3048,
+   "coverage_rows": 0.8628608923884514
+  },
+  "icw9_seas_equals_independent_score": true
+ },
+ "blend_seas": {
+  "date": "2026-09-25",
+  "rows": 1615,
+  "seas_info": {
+   "t": "2026-09-25",
+   "target_month": "2026-10",
+   "months_used": "2016-09..2025-10",
+   "files_used": 20,
+   "basis_mtime_span_days": 0.015,
+   "basis_flag": false,
+   "n": 1615,
+   "finite": 1459,
+   "coverage": 0.903405572755418,
+   "rows": 1615,
+   "coverage_rows": 0.903405572755418
+  }
+ },
+ "todo_now": {
+  "seas": [],
+  "blend_seas": []
+ }
+}

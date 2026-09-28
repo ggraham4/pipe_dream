@@ -43,6 +43,18 @@ RULES (frozen; COO implementation of Gabe's ruling)
     get sue NaN; > 1% non-uniform of a date's v3 tickers skips that date).
     ISOLATION: any SUE failure skips only the SUE record (logged to
     ledger_sue_guard_log.csv) and never stops v3/ext/hedge.
+ 8. WO-20 (2026-09-27, doc final/models/2026-09-27-wo20-seas-live.md): two
+    side ledgers from final/src/seasonality/seas_forward.py, written after SUE:
+      prediction_ledger_seas.csv        Theoretical model icw9_seas vs icw8,
+                                        on v3's rows (paired with v3)
+      prediction_ledger_blend_seas.csv  Today's Picks blend with seas (10 ew
+                                        factors) vs the previous 9-factor blend
+    Their dates are v3's dates after 2026-09-24 with no record in that ledger.
+    Same isolation as WO-15 Addendum A, PER LEDGER: any failure (plan,
+    preflight, record, sidecar) skips only that ledger's record, is logged to
+    ledger_seas_guard_log.csv, and never stops v3/ext/hedge/sue or the other
+    side ledger. A record half-written by a raising record step is reported
+    at the end, after hedge has recorded.
 """
 import argparse
 import hashlib
@@ -73,12 +85,19 @@ SUE = R26 / "prediction_ledger_sue.csv"
 ANN_CSV = R26 / "ledger_record_annotations.csv"
 SUE_GUARD_CSV = R26 / "ledger_sue_guard_log.csv"                      # WO-15 Addendum A
 SUE_REF_LOG = W.SH / "sf1_arq_eps_live_accepted.csv"                 # WO-15 Addendum A (d)
+# WO-20 (2026-09-27): side ledgers (final/src/seasonality/seas_forward.py)
+SEAS = R26 / "prediction_ledger_seas.csv"
+BLEND_SEAS = R26 / "prediction_ledger_blend_seas.csv"
+SEAS_GUARD_CSV = R26 / "ledger_seas_guard_log.csv"
 ALL_LEDGERS = [R26 / n for n in ("prediction_ledger.csv", "prediction_ledger_v2.csv",
                                  "prediction_ledger_v3.csv", "prediction_ledger_ext.csv",
-                                 "prediction_ledger_hedge.csv", "prediction_ledger_sue.csv")]
+                                 "prediction_ledger_hedge.csv", "prediction_ledger_sue.csv",
+                                 "prediction_ledger_seas.csv", "prediction_ledger_blend_seas.csv")]
 LATE_DAYS = 7
 SUE_INCOMPLETE_NOTE = ("incomplete_week: paired with the v3 record for this date, which is annotated "
                        "incomplete_week; descriptive only, never a counted date; WO-15 2026-09-26")
+SEAS_INCOMPLETE_NOTE = ("incomplete_week: paired with the v3 record for this date, which is annotated "
+                        "incomplete_week; descriptive only, never a counted date; WO-20 2026-09-27")
 
 
 def log(m):
@@ -122,7 +141,7 @@ def recorded_weeks(csv):
 
 def prefix_hashes():
     h = {}
-    for p in ALL_LEDGERS + [LOG_CSV, ANN_CSV, SUE_GUARD_CSV, SUE_REF_LOG]:
+    for p in ALL_LEDGERS + [LOG_CSV, ANN_CSV, SUE_GUARD_CSV, SUE_REF_LOG, SEAS_GUARD_CSV]:
         if p.exists():
             b = p.read_bytes()
             h[p] = (len(b), hashlib.sha256(b).hexdigest())   # keyed by full path (sidecars live in 2 dirs)
@@ -149,6 +168,19 @@ def plan():
     except (Exception, SystemExit) as e:   # noqa: BLE001
         log(f"SUE plan FAILED (SUE skipped this run; v3/ext/hedge unaffected): {type(e).__name__}: {e}")
         p[SUE.name] = []
+    # WO-20: side-ledger dates = v3 dates after 2026-09-24 (existing + this run's) without a record
+    for key in _side_keys().values():
+        p[key] = []
+    try:        # isolation: a side-ledger failure here never blocks v3/ext/hedge/sue
+        sides = _seas_forward().side_ledgers()
+    except (Exception, SystemExit) as e:   # noqa: BLE001
+        log(f"SEAS plan FAILED (side ledgers skipped this run; v3/ext/hedge/sue unaffected): {type(e).__name__}: {e}")
+        sides = []
+    for L in sides:
+        try:
+            p[_side_keys()[L.name]] = [(iso_week(d), d) for d in L.todo([d for _w, d in p[V3.name]])]
+        except (Exception, SystemExit) as e:   # noqa: BLE001
+            log(f"{L.name} plan FAILED (skipped this run; others unaffected): {type(e).__name__}: {e}")
     return targets, p
 
 
@@ -156,6 +188,24 @@ def _sue_forward():
     sys.path.insert(0, str(HERE.parent / "sue"))
     import sue_forward as SF
     return SF
+
+
+def _seas_forward():
+    sys.path.insert(0, str(HERE.parent / "seasonality"))
+    import seas_forward as SS
+    return SS
+
+
+def _side_keys():
+    """side-ledger name -> todo key (the ledger file name)."""
+    return {"seas": SEAS.name, "blend_seas": BLEND_SEAS.name}
+
+
+def _seas_guard(SS, iso, event, detail, ledger):
+    try:
+        SS.log_guard(iso, event, detail, ledger=ledger)
+    except (Exception, SystemExit) as e:   # noqa: BLE001
+        log(f"could not write seas guard log for {ledger} {iso}: {type(e).__name__}: {e}")
 
 
 def manifest_snapshot():
@@ -285,7 +335,36 @@ def run(dry=False):
                     sue_skipped[iso] = f"date: {type(e).__name__}: {e}"
         for iso, why in sue_skipped.items():
             log(f"SUE SKIPPED for {iso} (v3/ext/hedge unaffected): {why}")
-    log("preflight passed (blind, guards, insider freshness; SUE isolated)")
+    # WO-20 side-ledger preflight (isolated exactly like SUE, per ledger): rows +
+    # coverage guard + pairing where v3 already exists, BEFORE anything is written.
+    SS, sides = None, []
+    side_rows, side_skipped, side_deferred = {}, {}, []
+    if any(todo[k] for k in _side_keys().values()):
+        try:
+            SS = _seas_forward()
+            sides = SS.side_ledgers()
+            v3_have_s = set(pd.read_csv(V3, usecols=["panel_date"])["panel_date"].astype(str)) if V3.exists() else set()
+        except (Exception, SystemExit) as e:   # noqa: BLE001
+            for key in _side_keys():
+                side_skipped[key] = {d.date().isoformat(): f"preflight: {type(e).__name__}: {e}"
+                                     for _w, d in todo[_side_keys()[key]]}
+            sides = []
+    for L in sides:
+        side_rows[L.name], side_skipped[L.name] = {}, {}
+        for _w, d in todo[_side_keys()[L.name]]:
+            iso = d.date().isoformat()
+            try:
+                rows, info = L.build(d)
+                if L.pair is not None and iso in v3_have_s:
+                    L.pair(rows, d)
+                side_rows[L.name][iso] = rows
+                log(f"{L.name} preflight {iso}: {info}")
+            except (Exception, SystemExit) as e:   # noqa: BLE001
+                side_skipped[L.name][iso] = f"date: {type(e).__name__}: {e}"
+    for name, sk in side_skipped.items():
+        for iso, why in sk.items():
+            log(f"{name} SKIPPED for {iso} (v3/ext/hedge/sue unaffected): {why}")
+    log("preflight passed (blind, guards, insider freshness; SUE and side ledgers isolated)")
     man_before = manifest_snapshot()
 
     logrows = []
@@ -331,6 +410,37 @@ def run(dry=False):
             SF.log_guard(iso, "sue_skipped", "", why)
         except (Exception, SystemExit) as e:   # noqa: BLE001
             log(f"could not write SUE guard log for {iso}: {type(e).__name__}: {e}")
+    # WO-20 side ledgers, right after SUE (each record step re-checks blindness,
+    # duplicates and, for seas, v3 pairing). Isolated per ledger: a failure is
+    # logged and skipped; the other side ledger and hedge still record.
+    for L in sides:
+        for iso, rows in side_rows.get(L.name, {}).items():
+            d = pd.Timestamp(iso)
+            csv = L.csv
+            size0 = csv.stat().st_size if csv.exists() else 0
+            try:
+                out = L.record(d, rows)
+            except (Exception, SystemExit) as e:   # noqa: BLE001
+                side_skipped[L.name][iso] = f"record: {type(e).__name__}: {e}"
+                log(f"{L.name} SKIPPED for {iso} at record (v3/ext/hedge/sue unaffected): {e}")
+                if (csv.stat().st_size if csv.exists() else 0) != size0:
+                    side_deferred.append(f"{csv.name} {iso}: record raised AFTER appending ({e}); "
+                                         f"half-written record, fix by hand")
+                continue
+            try:
+                ra = str(out["recorded_at"].iloc[0])
+                logrows.append([csv.name, iso, iso_week(d), ra, _late(iso, ra), int(len(out))])
+                if v3_incomplete(iso):
+                    append_annotation(csv.name, iso, SEAS_INCOMPLETE_NOTE, L.source)
+            except (Exception, SystemExit) as e:   # noqa: BLE001
+                side_deferred.append(f"{csv.name} {iso}: sidecar step after the record failed: {type(e).__name__}: {e}")
+                log(f"{L.name} sidecar step FAILED for {iso} (hedge still records; run will report it): {e}")
+    for name, sk in side_skipped.items():
+        for iso, why in sorted(sk.items()):
+            if SS is not None:
+                _seas_guard(SS, iso, f"{name}_skipped", why, name)
+            else:
+                log(f"seas guard log unavailable ({name} {iso}): {why}")
     for _w, d in todo[HEDGE.name]:
         iso = d.date().isoformat()
         FH.record_hedge(date=iso)
@@ -340,10 +450,11 @@ def run(dry=False):
         append_log(logrows)
     check_prefixes(before)
     check_manifest(man_before)
-    if sue_deferred:
-        raise SystemExit("SUE post-record problem (v3/ext/hedge recorded): " + " | ".join(sue_deferred))
+    if sue_deferred or side_deferred:
+        raise SystemExit("SUE/side-ledger post-record problem (v3/ext/hedge recorded): "
+                         + " | ".join(sue_deferred + side_deferred))
     # one record per ISO week per ledger (weeks after START_AFTER)
-    for led in (V3, EXT, HEDGE, SUE):
+    for led in (V3, EXT, HEDGE, SUE, SEAS, BLEND_SEAS):
         for w, ds in recorded_weeks(led).items():
             if len(ds) > 1:
                 raise SystemExit(f"{led.name}: more than one record in {w}: {sorted(ds)}")
@@ -354,6 +465,9 @@ def run(dry=False):
     _, left = plan()
     if sue_skipped:     # a skipped SUE date stays missing by design (isolation); logged above
         left[SUE.name] = [x for x in left[SUE.name] if x[1].date().isoformat() not in sue_skipped]
+    for name, sk in side_skipped.items():   # same for the WO-20 side ledgers
+        key = _side_keys()[name]
+        left[key] = [x for x in left[key] if x[1].date().isoformat() not in sk]
     if any(left.values()):
         raise SystemExit(f"weeks still missing after run: {left}")
     return 0
