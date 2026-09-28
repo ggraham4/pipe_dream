@@ -1,0 +1,56 @@
+{
+ "reference": "/Users/ggraham/pipe_dream/.claude/worktrees/agent-ad57ef9f38454d99d/final/out/seasonality/seas_factor_v2.parquet",
+ "dates": {
+  "2019-01-02": {
+   "rows": 3969,
+   "finite": 2930,
+   "max_abs_diff": 0.0,
+   "nan_pattern_equal": true,
+   "nyears_equal": true,
+   "target_ym_equal": true,
+   "target_month": "2019-01",
+   "pass": true
+  },
+  "2019-03-15": {
+   "rows": 3954,
+   "finite": 2964,
+   "max_abs_diff": 0.0,
+   "nan_pattern_equal": true,
+   "nyears_equal": true,
+   "target_ym_equal": true,
+   "target_month": "2019-04",
+   "pass": true
+  },
+  "2019-06-03": {
+   "rows": 3977,
+   "finite": 3006,
+   "max_abs_diff": 0.0,
+   "nan_pattern_equal": true,
+   "nyears_equal": true,
+   "target_ym_equal": true,
+   "target_month": "2019-07",
+   "pass": true
+  },
+  "2019-10-28": {
+   "rows": 3984,
+   "finite": 3008,
+   "max_abs_diff": 0.0,
+   "nan_pattern_equal": true,
+   "nyears_equal": true,
+   "target_ym_equal": true,
+   "target_month": "2019-11",
+   "pass": true
+  },
+  "2019-12-31": {
+   "rows": 3970,
+   "finite": 3015,
+   "max_abs_diff": 0.0,
+   "nan_pattern_equal": true,
+   "nyears_equal": true,
+   "target_ym_equal": true,
+   "target_month": "2020-01",
+   "pass": true
+  }
+ },
+ "pass": true
+}

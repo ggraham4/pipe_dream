@@ -33,6 +33,18 @@ existing xrank candidate in current_signal_pit.py):
     confirmed to work. See final/models/2026-09-22-composite-model-
     corrections.md sections 12 and 16 for the full numbers.
 
+WO-20 (2026-09-27, Gabe: "Seasonality looks very good so you should add it
+to the model"): the model is now icw9_seas -- the 8 factors below PLUS
+Heston-Sadka return seasonality `seas` (WO-18 definition), scored with the
+frozen ic_weighted_composite.PRODUCTION_WEIGHTS_V9_SEAS (model_version
+ic_weighted_seas_2026-09-27). `seas` is computed at SCORE TIME from the SEP
+month files (final/src/seasonality/seas_live.py), so the panel is untouched.
+The in-era backtest of icw9_seas uses IN-SAMPLE weights; there is NO
+hold-out number for icw9_seas (the hold-out is spent). The hold-out lines in
+BACKTEST_SUMMARY are the icw8 model's. Doc: final/models/2026-09-27-wo20-seas-live.md.
+A missing SEP month file or seas coverage < SEAS_MIN_COVERAGE FAILS the run;
+it never falls back to icw8 (that would publish icw8 picks labelled icw9).
+
 CONSTRUCTION (matches the full-specification doc's section 2 exactly):
     Universe: cap150 tier (market cap >= $150M, trailing 20-day median
         dollar volume >= $250k, domestic common stock, point-in-time).
@@ -64,7 +76,9 @@ panel's last date (2026-09-08).
 OUTPUT
     final/out/current_signal_composite.csv
     final/out/current_signal_composite_meta.json
+    (--out-dir DIR writes both into DIR instead, for worktree testing)
 """
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -87,6 +101,8 @@ sys.path.insert(0, str(RESET_SRC))
 import composite as C  # noqa: E402
 import ic_weighted_composite as ICW  # noqa: E402
 import working_panel as W  # noqa: E402
+sys.path.insert(0, str(RESET_SRC.parent / "seasonality"))
+import seas_live as SL  # noqa: E402
 
 PANEL = W.WORKING_PANEL
 OUT_CSV = MAIN_ROOT / "out" / "current_signal_composite.csv"
@@ -94,22 +110,62 @@ OUT_META = MAIN_ROOT / "out" / "current_signal_composite_meta.json"
 
 TIER = "cap150"
 
+WEIGHTS = ICW.PRODUCTION_WEIGHTS_V9_SEAS
+SIGNS = ICW.SIGNS_V9_SEAS
+MODEL_VERSION = ICW.MODEL_VERSION_V9_SEAS
+SEAS_MIN_COVERAGE = 0.60   # of the eligible cap150 cross-section; in-era 0.76-0.85
+
 BACKTEST_SUMMARY = {
-    "model_version": "ic_weighted_2026-09-22",
+    "model_version": MODEL_VERSION,
+    "factors": "9: the 8 icw8 factors + seas (Heston-Sadka return seasonality, WO-18), "
+               "added 2026-09-27 by Gabe's decision",
+    "in_era_backtest_2007_2019": {
+        "harness": "WO-18 (v2 col c, cap150, decile_volq, 40 offsets, net 15bp, 2007-01-02..2019-12-31)",
+        "icw9_seas": {"excess_cagr_vs_spy_pct": 3.49, "worst_offset_pct": 2.95, "loyo_min_pct": 2.46,
+                      "post_2011_10_pct": 0.51, "offsets_positive": "40/40"},
+        "icw8_previous_model": {"excess_cagr_vs_spy_pct": 2.85, "worst_offset_pct": 1.93, "loyo_min_pct": 1.71,
+                                "post_2011_10_pct": 0.01, "offsets_positive": "40/40"},
+        "in_sample_note": "IN-SAMPLE: the icw9_seas weights come from the same full-era t-stats "
+                          "the backtest is read on (seas t +2.8356). Not an out-of-sample result.",
+        "source": "final/src/seasonality/wo20_frozen_backtest.py -> final/out/seasonality/wo20_frozen_backtest.json",
+    },
+    "holdout_2020_2026": "icw9_seas: NONE -- the hold-out is spent; no look without Gabe. "
+                         "The icw8_* lines below are the PREVIOUS 8-factor model's hold-out result.",
+    "icw8_model_version": "ic_weighted_2026-09-22",
     "nominate_pooled_ic": "+0.03 to +0.05 (t=2.8-5.6, odd/even split-half OOS)",
-    "holdout_excess_cagr_pct": 2.44,
-    "holdout_offsets_positive": "40/40",
-    "holdout_loyo_status": "FAILS -- dropping 2020 alone flips the mean to "
+    "icw8_holdout_excess_cagr_pct": 2.44,
+    "icw8_holdout_offsets_positive": "40/40",
+    "icw8_holdout_loyo_status": "FAILS -- dropping 2020 alone flips the mean to "
                             "-3.95%/yr. Same failure mode confirmed on three "
                             "separate model versions now (equal-weight, "
                             "asset_growth-dropped, IC-weighted). See the "
                             "full-specification and corrections docs before "
                             "trusting the headline number above.",
     "writeup": "final/models/2026-09-22-composite-model-full-specification.md",
+    "wo20_doc": "final/models/2026-09-27-wo20-seas-live.md",
+    "forward_record": "prediction_ledger_seas.csv (weekly; paired rho(icw9_seas) - rho(icw8), "
+                      "read once at 6 counted dates)",
 }
 
 
-def main():
+def overlap(p_a, p_b):
+    a, b = dict(p_a), dict(p_b)
+    shared = set(a) & set(b)
+    return {"n_icw9_seas": len(a), "n_icw8": len(b), "shared": len(shared),
+            "share_of_icw9_seas": round(len(shared) / max(len(a), 1), 4),
+            "weight_overlap": round(float(sum(min(a[t], b[t]) for t in shared)), 4)}
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out-dir", default=None,
+                    help="write the CSV/meta here instead of the main checkout's final/out")
+    args = ap.parse_args(argv)
+    out_csv, out_meta = OUT_CSV, OUT_META
+    if args.out_dir:
+        od = Path(args.out_dir)
+        od.mkdir(parents=True, exist_ok=True)
+        out_csv, out_meta = od / OUT_CSV.name, od / OUT_META.name
     if not PANEL.exists():
         raise SystemExit(f"{PANEL} not found -- it is built by "
                          f"reset2026/build_downcap_grid_v2.py (WO-6).")
@@ -125,10 +181,22 @@ def main():
         raise SystemExit(f"only {len(elig)} eligible names on {as_of.date()} -- "
                          f"panel looks stale or broken, refusing to write picks.")
 
-    scored = ICW.compute_composite_ic_weighted(elig)
+    # WO-20: live seas for the WHOLE eligible cross-section before scoring
+    # (rank_z runs over the full cross-section). Fails loudly, never falls back.
+    sf, seas_info = SL.seas_asof(elig["ticker"], as_of)
+    assert (sf["ticker"].to_numpy() == elig["ticker"].astype(str).to_numpy()).all()
+    elig = elig.copy()
+    elig["seas"] = sf["seas"].to_numpy(np.float64)
+    if not seas_info["coverage"] >= SEAS_MIN_COVERAGE:
+        raise SystemExit(f"seas coverage {seas_info['coverage']:.1%} on {as_of.date()} < "
+                         f"{SEAS_MIN_COVERAGE:.0%} -- SEP month files look incomplete; refusing to write picks.")
+    scored = ICW.compute_composite_ic_weighted(elig, weights=WEIGHTS)
     picks = C.pick_decile_volq(elig, scored)
     if not picks:
         raise SystemExit(f"pick_decile_volq returned no picks on {as_of.date()}.")
+    # monitoring only: what the previous icw8 model would pick today
+    picks8 = C.pick_decile_volq(elig, ICW.compute_composite_ic_weighted(elig, weights=ICW.PRODUCTION_WEIGHTS))
+    pick_overlap = overlap(picks, picks8)
 
     tickers = [t for t, _ in picks]
     weights = {t: w for t, w in picks}
@@ -139,18 +207,27 @@ def main():
     out["composite_score"] = out["ticker"].map(comp_lookup)
     out["weight"] = out["ticker"].map(weights)
     out = out.sort_values("weight", ascending=False).reset_index(drop=True)
-    out.to_csv(OUT_CSV, index=False)
+    out["seas"] = out["ticker"].map(dict(zip(elig["ticker"], elig["seas"])))
+    out.to_csv(out_csv, index=False)
 
     meta = {
         "as_of_date": as_of.strftime("%Y-%m-%d"),
         "tier": TIER,
         "n_eligible_universe": int(len(elig)),
         "n_picks": int(len(out)),
+        "model_version": MODEL_VERSION,
+        "n_factors": len(WEIGHTS),
         "construction": "decile_volq: top decile by IC-weighted composite score "
                         "within each of 5 trailing-volatility quintiles, "
                         "inverse-vol weighted, 40-trading-day hold, no stop-loss",
-        "factor_signs": {k: v for k, v in C.FACTOR_SIGNS.items()},
-        "factor_weights": {k: round(v, 4) for k, v in ICW.PRODUCTION_WEIGHTS.items()},
+        "factor_signs": {k: SIGNS[k] for k in WEIGHTS},
+        "factor_weights": {k: round(v, 4) for k, v in WEIGHTS.items()},
+        "seas": {"definition": "Heston-Sadka: mean same-calendar-month return over the prior 10 years "
+                               "(target month = month of t+28 calendar days; >= 5 years; SEP closeadj)",
+                 "coverage": round(seas_info["coverage"], 4), "target_month": seas_info["target_month"],
+                 "months_used": seas_info["months_used"], "basis_flag": seas_info["basis_flag"],
+                 "code": "final/src/seasonality/seas_live.py"},
+        "picks_overlap_vs_icw8": pick_overlap,
         "backtest_summary": BACKTEST_SUMMARY,
         "writeup": "final/models/2026-09-22-composite-model-full-specification.md",
         "preregistration": "final/src/reset2026/PREREGISTRATION.md",
@@ -159,16 +236,19 @@ def main():
                          f"({uinfo.get('spac_rows_dropped_eligible_' + TIER, 0)} eligible SPAC rows dropped)",
         "role": "candidate",
         "note": "TRACKED, NOT ACTED ON AS A VALIDATED EDGE -- a theoretical, "
-                "zero-fitted-parameter rank model (only the 8 factor SIGNS and "
+                "zero-fitted-parameter rank model (only the 9 factor SIGNS and "
                 "the IC-weights' shrinkage formula are decisions; no return "
-                "target was ever fit). Fails leave-one-year-out on the "
-                "2020-2026 hold-out across all three tested versions. See the "
-                "write-up.",
+                "target was ever fit). seas was added 2026-09-27 (Gabe); its "
+                "in-era backtest uses in-sample weights and it has no hold-out "
+                "result. The previous 8-factor version fails leave-one-year-out "
+                "on the 2020-2026 hold-out. See the write-ups.",
     }
-    OUT_META.write_text(json.dumps(meta, indent=2))
-    print(f"as of {as_of.date()}: {len(out)} picks from {len(elig)} eligible names")
+    out_meta.write_text(json.dumps(meta, indent=2))
+    print(f"as of {as_of.date()}: {len(out)} picks from {len(elig)} eligible names "
+          f"({MODEL_VERSION}; seas coverage {seas_info['coverage']:.1%})")
+    print(f"picks overlap vs icw8: {pick_overlap}")
     print(out.head(10).to_string(index=False))
-    print(f"\n-> {OUT_CSV}\n-> {OUT_META}")
+    print(f"\n-> {out_csv}\n-> {out_meta}")
 
 
 if __name__ == "__main__":
