@@ -1,0 +1,98 @@
+{
+  "reconcile": {
+    "score": {
+      "full": 0.028541632641009042,
+      "pre": 0.07752581091234244,
+      "post": 0.00012178267308571079
+    },
+    "rand": [
+      {
+        "full": -0.009795426657163273,
+        "pre": 0.020268481780941913,
+        "post": -0.02716136059651203
+      },
+      {
+        "full": -0.010148098927039504,
+        "pre": 0.019055227474393616,
+        "post": -0.02701244639511823
+      },
+      {
+        "full": -0.010043077982678224,
+        "pre": 0.020092891565558924,
+        "post": -0.027454984735945147
+      },
+      {
+        "full": -0.011336198276445884,
+        "pre": 0.019574828150653662,
+        "post": -0.02918488083611388
+      },
+      {
+        "full": -0.010754363095257857,
+        "pre": 0.017907946711985683,
+        "post": -0.027314514934846677
+      }
+    ],
+    "noscore_full": -0.00248503454823125,
+    "refs": {
+      "icw8_full": 0.0285416,
+      "coo_score_book": {
+        "full": 0.028541632641009042,
+        "pre": 0.07752581091234244,
+        "post": 0.00012178267308571079
+      },
+      "coo_null_draws": [
+        {
+          "full": -0.009795426657163273,
+          "pre": 0.020268481780941913,
+          "post": -0.02716136059651203
+        },
+        {
+          "full": -0.010148098927039504,
+          "pre": 0.019055227474393616,
+          "post": -0.02701244639511823
+        },
+        {
+          "full": -0.010043077982678224,
+          "pre": 0.020092891565558924,
+          "post": -0.027454984735945147
+        },
+        {
+          "full": -0.011336198276445884,
+          "pre": 0.019574828150653662,
+          "post": -0.02918488083611388
+        },
+        {
+          "full": -0.010754363095257857,
+          "pre": 0.017907946711985683,
+          "post": -0.027314514934846677
+        }
+      ],
+      "wo7_noscore_full": -0.002485034548231018,
+      "tol": 1e-06
+    },
+    "checks": {
+      "icw8_full_vs_0.0285416": true,
+      "score_full_vs_coo": true,
+      "rand0_full_vs_coo": true,
+      "rand1_full_vs_coo": true,
+      "rand2_full_vs_coo": true,
+      "rand3_full_vs_coo": true,
+      "rand4_full_vs_coo": true,
+      "score_pre_vs_coo": true,
+      "rand0_pre_vs_coo": true,
+      "rand1_pre_vs_coo": true,
+      "rand2_pre_vs_coo": true,
+      "rand3_pre_vs_coo": true,
+      "rand4_pre_vs_coo": true,
+      "score_post_vs_coo": true,
+      "rand0_post_vs_coo": true,
+      "rand1_post_vs_coo": true,
+      "rand2_post_vs_coo": true,
+      "rand3_post_vs_coo": true,
+      "rand4_post_vs_coo": true,
+      "noscore_full_vs_wo7": true
+    },
+    "all_pass": true
+  },
+  "runtime_s": 159.9388620853424
+}

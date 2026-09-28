@@ -120,6 +120,146 @@ and U). As in every v2-grid number since WO-13, late-2019 rows whose 40d
 label ends in early 2020 are kept (Gabe's ruling); this is needed for the
 reconcile. No 2020+ rebalance date is read.
 
-## 2. Results
+## 2. Results (run 2026-09-27; 1 run + 1 fix used)
 
-(to be filled after the run)
+**Run log.** `--validate` passed all 20 reconcile gates. The counted run
+then crashed in the OLS section, after the decomposition and decision map
+had been computed and logged. The crash was a pandas boolean-mask bug.
+The one allowed fix was a numpy mask plus a `bool()` cast on the trigger
+flags. The rerun reproduced the logged decomposition numbers exactly and
+wrote `final/out/construction/drag_decomp.json` (log: `drag_decomp.log`,
+reconcile: `drag_decomp_validate.json`, all under `final/out/construction/`.
+The script writes them to the main checkout, and they are copied onto the
+branch and committed. They are small and not gitignored.
+
+### 2.1 Reconcile (all 1e-6)
+
+| check | got | reference |
+|---|---|---|
+| icw8 full | +0.0285416 | +0.0285416 |
+| icw8 pre / post | +0.0775258 / +0.0001218 | COO decomp.json, equal |
+| 5 random draws, each of full / pre / post | 15 values | COO decomp.json null_draws, all equal |
+| noscore full vs SPY | −0.002485035 | WO-7 noscore_control.json −0.002485035 |
+
+### 2.2 Decomposition, %/yr vs SPY, net 15 bp (PRIMARY)
+
+Random = mean of 5 draws. Draw range is in brackets.
+
+| window | T = random net − SPY | (a) universe = noscore net − SPY | (b) construction = random net − noscore net | (c) costs = random net − gross |
+|---|---|---|---|---|
+| pre (< 2011-10) | **+1.94** [+1.79, +2.03] | +2.74 | −0.80 [−0.94, −0.71] | −0.86 |
+| post (≥ 2011-10) | **−2.76** [−2.92, −2.70] | **−1.99** | −0.77 [−0.93, −0.71] | −0.87 |
+| full | −1.04 | −0.25 | −0.79 | −0.86 |
+
+**Post-window shares of T (signed):** (a) **0.720**, (b) 0.280, (c) 0.315.
+
+Secondary gross three-way, post: (a_g) noscore gross − SPY −1.94 (0.703),
+(b_g) random gross − noscore gross **+0.05** (−0.017), (c) −0.87 (0.315).
+Pre: +2.80 / −0.00 / −0.86. It sums to T exactly.
+
+**Mean name turnover f_new** (post): random 0.905, score 0.205,
+noscore 0.048. Pre: 0.907 / 0.227 / 0.066.
+
+### 2.3 Decision map outcome: **"universe bet"**
+
+- (a) = 72.0 % of the post-2011 drag, which is ≥ 2/3 → universe bet.
+- (b) = 28.0 % < 2/3 → no construction trial.
+- (c) = 31.5 % < 1/3 → no turnover work order.
+- The gross basis gives the same triggers (a_g 70.3 %, b_g −1.7 %,
+  c 31.5 %), so there is no disagreement between the bases.
+
+As expected in section 1.4:
+- (c) sits just under the 1/3 line (analytic ≈ 31 %).
+- The gross construction effect is zero (random gross = noscore gross
+  within ±0.05).
+- So the net (b) is almost entirely the null's own churn cost:
+  f_new 0.905 vs the noscore book's 0.048.
+- The live book's cost is −0.20 %/yr (f_new 0.205), not −0.87.
+
+### 2.4 Same split for the score book (icw8), and selection
+
+| window | score net − SPY | (a) universe | score net − noscore net | score costs (net − gross) | selection net (score − random) | selection gross |
+|---|---|---|---|---|---|---|
+| pre | +7.75 | +2.74 | +5.02 | −0.22 | +5.82 | +5.17 |
+| post | **+0.01** | −1.99 | +2.00 | −0.20 | **+2.78** | +2.10 |
+| full | +2.85 | −0.25 | +3.10 | −0.20 | +3.90 | +3.23 |
+
+Net selection exceeds gross selection by about 0.67, because the random
+book pays about 0.67 %/yr more in costs than the score book.
+
+Reading of the map's forward formula (descriptive, not a forecast), post
+window, net: universe −1.99 + score-book construction/selection over the
+no-score book +2.00 = +0.01 vs SPY. Measured against the random null, the
+selection of +2.78 sits on top of a −2.76 random book, and 0.77 of that
+random book's drag is null-only churn.
+
+### 2.5 COO addendum: icw8 selection (score − random, net) across offsets
+
+| window | mean40 | sd40 | offsets positive | LOYO min (dropped yr) | LOYO max (dropped yr) |
+|---|---|---|---|---|---|
+| post 2011-10..2019 | +2.78 | 0.40 | 40/40 | +1.59 (2018) | +4.05 (2016) |
+| pre | +5.82 | 0.52 | 40/40 | +4.38 (2011) | +8.53 (2007) |
+| full | +3.90 | 0.31 | 40/40 | +3.28 (2018) | +4.76 (2016) |
+
+icw9_seas is not reported (in-sample weights).
+
+### 2.6 Per calendar year, %/yr
+
+Full-calendar chains, rebalance-date year. These do not sum to the
+sub-calendar pre/post numbers.
+
+| year | T random | (a) universe | (b) constr. | (c) costs | (b_g) gross constr. | score net | selection net |
+|---|---|---|---|---|---|---|---|
+| 2007 | −7.46 | −6.66 | −0.80 | −0.85 | −0.13 | −11.90 | −4.44 |
+| 2008 | +4.12 | +5.15 | −1.04 | −0.80 | −0.26 | +14.81 | +10.69 |
+| 2009 | +8.08 | +8.91 | −0.84 | −0.91 | +0.03 | +16.54 | +8.46 |
+| 2010 | +7.33 | +7.90 | −0.58 | −0.89 | +0.28 | +9.97 | +2.64 |
+| 2011 | −1.61 | −0.72 | −0.89 | −0.86 | −0.06 | +8.58 | +10.19 |
+| 2012 | −0.61 | +0.02 | −0.63 | −0.87 | +0.21 | −0.71 | −0.11 |
+| 2013 | +3.09 | +3.90 | −0.81 | −0.89 | +0.04 | +4.40 | +1.31 |
+| 2014 | −6.59 | −5.79 | −0.80 | −0.86 | +0.04 | −0.77 | +5.82 |
+| 2015 | −7.40 | −6.68 | −0.72 | −0.83 | +0.09 | −5.67 | +1.73 |
+| 2016 | +7.20 | +7.93 | −0.73 | −0.89 | +0.13 | +0.62 | −6.58 |
+| 2017 | −7.92 | −6.88 | −1.04 | −0.87 | −0.19 | +1.50 | +9.41 |
+| 2018 | −0.75 | −0.06 | −0.70 | −0.85 | +0.13 | +10.64 | +11.39 |
+| 2019 | −11.24 | −10.44 | −0.79 | −0.87 | +0.05 | −11.28 | −0.04 |
+
+The universe term drives the year-to-year swings, while (b) and (c) are
+flat at about −0.8 %/yr every year. The post-2011 drag comes from the
+universe losing to SPY in 2014, 2015, 2017 and 2019.
+
+### 2.7 OLS of per-date 40d net excess (NW(39) t; alpha ×252/40)
+
+Random book (5-draw mean), common sample where IWM is finite.
+
+| window (n) | on SPY: slope (β−1), t | alpha, t | on IWM: slope, t | alpha, t | raw on IWM: β, R² | mean IWM − SPY |
+|---|---|---|---|---|---|---|
+| pre (1197) | +0.129, +3.40 | +2.07 %, +0.93 | +0.163, +7.87 | +1.72 %, +0.90 | 0.922, 0.982 | +2.37 %/yr |
+| post (2035) | +0.037, +0.85 | **−2.95 %, −2.23** | +0.188, +7.67 | **−4.59 %, −4.15** | 0.819, 0.972 | −1.10 %/yr |
+| full (3232) | +0.091, +2.68 | −1.52 %, −1.23 | +0.166, +9.00 | −2.10 %, −1.96 | 0.888, 0.976 | +0.18 %/yr |
+
+- **SPY beta:** the random book's beta to SPY is ≈ 1.04 post and 1.13 pre.
+  Post, the drag is not market beta. It is an intercept of −2.95 %/yr.
+- **Excess on (IWM − SPY):** slope +0.64 post (t +27.6, R² 0.85), alpha
+  −1.79 %/yr (t −4.06). Pre: slope +0.71, alpha +0.25 %/yr (t +0.27).
+- **Raw return on IWM:** R² 0.97, alpha +0.60 %/yr post (t +1.19). The
+  cap150 universe book behaves like about 0.8 × IWM.
+- About −0.7 of the post drag is the small-cap spread (0.64 × −1.10). Most
+  of the rest is the 0.87 null churn cost, plus a residual.
+
+Score book, post: on SPY slope −0.045 (t −1.12), alpha +0.90 % (t +0.60);
+on IWM slope +0.099, alpha −0.74 % (t −0.48).
+
+### 2.8 Summary
+
+The post-2011 random-book drag of −2.76 %/yr splits into three parts:
+- **Universe (−1.99, 72 %):** the no-score, inverse-vol cap150 book losing
+  to SPY. It is concentrated in 2014, 2015, 2017 and 2019, and tracks
+  small caps (≈ 0.8 × IWM, R² 0.97).
+- **Construction (−0.77, 28 %):** entirely trading cost from the null's
+  0.9 name turnover. The gross construction effect is +0.05.
+- **Costs (−0.87, 31.5 %):** overlaps with the above. It is a property of
+  the reshuffled null, not of the live book, whose cost is −0.20.
+
+Decision map: **"universe bet"**. Forward expectation vs SPY ≈ selection
+− universe drag. The benchmark/hedge choice goes to Gabe.
