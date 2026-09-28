@@ -1079,10 +1079,13 @@ def _sue_guard_report(job_name: str):
     record_weekly.py appended to ledger_sue_guard_log.csv during that run
     (columns per final/src/sue/sue_forward.py log_guard())."""
     state = dr.refresh_status(job_name)
-    if state.status not in ("done", "failed") or not state.meta \
-            or "sue_guard_rows_before" not in state.meta:
+    # getattr: a Streamlit process started before JobState.meta existed keeps
+    # the old lib.data_refresh class in memory (hot-reload only re-runs app.py).
+    meta = getattr(state, "meta", None)
+    if state.status not in ("done", "failed") or not meta \
+            or "sue_guard_rows_before" not in meta:
         return
-    new = kg.sue_guard_rows_since(int(state.meta["sue_guard_rows_before"]))
+    new = kg.sue_guard_rows_since(int(meta["sue_guard_rows_before"]))
     if new.empty:
         st.caption("SUE forward record: no rows were written to `ledger_sue_guard_log.csv` "
                    "during this run (no SUE skips or guard events).")
