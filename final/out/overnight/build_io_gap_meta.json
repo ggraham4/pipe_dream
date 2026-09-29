@@ -1,0 +1,190 @@
+{
+  "spec": "models/2026-09-29-overnight-intraday-screen.md",
+  "window": 252,
+  "min_valid": 200,
+  "max_abs_log": 0.7,
+  "max_gap_days": 7,
+  "composite_panel_v2_sha256": "30f636fd4802b4f13278322bc0c6e766a4623853edf15e92b60c2b672e97e0ff",
+  "sep_files": "2005-01..2019-12",
+  "sep_digest": "83e7b89085665b0722d1be1bd41b6f37defb2b285b79777adb3892e15f36ab44",
+  "market_calendar_days": 3775,
+  "pit_rows_checked": 12424924,
+  "window_first_price_min": "2005-12-30",
+  "flag_share_by_year": {
+    "2006": {
+      "bad_open": 0.0,
+      "bad_close": 0.0,
+      "no_prev": 0.0002328766993609144,
+      "zero_volume": 0.018025224522484434,
+      "open_outside_range": 0.0,
+      "extreme": 6.247911446268435e-05,
+      "open_eq_prev_close": 0.13361821285119652,
+      "valid": 0.981686046236438
+    },
+    "2007": {
+      "bad_open": 0.0,
+      "bad_close": 0.0,
+      "no_prev": 0.00025082393819403077,
+      "zero_volume": 0.014770947948499943,
+      "open_outside_range": 0.0,
+      "extreme": 8.575965533840022e-05,
+      "open_eq_prev_close": 0.1109499403371,
+      "valid": 0.9848989234857888
+    },
+    "2008": {
+      "bad_open": 0.0,
+      "bad_close": 0.0,
+      "no_prev": 9.56132102181745e-05,
+      "zero_volume": 0.022321507309769163,
+      "open_outside_range": 0.0,
+      "extreme": 0.00038430940806140037,
+      "open_eq_prev_close": 0.0976851392007664,
+      "valid": 0.9772078529078948
+    },
+    "2009": {
+      "bad_open": 0.0,
+      "bad_close": 0.0,
+      "no_prev": 8.453247776219477e-05,
+      "zero_volume": 0.022905419684540164,
+      "open_outside_range": 0.0,
+      "extreme": 0.0004841405544562064,
+      "open_eq_prev_close": 0.1162725019692225,
+      "valid": 0.9765335920539471
+    },
+    "2010": {
+      "bad_open": 0.0,
+      "bad_close": 0.0,
+      "no_prev": 0.0001595149180700065,
+      "zero_volume": 0.018856033382655738,
+      "open_outside_range": 0.0,
+      "extreme": 0.0002828209283572508,
+      "open_eq_prev_close": 0.11177200522974062,
+      "valid": 0.9807094597239511
+    },
+    "2011": {
+      "bad_open": 0.0,
+      "bad_close": 0.0,
+      "no_prev": 0.00014202442820165069,
+      "zero_volume": 0.019411338750265045,
+      "open_outside_range": 0.0,
+      "extreme": 0.00022103801853918875,
+      "open_eq_prev_close": 0.09739075120920798,
+      "valid": 0.9802315998351716
+    },
+    "2012": {
+      "bad_open": 0.0,
+      "bad_close": 0.0,
+      "no_prev": 0.0001800256918021182,
+      "zero_volume": 0.020812800742072004,
+      "open_outside_range": 0.0,
+      "extreme": 0.00024715391586392497,
+      "open_eq_prev_close": 0.10929593680996508,
+      "valid": 0.9787671393103897
+    },
+    "2013": {
+      "bad_open": 0.0,
+      "bad_close": 0.0,
+      "no_prev": 0.00024930633288552397,
+      "zero_volume": 0.014463804656880803,
+      "open_outside_range": 0.0,
+      "extreme": 0.00020691416292118386,
+      "open_eq_prev_close": 0.10477224806686658,
+      "valid": 0.9850860308715931
+    },
+    "2014": {
+      "bad_open": 0.0,
+      "bad_close": 0.0,
+      "no_prev": 0.0003085415907185973,
+      "zero_volume": 0.011203793685902696,
+      "open_outside_range": 0.0,
+      "extreme": 0.0002181408698711102,
+      "open_eq_prev_close": 0.09216943060319881,
+      "valid": 0.9882773847857552
+    },
+    "2015": {
+      "bad_open": 0.0,
+      "bad_close": 0.0,
+      "no_prev": 0.00021873197396895941,
+      "zero_volume": 0.01042170750308741,
+      "open_outside_range": 0.0,
+      "extreme": 0.00022163549574730844,
+      "open_eq_prev_close": 0.08813059653822777,
+      "valid": 0.9891388928677891
+    },
+    "2016": {
+      "bad_open": 0.0,
+      "bad_close": 0.0,
+      "no_prev": 0.00014406165049262178,
+      "zero_volume": 0.010892442190329121,
+      "open_outside_range": 0.0,
+      "extreme": 0.0002456941847442659,
+      "open_eq_prev_close": 0.09399924022280219,
+      "valid": 0.9887227355926016
+    },
+    "2017": {
+      "bad_open": 0.0,
+      "bad_close": 0.0,
+      "no_prev": 0.00022553135792027868,
+      "zero_volume": 0.008083889610454989,
+      "open_outside_range": 0.0,
+      "extreme": 0.00018223739189093948,
+      "open_eq_prev_close": 0.12714934404607284,
+      "valid": 0.9915103553125724
+    },
+    "2018": {
+      "bad_open": 0.0,
+      "bad_close": 0.0,
+      "no_prev": 0.00024492827817428054,
+      "zero_volume": 0.008050511438351352,
+      "open_outside_range": 0.0,
+      "extreme": 0.00020377229700565142,
+      "open_eq_prev_close": 0.11178867909376537,
+      "valid": 0.9915027955953062
+    },
+    "2019": {
+      "bad_open": 0.0,
+      "bad_close": 0.0,
+      "no_prev": 0.00020971667277508085,
+      "zero_volume": 0.009157628044511864,
+      "open_outside_range": 0.0,
+      "extreme": 0.000303589850112498,
+      "open_eq_prev_close": 0.09319609207960046,
+      "valid": 0.990335057337537
+    }
+  },
+  "flag_share_by_group": {
+    "added": {
+      "bad_open": 0.0,
+      "bad_close": 0.0,
+      "no_prev": 0.0002315421489458438,
+      "zero_volume": 0.029025816874382594,
+      "open_outside_range": 0.0,
+      "extreme": 0.0004406672867201927,
+      "open_eq_prev_close": 0.15519853498061756,
+      "valid": 0.9703132574204069
+    },
+    "not_in_panel": {
+      "bad_open": 0.0,
+      "bad_close": 0.0,
+      "no_prev": 0.00035879462585068693,
+      "zero_volume": 0.1023065695278414,
+      "open_outside_range": 0.0,
+      "extreme": 0.0008381836237413402,
+      "open_eq_prev_close": 0.22781243742848498,
+      "valid": 0.8965164926867248
+    },
+    "old": {
+      "bad_open": 0.0,
+      "bad_close": 0.0,
+      "no_prev": 0.00016481621426160052,
+      "zero_volume": 0.00286046826335256,
+      "open_outside_range": 0.0,
+      "extreme": 6.446493257737978e-05,
+      "open_eq_prev_close": 0.06395873931125091,
+      "valid": 0.9969112945563279
+    }
+  },
+  "factor_rows": 13253466,
+  "factor_finite": 12424924,
+  "runtime_s": 146.66012287139893
+}
