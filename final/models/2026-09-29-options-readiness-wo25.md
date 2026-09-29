@@ -434,9 +434,30 @@ Otherwise the verdict is MIDDLE (COO decides).
 
 ## 6. Phase 2 commands (one per experiment)
 
-All from `/Users/ggraham/pipe_dream` (the checkout holding the data), with the
-`pipe_dream` conda env (base anaconda's pandas is broken on this Mac):
+**Run from a checkout that has branch `wo25-options-readiness`**, not from the
+main checkout (`/Users/ggraham/pipe_dream` is on `round18-app-two-models` and
+has neither `final/src/options_wo25/` nor `final/out/seasonality/`). Use either:
+- this worktree, `/Users/ggraham/pipe_dream/.claude/worktrees/agent-a8b6bd6512a6407cf`;
+- or any integration checkout once the branch has landed.
 
+The scripts read data from the main checkout by absolute path
+(`/Users/ggraham/pipe_dream/final/data`, `.../final/out/reset2026`). They write
+to `final/out/options_wo25/` of the checkout they run from. The chain and
+feature parquets are gitignored. If the worktree is deleted, `gate_a.py`
+rebuilds them (~5 minutes for 33 dates, proportionally longer for 225).
+
+Guards (pre-stated here):
+- Exp B screen needs at least 120 nominate dates complete. Confirm needs
+  2019-02..2026-08 complete, and it refuses a second run.
+- **WO-O1 `--phase2` needs every planned monthly date through 2026-08
+  complete at cap2000, and the chain partitions must equal that list** (so
+  `gate_a.py` has been re-run). It refuses to overwrite
+  `wo_o1_results.json`, because a re-run is an iteration.
+
+Use the `pipe_dream` conda env (base anaconda's pandas is broken on this
+Mac). Commands, from the checkout root:
+
+    cd /Users/ggraham/pipe_dream/.claude/worktrees/agent-a8b6bd6512a6407cf
     # 0. arrival integrity (must PASS)
     /opt/anaconda3/envs/pipe_dream/bin/python final/src/options_wo25/check_arrival.py
     # 1. Gate A on all dates (rebuilds chain + features under final/out/options_wo25/)

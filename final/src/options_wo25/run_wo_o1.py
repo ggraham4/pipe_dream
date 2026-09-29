@@ -250,8 +250,25 @@ def main():
             subprocess.run(["git", "-C", str(REPO), "ls-files", "--error-unmatch", PREREG_DOC], check=True, capture_output=True)
         except subprocess.CalledProcessError:
             raise SystemExit(f"--phase2 refused: {PREREG_DOC} not committed")
-        if json.loads(ARRIVAL.read_text()).get("overall") != "PASS":
+        if not ARRIVAL.exists():
+            raise SystemExit("--phase2 refused: run check_arrival.py first")
+        arr = json.loads(ARRIVAL.read_text())
+        if arr.get("overall") != "PASS":
             raise SystemExit("--phase2 refused: arrival_report overall != PASS")
+        # Pre-registered bar (doc section 6): every planned monthly date through 2026-08 complete at cap2000.
+        seg = arr["monthly_cap2000_completeness"]
+        planned_to_aug26 = [d for d in arr["monthly_dates_complete"]]
+        incomplete = [x for v in seg.values() for x in v["missing_or_partial"] if x[:10] <= "2026-08-31"]
+        if incomplete:
+            raise SystemExit(f"--phase2 refused: {len(incomplete)} planned monthly dates <= 2026-08 incomplete at cap2000 "
+                             f"(first: {incomplete[:3]}); WO-O1 runs once, on the full store")
+        on_disk = sorted(p_.stem.split("=")[1] for p_ in CHAIN.glob("date=*.parquet"))
+        want = sorted(d for d in planned_to_aug26 if d <= "2026-08-31")
+        if [d for d in on_disk if d <= "2026-08-31"] != want:
+            raise SystemExit("--phase2 refused: chain partitions != arrival report's complete dates; re-run gate_a.py")
+        if (OUT / "wo_o1_results.json").exists():
+            raise SystemExit("--phase2 refused: wo_o1_results.json exists; a re-run is an iteration (cap 3) and must be "
+                             "written into the doc and committed first, then the old file moved aside by hand")
 
     entry = sorted(pd.Timestamp(p.stem.split("=")[1]) for p in CHAIN.glob("date=*.parquet"))
     log(f"{mode} mode: {len(entry)} entry dates {entry[0].date()}..{entry[-1].date()}")
