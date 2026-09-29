@@ -1,0 +1,47 @@
+{
+  "stage": "confirm",
+  "admitted": [
+    "opt_cw_spread"
+  ],
+  "ic_gain": {
+    "mean": 6.688972531140576e-05,
+    "t": 0.7977401864823206,
+    "n": 33
+  },
+  "by_year": {
+    "2008": -0.0002148589312902383,
+    "2009": 0.0003979916733649362,
+    "2010": 2.8078370208781773e-05
+  },
+  "loyo": {
+    "2008": 0.00025002635210247444,
+    "2009": -0.00012231138786204018,
+    "2010": 7.930935894424543e-05
+  },
+  "ic_confirmed": false,
+  "companion": {
+    "composite": {
+      "excess_ann_mean_offsets": -0.0457940370898918,
+      "per_offset": [
+        -0.02720835347972752,
+        -0.06437972070005607
+      ],
+      "n_dates": 33
+    },
+    "composite_plus": {
+      "excess_ann_mean_offsets": -0.04620153965835752,
+      "per_offset": [
+        -0.02662621862758524,
+        -0.0657768606891298
+      ],
+      "n_dates": 33
+    },
+    "diff": -0.00040750256846572297,
+    "pass": false
+  },
+  "confirmed": false,
+  "label_mode": "shuffled",
+  "pool_integrity": 1.0,
+  "runtime_s": 1.0468459129333496,
+  "holdout_read": "none (test labels)"
+}

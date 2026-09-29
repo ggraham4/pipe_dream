@@ -1,0 +1,264 @@
+{
+  "dates": [
+    "2008-01-02",
+    "2008-01-16",
+    "2008-02-20",
+    "2008-03-19",
+    "2008-04-16",
+    "2008-05-21",
+    "2008-06-18",
+    "2008-07-16",
+    "2008-08-20",
+    "2008-09-17",
+    "2008-10-22",
+    "2008-11-19",
+    "2008-12-17",
+    "2009-01-21",
+    "2009-02-18",
+    "2009-03-18",
+    "2009-04-15",
+    "2009-05-20",
+    "2009-06-17",
+    "2009-07-22",
+    "2009-08-19",
+    "2009-09-16",
+    "2009-10-21",
+    "2009-11-18",
+    "2009-12-16",
+    "2010-01-20",
+    "2010-02-17",
+    "2010-03-17",
+    "2010-04-21",
+    "2010-05-19",
+    "2010-06-16",
+    "2010-07-21",
+    "2010-08-18"
+  ],
+  "n_dates": 33,
+  "key_duplicate_rows_by_date": {
+    "2008-07-16": 2,
+    "2010-02-17": 90,
+    "2010-04-21": 76
+  },
+  "checks": {
+    "A1": {
+      "check": "AAPL present on every 2008 date",
+      "pass": true,
+      "dates_2008": 13,
+      "aapl_present": 13,
+      "missing": []
+    },
+    "A2": {
+      "check": "LEH/WM/WB present on 2008-08-20 with expected AV symbols (09-17: only if cap2000-eligible)",
+      "pass": true,
+      "detail": {
+        "LEHMQ@2008-08-20": {
+          "in_features": true,
+          "log_status": "ok",
+          "av_symbol": "LEH",
+          "eligible_cap2000": true,
+          "marketcap_musd": 9534.1,
+          "closeunadj": 13.73,
+          "pass": true
+        },
+        "WAMUQ@2008-08-20": {
+          "in_features": true,
+          "log_status": "ok",
+          "av_symbol": "WM",
+          "eligible_cap2000": false,
+          "marketcap_musd": 6992.0,
+          "closeunadj": 4.1,
+          "pass": true
+        },
+        "WB1@2008-08-20": {
+          "in_features": true,
+          "log_status": "ok",
+          "av_symbol": "WB",
+          "eligible_cap2000": true,
+          "marketcap_musd": 32166.9,
+          "closeunadj": 14.9,
+          "pass": true
+        },
+        "WAMUQ@2008-09-17": {
+          "in_features": false,
+          "log_status": "not attempted",
+          "av_symbol": null,
+          "eligible_cap2000": false,
+          "marketcap_musd": 3427.8,
+          "closeunadj": 2.01,
+          "note": "not cap2000-eligible on this date (cap2000 = mcap>=$2B AND closeunadj>$10); pull was cap2000-only -> no chain; N/A",
+          "pass": true
+        },
+        "WB1@2008-09-17": {
+          "in_features": false,
+          "log_status": "not attempted",
+          "av_symbol": null,
+          "eligible_cap2000": false,
+          "marketcap_musd": 19688.8,
+          "closeunadj": 9.12,
+          "note": "not cap2000-eligible on this date (cap2000 = mcap>=$2B AND closeunadj>$10); pull was cap2000-only -> no chain; N/A",
+          "pass": true
+        }
+      }
+    },
+    "A3": {
+      "check": "identity: |parity spot / closeunadj - 1| < 5%",
+      "pass": true,
+      "detail": {
+        "LEHMQ@2008-08-20": {
+          "av_symbol": "LEH",
+          "identity": "verified",
+          "spot_parity": 13.645,
+          "closeunadj": 13.73,
+          "abs_err": 0.006190823015295055
+        },
+        "WAMUQ@2008-08-20": {
+          "av_symbol": "WM",
+          "identity": "verified",
+          "spot_parity": 4.06,
+          "closeunadj": 4.1,
+          "abs_err": 0.009756097560975618
+        },
+        "WB1@2008-08-20": {
+          "av_symbol": "WB",
+          "identity": "verified",
+          "spot_parity": 14.87,
+          "closeunadj": 14.9,
+          "abs_err": 0.002013422818792021
+        }
+      }
+    },
+    "A4": {
+      "check": "no WM/WMI cross-assignment; one Sharadar ticker per (date, AV symbol) in chain",
+      "pass": true,
+      "wm_rows": [
+        {
+          "date": "2008-08-20",
+          "ticker": "WAMUQ",
+          "symbol": "WM",
+          "spot_parity": 4.06,
+          "closeunadj": 4.1
+        },
+        {
+          "date": "2008-08-20",
+          "ticker": "WM",
+          "symbol": "WMI",
+          "spot_parity": 34.425000000000004,
+          "closeunadj": 34.62
+        },
+        {
+          "date": "2008-09-17",
+          "ticker": "WM",
+          "symbol": "WMI",
+          "spot_parity": 33.894999999999996,
+          "closeunadj": 33.86
+        },
+        {
+          "date": "2008-10-22",
+          "ticker": "WM",
+          "symbol": "WMI",
+          "spot_parity": 29.5,
+          "closeunadj": 29.35
+        },
+        {
+          "date": "2008-11-19",
+          "ticker": "WM",
+          "symbol": "WMI",
+          "spot_parity": 29.725,
+          "closeunadj": 29.73
+        },
+        {
+          "date": "2008-12-17",
+          "ticker": "WM",
+          "symbol": "WMI",
+          "spot_parity": 31.450000000000003,
+          "closeunadj": 31.42
+        },
+        {
+          "date": "2009-01-21",
+          "ticker": "WM",
+          "symbol": "WMI",
+          "spot_parity": 32.650000000000006,
+          "closeunadj": 32.64
+        }
+      ],
+      "bad_rows": 0,
+      "multi_claims": 0
+    },
+    "A5": {
+      "check": "rr25 > 0 on most name-dates",
+      "pass": true,
+      "share_pos": 0.9543435144783816,
+      "n": 25210,
+      "by_year": {
+        "2008": 0.9240146585894847,
+        "2009": 0.9902824172487094,
+        "2010": 0.9864839139539311
+      }
+    },
+    "A6": {
+      "check": "pc_vol_ratio median in [0.30, 0.45]",
+      "pass": true,
+      "median": 0.3949843260188088,
+      "n": 35779
+    },
+    "A7": {
+      "check": "cw_spread median slightly negative (builder: about -0.022 in 2008)",
+      "pass": true,
+      "median_all": -0.016850563266882793,
+      "median_2008": -0.01350599220281191,
+      "n": 38080
+    },
+    "A8": {
+      "check": "coverage by tier (tier attempted dates only)",
+      "pass": true,
+      "tiers": {
+        "cap150_only": {
+          "dates_attempted": 9,
+          "eligible_name_dates": 9001,
+          "share_with_chain": 0.4645039440062215,
+          "share_with_chain_min_date": 0.43846153846153846,
+          "median_atm_rel_spread": 0.223938223938224,
+          "atm_iv_median": 0.6275626857743495
+        },
+        "cap2000": {
+          "dates_attempted": 33,
+          "eligible_name_dates": 27741,
+          "share_with_chain": 0.9570311091885657,
+          "share_with_chain_min_date": 0.9299610894941635,
+          "median_atm_rel_spread": 0.08403361344537814,
+          "atm_iv_median": 0.38233569391111494
+        },
+        "cap500_only": {
+          "dates_attempted": 9,
+          "eligible_name_dates": 9766,
+          "share_with_chain": 0.7713495801761212,
+          "share_with_chain_min_date": 0.7405119152691968,
+          "median_atm_rel_spread": 0.15016051030290084,
+          "atm_iv_median": 0.49324015752625805
+        }
+      }
+    },
+    "A9": {
+      "check": "median ATM relative spread rises as cap falls",
+      "pass": true,
+      "by_tier": {
+        "cap150_only": 0.223938223938224,
+        "cap2000": 0.08403361344537814,
+        "cap500_only": 0.15016051030290084
+      }
+    },
+    "A10": {
+      "check": "forward_return_tradable_40 == close[t+40]/open[t+1]-1 (own trading days)",
+      "pass": true,
+      "sampled": 400,
+      "resolved": 400,
+      "unresolved": 0,
+      "match": 400,
+      "mismatch": 0,
+      "match_rate": 1.0
+    }
+  },
+  "all_pass": true,
+  "runtime_s": 21.962090015411377
+}
