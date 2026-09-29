@@ -206,3 +206,51 @@ PIT assert (last price used ≤ t) holds on all 12,424,924 finite panel rows.
 ---
 
 ## Results
+
+Run 2026-09-29 11:00–11:13 on the pre-registration commit **b451e52**
+(`screen_io_gap.py`, 834 s, iteration 1 of 3, no code changes). The panel hash
+matched the pre-registration. The harness reconcile passed again before any
+`io_gap` number was computed. Report: `final/out/overnight/io_gap_screen_report.json`;
+log: `screen_io_gap.log`.
+
+**Verdict: PASS-nomination. All 7 gates pass.**
+
+| gate | result | bar |
+|---|---|---|
+| 1 pooled NW(39) IC | +0.0322, **t +4.00** (3,272 dates) | t ≥ +1.96 |
+| 2 halves | odd +0.0282 (t +2.33), even +0.0370 (t +3.75) | both > 0 |
+| 3 sector both-sides | t +3.57 (factor-only +4.16) | ≥ +1.0 |
+| 4 grid offsets | 0/40 flips (range +0.0295..+0.0348) | 0 |
+| 5 max year share | 0.167 (2015); LOYO t min +3.50 | ≤ 0.45 |
+| 6 icw9 vs icw8, decile_volq net 15bp, split-half OOS | icw9 **+2.513%/yr** vs icw8 +2.368%; null p50 +2.361, p80 +2.367; real above all 20 draws | > null p80 |
+| 7 weight rule | reproduces PRODUCTION_WEIGHTS to 4dp | exact |
+
+**Caveats. These do not change the verdict, but the COO should weigh them.**
+- **The portfolio gain is small.** It is +0.145 pp/yr over icw8. The shuffle
+  null is very tight (p80 is only +0.0003 above icw8), which is why the real
+  result clears all 20 draws. The OOS composite IC mean rises from 0.0485 to
+  0.0500, but its NW t falls from 6.65 to 6.01, so the 9-factor score is not
+  uniformly better.
+- **The fitted weight is unstable.** The OOS weight on `io_gap` is 0.094 when
+  fit on odd years and 0.251 when fit on even years. The descriptive
+  full-era icw9 weight is 0.280.
+- **It overlaps with momentum** (median Spearman +0.30 with momentum_12_1,
+  −0.23 with volatility_60, +0.17 with the icw8 score). That overlap is
+  modest, and gates 3 and 6 are the incremental tests.
+- **The overnight leg drives more of the result than the intraday leg.**
+  These are descriptive leg ICs, not trials. The overnight leg alone has IC
+  −0.0247, t −4.56. The intraday leg alone has IC +0.0287, t +2.64. That
+  fits the sentiment-reversal mechanism (Aboody et al.) better than a pure
+  "institutions buy intraday" story. Gabe's MU framing (gains made intraday)
+  is the weaker half.
+- **Excluding flat-open days** (`io_gap_noeq`) gives IC +0.0310, t +3.88. The
+  result is not driven by stale opens.
+- **Illiquidity:** the median Spearman with amihud_20 is −0.085 on the 69% of
+  rows it covers, so this is not a bid-ask bounce proxy.
+
+**What PASS means here.** This is a nomination only. There is no in-era
+promotion and no change to live weights. The next steps are Gabe's and the
+COO's call:
+- a forward side-ledger column (icw9_io), as done for SUE and seas;
+- an unfitted hold-out read (2020+) of the frozen factor, which the
+  2026-09-27 standing rule allows with logging.

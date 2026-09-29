@@ -1,0 +1,29 @@
+[10:59:31] panel hash 30f636fd4802b4f1
+[10:59:31] frozen weight rule reproduces PRODUCTION_WEIGHTS to 4dp
+[10:59:38] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[11:01:41] harness reconcile OK: {'decile_icw8_frozen': [0.028541632641009042, 0.028541632641009042], 'oos_fit_odd_test_even': [0.04041110565685588, 0.040411105656855885], 'oos_fit_even_test_odd': [0.055397983383733786, 0.055397983383733786]}
+[11:02:28] IC +0.03224 t +4.00 | odd +0.02815 (t +2.33) even +0.03701 (t +3.75) | sector both +3.57 factor-only +4.16 | offset flips 0/40 | max year share 0.1672682941876435 (2015)
+[11:03:58] [primary] icw8 +0.02368  icw9 +0.02513  ins t fit-odd +2.33 fit-even +3.75  w +0.0939/+0.2509
+[11:04:21] [primary] null 0: +0.02370 (ins t -0.35/-0.78)
+[11:04:47] [primary] null 1: +0.02371 (ins t +0.25/-0.87)
+[11:05:11] [primary] null 2: +0.02352 (ins t -0.83/-0.51)
+[11:05:36] [primary] null 3: +0.02283 (ins t -2.11/-0.29)
+[11:05:59] [primary] null 4: +0.02331 (ins t -0.80/+0.17)
+[11:06:22] [primary] null 5: +0.02365 (ins t -0.70/-0.81)
+[11:06:43] [primary] null 6: +0.02349 (ins t -0.11/+0.01)
+[11:07:06] [primary] null 7: +0.02366 (ins t -1.39/+0.16)
+[11:07:30] [primary] null 8: +0.02328 (ins t +0.22/+0.64)
+[11:07:56] [primary] null 9: +0.02366 (ins t +0.75/+0.99)
+[11:08:20] [primary] null 10: +0.02338 (ins t +0.15/-0.12)
+[11:08:44] [primary] null 11: +0.02379 (ins t +1.31/-1.10)
+[11:09:08] [primary] null 12: +0.02244 (ins t -2.46/+2.02)
+[11:09:29] [primary] null 13: +0.02361 (ins t +1.39/+0.14)
+[11:09:53] [primary] null 14: +0.02360 (ins t +1.67/+0.37)
+[11:10:16] [primary] null 15: +0.02393 (ins t -0.74/+0.37)
+[11:10:39] [primary] null 16: +0.02366 (ins t -0.05/+0.18)
+[11:11:09] [primary] null 17: +0.02359 (ins t +1.00/+0.79)
+[11:11:35] [primary] null 18: +0.02362 (ins t +0.63/-0.19)
+[11:11:59] [primary] null 19: +0.02293 (ins t -2.08/+0.75)
+[11:11:59] gates {'g1_pooled_t': True, 'g2_both_halves_positive': True, 'g3_sector_both_sides_t': True, 'g4_zero_offset_flips': True, 'g5_year_share': True, 'g6_beats_null_p80': True, 'g7_weight_rule_reproduces_production_4dp': True} -> PASS-nomination
+[11:13:25] descriptive {"amihud_coverage": 0.6936716064271724, "median_spearman_io_gap_vs_icw8": 0.1653779730803284, "median_spearman_io_gap_vs_momentum_12_1": 0.3046297855773846, "median_spearman_io_gap_vs_volatility_60": -0.22873597114427566, "median_spearman_io_gap_vs_amihud_20": -0.08542217111834396, "median_spearman_io_gap_vs_io_intraday": 0.8728231404597682, "median_spearman_io_gap_vs_io_overnight": -0.7463566170242141, "ic_io_intraday_DESCRIPTIVE": {"mean": 0.02870695004455794, "t": 2.641375761118587, "n": 3272, "n_dates": 3272}, "ic_io_overnight_DESCRIPTIVE": {"mean": -0.024710982378087547, "t": -4.558839574975138, "n": 3272, "n_dates": 3272}, "ic_io_gap_noeq_DESCRIPTIVE": {"mean": 0.03096283461878584, "t": 3.8779208222356774, "n": 3272, "n_dates": 3272}, "full_era_icw9_weight_of_io_gap_DESCRIPTIVE": 0.28043515190706464}
+[11:13:25] wrote /Users/ggraham/pipe_dream/.claude/worktrees/overnight-intraday/final/out/overnight/io_gap_screen_report.json (834s)
