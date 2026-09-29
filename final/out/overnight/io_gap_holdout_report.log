@@ -1,0 +1,14 @@
+[16:00:01] frozen weight rule reproduces the WO-26-io icw10 / icw9_io dicts to 4dp
+[16:00:11] [A] cap150: 9,756,141 rows, 6,508 tickers, 3272 dates 2007-01-03..2019-12-31
+[16:00:57] [A] WO-23 reconcile OK {'icw8': [0.028541632641009042, 0.028541632641009042], 'icw9_seas': [0.03486520057904396, 0.03486520057904396]}
+[16:02:08] [A] in-era io_gap IC t reproduces the screen (+3.995309)
+[16:02:08] [A] io_gap IC +0.03224 NW t +3.995 n 3272 | sector both +3.57 | resid-mom t +5.00 | legs intra t +2.64 over t -4.56
+[16:02:19] [A] icw10_minus_icw9_seas: mean40 +0.00288 sd40 0.00249 offsets>0 34/40 LOYO min +0.00013 (2007)
+[16:02:19] [A] icw9_io_minus_icw8: mean40 +0.00350 sd40 0.00297 offsets>0 36/40 LOYO min +0.00041 (2007)
+[16:02:24] [B] cap150: 5,220,610 rows, 5,066 tickers, 1652 dates 2020-01-02..2026-07-30
+[16:02:47] [B] WO-23 reconcile OK {'icw8': [-0.01991796370396389, -0.01991796370396389], 'icw9_seas': [-0.02016365566661011, -0.02016365566661011]}
+[16:03:20] [B] io_gap IC +0.03968 NW t +2.615 n 1652 | sector both +2.14 | resid-mom t +2.39 | legs intra t +2.42 over t -1.36
+[16:03:26] [B] icw10_minus_icw9_seas: mean40 +0.00164 sd40 0.00320 offsets>0 27/40 LOYO min -0.00165 (2026)
+[16:03:26] [B] icw9_io_minus_icw8: mean40 +0.00054 sd40 0.00593 offsets>0 18/40 LOYO min -0.00588 (2025)
+[16:03:26] PRIMARY {'period': 'B', 'ic': 0.03968006631560693, 'nw_t': 2.615120235591115, 'n_dates': 1652, 'first_date': '2020-01-02', 'last_matured_date': '2026-07-30', 'verdict': 'SUCCESS', 'bars': 'SUCCESS IC>0 and t>=+1.0; MIDDLE 0<t<1.0; KILL t<=0'}
+[16:03:26] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a648114375fb9da59/final/out/overnight/io_gap_holdout_report.json (206s)

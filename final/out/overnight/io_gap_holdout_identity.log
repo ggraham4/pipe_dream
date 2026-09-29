@@ -1,0 +1,4 @@
+[15:56:07] hashes OK: panel 30f636fd4802b4f1 sep 83e7b89085665b07
+[15:57:58] identity 1 (frozen bounds) OK {'sep_files': '2005-01..2019-12', 'sep_rows': 21589357, 'market_calendar_days': 3775, 'rows': 13253466, 'pit_rows_checked': 12424924, 'window_first_price_min': '2005-12-30', 'io_gap_max_abs_diff': 0.0, 'io_gap_finite': 12424924, 'io_intraday_max_abs_diff': 0.0, 'io_intraday_finite': 12424924, 'io_overnight_max_abs_diff': 0.0, 'io_overnight_finite': 12424924, 'io_nvalid_exact': True}
+[15:59:51] identity 2 (extended build, rows <= 2019-12-31) OK {'rows': 13253466, 'io_gap_max_abs_diff': 0.0, 'io_gap_finite': 12424924, 'io_intraday_max_abs_diff': 0.0, 'io_intraday_finite': 12424924, 'io_overnight_max_abs_diff': 0.0, 'io_overnight_finite': 12424924, 'io_nvalid_exact': True}
+[15:59:53] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a648114375fb9da59/final/out/overnight/io_gap_factor_ext.parquet (20,263,674 rows) in 227s
