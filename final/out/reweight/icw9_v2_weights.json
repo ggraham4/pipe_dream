@@ -1,0 +1,152 @@
+{
+ "work_order": "WO-25 icw v2 reweight",
+ "rule": "w_k = sign_k*max(0.1,|t_k|-1)/sum|.| (SI.fit_weights)",
+ "signs": {
+  "momentum_12_1": 1,
+  "pct_from_high_252": 1,
+  "volatility_60": -1,
+  "gross_profitability": 1,
+  "accruals": -1,
+  "net_issuance_pct": -1,
+  "days_to_next_filing_seasonal": -1,
+  "short_interest_days_to_cover": -1,
+  "seas": 1
+ },
+ "name_check": {
+  "v1_t_source": "/Users/ggraham/pipe_dream/final/out/reset2026/ic_weighted_composite_report.json",
+  "v1_full_t": {
+   "momentum_12_1": 1.3823405236334954,
+   "pct_from_high_252": 0.836261428518942,
+   "volatility_60": -0.2095936566027876,
+   "gross_profitability": 5.5775328355615095,
+   "accruals": -2.2508107695974884,
+   "net_issuance_pct": -2.0749393150150004,
+   "days_to_next_filing_seasonal": -0.7703417716508143,
+   "short_interest_days_to_cover": NaN
+  },
+  "seas_t": 2.83557806966033,
+  "icw8_full_precision": {
+   "momentum_12_1": 0.04974749627391088,
+   "pct_from_high_252": 0.013011306204517814,
+   "volatility_60": -0.013011306204517814,
+   "gross_profitability": 0.5955968138472549,
+   "accruals": -0.16274681927141502,
+   "net_issuance_pct": -0.13986364578934804,
+   "days_to_next_filing_seasonal": -0.013011306204517814,
+   "short_interest_days_to_cover": -0.013011306204517814
+  },
+  "icw8_4dp_equals_PRODUCTION_WEIGHTS": true,
+  "icw9_seas_full_precision": {
+   "momentum_12_1": 0.04015675154996681,
+   "pct_from_high_252": 0.010502876119001277,
+   "volatility_60": -0.010502876119001277,
+   "gross_profitability": 0.48077260302563174,
+   "accruals": -0.13137110561395068,
+   "net_issuance_pct": -0.11289954461046638,
+   "days_to_next_filing_seasonal": -0.010502876119001277,
+   "short_interest_days_to_cover": -0.010502876119001277,
+   "seas": 0.19278849072397938
+  },
+  "icw9_seas_4dp_equals_PRODUCTION_WEIGHTS_V9_SEAS": true
+ },
+ "t_used": {
+  "momentum_12_1": 1.3897631064607714,
+  "pct_from_high_252": 2.093019114108593,
+  "volatility_60": -2.903108993947845,
+  "gross_profitability": 6.029237675949403,
+  "accruals": -0.3946395837158993,
+  "net_issuance_pct": -5.2453285097986155,
+  "days_to_next_filing_seasonal": -4.282976489681671,
+  "seas": 2.83557806966033,
+  "short_interest_days_to_cover": -2.8937388498101124
+ },
+ "t_source": {
+  "momentum_12_1": "WO-23 period A 2007-01-02..2019-12-31",
+  "pct_from_high_252": "WO-23 period A 2007-01-02..2019-12-31",
+  "volatility_60": "WO-23 period A 2007-01-02..2019-12-31",
+  "gross_profitability": "WO-23 period A 2007-01-02..2019-12-31",
+  "accruals": "WO-23 period A 2007-01-02..2019-12-31",
+  "net_issuance_pct": "WO-23 period A 2007-01-02..2019-12-31",
+  "days_to_next_filing_seasonal": "WO-23 period A 2007-01-02..2019-12-31",
+  "short_interest_days_to_cover": "WO-23 period B 2020-01-02..2026-07-30",
+  "seas": "WO-23 period A 2007-01-02..2019-12-31"
+ },
+ "wo23_t_A": {
+  "momentum_12_1": 1.3897631064607714,
+  "pct_from_high_252": 2.093019114108593,
+  "volatility_60": -2.903108993947845,
+  "gross_profitability": 6.029237675949403,
+  "accruals": -0.3946395837158993,
+  "net_issuance_pct": -5.2453285097986155,
+  "days_to_next_filing_seasonal": -4.282976489681671,
+  "short_interest_days_to_cover": NaN,
+  "seas": 2.83557806966033
+ },
+ "wo23_t_B": {
+  "momentum_12_1": 1.6831535878367307,
+  "pct_from_high_252": 2.2865259402344957,
+  "volatility_60": -2.283380793879822,
+  "gross_profitability": 3.4496155062951366,
+  "accruals": 1.630695966056995,
+  "net_issuance_pct": -4.516026518087625,
+  "days_to_next_filing_seasonal": -1.1272871707419563,
+  "short_interest_days_to_cover": -2.8937388498101124,
+  "seas": 0.2339942006510558
+ },
+ "seas_t_wo23_A_minus_SEAS_T": 0.0,
+ "icw9_v2_full_precision": {
+  "momentum_12_1": 0.0197121336437991,
+  "pct_from_high_252": 0.05527906180803187,
+  "volatility_60": -0.09624907592733302,
+  "gross_profitability": 0.25435194750717666,
+  "accruals": -0.005057465244156728,
+  "net_issuance_pct": -0.21470601388334173,
+  "days_to_next_filing_seasonal": -0.1660353949394871,
+  "short_interest_days_to_cover": -0.09577518414423981,
+  "seas": 0.09283372290243415
+ },
+ "icw9_v2_4dp": {
+  "momentum_12_1": 0.0197,
+  "pct_from_high_252": 0.0553,
+  "volatility_60": -0.0962,
+  "gross_profitability": 0.2544,
+  "accruals": -0.0051,
+  "net_issuance_pct": -0.2147,
+  "days_to_next_filing_seasonal": -0.166,
+  "short_interest_days_to_cover": -0.0958,
+  "seas": 0.0928
+ },
+ "icw9_v2_si_floor_full_precision": {
+  "momentum_12_1": 0.021678783424608515,
+  "pct_from_high_252": 0.060794170256087396,
+  "volatility_60": -0.10585170076217139,
+  "gross_profitability": 0.27972825688354863,
+  "accruals": -0.0055620409077354336,
+  "net_issuance_pct": -0.23612690838275407,
+  "days_to_next_filing_seasonal": -0.18260049534743128,
+  "short_interest_days_to_cover": -0.0055620409077354336,
+  "seas": 0.10209560312792797
+ },
+ "icw9_v2_si_floor_4dp": {
+  "momentum_12_1": 0.0217,
+  "pct_from_high_252": 0.0608,
+  "volatility_60": -0.1059,
+  "gross_profitability": 0.2797,
+  "accruals": -0.0056,
+  "net_issuance_pct": -0.2361,
+  "days_to_next_filing_seasonal": -0.1826,
+  "short_interest_days_to_cover": -0.0056,
+  "seas": 0.1021
+ },
+ "live_icw9_seas_4dp": {
+  "momentum_12_1": 0.0402,
+  "pct_from_high_252": 0.0105,
+  "volatility_60": -0.0105,
+  "gross_profitability": 0.4808,
+  "accruals": -0.1314,
+  "net_issuance_pct": -0.1129,
+  "days_to_next_filing_seasonal": -0.0105,
+  "short_interest_days_to_cover": -0.0105,
+  "seas": 0.1928
+ }
+}
