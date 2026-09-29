@@ -1,7 +1,7 @@
 # pipe_dream: current state of the project
 
 **Consolidated 2026-09-23 by `pipe-dream-readme-manager`** (first full sweep),
-last refreshed **2026-09-29** (run 12, at the end of this paragraph); run 5 (2026-09-26) followed WO-9, WO-10/WO-11, WO-13 and WO-14 landing,
+last refreshed **2026-09-29** (run 13, at the end of this paragraph); run 5 (2026-09-26) followed WO-9, WO-10/WO-11, WO-13 and WO-14 landing,
 the 10bfb19 app layout became official, and the ext ledger was committed
 (integration `079fa26`); run 6 (same day) folds in the reset-branch landing
 (`d7d257d`), the WO-8 addendum (`ddb2773`), the live-checkout sync (`6a1823d`)
@@ -27,8 +27,14 @@ descriptive), Gabe's standing OK for unfitted hold-out reads, and the AV pull
 now running on Gabe's Windows machine; run 12 (**2026-09-29**) folds in
 **WO-20-seas-final**: Gabe's "Theoretical only" call puts `seas` in the
 Theoretical model only and returns Today's Picks to its original 9-factor
-blend (landed `22f2c69`, **deploy pending**). It also lists the new in-flight
-branches (WO-23 results, WO-24, the two WO-25s, overnight-intraday). "WO-20" alone means the AV retry fix
+blend (landed `22f2c69`); run 13 (**2026-09-29**, later) folds in the seas
+deploy (live `7e89bad`) and the WO-19 deploy (live `57bc458`, Gabe "Push
+3"), the WO-23 audit (landed `21f4c39`) and WO-24 2020s decomposition (landed
+`f624a54`), Gabe's "Keep the live weights. Keep SPY." (the ICW v2 reweight not
+adopted), and the **io_gap** overnight-vs-intraday screen (landed `2338c91`,
+PASS-nomination, COO verdict ITERATE → WO-26-io in flight), and **WO-25-options**
+Phase 1, the options-readiness harness (landed `994378f`, Gate A 10/10, Phase 2
+blocked on the Windows data). "WO-20" alone means the AV retry fix
 (`f380817`); the seasonality deploy is always "WO-20-seas" (COO.md naming
 note).
 This is the one current-state document. It merges every branch's docs, the
@@ -38,10 +44,11 @@ at the bottom.
 
 How to read the tags:
 
-- **landed** means the claim is on `integration` (22f2c69). Landed is not
+- **landed** means the claim is on `integration` (994378f). Landed is not
   the same as **live**: the live app runs from Gabe's main checkout
-  (`round18-app-two-models` @ 4ab4363), which gets code only through an
-  explicit deploy with his OK (§5 live-checkout row).
+  (`round18-app-two-models` @ 57bc458), which gets code only through an
+  explicit deploy with his OK (§5 live-checkout row). Deployed code shows in
+  the app only after a Streamlit restart and a Retrain ALL (§6 #30).
 - **in flight** means it comes from an unlanded branch or from uncommitted files
   in a worktree. In-flight claims never describe current state. They live in
   [In flight](#5-in-flight).
@@ -153,7 +160,7 @@ small-cap monthly 10-04..08, and the weekly pass around 10-25..29, after the
 ~10-22 renewal. Whether the Windows copy has the retry fix is not recorded
 (§4.4, §6 #21).
 **Seasonality goes into the Theoretical model only (Gabe, 2026-09-29:
-"Theoretical only"); landed, deploy pending.** WO-18 (Heston-Sadka return
+"Theoretical only"); landed and deployed (live 7e89bad), not yet showing.** WO-18 (Heston-Sadka return
 seasonality, `seas`) was a COO-verified PASS-nomination (+0.181pp/yr out of
 sample, noise-sized). On 2026-09-27 Gabe promoted it into both models, and
 WO-20-seas (0032ee3, with WO-18; app text 254ea01) implemented that. Before it
@@ -165,10 +172,12 @@ unfitted), and Gabe then chose "Theoretical only". **WO-20-seas-final**
 frozen 9-factor leg (`blend_q75_ew9_2026-09-19`). Its picks equal the
 pre-WO-20 scorer's (max diff 0.0). The 10-factor seas blend is recorded only
 in the forward side ledger `prediction_ledger_blend_seas.csv`. COO.md records
-the call as his in-the-moment deploy OK. **The deploy has not happened yet:** the integrator's
-landing run was worktree-isolated and could not reach the main checkout,
-which is still at 4ab4363, so the live app still shows icw8 and the 9-factor
-blend (§4.1, §6 #24;
+the call as his in-the-moment deploy OK. **Deployed 2026-09-29 as live
+7e89bad** (10 paths from 22f2c69, no Retrain ALL; `seas_forward.py selftest`
+PASS, `record_weekly.py --plan` rc 0, ledger sha1s unchanged; LEDGER). The live
+composite meta is still `ic_weighted_2026-09-22` (icw8) until the next
+retrain, so **the app shows icw9_seas only after Gabe restarts Streamlit from
+a shell with `secrets.env` sourced and runs Retrain ALL** (§4.1, §6 #30;
 [seas Theoretical-only doc](final/models/2026-09-29-seas-theoretical-only.md)).
 **WO-21 (2026-09-27, landed e05faea, descriptive): the post-2011 drag is a
 universe bet.** Over 2011-10..2019 (nomination era, v2 cap150, net 15bp), a
@@ -176,7 +185,25 @@ random same-construction book trails SPY by −2.76%/yr. Of that, 72% (−1.99) 
 large caps, and the rest is the random null's own turnover cost. The icw8
 ranking still adds +2.78 net over that null after 2011 (gross +2.10). The
 realised post-2011 icw8 book was +0.01 vs SPY. The COO verdict is UNIVERSE BET,
-no model change; the benchmark/hedge question goes to Gabe (§3.3, §6 #25).
+no model change. **Gabe kept SPY as the headline benchmark** (2026-09-29,
+"Keep SPY"; picks-over-pool tracked as a diagnostic; §6 #25).
+**The 2020s (WO-23, WO-24, landed 2026-09-29; hold-out reads #5 and #6,
+unfitted, frozen weights):** every model trails SPY over 2020-01..2026-07
+(icw9_seas −2.02%/yr, icw8 −1.99, blend10 −1.41, blend9 −0.63, per COO.md).
+WO-24 puts the icw8 −1.99 down to the cap150 pool (−4.85 vs SPY) against a
+selection gain of +2.85 over that pool. The selection doesn't survive
+dropping 2020 (−0.87 vs the pool). The COO reads it as UNIVERSE BET again,
+with no robust evidence of in-pool stock picking since 2021 (§3.3).
+**Gabe: "Keep the live weights"** (2026-09-29). The ICW v2 reweight, which
+re-derived the weights on v2 and fit short interest on 2020-26, is not adopted.
+Short interest stays at the floor weight and is judged forward (§5). **WO-19
+(key redaction) is deployed live** as 57bc458 (Gabe "Push 3"; §4.7).
+**New factor nominated: `io_gap` (2026-09-29, landed 2338c91).** The
+252-day intraday-minus-overnight log return is a new family, trial 1. It
+passed all 7 gates of the WO-13/18 stack in the nomination era (NW IC t +4.00),
+but its book gain over icw8 is small (+0.145 pp/yr). The COO verdict is
+ITERATE: an unfitted 2020+ read (WO-26-io, hold-out read #9) is in flight,
+and a forward column waits on it (§3.3, §5, §6 #31).
 **Hold-out policy changed (Gabe, 2026-09-27):** checks that fit nothing may
 read 2020-2026 without asking each time (§3.4). Gabe has recorded that he has
 **more faith in the blend** (Today's Picks) than in the Theoretical model
@@ -199,7 +226,7 @@ Buy/No-Buy, Options Premium, Data & Updates). Stock has **four sub-tabs**:
 | sub-tab | what it shows | role |
 |---|---|---|
 | Today's Picks | the composite+q75 blend, cap2000 (`final/src/current_signal_blend.py`). Its composite half is the **frozen original 9-factor equal-weight** version (`blend_q75_ew9_2026-09-19`), now read from the v2 panel. It stays that way after WO-20-seas-final: no `seas` in the blend | `"role": "primary"` in its meta. Not a validated edge |
-| Theoretical Model | the icw8 composite alone, cap150, v2 panel + SPAC rule (`final/src/current_signal_composite.py`). On integration it is `icw9_seas`, not yet deployed | `"role": "candidate"`, note "TRACKED, NOT ACTED ON AS A VALIDATED EDGE" |
+| Theoretical Model | the composite alone, cap150, v2 panel + SPAC rule (`final/src/current_signal_composite.py`). The code is `icw9_seas` on integration and live (7e89bad, 2026-09-29), but the live meta is icw8 until the next Retrain ALL (§6 #30) | `"role": "candidate"`, note "TRACKED, NOT ACTED ON AS A VALIDATED EDGE" |
 | Query a Ticker | per-ticker answers from both models plus a "Both models pick it" column (2026-09-24) | — |
 | Universe | the eligible universe | — |
 
@@ -213,10 +240,10 @@ The numbers each tab's meta carries (landed):
   27cc6ce): as of 2026-09-08 on v2, 3,065 eligible, 305 picks (220 on v1). It
   still quotes hold-out excess 2.44%/yr, 40/40 offsets, and **fails LOYO**
   (dropping 2020 flips it to -3.95%/yr). **Those hold-out numbers were measured
-  on v1.** No landed hold-out read on v2 yet. Since Gabe's
-  2026-09-27 standing OK, an unfitted read needs no per-read approval (§3.4).
-  WO-23's read #5 (2026-09-28, committed, not landed) is the first on v2
-  (§3.4, §5).
+  on v1.** Since Gabe's 2026-09-27 standing OK, an unfitted read needs no
+  per-read approval (§3.4). WO-23's read #5 (landed 21f4c39, 2026-09-29) is
+  the first on v2: frozen icw9_seas −2.02%/yr and icw8 −1.99 vs SPY over
+  2020-01..2026-07 (COO.md; §3.3). The meta itself doesn't carry it.
 - **After WO-14 (uncommitted outputs in the main checkout, 2026-09-25):** the
   composite is as of 2026-09-24, with a cap150 book of 300 of 3,048 eligible.
   The blend stays as of 2026-09-08, because its `as_of` comes from the v1 base
@@ -237,9 +264,9 @@ filter. It is display only: rows and weights are unchanged (Gabe, "aggressive
 trading mode"; HANDOFF-app; COO.md decision #12). The same deploy made the
 SHARADAR_API_KEY guard live (§4.7).
 
-**Landed on integration, deploy pending: seasonality in the Theoretical tab
-only (WO-20-seas 0032ee3, 2026-09-28; WO-20-seas-final 22f2c69,
-2026-09-29).** On integration, `current_signal_composite.py` scores
+**Landed and deployed, not yet showing: seasonality in the Theoretical tab
+only (WO-20-seas 0032ee3, 2026-09-28; WO-20-seas-final 22f2c69, deployed
+live 7e89bad, 2026-09-29).** On integration and live, `current_signal_composite.py` scores
 `icw9_seas` (meta `model_version` `ic_weighted_seas_2026-09-27`, 9 factor
 weights incl. `seas`). On 2026-09-25 data the new Theoretical book shares
 203/300 picks with icw8 (HANDOFF-worktree-agent-a790eb27c4530aa0a).
@@ -254,12 +281,13 @@ It is meta-driven, and WO-20-seas-final's AppTest with blend9 + icw9_seas metas
 showed 0 exceptions and correct text ("9 composite factors", "The blend shows
 **-0.36%** excess", no "PREVIOUS 9-factor blend's"), so no app change was
 needed. The same landing carries a `_sue_guard_report` getattr fix (02b72e2).
-Src and app deploy together as a 10-path list (HANDOFF-wo20-seas-final),
-**without** running Retrain ALL; Gabe runs that himself after restarting
-Streamlit from a shell with `secrets.env` sourced. None of this is in the live
-checkout (4ab4363) yet (§6 #24). The tracked metas on integration were last
-committed at 27cc6ce, so the composite meta there still shows icw8 until the
-next scorer run.
+Src and app were deployed together as the 10-path list
+(HANDOFF-wo20-seas-final) on 2026-09-29, as live 7e89bad, **without**
+running Retrain ALL (LEDGER). Gabe runs that himself after restarting
+Streamlit from a shell with `secrets.env` sourced (§6 #30). Until then the
+live composite meta is still `ic_weighted_2026-09-22` (icw8), and the tracked
+metas on integration (last committed 27cc6ce) also show icw8 until the next
+scorer run.
 
 **Gabe's recorded preference (2026-09-26):** "for the record I have more faith
 in the blend than the theoretical because theoretical rejects TXG" (project
@@ -274,7 +302,8 @@ App-owned inaccuracies are for `pipe-dream-app-manager` and are not fixed here
 "q75 PRIMARY / xrank CANDIDATE, six tabs" header. The Theoretical Model tab
 says it is "the SAME composite that feeds the blend", but the blend uses the
 frozen 9-factor equal-weight composite and Theoretical uses icw8. That
-sentence is fixed on integration (254ea01) and stays live until the deploy.
+sentence is fixed on integration (254ea01) and was deployed with 7e89bad; the
+running app picks it up at the next Streamlit restart.
 
 ### 3.3 Headline verdicts
 
@@ -292,8 +321,11 @@ sentence is fixed on integration (254ea01) and stays live until the deploy.
 | **SUE / post-earnings-announcement drift (WO-13): PASS-nomination**, new family "earnings surprise / PEAD", k=1, v2 column c cap150, h=40, 2007-2019. All 6 gates pass: pooled NW IC **t +2.17** (bar 1.96), halves +1.82 / +1.22, both-sides sector-demeaned t +2.09, 0/40 offset flips, max single-year share 0.335. Gate 6: icw9 +2.4412%/yr vs a shuffle-null p80 of +2.3504%, so **icw9 − icw8 is +0.073pp/yr** against a null median of −0.025pp. That is noise against the book's offset sd (~0.47pp per COO.md; the doc gives 0.54 / 0.48). LOYO t falls to 1.52 without 2015; 2009 is −41% of the sum. Nearly new information (median Spearman with icw8 +0.062, with momentum +0.262). The COO recommended forward confirmation only. **Gabe approved the item 2026-09-26** (COO.md decisions log). Per the COO (2026-09-26) that means forward confirmation via WO-15, not live weights (§6 #15). WO-15's forward column landed 6ac64e6 and is live (562dab9); its verdict is read at 6 counted dates (§4.1) | landed 026e3b7; COO verdict PASS-nomination; WO-15 forward bet live 2026-09-26 | 2026-09-25 | [SUE screen](final/models/2026-09-25-sue-drift-screen.md) "Results"; COO.md WO-13, WO-15 |
 | **Return seasonality `seas` (WO-18): PASS-nomination.** Heston-Sadka 2008 same-calendar-month returns, sign +1, new family, **trial 1, k=1**, v2 column c, cap150, h=40, 2007-2019. All 7 gates pass: NW t +2.84 (bar 1.96); halves t +1.61 / +2.67; both-sides sector t +2.87; 0/40 flips; max year share 0.271 (2008); icw9 +2.5496%/yr vs icw8 +2.3683% and shuffle-null p80 +2.3617% (**+0.181pp/yr**, split-half OOS weights, beats 20/20 draws). Caveats: 2017-2019 all negative; the COO puts 2007-2012 at ≈ 79% of the summed IC (decay plausible, the paper is from 2008); OOS IC does not improve (icw9 0.04831 vs icw8 0.04848, the gain is in the top-decile tail). The panel-swap race with Gabe's Retrain ALL was cleared (in-era slices sha-identical). The COO recommended a forward column only; Gabe promoted it instead (next row) | landed 0032ee3 (with WO-20-seas); COO verdict PASS-nomination | 2026-09-26/27 | [seasonality screen](final/models/2026-09-26-seasonality-screen.md) Results; COO.md "WO-18 VERDICT" |
 | **`seas` promoted into both live models by Gabe (WO-20-seas); narrowed to the Theoretical model only on 2026-09-29 (next row)**: "Seasonality looks very good so you should add it to the model"; "Yes the blend should get the seasonality" (2026-09-27; overrides the pre-registered forward-column-only route; his call, not relitigated). Theoretical `icw9_seas` (frozen-rule weights: `seas` +0.1928, `gross_profitability` .4808): in-era +3.4871%/yr vs icw8 +2.8542%, worst offset +2.95 vs +1.93, LOYO min +2.46 vs +1.71, post-2011-10 +0.51 vs +0.01. **These use in-sample weights and are not evidence**; the out-of-sample figure is WO-18's +0.181pp/yr. Blend, pre-2020 **single grid**: previous 9-factor +2.52%/yr → 10-factor with seas **+2.40** (LOYO min +2.07 → +1.87, post-2011 +0.60 → +0.20), so **seas made the blend slightly worse on this grid**, inside single-grid noise; Gabe was shown this before deciding. Two forward side ledgers **monitor** the promotion (not a gate): mean paired rank-IC gain ≤ 0 at the 6th counted date is a demotion question to Gabe, never automatic | landed 0032ee3; the blend half superseded by 22f2c69 (next row) | 2026-09-27 | [WO-20-seas doc](final/models/2026-09-27-wo20-seas-live.md) §2-4; HANDOFF-worktree-agent-a790eb27c4530aa0a; COO.md decisions log |
-| **`seas` in the Theoretical model only (Gabe, 2026-09-29, in the moment: "Theoretical only"; WO-20-seas-final).** Theoretical stays `icw9_seas` (`ic_weighted_seas_2026-09-27`). Today's Picks is back on its original frozen 9-factor leg (`blend_q75_ew9_2026-09-19`); the 10-factor seas blend is recorded only in `prediction_ledger_blend_seas.csv`. Why, per the doc: "seas was tested in the blend, not deployed (WO-23: blend10 −0.12 pre-2020, −0.78 2020-26 vs blend9)". Those WO-23 figures are the blend's single grid, frozen weights; 2020-26 is hold-out read #5 (unfitted), and WO-23 itself is not landed (§5). Checks: blend picks 160/160 and full 2288/2288 rows identical to the pre-WO-20 file on 2026-09-25 (max abs diff **0.0**); `seas_forward.py selftest` PASS; `wo20_isolation_test.py` all 8 modes rc 0; live ledger sha1s unchanged | landed 22f2c69 (161db4b); **deploy pending** (Gabe's OK given; the isolated integrator run could not reach the main checkout) | 2026-09-29 | [seas Theoretical-only](final/models/2026-09-29-seas-theoretical-only.md); COO.md decisions log; HANDOFF-wo20-seas-final |
-| **Post-2011 drag decomposition (WO-21): UNIVERSE BET.** Descriptive, no trial. icw8 frozen, v2 column c, cap150, h=40, 2007-2019, 40 offsets, net 15bp, random book = 5-draw mean of the icw8 score shuffled within date. Post (≥ 2011-10), %/yr vs SPY: random book **−2.76** = (a) universe (no-score cap150 book) **−1.99** (72%) + (b) construction **−0.77** (28%); (c) costs −0.87 (31.5%, overlapping). Gross construction is +0.05, so (b) is entirely the random null's own turnover (f_new 0.905); the live book's cost is −0.20. Pre-2011 the universe helped (+2.74). icw8 selection over that null, post: **+2.78** net (sd40 0.40, 40/40 offsets, LOYO min +1.59 dropping 2018), +2.10 gross; the ≈ 0.67 gap is the null's extra cost. Realised post-2011 icw8 book: **+0.01** vs SPY. The universe book is ≈ 0.8 × IWM (R² 0.97); its SPY slope is t 0.85, so the drag is not beta. The doc's literal "selection − universe drag" is +0.79 and explicitly does not choose a forward formula. Not comparable one-to-one with WO-7's 20-draw median null (+3.95 selection) | landed e05faea; COO verdict UNIVERSE BET (COO-verified from drag_decomp.json, 20/20 reconciles), no model change, benchmark/hedge question to Gabe | 2026-09-27/28 | [construction drag](final/models/2026-09-27-construction-drag.md) §2; COO.md "WO-21 VERDICT" |
+| **`seas` in the Theoretical model only (Gabe, 2026-09-29, in the moment: "Theoretical only"; WO-20-seas-final).** Theoretical stays `icw9_seas` (`ic_weighted_seas_2026-09-27`). Today's Picks is back on its original frozen 9-factor leg (`blend_q75_ew9_2026-09-19`); the 10-factor seas blend is recorded only in `prediction_ledger_blend_seas.csv`. Why, per the doc: "seas was tested in the blend, not deployed (WO-23: blend10 −0.12 pre-2020, −0.78 2020-26 vs blend9)". Those WO-23 figures are the blend's single grid, frozen weights; 2020-26 is hold-out read #5 (unfitted; WO-23 landed 21f4c39, next rows). Checks: blend picks 160/160 and full 2288/2288 rows identical to the pre-WO-20 file on 2026-09-25 (max abs diff **0.0**); `seas_forward.py selftest` PASS; `wo20_isolation_test.py` all 8 modes rc 0; live ledger sha1s unchanged | landed 22f2c69 (161db4b); **deployed live 7e89bad** (2026-09-29); shows after a Streamlit restart + Retrain ALL (§6 #30) | 2026-09-29 | [seas Theoretical-only](final/models/2026-09-29-seas-theoretical-only.md); COO.md decisions log; HANDOFF-wo20-seas-final |
+| **Post-2011 drag decomposition (WO-21): UNIVERSE BET.** Descriptive, no trial. icw8 frozen, v2 column c, cap150, h=40, 2007-2019, 40 offsets, net 15bp, random book = 5-draw mean of the icw8 score shuffled within date. Post (≥ 2011-10), %/yr vs SPY: random book **−2.76** = (a) universe (no-score cap150 book) **−1.99** (72%) + (b) construction **−0.77** (28%); (c) costs −0.87 (31.5%, overlapping). Gross construction is +0.05, so (b) is entirely the random null's own turnover (f_new 0.905); the live book's cost is −0.20. Pre-2011 the universe helped (+2.74). icw8 selection over that null, post: **+2.78** net (sd40 0.40, 40/40 offsets, LOYO min +1.59 dropping 2018), +2.10 gross; the ≈ 0.67 gap is the null's extra cost. Realised post-2011 icw8 book: **+0.01** vs SPY. The universe book is ≈ 0.8 × IWM (R² 0.97); its SPY slope is t 0.85, so the drag is not beta. The doc's literal "selection − universe drag" is +0.79 and explicitly does not choose a forward formula. Not comparable one-to-one with WO-7's 20-draw median null (+3.95 selection) | landed e05faea; COO verdict UNIVERSE BET (COO-verified from drag_decomp.json, 20/20 reconciles), no model change; Gabe kept SPY as the headline (2026-09-29, "Keep SPY") | 2026-09-27/28 | [construction drag](final/models/2026-09-27-construction-drag.md) §2; COO.md "WO-21 VERDICT", decisions log |
+| **Model audit on 2020-26 (WO-23): no F1/F2 flags; S1 not triggered.** Descriptive, fixed weights, no refit; **hold-out read #5** (unfitted), periods A = 2007-2019 and B = 2020-01 to the last matured label. Period B, %/yr vs SPY: icw9_seas −2.02 (0/40 offsets), icw8 −1.99, blend10 −1.41, blend9 −0.63 (blend single grid; q75's 2020+ training-window leakage unchecked). `seas` B IC t +0.23, leave-one-out −0.03, so S2 (forward ledgers) applies to seas in Theoretical. Other findings: live ICW weights come from v1-panel t's; short interest (no data before 2020) is t −2.89 in B; accruals is wrong-signed in B (COO.md) | landed 21f4c39 (9106bef); COO-verified | 2026-09-27/28 | [model audit](final/models/2026-09-27-model-audit.md); COO.md "WO-23 VERDICT" |
+| **2020s drag decomposition (WO-24): UNIVERSE BET again, but the 2020s selection fails LOYO.** WO-21's decomposition on B = 2020-01..2026-07, **hold-out read #6**, unfitted, descriptive; v2 column c cap150, 40 offsets, net 15bp. icw8 vs SPY **−1.99** = no-score pool **−4.85** + score over pool **+2.85**; pool share of the random-book drag 87.2% (≥ 2/3 → "universe bet"). Selection over the random null **+3.56**, sd40 0.91, 40/40 offsets, but dropping 2020 gives **−0.17** vs random and **−0.87** vs the pool. icw9_seas: same pool, a higher gross selection eaten by its higher turnover cost (−0.43 vs −0.22). COO reading: since 2021 there is no robust evidence the model picks stocks well inside the pool, and the forward expectation vs SPY with this pool is negative unless small/mid caps recover | landed f624a54 (0162a4e); COO-verified | 2026-09-28/29 | [construction drag 2020s](final/models/2026-09-28-construction-drag-2020s.md) §2; COO.md "WO-24 VERDICT" |
+| **Overnight vs intraday `io_gap` (2026-09-29): PASS-nomination.** 252-day mean of (intraday − overnight) log return, annualised, sign +1 (Lou-Polk-Skouras 2019), new family "overnight/intraday decomposition", **trial 1, k=1**, v2 column c, cap150, h=40, nomination era 2007-2019. All 7 gates pass: pooled NW(39) IC +0.0322, **t +4.00**; halves t +2.33 / +3.75; both-sides sector t +3.57; 0/40 flips; max year share 0.167 (2015). Gate 6 (decile_volq net 15bp, split-half OOS): icw9 **+2.513%/yr** vs icw8 +2.368% and shuffle-null p80 +2.367 (real above all 20 draws). Caveats (doc): the gain is small (+0.145 pp/yr); the OOS composite IC mean rises 0.0485 → 0.0500 but its NW t falls 6.65 → 6.01; the OOS io_gap weight is 0.094 vs 0.251 across halves; median Spearman +0.30 with momentum_12_1. The overnight leg carries more of it (IC t −4.56 vs intraday +2.64, descriptive), a sentiment-reversal story more than "gains made intraday". COO calibration (COO.md): the null draws get the floor weight, so gate 6 certifies "beats floor-weight noise", as it did for seas, which then read t +0.23 in 2020-26; and the comparator was icw8, not live icw9_seas | landed 2338c91 (b6b6b64); COO verdict **ITERATE** → WO-26-io unfitted 2020+ read (§5); nothing deployed | 2026-09-29 | [overnight-intraday screen](final/models/2026-09-29-overnight-intraday-screen.md) "Results"; COO.md io_gap row |
 | **Up-market capture / upside beta: shelved by Gabe** before any run ("If the metric already exists then may not be worth the effort to include"). No trial spent, not a dead end. Reopen only if Gabe asks | recorded (no files) | 2026-09-25 | COO.md "Gabe decisions log" |
 | The composite is a strong low-beta bet: corr(score, beta_252) -0.2933. Beta-adjusted IC is sharper (t 2.53 → 4.25) | landed. v1 cap150 grid, not re-measured on v2 | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §9b |
 | **IC-shrinkage weights** (each factor weighted by sign × max(0.1, abs(t) − 1) of its own pooled-IC t, pre-registered, one run) beat equal weight out of sample on raw-return IC in both split-halves: fit-odd→test-even, weighted +0.0304 vs equal +0.0183; fit-even→test-odd, weighted +0.0496 vs equal +0.0434. On beta-adjusted IC the second split favours equal weight on the point estimate. No portfolio CAGR was computed for this step | landed. v1 cap150 grid, nomination era (v2 split-half IC in the WO-6 row) | 2026-09-22 | [corrections](final/models/2026-09-22-composite-model-corrections.md) §12 (OOS figures as reproduced in §19's sanity gate) |
@@ -360,17 +392,28 @@ The certified dead ends list is owned by the COO (`~/.claude/pipe_dream-coordina
   or selection were chosen after seeing a 2020+ number as in-sample for 2020+
   from then on. **Fitting on 2020+ still needs Gabe** (project memory
   `feedback_holdout_unfitted_reads_ok.md`; COO.md decisions log).
-  - **Read #5 done, not landed:** WO-23's model audit (per-factor IC and
+  - **Read #5 done and landed:** WO-23's model audit (per-factor IC and
     leave-one-out for icw9_seas and the 10-factor blend, 2020-01 to the last
     matured label, frozen weights; pre-registered 8a58c88 before any 2020+
-    number; results c9ba394/9106bef, COO-verified 2026-09-28; §5). Its
+    number; COO-verified 2026-09-28; landed 21f4c39, 2026-09-29). Its
     blend10-vs-blend9 figures informed Gabe's "Theoretical only" (§3.3).
-  - **Reads #6 and #7 are in flight (2026-09-29):** WO-24 (WO-21's
-    decomposition on 2020+, descriptive) is #6. #7 is claimed twice in
-    COO.md: the ICW v2 reweight, whose short-interest weight is **fit on
-    2020-26** (Gabe-approved), and the options-readiness WO-25's exp B confirm
-    (§5, §6 #28). Per COO.md, once the reweight fits on 2020-26 "only forward
-    ledgers can confirm the Theoretical model".
+  - **Read #6 done and landed:** WO-24 (WO-21's decomposition on 2020+,
+    descriptive; landed f624a54, 2026-09-29; §3.3).
+  - **Read #7 done, not landed, a fit:** the ICW v2 reweight, whose
+    short-interest weight was **fit on 2020-26** (Gabe-approved). Gabe did
+    not adopt it ("Keep the live weights", 2026-09-29; §5). COO.md had written
+    that after such a fit "only forward ledgers can confirm the Theoretical
+    model"; since the fitted weights were not adopted, whether that still
+    holds isn't recorded. WO-25-options also pre-assigns #7 to its exp B
+    confirm (§6 #28).
+  - **Read #8** is pre-assigned to WO-25-options' WO-O1 2020+ run (Phase 2,
+    not run).
+  - **Read #9 in flight (2026-09-29):** WO-26-io, the frozen io_gap factor on
+    2020-01..last matured label, unfitted, weights pinned from 2007-2019 t's
+    before the read. The COO renumbered it from #8 to avoid WO-25-options'
+    pre-assignment and relaunched it at 15:50 after the first worker died on
+    the spend limit before reading anything (COO.md). Its pre-registration was
+    committed as e634896 before any 2020+ value (LEDGER).
 - **The forward ledgers remain the only fully clean test surface.** Before
   the policy change, any further hold-out look needed Gabe's explicit OK
   (COO.md). There are three live ledgers,
@@ -386,12 +429,15 @@ The certified dead ends list is owned by the COO (`~/.claude/pipe_dream-coordina
   - `prediction_ledger_sue.csv`: the WO-15 icw9_sue column (landed 6ac64e6,
     deployed live 562dab9, 2026-09-26). No record yet: W38/W39 were declined,
     and W40 is the first countable record (§4.1).
-  - **Landed, not yet live (WO-20-seas 0032ee3; unchanged by 22f2c69):**
+  - **Landed (WO-20-seas 0032ee3; unchanged by 22f2c69) and deployed live
+    (7e89bad, 2026-09-29):**
     `prediction_ledger_seas.csv` (icw9_seas vs icw8 on v3's rows; monitors
     the live Theoretical promotion) and `prediction_ledger_blend_seas.csv`
     (10-factor vs 9-factor blend, cap2000; since 2026-09-29 the only place
-    the seas blend is recorded, since it is not deployed). They start at the first v3 date
-    after 2026-09-24 (W40) once deployed. Neither is a gate (§4.1).
+    the seas blend is recorded, since it is not deployed). Neither file exists
+    yet: they start at the first v3 date after 2026-09-24 (W40). The live
+    `record_weekly.py --plan` lists all 6 ledgers with nothing missing
+    (LEDGER). Neither is a gate (§4.1).
 
   **Cadence: weekly** (Gabe, 2026-09-25, "maximum data for future analyses").
   Records so far are 2026-09-08, 2026-09-18 (W38) and 2026-09-24 (W39,
@@ -405,14 +451,15 @@ The certified dead ends list is owned by the COO (`~/.claude/pipe_dream-coordina
 - All three hold-out reads above were on the **v1** grid. The v2-grid work
   (WO-6, WO-7, WO-4, 2026-09-24; WO-9, WO-13, 2026-09-25) is nomination-era
   only and asserts `max(date) < 2020-01-01`, so it spent nothing. So do
-  WO-18 and WO-21 (2026-09-26/27). WO-23 (read #5, 2026-09-28) is the first
-  v2 hold-out read.
+  WO-18, WO-21 (2026-09-26/27) and the io_gap screen (2026-09-29, asserted:
+  no SEP file after 2019-12, no date ≥ 2020). WO-23 (read #5, 2026-09-28) is
+  the first v2 hold-out read.
 
 ---
 
 ## 4. Workstreams
 
-### 4.1 Factor composite (reset2026): active, landed through WO-21 (2026-09-28); live still icw8
+### 4.1 Factor composite (reset2026): active, landed through io_gap (2026-09-29); icw9_seas deployed, the live meta still icw8 until Retrain ALL
 
 **Start with the [full specification](final/models/2026-09-22-composite-model-full-specification.md)**
 (2026-09-22, landed): the equation, factor table, weights, universe, eras and
@@ -434,12 +481,14 @@ which now lives in §7 below.
   2026-09-23): `gross_profitability` 0.5956, `accruals` -0.1627,
   `net_issuance_pct` -0.1399, `momentum_12_1` 0.0497, the rest ±0.013 (per
   the landed composite meta). Frozen, fit once on the nomination era.
-  **On integration since 0032ee3 (2026-09-28, not deployed):** the Theoretical
-  scorer uses `PRODUCTION_WEIGHTS_V9_SEAS` (9 factors: `gross_profitability`
-  .4808, `seas` +.1928, `accruals` −.1314, `net_issuance_pct` −.1129,
-  `momentum_12_1` .0402, the rest ±.0105; same frozen ICW rule, full-era t).
-  `PRODUCTION_WEIGHTS` (icw8) is unchanged and still what the live app and the
-  v3 ledger use.
+  **On integration since 0032ee3 (2026-09-28) and deployed live 7e89bad
+  (2026-09-29):** the Theoretical scorer uses `PRODUCTION_WEIGHTS_V9_SEAS` (9
+  factors: `gross_profitability` .4808, `seas` +.1928, `accruals` −.1314,
+  `net_issuance_pct` −.1129, `momentum_12_1` .0402, the rest ±.0105; same
+  frozen ICW rule, full-era t). `PRODUCTION_WEIGHTS` (icw8) is unchanged and
+  is what the v3 ledger uses; the live composite meta stays icw8 until the
+  next Retrain ALL (§6 #30). Gabe kept these live weights on 2026-09-29 over
+  the ICW v2 reweight (§5).
 - **Physics audit (landed 2026-09-22).** Signs mostly right. Equal weights sit
   at cosine similarity 0.47 from the IC-optimal weights. Most of the edge is
   unlikely to be stock selection.
@@ -561,7 +610,7 @@ which now lives in §7 below.
   [seasonality screen](final/models/2026-09-26-seasonality-screen.md).
 - **WO-20-seas → WO-20-seas-final: `seas` goes live in the Theoretical model
   only (landed 0032ee3 on 2026-09-28, narrowed by 22f2c69 on 2026-09-29;
-  deploy pending).** Gabe decided "both" on 2026-09-27 and "Theoretical only"
+  deployed live 7e89bad on 2026-09-29).** Gabe decided "both" on 2026-09-27 and "Theoretical only"
   on 2026-09-29, after WO-23 (§3.3). The forward ledgers monitor it rather
   than gate it.
   [seas Theoretical-only doc](final/models/2026-09-29-seas-theoretical-only.md);
@@ -583,32 +632,68 @@ which now lives in §7 below.
     counting rules; seas coverage ≥ 0.70): mean `gain_raw` = Spearman(new,
     r) − Spearman(previous, r) > 0 → CONSISTENT, reported to Gabe; ≤ 0 → a
     **demotion question to Gabe**, nothing automatic (doc §4).
-  - **Deploy** is an additive 10-path list in HANDOFF-wo20-seas-final (7
-    `final/src` files, `final/app/`, and both seas docs), approved by Gabe's
-    2026-09-29 call and still pending (§6 #24). Do not run Retrain ALL as part
-    of it. Post-deploy checks: `seas_forward.py selftest`,
-    `record_weekly.py --plan`, and both metas' `model_version`.
-  - **Blocked on Gabe:** the Theoretical tab's 2007-2026 equity curve stays
-    **icw8** and is to be labelled so. The doc says an icw9_seas curve would
-    read the spent hold-out; whether Gabe's newer unfitted-read OK changes
-    that is open (§6 #26).
+  - **Deploy: done 2026-09-29, live 7e89bad** (LEDGER), the additive 10-path
+    list in HANDOFF-wo20-seas-final (7 `final/src` files, `final/app/` (only
+    app.py differed), and both seas docs), on Gabe's 2026-09-29 call, with no
+    Retrain ALL. Checks: `seas_forward.py selftest` PASS (coverage
+    86.3%/90.3%), `record_weekly.py --plan` rc 0 with all 6 ledgers and
+    nothing missing, ledger sha1s unchanged. The metas' `model_version` check
+    waits for the first Retrain ALL (§6 #30).
+  - **Equity curve:** the Theoretical tab's 2007-2026 curve stays **icw8**
+    and is labelled so. The doc says an icw9_seas curve would read the spent
+    hold-out. The COO has since ruled (2026-09-28) that such a curve is
+    covered by Gabe's unfitted-read OK, because its weights come from
+    2007-2019 t's. It must be logged as a hold-out read when built, and
+    building it is an app change for the app manager (§6 #26). Nobody has
+    asked for it yet.
 - **Post-2011 drag decomposition (WO-21, landed e05faea, 2026-09-28): UNIVERSE
   BET** (§3.3). Pre-registered decision map, 1 run + 1 fix, 20/20 reconciles
   to the COO's and WO-7's numbers. The drag concentrates in 2014, 2015, 2017
   and 2019, and its construction and cost parts are flat at about −0.8%/yr
   every year. The COO's reading: the model's stock picking kept working after
   2011, and the unhedged book vs SPY rides the small/mid-cap vs large-cap
-  cycle. The COO recommends keeping SPY as the headline and adding
-  score-over-universe as a standing diagnostic (§6 #25). No construction trial
-  and no turnover work order were triggered.
+  cycle. Gabe kept SPY as the headline (2026-09-29), with picks-over-pool
+  tracked as a diagnostic (§6 #25). No construction trial and no turnover
+  work order were triggered.
   [construction drag](final/models/2026-09-27-construction-drag.md); code
   `final/src/construction/drag_decomp.py`, outputs `final/out/construction/`.
-- **Next (COO.md, 2026-09-28/29):** WO-23's audit is done and awaits landing:
-  S1 was not triggered, so S2 (the forward ledgers at 6 counted dates) applies
-  to seas in the Theoretical model (§5). Its other findings (weights derived
-  from v1 t's, short interest, accruals wrong-signed on 2020+) led to the ICW
-  v2 reweight and WO-24, both in flight (§5). WO-22 (a next factor) has no
-  strong candidate and is not launched.
+- **Model audit (WO-23, landed 21f4c39, 2026-09-29; hold-out read #5):** no
+  F1/F2 flags, S1 not triggered, so S2 (the forward ledgers at 6 counted
+  dates) applies to seas in the Theoretical model (§3.3). Its other findings
+  (weights derived from v1 t's, short interest, accruals wrong-signed on
+  2020+) led to the ICW v2 reweight (not adopted, §5) and WO-24.
+  [model audit](final/models/2026-09-27-model-audit.md); code `final/src/audit/`,
+  outputs `final/out/audit/`.
+- **2020s drag decomposition (WO-24, landed f624a54, 2026-09-29; hold-out read
+  #6): UNIVERSE BET again**, and the 2020s selection fails LOYO on 2020
+  (§3.3). [construction drag 2020s](final/models/2026-09-28-construction-drag-2020s.md);
+  code `final/src/construction/drag_decomp_b.py`, output
+  `final/out/construction/drag_decomp_b.json`.
+- **Overnight vs intraday `io_gap` (landed 2338c91, 2026-09-29):
+  PASS-nomination, COO verdict ITERATE** (§3.3). Gabe asked for it after an
+  analysis showing MU's gains came almost entirely intraday ("Lets proceed
+  with it since its cheap"). The factor comes from
+  SEP open/close/closeadj only, is point-in-time (asserted on all 12,424,924
+  finite panel rows), and covers 96.5% of eligible cap150 rows. A name check
+  of MU and the delisted RSHCQ matches an independent recompute to 1e-9.
+  Nothing is deployed and no weight changed.
+  - **Next:** WO-26-io reads the frozen factor on 2020+, unfitted (hold-out
+    read #9, §5). Its pre-fixed rule: NW t ≥ +1.0 is SUCCESS, which leads the
+    COO to recommend a forward column `icw10_io` (icw9_seas + io_gap); a t
+    between 0 and 1.0 is MIDDLE; t ≤ 0 is KILL, a certified dead end for
+    adoption (§6 #31). Under the frozen rule io_gap would get weight 0.239 in
+    icw10, the second-largest after GP (0.366) (COO.md).
+  - **Don't** run the overnight leg on its own (`io_overnight`, IC t −4.56,
+    descriptive, picked post hoc) until WO-26-io shows the family alive
+    in 2020+. If it does, it needs its own pre-registered trial (trial 2 of the
+    family; COO.md).
+  [overnight-intraday screen](final/models/2026-09-29-overnight-intraday-screen.md);
+  code `final/src/overnight/`, outputs `final/out/overnight/`
+  (`io_gap_factor_v2.parquet` is gitignored; §7).
+- **Next (COO.md, 2026-09-29):** WO-26-io's number, then D-IO (§6 #31); the
+  forward ledgers (first counted reads ~11-03); options on the AV data when
+  Gabe sends it (§4.4). WO-22 (a next factor) has no strong candidate and is
+  not launched.
 
 ### 4.2 Old XGBoost stock model (q75 / xrank): half of the blend, no validated edge
 
@@ -692,6 +777,29 @@ which now lives in §7 below.
     branch (§5, §6 #23).
   A unified AV+DoltHub chain and option features are built
   (`build_option_chain_unified.py`, `build_av_options_features.py`).
+- **WO-25-options Phase 1: COMPLETE, Phase 2 BLOCKED on the Windows data
+  copy (landed 994378f, 2026-09-29; COO-verified).** A readiness harness, with
+  **no outcome statistic on real labels**:
+  - **Gate A 10/10 PASS** on the 33 Mac AV dates (2008-01-02..2010-08-18).
+    AAPL is on 13/13 2008 dates. LEH/WM/WB map to LEHMQ/WAMUQ/WB1 on
+    2008-08-20. rr25 > 0 on 95.4% of name-dates, pc_vol_ratio median 0.395.
+    Chain coverage is cap2000 **0.957**. The median ATM spread is 0.084 /
+    0.150 / 0.224 by tier. The label basis is tradable on 400/400 rows.
+  - Exp B and WO-O1 runners exercised on shuffled or noise labels only (exp B
+    0/5 screen passes on shuffled labels; WO-O1 noise-label z within ±1.9).
+    The named LEH settlement check is exact (0.976 to 0.981 of max loss).
+  - COO rulings: keep the cap2000 $10 price floor, which excludes WaMu (label
+    WO-O1 results "excludes sub-$10 names at entry"; changing it is
+    methodology, Gabe's call). NW lag 39 stays binding. The blend arm is
+    BLOCKED (the q75 cache predates the purge code), so the icw8 arm runs
+    alone. New Phase 2 precondition: a deterministic dedupe rule for
+    key-duplicate contracts, written into the doc before the run. Phase 2
+    runs from the wo25 worktree or an integration checkout, not the main
+    checkout.
+  - **Phase 2 needs** ≥ 120 of 134 nominate-era dates complete at cap2000
+    (the Mac has 33), and the confirm stage needs all of 2019-02..2026-08.
+  [options readiness WO-25](final/models/2026-09-29-options-readiness-wo25.md) §8;
+  code `final/src/options_wo25/`, outputs `final/out/options_wo25/`.
 - **Pre-registered, not run.** Exp B (option factors, cap2000) needs ≥120
   nominate-era monthly dates landed. Exp A (train-old/test-new weights) needs
   the 1998 Sharadar backfill (blocked: `SHARADAR_API_KEY` not set). WO-18's
@@ -811,7 +919,7 @@ which now lives in §7 below.
   [Results](final/models/2026-09-23-insider-congress-results.md),
   [pre-registration](final/models/2026-09-23-insider-congress-preregistration.md).
 
-### 4.7 Live pipeline and forward ledgers: landed (9dd0852, WO-16 defcc23) and deployed to the live checkout (6a1823d, WO-16 500a4a5, app 4ab4363), 2026-09-26; WO-19 landed, not deployed; WO-20-seas(-final) landed, deploy pending
+### 4.7 Live pipeline and forward ledgers: landed (9dd0852, WO-16 defcc23) and deployed to the live checkout (6a1823d, WO-16 500a4a5, app 4ab4363), 2026-09-26; WO-20-seas-final (7e89bad) and WO-19 (57bc458) deployed 2026-09-29
 
 - **The Retrain ALL chain that should run** (WO-14 doc): the v1 data steps
   (`sharadar_pull_pit_panel.py` … `export_sharadar_ohlc.py`), then
@@ -827,16 +935,21 @@ which now lives in §7 below.
   Gabe's OK. A static trace of all 15 Retrain ALL steps found 41 files, 0
   missing scripts and 0 unresolved imports. The other
   integration-only `final/scripts` paths are still absent live, and Retrain
-  ALL doesn't call them: **10 as of e05faea** (checked with `git ls-tree`
-  integration vs the live HEAD 4ab4363, 2026-09-28 run 11), the 9 from run 10
-  plus WO-19's `test_wo19_key_redaction.py`. Two of them are the WO-20-fixed
-  `av_options_pull.py` and its launcher `av_options_run_pull.sh` (§4.4).
-- **Live `final/src` no longer equals integration (2026-09-29).** Landed but
-  not deployed: WO-20-seas as narrowed by WO-20-seas-final (the scorer/ledger
-  files plus the new `final/src/seasonality/` tree and the app text; Gabe's OK
-  given 2026-09-29, deploy pending a non-isolated integrator run, §6 #24),
-  WO-19's key redaction in 11 Sharadar scripts plus `sf1_topup.py` (needs
-  Gabe's OK, §6 #27), and WO-21's research-only `final/src/construction/`.
+  ALL doesn't call them: **9 as of 2338c91** (`git ls-tree` integration vs
+  the local live ref 57bc458, 2026-09-29 run 13; WO-19's test is now live).
+  They are `AV_PULL_WINDOWS.md`, `av_congress_pull.py`, `av_options_pull.py`,
+  `av_options_run_pull.sh`, `edgar_8k_item202_pull.py`,
+  `sharadar_backfill_1998.sh`, `sharadar_downcap_pull.py`,
+  `sharadar_reference_refresh.py` and `wo17_acceptance_report.py`. Two of them
+  are the WO-20-fixed AV pull script and its launcher (§4.4).
+- **Live `final/src` + `final/app` vs integration (2026-09-29, `git diff
+  --stat` 57bc458 vs 2338c91):** the same except research-only code that no
+  live step runs: `final/src/audit/` (WO-23), `final/src/construction/`
+  (WO-21, WO-24), `final/src/overnight/` (io_gap), and the seasonality
+  screen/backtest scripts (`screen_seas.py`, `hand_check_seas.py`,
+  `check_panel_swap.py`, `pull_sep_pre2005.py`, `wo20_*`). Live also keeps
+  `final/src/fly/` (9 files), which integration deleted. WO-20-seas-final
+  went live as 7e89bad and WO-19 as 57bc458, both 2026-09-29 (LEDGER).
 - **First real live Retrain ALL: CLEAN (Gabe, 2026-09-26 22:36-22:47;
   COO-verified from `final/app/logs/retrain_all_models/run.log`, COO.md).**
   Insider refresh ran (filings through 09-25). SF1 top-up: +0 rows, 21
@@ -912,8 +1025,8 @@ which now lives in §7 below.
   disk, so the current month is never re-pulled, and every Retrain was a no-op
   for September. WO-14 used `--start 2026-09 --end 2026-09 --force` (21
   calls). The deployed app change also forces the current-month re-pull.
-- **Sharadar key out of logs (WO-19): landed 9e169ce, 2026-09-27, NOT
-  deployed** ([WO-19 doc](final/models/2026-09-27-wo19-key-redaction.md)). No
+- **Sharadar key out of logs (WO-19): landed 9e169ce, 2026-09-27; deployed
+  live 57bc458, 2026-09-29** (Gabe "Push 3"; [WO-19 doc](final/models/2026-09-27-wo19-key-redaction.md)). No
   script built a key-bearing URL string. The leak was `requests` exception
   text (which carries the full URL, key included) reaching stdout, a
   RuntimeError or a traceback, and so the app job logs. An inline `_scrub()`
@@ -925,8 +1038,12 @@ which now lives in §7 below.
   defence in depth. `sf1_eps_live_pull.py` and `sf1_topup.py` were already
   safe. Offline test (fake key, no network): 10 of 13 pre-fix copies leak, 13
   of 13 fixed copies are clean, and mocked-success output is byte-identical. A
-  read-only scan of the live `final/app/logs` found no key-shaped string. The
-  live checkout still has the pre-fix scripts (§8.2).
+  read-only scan of the live `final/app/logs` found no key-shaped string.
+  **Deploy (LEDGER, 2026-09-29):** 13 paths from 7b77ba4, 12 existing scripts
+  plus the test and the doc. `sharadar_downcap_pull.py` was skipped because it
+  isn't in the live checkout. The committed test hard-codes that file, so live
+  it passes (12/12, 0 leaks) only through a wrapper that drops it; unwrapped,
+  it fails on the missing file (§6 #32). No Retrain, no Streamlit restart.
 - **Forward ledgers** (§3.4): v3, ext, hedge and (from W40) sue, weekly, with sidecars
   `ledger_record_log.csv` (`recorded_late`) and `ledger_record_annotations.csv`
   (`incomplete_week`). `forward_hedge.py status` drops both kinds before
@@ -942,12 +1059,9 @@ Nothing below is current state until it lands.
 
 | branch / worktree | what it will change | state | source |
 |---|---|---|---|
-| `worktree-wo23-model-audit` (COO WO-23, model audit) @ 9106bef | Descriptive audit, **no fitting, no weight changes**, of Theoretical icw9_seas (40 offsets) and the blend's 10-factor leg + q75 (cap2000, single grid), periods A = 2007-2019 and B = 2020-01 to the last matured label (**hold-out read #5**, unfitted). COO verdict (COO.md "WO-23 VERDICT", 2026-09-28): no F1/F2 flags; S1 not triggered (seas B IC t +0.23, LOO −0.03), so S2 (forward) applies to Theoretical. Period B %/yr vs SPY, frozen weights: icw9_seas −2.02, icw8 −1.99, blend10 −1.41, blend9 −0.63 (q75's 2020+ training-window leakage unchecked). Its "seas lowered the blend" finding drove Gabe's "Theoretical only" (§3.3) | pre-reg 8a58c88; results c9ba394 + doc follow-up 9106bef (2026-09-28); **not landed** (COO.md: "Landing requested after Gabe sees it."). The LEDGER row still says "awaiting COO verdict" | `worktree-wo23-model-audit:final/models/2026-09-27-model-audit.md`; COO.md; LEDGER |
-| `worktree-wo24-construction-drag` (COO WO-24) @ 06a76c2 | WO-21's universe/construction/cost decomposition on period B (2020-01-02..2026-07-30) for icw8 and icw9_seas: **hold-out read #6**, unfitted, descriptive. New files only (`drag_decomp_b.py`, `drag_decomp_b.json`, `final/models/2026-09-28-construction-drag-2020s.md`) | pre-reg b63582d; results committed 06a76c2 (2026-09-29; commit message: "decision map: universe bet"); no COO verdict recorded yet; not landed. Carries WO-23 as an input merge | `worktree-wo24-construction-drag:final/models/2026-09-28-construction-drag-2020s.md`; LEDGER |
-| `worktree-agent-aa9609e4d8a64a036` (ICW v2 reweight; the ledger calls it "WO-25") @ 0aa87b4 | Gabe, 2026-09-29: "re derive on v2, fit on 2020-26". Re-derives the icw9 weights with the same rule from v2 column c 2007-2019 t's for 8 factors, with the short-interest weight **fit on 2020-26** (hold-out read #7, Gabe-approved). New files only (`final/src/reweight/`, `final/out/reweight/`, `final/models/2026-09-29-icw-v2-reweight.md`). No `PRODUCTION_WEIGHTS` change and no deploy; results go to Gabe | method pin 0aa87b4 committed before any backtest (2026-09-29); carries WO-23 (land WO-23 first or together) | LEDGER; COO.md decisions log |
-| `wo25-options-readiness` (COO WO-25, options Phase 1) in `agent-a8b6bd6512a6407cf` | Gate A on the 33 Mac AV dates, exp B runner + a portfolio shuffle-p80 companion, the WO-O1 put-selling backtester, a data-arrival checker; **no outcome stats on real labels**. Pre-reg `final/models/2026-09-29-options-readiness-wo25.md`; hold-out reads pre-assigned #7 and #8 (§6 #28). Phase 2 runs on the Windows data once copied (~10-01), before the ~10-20 AV renewal call | in progress, no commits recorded (2026-09-29) | COO.md "WO-25 LAUNCHED"; LEDGER |
-| `worktree-overnight-intraday` | Overnight vs intraday return decomposition screen (Lou-Polk-Skouras 2019), Gabe-approved 2026-09-29. New files only (`final/src/overnight/`, `final/out/overnight/`, `final/models/2026-09-29-overnight-intraday-screen.md`); pre-reg before any outcome read | in progress, no commits recorded | LEDGER |
-| main checkout `round18-app-two-models` (live) @ 4ab4363 | **Not yet deployed there (2026-09-29):** WO-20-seas src as narrowed by WO-20-seas-final (22f2c69) with its app text (254ea01): **Gabe's OK given 2026-09-29, deploy pending** because the landing integrator run was worktree-isolated (LEDGER). Also WO-19 (9e169ce, needs Gabe's OK) and WO-21 (e05faea, research only). Today `final/src` + `final/app` equal integration d7d257d plus the 3 WO-16 paths from defcc23 (500a4a5), `final/scripts/edgar_form4_refresh.py` (db13243), the 6 WO-15 paths from 6ac64e6 (562dab9) and `final/app` from c8dec17 (4ab4363: key guard + picks sort), all 2026-09-26, except `final/src/fly/*` (9 files kept). The other integration-only `final/scripts` are not synced (10 at e05faea, incl. WO-17's two operator tools and WO-20's fixed AV pull script and launcher, which only run by hand). WO-17's data write went straight into the live `final/data/sharadar/` (no commit). **Not pushed**: 10bfb19 in its history carries 4.3 GB of FUSE temp files and >100MB blobs. A clean mirror is on origin as `round18-app-two-models-clean` @ 78f8c34, and it lacks 02be838 and everything from 6a1823d on | Repointing the local branch onto the clean line is a history rewrite: Gabe's call (§6 #12). Not to be merged into integration | LEDGER landing log 2026-09-26; LEDGER round18 row |
+| `worktree-agent-a648114375fb9da59` (COO **WO-26-io**, io_gap 2020+ read; relaunched 15:50, replaces the dead `agent-a84f9b7a308dac963`) | Reads the frozen io_gap factor (b451e52 definition, sign +1) on 2020-01..last matured label, unfitted (**hold-out read #9**). A wrapper lifts the 2019-12 bound without editing the builder and must reproduce `io_gap_factor_v2.parquet` on 2007-2019 to ≤1e-12 first. Weights pinned from 2007-2019 t's before the read: io_gap 0.2393 in icw10, 0.2804 in icw9_io. Primary: io_gap pooled NW(39) rank IC 2020+ (SUCCESS t ≥ +1.0; MIDDLE 0 < t < 1.0; KILL t ≤ 0). Secondary, descriptive: icw10 vs icw9_seas, icw9_io vs icw8, LOYO, per-year IC, momentum-residualised IC, leg ICs. New files only (`final/src/overnight/holdout_io_gap.py`, `final/out/overnight/io_gap_holdout_report.{json,log}`, `final/models/2026-09-29-io-gap-holdout-read.md`) | relaunched 2026-09-29 15:50; pre-reg e634896 (doc only, before any 2020+ value), pushed; not landed | COO.md "WO-26-io", "Hold-out status" #9; LEDGER |
+| `worktree-agent-aa9609e4d8a64a036` (ICW v2 reweight; the ledger calls it "WO-25", COO.md "WO-25-reweight") @ 43fa1a4 | Gabe, 2026-09-29: "re derive on v2, fit on 2020-26". Re-derived the icw9 weights with the same rule from v2 column c 2007-2019 t's for 8 factors, with the short-interest weight **fit on 2020-26** (hold-out read #7). Results, %/yr vs SPY (commit 43fa1a4): A 2007-2019 +2.60 in-sample vs live icw9_seas +3.49 (split-half OOS +2.55); B −2.61 vs −2.02; B with SI at the floor −3.14. **COO verdict DO NOT ADOPT**; **Gabe: "Keep the live weights"** (2026-09-29). SI stays at the floor, judged forward. No `PRODUCTION_WEIGHTS` change, nothing deployed | committed 0aa87b4 (method pin) + 43fa1a4 (results); not landed; COO.md: "land as a record only" (it carries the WO-23 merge, now landed) | `worktree-agent-aa9609e4d8a64a036:final/models/2026-09-29-icw-v2-reweight.md`; COO.md "WO-25 (reweight …) VERDICT", decisions log |
+| main checkout `round18-app-two-models` (live) @ 57bc458 | **Deployed 2026-09-29:** WO-20-seas-final (7e89bad, 10 paths from 22f2c69, incl. the app text 254ea01) and WO-19 (57bc458, 13 paths from 7b77ba4), both on Gabe's in-the-moment OK relayed by the COO. Not yet in effect in the running app: Gabe restarts Streamlit from a shell with `secrets.env` sourced, then runs Retrain ALL (§6 #30). `final/src` + `final/app` now equal integration except the research-only dirs and the kept `final/src/fly/` (§4.7). 9 integration-only `final/scripts` are not synced; they only run by hand (§4.7). WO-17's data write went straight into the live `final/data/sharadar/` (no commit). **Not pushed**: 10bfb19 in its history carries 4.3 GB of FUSE temp files and >100MB blobs. A clean mirror is on origin as `round18-app-two-models-clean` @ 78f8c34, and it lacks 02be838 and everything from 6a1823d on | Repointing the local branch onto the clean line is a history rewrite: Gabe's call (§6 #12). Not to be merged into integration | LEDGER landing log 2026-09-26/29; LEDGER round18 row |
 | `worktree-alpha-vantage-spin` @ 6ca32f3 | Updated Windows runbook, `av_pull_windows_prep.py`, `av_merge_pull_roots.py`, a pull retry fix in `av_options_pull.py` (a bare `except Exception`, not WO-20's `FETCH_ERRORS`; also `--only-tier downcap`), a `downcap_universe.py` path override | committed and pushed, **not landed**: excluded from the 2026-09-26 merge (Gabe: "merge everything but AV"). Its `av_options_pull.py` now conflicts with WO-20's landed version (f380817) on the same lines (§6 #23) | LEDGER landing log; COO.md decisions log 2026-09-26 |
 | `worktree-papermoney-order-sheet` | paper-broker order sheet | **not to land** (Gabe, 2026-09-23; reaffirmed 2026-09-26) | LEDGER; COO.md decisions log |
 
@@ -988,8 +1102,9 @@ Nothing below is current state until it lands.
    blend", but the blend's composite leg is the frozen 9-factor equal-weight
    version, and Theoretical is icw8. (The blend's `"role": "primary"` is
    correct again under the 10bfb19 layout.) The Theoretical sentence is fixed
-   on integration by the WO-20-seas app text (254ea01, 2026-09-28, not
-   deployed). The app README header is not in that change and is still open.
+   on integration by the WO-20-seas app text (254ea01, 2026-09-28; deployed
+   live with 7e89bad, 2026-09-29). The app README header is not in that change
+   and is still open.
 6. **Stale coordination entries (for their owners).** COO.md "Hold-out
    status" read 2 still says the blend is "a Candidate tab, not app primary:
    Gabe declared bca3f7c the baseline", which the 10bfb19 decision reversed.
@@ -1009,7 +1124,8 @@ Nothing below is current state until it lands.
    2026-09-27 policy that replaced it. COO.md D-AV still says the retry fix is
    unfixed on integration; it landed as f380817. The WO-20-seas doc §5 says an
    icw9_seas equity curve is forbidden by the spent hold-out, which doesn't
-   account for Gabe's unfitted-read OK (#26).
+   account for Gabe's unfitted-read OK; the COO has since ruled that it is
+   allowed (#26).
 7. **Earlier decisions still pending** (COO.md): why the HMM regime gate was
    retired; whether to renew AV premium (around 2026-10-22; now D-AV-2, #21);
    whether the integrator may
@@ -1041,7 +1157,7 @@ Nothing below is current state until it lands.
     now reaches the weekly records and the SF1 top-up (static trace, then a
     clean live run 2026-09-26; §4.7).
     Still open, Gabe's call: (b) 6a1823d and everything after it (500a4a5,
-    db13243, 562dab9, 4ab4363) is not pushed, because the local round18
+    db13243, 562dab9, 4ab4363, 7e89bad, 57bc458) is not pushed, because the local round18
     history carries >100MB blobs. Repointing the local branch onto
     `round18-app-two-models-clean` is a history rewrite. COO.md (2026-09-26)
     says it is "NOT treated as approved".
@@ -1084,8 +1200,7 @@ Nothing below is current state until it lands.
     `final/out/wo17/master_label_changes_pending.csv`, `acceptance_b_tickers.csv`.
 19. **RESOLVED 2026-09-26: deployed.** Gabe: "just deploy it now" (COO.md
     #12). The key guard and the picks sort landed as c8dec17 and went live as
-    4ab4363 (§4.7). Still open for Gabe: a full Streamlit restart from a shell
-    that sourced `secrets.env`, or the new modules don't load.
+    4ab4363 (§4.7). The full Streamlit restart it needs is now part of #30.
 20. **DOMO → HUCK continuity: logged as a low-priority lead (COO,
     2026-09-26).** DOMO (eligible) was renamed HUCK on 2026-09-24 (same
     permaticker 116453; WO-17 doc). The panel is keyed on ticker, so a rename orphans
@@ -1114,46 +1229,66 @@ Nothing below is current state until it lands.
     ever landed, the merge must pick one. Gabe excluded AV-spin from the
     2026-09-26 merge. Which checkout the other machine runs isn't recorded,
     so it is unknown whether that copy has any fix.
-24. **WO-20-seas deploy: DECIDED 2026-09-29, deploy pending.** COO.md
-    records Gabe's "Theoretical only" (relayed from the peer session
-    "seasonality evaluation next steps", COO.md 2026-09-29) as his
-    in-the-moment deploy OK for exactly the WO-20-seas-final change: icw9_seas
-    in Theoretical, the 9-factor blend in Today's Picks. It landed as 22f2c69.
-    The integrator's landing run was worktree-isolated and could not run git in
-    the main checkout, so live is still 4ab4363. **Open: a non-isolated
-    integrator run to do the additive 10-path deploy** (HANDOFF-wo20-seas-final),
-    with no Retrain ALL. Gabe then restarts Streamlit from a shell with
-    `secrets.env` sourced and runs Retrain ALL himself.
-25. **WO-21's benchmark/hedge question (Gabe; COO.md "WO-21 VERDICT",
-    2026-09-28).** The post-2011 drag is a universe bet (§3.3). The COO
-    recommends keeping SPY as the headline (the real alternative investment)
-    and adding score-over-universe as a standing diagnostic. The IWM-hedged
-    forward bet (WO-10) already tests the hedged product. A beta-matched
-    (~0.8 × IWM) hedge variant would be a methodology change, so it is Gabe's
-    call. Which forward formula to quote (net or gross selection minus the
-    universe drag) is also left to the COO and Gabe by the WO-21 doc.
-26. **Does the unfitted-read OK unblock an icw9_seas equity curve?
-    (methodology, Gabe/COO).** The WO-20-seas doc (§5) keeps the Theoretical
-    tab's 2007-2026 curve on icw8 because an icw9_seas curve "would compute on
-    2020+ returns, which the spent hold-out forbids", and COO.md says moving it
-    "needs a 2020+ read, Gabe". Gabe's 2026-09-27 standing OK allows unfitted
-    2020+ reads, and the icw9_seas weights were fit on 2007-2019 only. The two
-    sources disagree; this README doesn't decide which applies.
-27. **Deploy WO-19 (key redaction) to live? (Gabe).** Landed 9e169ce; the
-    live checkout still has the scripts that can print the key into job logs
-    on a connection error (§4.7, §8.2). It is scripts only and needs no app
-    change. Deploying needs Gabe's in-the-moment OK (still open in COO.md,
-    2026-09-29).
-28. **Two "WO-25"s and two hold-out read #7s (COO, 2026-09-29).** The LEDGER
-    and the reweight branch's commit call the ICW v2 reweight "WO-25", and it
-    logs its 2020-26 short-interest fit as hold-out read #7 (COO.md "Hold-out
-    status"). COO.md's "WO-25 LAUNCHED" is the options-readiness work order,
-    and it pre-assigns reads #7 and #8 to exp B and WO-O1. The COO should
-    renumber one of each before either result lands. This README names them
-    "ICW v2 reweight" and "WO-25 (options readiness)".
-29. **WO-23 findings still open for Gabe (COO.md, 2026-09-29).** Beyond seas
-    (settled by #24): short-interest weighting (the reweight fits it on
-    2020-26, in flight), and landing WO-23 itself after Gabe sees it.
+24. ~~WO-20-seas deploy.~~ **Done 2026-09-29:** Gabe's "Theoretical only"
+    (relayed by the COO from the peer session "seasonality evaluation next
+    steps") was his in-the-moment deploy OK for exactly the WO-20-seas-final
+    change. It landed as 22f2c69 and was deployed live as 7e89bad (10 paths,
+    no Retrain ALL; LEDGER). What's left is Gabe's restart + Retrain (#30).
+25. ~~WO-21's benchmark/hedge question.~~ **Decided 2026-09-29 by Gabe:
+    "Keep SPY."** SPY stays the headline benchmark, and picks-over-pool is
+    tracked as a diagnostic (COO.md decisions log). A beta-matched (~0.8 ×
+    IWM) hedge variant was not asked for. The IWM-hedged forward bet (WO-10)
+    still records. Which forward formula to quote (net or gross selection
+    minus the universe drag) is left open by the WO-21 doc; WO-24 (§3.3) is the
+    2020s input to that.
+26. ~~Does the unfitted-read OK unblock an icw9_seas equity curve?~~
+    **Answered by the COO, 2026-09-28** (COO.md report log): "an icw9_seas
+    equity curve over 2020–26 uses weights fixed from 2007–2019 t's, so it IS
+    covered by Gabe's standing unfitted-read OK". Log it as a hold-out read
+    when built; building it is an app change for the app manager. The
+    WO-20-seas doc §5 still says the spent hold-out forbids it (#6). Nobody
+    has asked for the curve yet.
+27. ~~Deploy WO-19 (key redaction) to live?~~ **Done 2026-09-29:** Gabe
+    "Push 3", deployed as 57bc458 (§4.7). The test follow-up is #32.
+28. **Two "WO-25"s, and hold-out read #7 claimed twice (COO, 2026-09-29).**
+    The LEDGER and the reweight branch's commits call the ICW v2 reweight
+    "WO-25" (COO.md: "WO-25-reweight"), and COO.md "Hold-out status" logs its
+    2020-26 short-interest fit as read #7. The options-readiness order is now
+    "WO-25-options" (COO.md), and its pre-registration pre-assigns reads #7
+    and #8 to exp B confirm and WO-O1. The #8 clash is resolved: the COO moved
+    WO-26-io to #9. **#7 is still claimed by both.** The COO should renumber
+    before exp B's confirm stage runs. This README says "ICW v2 reweight",
+    "WO-25-options" and "WO-26-io".
+29. **WO-23 findings (COO.md, 2026-09-29): mostly settled.** Seas: settled by
+    #24. Weight re-derivation on v2 and short-interest weighting: settled by
+    Gabe's "Keep the live weights" (SI stays at the floor, judged forward;
+    §5). WO-23 itself has landed (21f4c39). Still open: accruals is
+    wrong-signed in 2020-26 in both models (a finding, no action requested).
+30. **Seas is deployed but not yet showing: restart Streamlit + Retrain ALL
+    (Gabe; COO.md report log, 2026-09-29).** The live composite meta is still
+    `ic_weighted_2026-09-22` (icw8; checked on disk this run), so the
+    Theoretical tab shows icw8 picks until Gabe (1) fully restarts
+    Streamlit from a shell that sourced `~/.config/pipe_dream/secrets.env`,
+    in the pipe_dream env, and (2) runs Retrain ALL. Today's Picks is
+    unaffected either way (its picks equal the pre-WO-20 scorer's). The seas
+    side ledgers start at W40 (§3.4).
+31. **D-IO: forward side-ledger column `icw10_io` (icw9_seas + io_gap)?
+    (Gabe; COO.md, 2026-09-29).** It waits on WO-26-io's number (§5), after
+    which the COO brings one decision. Its rule, fixed before the read:
+    SUCCESS → recommend YES (forward column only, no live-weight change);
+    MIDDLE → optional, the COO leans no; KILL → recommend NO and close the
+    question as a certified dead end for adoption. Either way the COO flags
+    that the frozen rule gives io_gap weight 0.239 in icw10, the
+    second-largest after GP (0.366), for an in-era uplift of +0.145pp/yr. The
+    screen doc and its handoff named the column `icw9_io` (on icw8). The COO
+    moved the comparator to live icw9_seas, so the question is now `icw10_io`.
+    The unfitted 2020+ read the doc also asks about needs no decision: it is
+    covered by Gabe's standing OK and already launched.
+32. **WO-19's test hard-codes a file that isn't live (integrator/COO,
+    low stakes).** `final/scripts/test_wo19_key_redaction.py` lists
+    `sharadar_downcap_pull.py` in `TARGETS`. That script is absent live, so
+    the live run needed a wrapper. The LEDGER suggests making the test skip
+    missing targets.
 
 ---
 
@@ -1173,9 +1308,12 @@ pipe_dream/
 │   │   ├── insider/              insider (SEC Form 345) signals, 2026-09-23
 │   │   ├── sue/                  SUE / post-earnings drift screen, 2026-09-25
 │   │   ├── seasonality/          seas screen (WO-18), live seas + side ledgers (WO-20-seas), 2026-09-26/27
-│   │   ├── construction/         post-2011 drag decomposition (WO-21), 2026-09-27
+│   │   ├── construction/         drag decompositions: post-2011 (WO-21) and 2020s (WO-24), 2026-09-27/28
+│   │   ├── audit/                model audit on 2007-19 vs 2020-26 (WO-23), 2026-09-27/28
+│   │   ├── overnight/            io_gap overnight-vs-intraday screen, 2026-09-29
+│   │   ├── options_wo25/         WO-25-options readiness: Gate A, exp B + WO-O1 runners, 2026-09-29
 │   │   ├── current_signal_pit.py        q75 + xrank live signal
-│   │   ├── current_signal_composite.py  Theoretical tab (icw8 live; icw9_seas on integration)
+│   │   ├── current_signal_composite.py  Theoretical tab (icw9_seas on integration and live since 7e89bad)
 │   │   ├── current_signal_blend.py      Today's Picks (frozen 9-factor leg, live and on integration; 10-factor seas code kept for the side ledger)
 │   │   ├── execution.py          the one place a position is realized (Round 9)
 │   │   └── build_*.py, sharadar_pull_*.py   data builders
@@ -1214,8 +1352,12 @@ unreachable from agent sandboxes, and keys (`SHARADAR_API_KEY`,
 | AV options pull + unified chain + features | `av_options_pull.py` (retry-fixed 2026-09-27, WO-20; resume with `ALPHAVANTAGE_API_KEY=... AV_PULL_ARGS="--passes monthly --only-tier cap2000" zsh <checkout>/final/scripts/av_options_run_pull.sh` from a checkout that has the fix; it skips every ok/no_data row already logged), `build_option_chain_unified.py`, `build_option_chain_unified.py`, `build_av_options_features.py` | [AV spin doc](final/models/2026-09-22-alpha-vantage-spin.md) §C-E; [WO-20 doc](final/models/2026-09-27-av-pull-retry-fix.md) "Resuming" |
 | Pre-2005 SEP for `seas` (WO-18, landed 0032ee3; data in the main checkout only) | `final/data/sharadar/sep_pre2005/` (SEP 1998-01..2005-01, 85 months, 12.9M rows, plus `_manifest.csv`; gitignored under `final/data/sharadar/`): `python final/src/seasonality/pull_sep_pre2005.py` (~17 min; needs `SHARADAR_API_KEY`) | [seasonality screen](final/models/2026-09-26-seasonality-screen.md); HANDOFF-worktree-agent-ad57ef9f38454d99d |
 | `seas` screen (WO-18, nomination era) | `build_seas.py` → `hand_check_seas.py` → `screen_seas.py --validate` (harness reconcile) → `screen_seas.py`; `check_panel_swap.py` (in-era slice hashes) | [seasonality screen](final/models/2026-09-26-seasonality-screen.md) |
-| Live `seas` + seas side ledgers (WO-20-seas, narrowed by 22f2c69; not deployed) | scored inside `current_signal_composite.py` via `seas_live.py` (the blend's `main()` no longer computes it; `blend_scores_at` does, for the blend_seas ledger) (`selftest`, `handcheck`); ledgers via `record_weekly.py`, or `seas_forward.py plan` / `score` / `status` / `selftest`; checks `wo20_frozen_backtest.py`, `wo20_blend_seas_backtest.py`, `wo20_isolation_test.py` (scratch store) | [WO-20-seas doc](final/models/2026-09-27-wo20-seas-live.md) §1-4, §6; [seas Theoretical-only](final/models/2026-09-29-seas-theoretical-only.md) "Checks" |
+| Live `seas` + seas side ledgers (WO-20-seas, narrowed by 22f2c69; deployed live 7e89bad) | scored inside `current_signal_composite.py` via `seas_live.py` (the blend's `main()` no longer computes it; `blend_scores_at` does, for the blend_seas ledger) (`selftest`, `handcheck`); ledgers via `record_weekly.py`, or `seas_forward.py plan` / `score` / `status` / `selftest`; checks `wo20_frozen_backtest.py`, `wo20_blend_seas_backtest.py`, `wo20_isolation_test.py` (scratch store) | [WO-20-seas doc](final/models/2026-09-27-wo20-seas-live.md) §1-4, §6; [seas Theoretical-only](final/models/2026-09-29-seas-theoretical-only.md) "Checks" |
 | Post-2011 drag decomposition (WO-21) | `python final/src/construction/drag_decomp.py --validate` (reconcile only), then without the flag (writes `final/out/construction/drag_decomp.json`; it writes to the main checkout) | [construction drag](final/models/2026-09-27-construction-drag.md) |
+| Model audit (WO-23; reads 2020+ under the unfitted-read OK) | `final/src/audit/build_seas_ext.py` (seas extended past 2019; its `seas_factor_ext.parquet` is gitignored), `model_audit_wo23.py`, `summarize_wo23.py`; outputs `final/out/audit/` | [model audit](final/models/2026-09-27-model-audit.md) |
+| 2020s drag decomposition (WO-24) | `python final/src/construction/drag_decomp_b.py` → `final/out/construction/drag_decomp_b.json` (reads IWM; the doc records an IWM-coverage crash and its path fix) | [construction drag 2020s](final/models/2026-09-28-construction-drag-2020s.md) |
+| `io_gap` factor + screen (nomination era) | `build_io_gap.py` (about 2.5 min; rebuilds the gitignored `io_gap_factor_v2.parquet` from SEP 2005-01..2019-12 and `composite_panel_v2.parquet`, input hashes in `build_io_gap_meta.json`) → `hand_check_io_gap.py` (independent recompute, MU + RSHCQ) → `screen_io_gap.py` (harness reconcile first, then 7 gates; ~14 min); pipe_dream env | [overnight-intraday screen](final/models/2026-09-29-overnight-intraday-screen.md) "Implementation"; HANDOFF-worktree-overnight-intraday |
+| WO-25-options (Phase 1 checks; Phase 2 once the AV data is copied) | `final/src/options_wo25/check_arrival.py` (arrival checklist), `gate_a.py`, `run_expB.py`, `run_wo_o1.py`; their `--phase2` guards refuse until the data is complete. Run from the wo25 worktree or an integration checkout, not the main checkout | [options readiness WO-25](final/models/2026-09-29-options-readiness-wo25.md) §1, §6 |
 | Key-redaction test (WO-19) | `python final/scripts/test_wo19_key_redaction.py`, run directly and **not under pytest** (it patches `socket.connect` and `requests.get` at import) | [WO-19 doc](final/models/2026-09-27-wo19-key-redaction.md) |
 | Live signals | `current_signal_pit.py`, `current_signal_composite.py`, `current_signal_blend.py` (the app's "Retrain ALL" runs them) | `final/app/README.md` |
 | Older gitignored paths (yfinance `td_data_local/`, EDGAR `fundamentals_raw/`, DoltHub options exports, GARCH, pre-Round-11 panels) | per-path commands | `git show integration:AGENTS.md` at 29eb67b, "Reproducing every gitignored path" (historical copy, see §Superseded) |
@@ -1283,7 +1425,7 @@ not superseded by anything newer):
 | `FF.main()` called after the reset renamed it to `build()` (**fixed 2026-09-26**, WO-16) | the first real v2 refresh with a new SEP day would have crashed with AttributeError; the live checkout carried it from 6a1823d to 500a4a5 | WO-16 reading the refresh code path | [WO-16 doc](final/models/2026-09-26-wo16-sf1-topup.md) §2 |
 | SF1 restatements are logged, not applied (WO-16 append-only, by design) | after a reverse split, `market_cap` and `net_issuance_pct` are off by the split ratio until the next filing (e.g. RML 67x, looks like a vendor share-count error); none eligible on 2026-09-24 | WO-16 share-basis screen | same, Addendum; `sf1_topup_restatements.csv` |
 | A SUE basis-validation STOP would have halted **all** weekly records (WO-15 §5 as pre-registered: "if SUE cannot be recorded, nothing is written") (**fixed 2026-09-26**, Addendum A0) | the first live pull hit 15 unexplained tickers; every later pull would keep failing against the frozen 09-08 file, wedging v3/ext/hedge from W40 | the WO-15 worker at the first live pull; the isolation harness then found 2 more paths (plan/import, post-record sidecar) | [SUE forward ledger](final/models/2026-09-26-sue-forward-ledger.md) Results, Addendum A |
-| Sharadar `requests` exception text carries `api_key` (**fixed on integration 2026-09-27**, WO-19, 9e169ce; not deployed) | a connection error printed the full URL, key included, into job logs, although every script already passed the key via `params=` | the app manager noticing it on screen (2026-09-26); WO-19's offline test (10 of 13 pre-fix copies leak) | [WO-19 doc](final/models/2026-09-27-wo19-key-redaction.md) |
+| Sharadar `requests` exception text carries `api_key` (**fixed on integration 2026-09-27**, WO-19, 9e169ce; deployed live 57bc458, 2026-09-29) | a connection error printed the full URL, key included, into job logs, although every script already passed the key via `params=` | the app manager noticing it on screen (2026-09-26); WO-19's offline test (10 of 13 pre-fix copies leak) | [WO-19 doc](final/models/2026-09-27-wo19-key-redaction.md) |
 | `actions.csv` covers only 2025-09-09 onward (through 2026-09-29 since WO-17) | no 2007-2019 dividends (and no pre-2025 splits) | WO-9 inspecting it before use | [hedged composite](final/models/2026-09-25-hedged-composite.md) §3.6 |
 
 **Standing rule** (Round 16/17): verify by naming what should be there, with
@@ -1368,12 +1510,12 @@ permuted row.
     is skipped (logged) every week; v3/ext/hedge are unaffected. Streamlit
     must be launched from a shell that has the key (project memory,
     `reference_sharadar_api_key.md`).
-  - **Sharadar scripts can write the API key into job logs; fixed on
-    integration (WO-19, 9e169ce), NOT in the live checkout.** The route is
+  - **Sharadar scripts could write the API key into job logs; fixed by WO-19
+    (landed 9e169ce, deployed live 57bc458 on 2026-09-29).** The route is
     `requests` exception text, which carries the full URL including
     `api_key`, reaching stdout, a RuntimeError or a traceback on a connection
     error. The live copies of `sharadar_pull_pit_panel.py` (run by Retrain
-    ALL) and 10 other Sharadar scripts still do this until deployed (§6 #27).
+    ALL) and the other Sharadar scripts are now the fixed ones.
     `sf1_topup.py` and `sf1_eps_live_pull.py` were already safe. The app
     redacts on screen only. A 2026-09-27 scan of the live `final/app/logs`
     found no key. New Sharadar code: never print raw exception text; use a
@@ -1390,7 +1532,7 @@ permuted row.
     reason before rerunning.
   - `sf1_arq_eps_live_accepted.csv` and `ledger_sue_guard_log.csv` are
     append-only (in the prefix-hash set).
-- **Seasonality landmines (WO-20-seas, 2026-09-27; apply once deployed;**
+- **Seasonality landmines (WO-20-seas, 2026-09-27; live since 7e89bad, 2026-09-29;**
   [WO-20-seas doc](final/models/2026-09-27-wo20-seas-live.md) §1, §5;
   HANDOFF-worktree-agent-a790eb27c4530aa0a):
   - **The Theoretical scorer fails outright, with no fallback,** if `seas`
@@ -1411,6 +1553,18 @@ permuted row.
   book's ~0.2), so at 15bp it pays about 0.67%/yr more than the live book.
   Net selection over such a null overstates the ranking's gross edge by that
   amount (post-2011: net +2.78, gross +2.10). Quote both.
+- **The WO-13/18 gate-6 shuffle null gives the shuffled factor the floor
+  weight (COO calibration, 2026-09-29).** The null's split-half weights
+  collapse to the floor (io_gap: 0.008/0.012 vs the real 0.094/0.251; seas
+  0.018/0.012). So gate 6 certifies "beats floor-weight noise", not "beats
+  noise at this weight". That makes it easy to clear with a tiny gain (io_gap:
+  null p80 only +0.0003 above icw8). It is not a gate change. seas passed the
+  same way and then read IC t +0.23 on 2020-26, so read a PASS-nomination
+  together with its 2020+ unfitted read (COO.md io_gap row).
+- **Name the live model a new factor is incremental to.** The io_gap screen compared against icw8, while live
+  Theoretical had become icw9_seas the same day; the COO moved the forward
+  question to `icw10_io` (§6 #31). A new screen should state which live model
+  it is incremental to.
 - **WO-17 / reference-table landmines (2026-09-26,** [WO-17 doc](final/models/2026-09-26-wo17-reference-refresh.md); COO.md):
   - The next `refresh_working_panel.py` (Retrain ALL) adds new DOMESTIC
     tickers as `new_tickers`, and `splice` writes their rows on every date,
@@ -1487,20 +1641,22 @@ the file is on `integration`.
 | [`final/models/2026-09-26-wo17-reference-refresh.md`](final/models/2026-09-26-wo17-reference-refresh.md) | 2026-09-26 (pre-reg 7dd8066; Addendum A 134fbf5; results f88ae19) | landed (a9344ef) | WO-17: tickers_master/actions refresh, label hold-back (+`firstpricedate`), SUCCESS; acceptance (a)-(d), named checks, split-blocked 8 stay blocked, WO-15 coupling. Its consumer table's "`sue_forward.py` (WO-15, not landed)" and "Recheck WO-15 before it deploys" predate the 562dab9 deploy (§6 #17). Reports in `final/out/wo17/` |
 | [`final/models/2026-09-26-seasonality-screen.md`](final/models/2026-09-26-seasonality-screen.md) | 2026-09-26 (pre-reg 51795c9; results a7aa44e; panel-swap check 74e6e03, 2026-09-27) | landed (0032ee3, via WO-20-seas) | WO-18: Heston-Sadka `seas` pre-registration + Results, PASS-nomination (7 gates), caveats, panel-swap verification |
 | [`final/models/2026-09-27-av-pull-retry-fix.md`](final/models/2026-09-27-av-pull-retry-fix.md) | 2026-09-27 (7b16662) | landed (f380817) | WO-20: why the AV pull died (IncompleteRead is an HTTPException), the retry fix, offline test, how to resume |
-| [`final/models/2026-09-27-wo19-key-redaction.md`](final/models/2026-09-27-wo19-key-redaction.md) | 2026-09-27 (7b77ba4) | landed (9e169ce), not deployed | WO-19: how the Sharadar key reached job logs (exception text), per-file audit and `_scrub()` fix, offline leak test |
-| [`final/models/2026-09-27-wo20-seas-live.md`](final/models/2026-09-27-wo20-seas-live.md) | 2026-09-27 (999db67; Addendum A 56afb05) | landed (0032ee3), not deployed; blend half superseded by 22f2c69 | **WO-20-seas** (the doc's title says "WO-20"): Gabe's two seas decisions, live `seas`, icw9_seas weights and in-sample backtest, the 10-factor blend (2.52 → 2.40), the two pre-registered monitoring ledgers, what is blocked; Results section empty until records exist |
+| [`final/models/2026-09-27-wo19-key-redaction.md`](final/models/2026-09-27-wo19-key-redaction.md) | 2026-09-27 (7b77ba4) | landed (9e169ce), deployed live 57bc458 (2026-09-29) | WO-19: how the Sharadar key reached job logs (exception text), per-file audit and `_scrub()` fix, offline leak test |
+| [`final/models/2026-09-27-wo20-seas-live.md`](final/models/2026-09-27-wo20-seas-live.md) | 2026-09-27 (999db67; Addendum A 56afb05) | landed (0032ee3); blend half superseded by 22f2c69; the rest deployed live 7e89bad (2026-09-29) | **WO-20-seas** (the doc's title says "WO-20"): Gabe's two seas decisions, live `seas`, icw9_seas weights and in-sample backtest, the 10-factor blend (2.52 → 2.40), the two pre-registered monitoring ledgers, what is blocked; Results section empty until records exist |
 | [`final/models/2026-09-27-construction-drag.md`](final/models/2026-09-27-construction-drag.md) | 2026-09-27 (pre-reg 74c73ca; results fb78673; follow-up e78a139, 2026-09-28) | landed (e05faea) | WO-21: pre-registered decision map, reconcile gates, post-2011 drag = universe −1.99 + construction −0.77 (costs −0.87), UNIVERSE BET, per-year table, OLS on SPY and IWM |
-| [`final/models/2026-09-29-seas-theoretical-only.md`](final/models/2026-09-29-seas-theoretical-only.md) | 2026-09-29 (161db4b) | landed (22f2c69), deploy pending | **WO-20-seas-final**: Gabe's "Theoretical only"; blend back on `blend_q75_ew9_2026-09-19`, 10-factor seas blend side-ledger only; the one-file change and its checks (picks identical, max diff 0.0; AppTest) |
-| `worktree-wo23-model-audit:final/models/2026-09-27-model-audit.md` | 2026-09-27/28 (pre-reg 8a58c88; results c9ba394; 9106bef) | in flight (committed, not landed) | WO-23: model audit pre-registration and results, periods A/B, flags F1/F2, seas removal plan S1-S3, hold-out read #5 |
-| `worktree-wo24-construction-drag:final/models/2026-09-28-construction-drag-2020s.md` | 2026-09-28/29 (pre-reg b63582d; results 06a76c2) | in flight (committed, not landed) | WO-24: WO-21's drag decomposition on 2020-26, hold-out read #6 |
-| `worktree-agent-aa9609e4d8a64a036:final/models/2026-09-29-icw-v2-reweight.md` | 2026-09-29 (method pin 0aa87b4) | in flight (committed, not landed) | ICW v2 reweight ("WO-25" in the ledger): method pin, SI weight fit on 2020-26 |
+| [`final/models/2026-09-29-seas-theoretical-only.md`](final/models/2026-09-29-seas-theoretical-only.md) | 2026-09-29 (161db4b) | landed (22f2c69), deployed live 7e89bad | **WO-20-seas-final**: Gabe's "Theoretical only"; blend back on `blend_q75_ew9_2026-09-19`, 10-factor seas blend side-ledger only; the one-file change and its checks (picks identical, max diff 0.0; AppTest) |
+| [`final/models/2026-09-27-model-audit.md`](final/models/2026-09-27-model-audit.md) | 2026-09-27/28 (pre-reg 8a58c88; results c9ba394; 9106bef) | landed (21f4c39) | WO-23: model audit pre-registration and results, periods A/B, flags F1/F2, seas removal plan S1-S3, hold-out read #5 |
+| [`final/models/2026-09-28-construction-drag-2020s.md`](final/models/2026-09-28-construction-drag-2020s.md) | 2026-09-28/29 (pre-reg b63582d; results 06a76c2; wording 0162a4e) | landed (f624a54) | WO-24: WO-21's drag decomposition on 2020-26, hold-out read #6; UNIVERSE BET again, 2020s selection fails LOYO |
+| `worktree-agent-aa9609e4d8a64a036:final/models/2026-09-29-icw-v2-reweight.md` | 2026-09-29 (method pin 0aa87b4; results 43fa1a4) | in flight (committed, not landed; "land as a record only") | ICW v2 reweight ("WO-25" in the ledger): method pin, SI weight fit on 2020-26 (read #7), A/B results; COO DO NOT ADOPT, Gabe kept the live weights |
+| [`final/models/2026-09-29-options-readiness-wo25.md`](final/models/2026-09-29-options-readiness-wo25.md) | 2026-09-29 (pre-reg dda8b00; Phase 1 8821bcf, 6b93174, 9c0eae4) | landed (994378f) | WO-25-options: arrival checklist, Gate A, exp B + WO-O1 specs, Amendment 1, decision rules, hold-out reads #7/#8, Phase 1 results (§8) |
+| [`final/models/2026-09-29-overnight-intraday-screen.md`](final/models/2026-09-29-overnight-intraday-screen.md) | 2026-09-29 (pre-reg b451e52; results b6b6b64) | landed (2338c91) | io_gap (intraday − overnight, 252 days): pre-registration, data validation, 7-gate results PASS-nomination, per-leg caveats; COO ITERATE → WO-26-io |
 | [`final/app/README.md`](final/app/README.md) | 2026-09-24 (commit) | landed; header stale vs the 10bfb19 app.py (app-manager) | how to run the app, tab guide |
 | [`final/models/pit_integration/README.md`](final/models/pit_integration/README.md) | 2026-09-02 | landed | options PIT-integration reproduction |
 | [`final/models/hyperparameter_retune/README.md`](final/models/hyperparameter_retune/README.md) | 2026-09-02 | landed | options Tweedie/GAM retune |
 | `round18-app-two-models:Claude outputs/RUNBOOK.md` | 2026-09-09 | superseded (self-labelled) | Round 12-only runbook |
 | `round18-app-two-models:AGENTS.md` | 2026-09-16 | not landed; absorbed here | Rounds 9-19 narrative |
-| `~/.claude/pipe_dream-coordination/` LEDGER.md, COO.md, APP.md, HANDOFF-*.md | 2026-09-23 → 09-28 | outside git | who's doing what; research verdicts; app state |
-| `~/.claude/projects/-Users-ggraham-pipe-dream/memory/*.md` | 2026-09-17 → 09-27 | outside git | Gabe's recorded decisions (foundation reset, data priorities, meta-model roadmap, don't-relitigate, blend preference, unfitted hold-out reads OK) |
+| `~/.claude/pipe_dream-coordination/` LEDGER.md, COO.md, APP.md, HANDOFF-*.md | 2026-09-23 → 09-29 | outside git | who's doing what; research verdicts; app state |
+| `~/.claude/projects/-Users-ggraham-pipe-dream/memory/*.md` | 2026-09-17 → 09-27 (no new file by 09-29) | outside git | Gabe's recorded decisions (foundation reset, data priorities, meta-model roadmap, don't-relitigate, blend preference, unfitted hold-out reads OK) |
 | Project docs (`claude/validation-gates.md`, `backtest/*`, `models/*`, `universe/*`) | 2026-08 → 09-16 | Claude Project, not in repo | the pre-reset narrative. Gates: the DECISION BAR (2026-09-12) |
 
 ---
@@ -1623,3 +1779,20 @@ Old claim, its source and date → what replaced it, with source and date.
 - WO-23 hold-out read #5 in flight, no results (README §3.2/§3.4/§5, 2026-09-28 run 11) → results committed c9ba394/9106bef, COO-verified verdict (S1 not triggered), not landed (COO.md; LEDGER, 2026-09-28).
 - WO-23 next: apply the seas removal plan S1 (README §4.1, 2026-09-28) → S1 not triggered, S2 (forward) applies to the Theoretical model (COO.md "WO-23 VERDICT", 2026-09-28).
 - No v2 hold-out read had been reported as of 2026-09-28 (README §3.4, run 11) → WO-23 read #5 is the first; WO-24 (#6) and the ICW v2 reweight (#7) are in flight (COO.md; LEDGER, 2026-09-29).
+- WO-20-seas-final landed, **deploy pending** (the isolated integrator could not reach the main checkout); live still 4ab4363 (README §3.1/§3.2/§4.1/§4.7/§5/§6 #24, 2026-09-29 run 12) → deployed live 7e89bad, 10 paths, no Retrain ALL; live meta still icw8 until Gabe's restart + Retrain ALL (LEDGER landing log; COO.md report log, 2026-09-29).
+- WO-19 landed, not deployed; deploy is Gabe's call (README §4.7/§6 #27/§8.2, 2026-09-28 run 11) → deployed live 57bc458 on Gabe's "Push 3" (LEDGER; COO.md decisions log, 2026-09-29).
+- Live checkout @ 4ab4363 (README header/§5, 2026-09-26 → 09-29 run 12) → 57bc458 (on 7e89bad) (LEDGER round18 row, 2026-09-29).
+- 10 integration-only `final/scripts` absent live (README §4.7/§5, 2026-09-28 run 11) → 9 (WO-19's test is now live; git ls-tree 57bc458 vs 2338c91, 2026-09-29 run 13).
+- WO-23 committed, not landed ("Landing requested after Gabe sees it"; README §5, 2026-09-29 run 12) → landed 21f4c39 (LEDGER, 2026-09-29).
+- WO-24 committed, no COO verdict, not landed (README §5, 2026-09-29 run 12) → COO verdict UNIVERSE BET, 2020s selection fails LOYO; landed f624a54 (COO.md "WO-24 VERDICT"; LEDGER, 2026-09-29).
+- Reads #6 and #7 in flight (README §3.4, 2026-09-29 run 12) → #6 landed (WO-24); #7 done, not landed, not adopted; WO-26-io in flight as #9, renumbered from #8 (COO.md "Hold-out status", 2026-09-29 15:50).
+- ICW v2 reweight: method pin only, results go to Gabe (README §5, 2026-09-29 run 12) → results 43fa1a4, COO DO NOT ADOPT, Gabe "Keep the live weights" (COO.md, 2026-09-29).
+- WO-21 benchmark/hedge question open for Gabe; COO recommends SPY headline (README §6 #25, 2026-09-28 run 11) → Gabe "Keep SPY", picks-over-pool as a diagnostic (COO.md decisions log, 2026-09-29).
+- WO-23 findings open for Gabe: short-interest weighting, landing WO-23 (README §6 #29, 2026-09-29 run 12) → SI stays at the floor, judged forward; WO-23 landed (COO.md decisions log; LEDGER, 2026-09-29).
+- `worktree-overnight-intraday` in progress, no commits recorded (README §5, 2026-09-29 run 12) → io_gap PASS-nomination 7/7, landed 2338c91; COO ITERATE → WO-26-io (screen doc "Results"; COO.md, 2026-09-29).
+- io_gap next steps for Gabe: a forward `icw9_io` column and an unfitted 2020+ read (screen doc "What PASS means here"; HANDOFF-worktree-overnight-intraday, 2026-09-29) → the 2020+ read is WO-26-io, launched under the standing unfitted-read OK; the forward question is D-IO for `icw10_io` (on live icw9_seas), after WO-26-io (COO.md, 2026-09-29).
+- Theoretical tab "icw9_seas on integration, not yet deployed" (README §3.2 table, 2026-09-29 run 12) → code live since 7e89bad; the meta changes at the next Retrain ALL (LEDGER; live meta read 2026-09-29 run 13).
+- `wo25-options-readiness` in progress, no commits recorded; pre-assigns reads #7/#8 (README §5, 2026-09-29 run 12) → Phase 1 COMPLETE, Gate A 10/10, Phase 2 blocked on the Windows data; landed 994378f; now "WO-25-options" (COO.md "WO-25 PHASE 1 VERDICT"; LEDGER, 2026-09-29).
+- Two "WO-25"s and reads #7 and #8 each claimed twice (README §6 #28, 2026-09-29 run 12) → #8 resolved (WO-26-io moved to #9); #7 still claimed by the ICW v2 reweight and WO-25-options exp B (COO.md "Hold-out status", 2026-09-29).
+- WO-26-io launched on `agent-a84f9b7a308dac963` as hold-out read #8 (COO.md, 2026-09-29 11:17) → that worker died on the spend limit before reading; relaunched 15:50 on `worktree-agent-a648114375fb9da59` as read #9, pre-reg e634896 (COO.md; LEDGER, 2026-09-29).
+- Whether the unfitted-read OK unblocks an icw9_seas equity curve is open; WO-20-seas doc §5 and COO.md disagree (README §6 #26, 2026-09-28 run 11) → COO ruling: covered by the standing OK, log as a hold-out read when built, app change via the app manager (COO.md report log, 2026-09-28).
