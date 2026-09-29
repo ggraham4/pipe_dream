@@ -221,7 +221,8 @@ checked. That is stated, not worked around. A contract is dropped when:
   can't be told apart, so all rows of the key are dropped.
 - F1: bid <= 0, or ask <= bid;
 - F2: `bid_size` = 0. This proxies a non-live bid, in place of a quote
-  timestamp.
+  timestamp. **Amended (Amendment 1, below): F2 applies only on name-dates
+  where AV populates bid_size.**
 - F3: no mid IV solves (mid outside the no-arbitrage band);
 - F4: bid < intrinsic (K - S)+ - 0.05. A bid below intrinsic means the quote
   or spot is stale.
@@ -312,6 +313,46 @@ to that day. This is the `execution.py` delisting exit floor.
   each entry date across arm (a)'s tradable pool for the bucket, and takes
   the top quintile (a random 20% of the same pool), seeds 0..19.
   p80 = 80th percentile of the draws' annualized net excess.
+
+### Amendment 1 (2026-09-29, Phase 1, before any Phase 2 number): F2 and the named pool
+
+This was found by the Phase 1 plumbing run on noise labels. It surfaced as a
+**presence** failure of the named check. No outcome was looked at.
+
+- **F2 is scoped.** AV leaves `bid_size`/`ask_size` unpopulated (stored as 0)
+  for whole chains in 2008-2009. Among puts with bid > 0, 51% have size 0 on
+  2008-08-20, and on 2008-01-16 968 of 2,224 names are all-zero. By
+  2010-08-18 it is 0.3%.
+  - Every LEH put on 2008-08-20 has size 0, despite volume of 21,157 at the
+    10 strike. As written, F2 removed LEH from the pool, which is the exact
+    survivorship flattering the named check exists to catch.
+  - Sizes are missing at random within a chain (for all names on 2008-08-20,
+    each listed expiry has 56-61% of bid>0 contracts with a size). So a zero
+    before ~2010 means "unknown", not "no bid". LEH has sizes on 2% of its
+    contracts.
+  - An "any contract has a size" scope was tried first on the same noise
+    run. LEH still failed, so it was rejected.
+  - **F2 now applies only when at least 90% of the name's bid>0 contracts
+    (calls and puts, all expiries) carry a nonzero size on t.** Then a zero
+    is meaningful. Elsewhere F1 and F3-F6 still apply.
+- **Named pool vs the cap2000 price floor.** v2 `eligible_cap2000` is
+  marketcap >= $2B **and** closeunadj > $10 on t
+  (`reset2026/downcap_universe.py`).
+  - WAMUQ (mcap $7.0B, $4.10) is therefore NOT in the cap2000 pool on
+    2008-08-20.
+  - Neither WAMUQ ($2.01) nor WB1 ($9.12) is in it on 2008-09-17. The Windows
+    pull was cap2000-only from 2008-09-17, so no chain exists for them.
+  - LEHMQ ($13.73) and WB1 ($14.90) are in the pool on 2008-08-20.
+  - The rule is point in time (no look-ahead), so it is a legitimate
+    tradable universe. But it keeps a short-put book out of sub-$10
+    distressed names by construction.
+  - The named check now fails loudly only when a name is cap2000-eligible
+    with a verified chain and still missing from arm (a). LEH on 2008-08-20
+    is required. WM is reported as "not in pool: price floor".
+  - **Open for COO:** whether WO-O1 should also run a no-price-floor cap2000
+    variant (mcap >= $2B only) as a descriptive stress. That needs the
+    Windows pull to cover sub-$10 $2B+ names, which it did not do after
+    2008-09-17. This is not added as a trial here.
 
 ### 4.1 Blend arm: BLOCKED
 
