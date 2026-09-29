@@ -259,9 +259,11 @@ The SPY OLS is reported instead:
 
 - As post-2011, the B drag is not SPY beta: the slope is not significant.
   It is an intercept.
-- The pool's R² on SPY is only 0.76, against 0.97 on IWM in A. That is
-  consistent with a small/mid-cap factor the SPY regression can't
-  capture. Confirming it needs IWM data for 2020+.
+- The B no-score pool's raw-on-SPY fit is β 1.07, R² 0.76. For
+  reference, WO-21's post-2011 random book had raw-on-SPY β 1.04, R² 0.82,
+  and raw-on-IWM R² 0.97 (a different book and window, so these are not
+  like-for-like). How much of B's intercept a small-cap benchmark would
+  absorb can't be said without IWM data for 2020+.
 
 ### 2.7 Summary
 
