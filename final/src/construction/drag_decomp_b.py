@@ -271,7 +271,9 @@ def stage_b():
     for m in W:
         ols[f"random_{m}_excess_on_spy"] = DD.ols_nw((df[f"rnd_{m}"] - df["spy"]).to_numpy(), x)
         ols[f"score_{m}_excess_on_spy"] = DD.ols_nw((df[f"score_{m}"] - df["spy"]).to_numpy(), x)
-    iwm = pd.read_csv(FINAL / "data" / "benchmarks" / "IWM.csv", usecols=["date"], parse_dates=["date"])
+    # fix 1/1: the data dir is gitignored and lives in the main checkout (= hedged_composite.IWM_CSV)
+    import hedged_composite as HC
+    iwm = pd.read_csv(HC.IWM_CSV, usecols=["date"], parse_dates=["date"])
     iwm_note = {"iwm_csv_last": str(iwm["date"].max().date()), "covers_B": bool(iwm["date"].max() >= B_HI),
                 "note": "IWM.csv ends 2019-12-31 and IWM is not in outcome_cache_v2 (SPY, USMV only); the Sharadar panel is "
                         "stocks only. No IWM OLS for B; no data pulled under WO-24."}
