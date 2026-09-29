@@ -1,0 +1,32 @@
+[22:14:58] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[22:15:30] universe 9,756,141 rows; dates 2007-01-03..2019-12-31 (38s)
+[22:16:26] picks built (94s)
+[22:16:44]   reconcile icw8_full_vs_0.0285416: OK
+[22:16:44]   reconcile score_full_vs_coo: OK
+[22:16:44]   reconcile rand0_full_vs_coo: OK
+[22:16:44]   reconcile rand1_full_vs_coo: OK
+[22:16:44]   reconcile rand2_full_vs_coo: OK
+[22:16:44]   reconcile rand3_full_vs_coo: OK
+[22:16:44]   reconcile rand4_full_vs_coo: OK
+[22:16:44]   reconcile score_pre_vs_coo: OK
+[22:16:44]   reconcile rand0_pre_vs_coo: OK
+[22:16:44]   reconcile rand1_pre_vs_coo: OK
+[22:16:44]   reconcile rand2_pre_vs_coo: OK
+[22:16:44]   reconcile rand3_pre_vs_coo: OK
+[22:16:44]   reconcile rand4_pre_vs_coo: OK
+[22:16:44]   reconcile score_post_vs_coo: OK
+[22:16:44]   reconcile rand0_post_vs_coo: OK
+[22:16:44]   reconcile rand1_post_vs_coo: OK
+[22:16:44]   reconcile rand2_post_vs_coo: OK
+[22:16:44]   reconcile rand3_post_vs_coo: OK
+[22:16:44]   reconcile rand4_post_vs_coo: OK
+[22:16:44]   reconcile noscore_full_vs_wo7: OK
+[22:16:44] score full +0.0285416 pre +0.0775258 post +0.0001218; noscore full -0.002485035 (WO-7 -0.002485035)
+[22:16:47] full: T -0.0104 a -0.0025 b -0.0079 c -0.0086 | score +0.0285 sel +0.0390 (115s)
+[22:16:48] pre: T +0.0194 a +0.0273 b -0.0080 c -0.0086 | score +0.0775 sel +0.0581 (116s)
+[22:16:49] post: T -0.0276 a -0.0199 b -0.0077 c -0.0087 | score +0.0001 sel +0.0277 (118s)
+[22:16:49] decision map: {'primary_net_triggers': {'a_ge_2/3': True, 'b_ge_2/3': False, 'c_ge_1/3': False}, 'secondary_gross_triggers': {'a_ge_2/3': True, 'b_ge_2/3': False, 'c_ge_1/3': False}, 'disagreement': {'a_ge_2/3': False, 'b_ge_2/3': False, 'c_ge_1/3': False}, 'outcome': 'universe bet'}
+[22:16:52] OLS full: on SPY slope +0.091 (t +2.68) alpha -0.0152 (t -1.23); on IWM slope +0.166 alpha -0.0210
+[22:16:52] OLS pre: on SPY slope +0.129 (t +3.40) alpha +0.0207 (t +0.93); on IWM slope +0.163 alpha +0.0172
+[22:16:52] OLS post: on SPY slope +0.037 (t +0.85) alpha -0.0295 (t -2.23); on IWM slope +0.188 alpha -0.0459
+[22:16:52] wrote /Users/ggraham/pipe_dream/final/out/construction/drag_decomp.json (120s)

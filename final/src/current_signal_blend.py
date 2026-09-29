@@ -34,8 +34,21 @@ signal, shown separately in the app's Theoretical Model tab for exactly
 this kind of side-by-side comparison) -- not something that should happen
 as a side effect of an unrelated edit to composite.py.
 
+WO-20-seas-final (2026-09-29, Gabe, in the moment: "Theoretical only"):
+seas goes live ONLY in the Theoretical composite (icw9_seas,
+current_signal_composite.py). The LIVE blend (main() below) is back on the
+ORIGINAL frozen 9-factor leg (_ORIGINAL_FACTOR_SIGNS /
+_compute_composite_frozen), model_version blend_q75_ew9_2026-09-19 --
+the pre-WO-20 scoring; main() does not compute seas at all.
+The 10-factor seas blend below is kept ONLY for its forward side ledger
+(seas_forward.py -> prediction_ledger_blend_seas.csv, via blend_scores_at)
+and the backtest harness. Seas was tested in the blend, not deployed
+(WO-23: blend10 -0.12 pre-2020, -0.78 2020-26 vs blend9). Doc:
+final/models/2026-09-29-seas-theoretical-only.md.
+
 WO-20 BLEND + SEAS (2026-09-27, Gabe: "Yes the blend should get the
-seasonality"): the LIVE composite leg is now _BLEND_FACTOR_SIGNS_V10_SEAS /
+seasonality") -- SUPERSEDED for the live path by the note above: the
+tested 10-factor leg is _BLEND_FACTOR_SIGNS_V10_SEAS /
 _compute_composite_frozen_v10_seas -- the ORIGINAL frozen 9 factors above
 (asset_growth kept, equal weights kept) PLUS `seas` (Heston-Sadka return
 seasonality, WO-18 definition, sign +1) as a 10th equal-weight factor.
@@ -143,8 +156,10 @@ def _compute_composite_frozen(df_date: pd.DataFrame) -> pd.DataFrame:
 # (unchanged, incl. asset_growth) + seas as a 10th EQUAL-weight factor.
 _BLEND_FACTOR_SIGNS_V10_SEAS = {**_ORIGINAL_FACTOR_SIGNS, "seas": +1}
 _BLEND_FACTOR_COLS_V10_SEAS = list(_BLEND_FACTOR_SIGNS_V10_SEAS)
-BLEND_MODEL_VERSION = "blend_q75_ew10seas_2026-09-27"
-BLEND_MODEL_VERSION_PREVIOUS = "blend_q75_ew9_2026-09-19"
+# WO-20-seas-final (2026-09-29, "Theoretical only"): the LIVE blend is the
+# original 9-factor one again. The 10-factor seas version is side-ledger only.
+BLEND_MODEL_VERSION = "blend_q75_ew9_2026-09-19"
+BLEND_MODEL_VERSION_SEAS10_TESTED = "blend_q75_ew10seas_2026-09-27"  # side ledger only, not live
 SEAS_MIN_COVERAGE = 0.60
 
 
@@ -210,8 +225,11 @@ BACKTEST_SUMMARY = {
     "loyo_drop_2020_still_positive": True,
     "source": "final/src/reset2026/blend_q75.py, final/out/reset2026/blend_q75_report.json",
     "writeup": "final/models/2026-09-19-factor-composite-reset.md",
-    "note_wo20": "All numbers above are the PREVIOUS 9-factor blend (blend_q75_ew9_2026-09-19). "
-                 "The live blend since WO-20 adds seas; its before/after is in wo20_seas_pre2020.",
+    "note_wo20": "All numbers above are the live 9-factor blend (blend_q75_ew9_2026-09-19), which is "
+                 "what Today's Picks runs. seas tested in the blend, not deployed (Gabe 2026-09-29; "
+                 "WO-23: blend10 \u22120.12 pre-2020, \u22120.78 2020-26 vs blend9). The 10-factor "
+                 "seas blend is recorded only in its forward side ledger "
+                 "(prediction_ledger_blend_seas.csv); its pre-2020 test is in wo20_seas_pre2020.",
     "wo20_seas_pre2020": {
         "harness": "blend_q75.py port, SINGLE GRID (q75 cadence), 82 windows 2007-01-03..2019-11-14, "
                    "v2 panel + column-c universe rule, net 15bp; no 2020+ window read",
@@ -222,7 +240,8 @@ BACKTEST_SUMMARY = {
         "composite_leg_alone": {"previous_9factor_pct": 1.18, "new_10factor_seas_pct": 1.67},
         "reading": "Adding seas raises the composite leg alone (+0.49pp/yr) but LOWERS the blend "
                    "(-0.12pp/yr, LOYO min -0.20pp, post-2011-10 -0.40pp) on this single grid. "
-                   "Adopted by Gabe's decision (2026-09-27), not on this backtest.",
+                   "Adopted by Gabe's decision (2026-09-27), then withdrawn from the live blend "
+                   "(Gabe 2026-09-29, \"Theoretical only\"): tested, not deployed.",
         "source": "final/src/seasonality/wo20_blend_seas_backtest.py -> final/out/seasonality/wo20_blend_seas_backtest.json",
     },
 }
@@ -299,7 +318,7 @@ def main(argv=None):
     model.load_model(str(Q75_MODEL))
     elig["q75_score"] = model.predict_proba(elig[AUGMENTED_FEATURE_COLS])[:, 1]
 
-    print("loading composite panel + scoring composite (frozen 9-factor original + seas, WO-20) ...")
+    print("loading composite panel + scoring composite (frozen 9-factor original; seas NOT in the live blend) ...")
     comp_needed = list(dict.fromkeys(
         ["ticker", "date", "sector", "volatility_60", f"eligible_{TIER}"] + _ORIGINAL_FACTOR_COLS))
     comp_panel, uinfo = W.working_cross_section(comp_needed, date=as_of, path=COMPOSITE_PANEL)
@@ -307,18 +326,10 @@ def main(argv=None):
     if comp_today.empty:
         raise SystemExit(f"no eligible_{TIER} rows in {COMPOSITE_PANEL.name} on {as_of.date()} -- "
                          f"the working panel (v2) has no refresh path yet; see WO-11.")
-    # WO-20: live seas on the WHOLE eligible cap2000 cross-section before rank_z
-    sf, seas_info = SL.seas_asof(comp_today["ticker"], as_of)
-    assert (sf["ticker"].to_numpy() == comp_today["ticker"].astype(str).to_numpy()).all()
-    comp_today = comp_today.copy()
-    comp_today["seas"] = sf["seas"].to_numpy(np.float64)
-    if not seas_info["coverage"] >= SEAS_MIN_COVERAGE:
-        raise SystemExit(f"seas coverage {seas_info['coverage']:.1%} on {as_of.date()} < "
-                         f"{SEAS_MIN_COVERAGE:.0%} -- SEP month files look incomplete; refusing to write picks.")
-    comp_scored = _compute_composite_frozen_v10_seas(comp_today)
-    # monitoring only: the previous 9-factor blend's picks today
-    pick_overlap = _overlap(_blend_picks(elig, comp_today, comp_scored),
-                            _blend_picks(elig, comp_today, _compute_composite_frozen(comp_today)))
+    # WO-20-seas-final (2026-09-29, "Theoretical only"): the live leg is the
+    # original frozen 9 factors, exactly as before WO-20. No seas here; the
+    # 10-factor seas blend is recorded only by seas_forward.py's side ledger.
+    comp_scored = _compute_composite_frozen(comp_today)
 
     merged = elig.merge(
         comp_today[["ticker", "sector"]], on="ticker", how="inner"
@@ -409,16 +420,10 @@ def main(argv=None):
         "n_eligible_universe": int(len(merged)),
         "n_picks": int(len(out)),
         "model_version": BLEND_MODEL_VERSION,
-        "construction": "blend_score = mean(rank_z(composite_10factor_frozen_ew_seas), rank_z(q75_xgboost)), "
+        "construction": "blend_score = mean(rank_z(composite_9factor_frozen), rank_z(q75_xgboost)), "
                         "decile_volq portfolio (top decile per trailing-vol quintile, inverse-vol "
                         "weighted), 40-trading-day hold, no stop-loss",
-        "factors": {k: v for k, v in _BLEND_FACTOR_SIGNS_V10_SEAS.items()},
-        "seas": {"definition": "Heston-Sadka: mean same-calendar-month return over the prior 10 years "
-                               "(target month = month of t+28 calendar days; >= 5 years; SEP closeadj)",
-                 "coverage": round(seas_info["coverage"], 4), "target_month": seas_info["target_month"],
-                 "months_used": seas_info["months_used"], "basis_flag": seas_info["basis_flag"],
-                 "code": "final/src/seasonality/seas_live.py"},
-        "picks_overlap_vs_previous_9factor_blend": pick_overlap,
+        "factors": {k: v for k, v in _ORIGINAL_FACTOR_SIGNS.items()},
         "q75_weight": 0.5,
         "composite_weight": 0.5,
         "backtest_summary": BACKTEST_SUMMARY,
@@ -434,13 +439,15 @@ def main(argv=None):
                 "final/models/2026-09-19-factor-composite-reset.md. Composite factor set "
                 "frozen 2026-09-22 to the exact version this backtest ran against -- see "
                 "this file's module docstring; the corrected/IC-weighted version is shown "
-                "separately in the app's Theoretical Model tab. WO-20 (2026-09-27, Gabe): "
-                "seas added as a 10th equal-weight factor of the composite leg; q75 not retrained.",
+                "separately in the app's Theoretical Model tab. seas tested in the blend, "
+                "not deployed (Gabe 2026-09-29; WO-23: blend10 \u22120.12 pre-2020, "
+                "\u22120.78 2020-26 vs blend9); seas is live only in the Theoretical "
+                "model (icw9_seas). The 10-factor seas blend is recorded only in "
+                "prediction_ledger_blend_seas.csv.",
     }
     out_meta.write_text(json.dumps(meta, indent=2))
     print(f"\nas of {as_of.date()}: {len(out)} picks from {len(merged)} scored names")
     print(out.head(10).to_string(index=False))
-    print(f"seas coverage {seas_info['coverage']:.1%}; picks overlap vs previous 9-factor blend: {pick_overlap}")
     print(f"\n-> {out_csv}\n-> {out_meta}\n-> {out_full}")
 
 
