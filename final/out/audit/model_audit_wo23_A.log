@@ -1,0 +1,28 @@
+[08:56:30] [A] cap150: 9,756,141 rows, 6,508 tickers, 3272 dates 2007-01-03..2019-12-31
+[08:56:36] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[08:56:47] [A] generic loader == screen_seas.load_universe
+[08:57:21] [A] icw9_seas +0.0348652 (sd40 0.00223)  icw8 +0.0285416
+[08:57:26] [A] RECONCILE OK {'icw8': [0.028541632641009042, 0.0285416], 'icw9_seas_full_precision': [0.03487104914180321, 0.034871], 'icw9_seas_live_4dp_vs_wo20': [0.03486520057904396, 0.03486520057904396]}
+[08:58:01] [A] momentum_12_1                    IC +0.0165 t +1.39 sec-t +1.56 LOO delta +0.00083 (sd 0.00132) (100s)
+[08:58:36] [A] pct_from_high_252                IC +0.0309 t +2.09 sec-t +2.20 LOO delta -0.00014 (sd 0.00097) (135s)
+[08:59:13] [A] volatility_60                    IC -0.0418 t -2.90 sec-t -3.33 LOO delta +0.00035 (sd 0.00102) (172s)
+[08:59:47] [A] gross_profitability              IC +0.0393 t +6.03 sec-t +4.51 LOO delta +0.01489 (sd 0.00281) (206s)
+[09:00:22] [A] accruals                         IC -0.0024 t -0.39 sec-t -0.28 LOO delta +0.00172 (sd 0.00144) (240s)
+[09:00:55] [A] net_issuance_pct                 IC -0.0341 t -5.25 sec-t -4.56 LOO delta -0.00353 (sd 0.00158) (274s)
+[09:01:25] [A] days_to_next_filing_seasonal     IC -0.0106 t -4.28 sec-t -4.61 LOO delta -0.00033 (sd 0.00117) (304s)
+[09:01:31] [A] short_interest_days_to_cover     IC +nan t +nan sec-t +nan LOO delta +0.00000 (sd 0.00000) (309s)
+[09:01:58] [A] seas                             IC +0.0113 t +2.84 sec-t +2.87 LOO delta +0.00630 (sd 0.00231) (337s)
+[09:02:04] [A] BLEND RECONCILE OK {'blend_prev9': [0.025164593970118013, 0.025164593970118013], 'blend_seas10': [0.024006967037278844, 0.024006967037278844]}
+[09:02:04] [A] blend10 +0.02401 blend9 +0.02516 (5s)
+[09:02:12] [A] cap2000: 3,802,861 rows, 2,789 tickers, 3272 dates 2007-01-03..2019-12-31
+[09:02:21] [A] blend momentum_12_1                    IC +0.0137 t +0.93 sec-t +1.16 LOO(1 grid) +0.00247
+[09:02:30] [A] blend pct_from_high_252                IC +0.0153 t +0.91 sec-t +1.25 LOO(1 grid) +0.00441
+[09:02:39] [A] blend volatility_60                    IC -0.0101 t -0.55 sec-t -0.73 LOO(1 grid) +0.00166
+[09:02:48] [A] blend gross_profitability              IC +0.0444 t +5.35 sec-t +2.88 LOO(1 grid) +0.01405
+[09:02:57] [A] blend accruals                         IC -0.0174 t -2.61 sec-t -1.89 LOO(1 grid) +0.00525
+[09:03:05] [A] blend asset_growth                     IC +0.0074 t +0.93 sec-t +0.52 LOO(1 grid) -0.01195
+[09:03:13] [A] blend net_issuance_pct                 IC -0.0284 t -3.84 sec-t -2.84 LOO(1 grid) -0.00209
+[09:03:21] [A] blend days_to_next_filing_seasonal     IC -0.0041 t -1.39 sec-t -1.01 LOO(1 grid) -0.00436
+[09:03:21] [A] blend short_interest_days_to_cover     IC +nan t +nan sec-t +nan LOO(1 grid) +0.00000
+[09:03:28] [A] blend seas                             IC +0.0118 t +2.11 sec-t +2.09 LOO(1 grid) -0.00116
+[09:03:28] wrote /Users/ggraham/pipe_dream/.claude/worktrees/wo23-model-audit/final/out/audit/model_audit_wo23_A.json
