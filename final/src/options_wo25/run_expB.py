@@ -93,7 +93,7 @@ def load(start, end, feats_path):
     dates = sorted(f.date.unique())
     if not dates:
         raise SystemExit(f"no av_monthly feature dates in {start.date()}..{end.date()}")
-    cols = ["ticker", "date", "sector", LABEL, "volatility_60", "eligible_cap2000"] + list(BASE_SIGNS)
+    cols = list(dict.fromkeys(["ticker", "date", "sector", LABEL, "volatility_60", "eligible_cap2000"] + list(BASE_SIGNS)))
     p = read_on_dates(PANEL_V2, cols, dates)
     p["date"] = pd.to_datetime(p["date"]); p["ticker"] = p["ticker"].astype(str)
     u = read_on_dates(UNIVERSE_V2, ["date", "ticker", "eligible_cap2000"], dates)

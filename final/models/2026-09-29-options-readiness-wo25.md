@@ -457,7 +457,98 @@ All from `/Users/ggraham/pipe_dream` (the checkout holding the data), with the
 - `final/out/options_wo25/`: outputs (parquets gitignored; small JSON
   committed).
 
-## 8. Phase 1 results
+## 8. Phase 1 results (2026-09-29; chain facts and null-label plumbing only)
 
-(filled in below once Phase 1 runs; chain facts and shuffled/noise-label
-plumbing only)
+### 8.1 Arrival check on the current Mac store
+
+`check_arrival.py`: overall **PASS**.
+- 33 monthly dates on disk (2008-01-02..2010-08-18), against a plan of 225.
+- Nominate segment (2008-01..2019-01): 33 of 134 dates complete at cap2000.
+- 2019-02 onward: 0 of 91 complete.
+- 1 error row, on 2008-12-17.
+- WARN: adjusted-deliverable key duplicates on 2008-07-16 (1 row),
+  2010-02-17 (45) and 2010-04-21 (38).
+- The Phase 2 guards correctly refuse (`--phase2 refused: fewer than 120
+  nominate-era dates complete at cap2000`).
+
+### 8.2 Gate A: 10/10 PASS (`final/out/options_wo25/gate_a_report.json`)
+
+| id | result | numbers |
+|---|---|---|
+| A1 | PASS | AAPL present on 13/13 dates in 2008 |
+| A2 | PASS | 2008-08-20: LEHMQ via AV LEH, WAMUQ via AV WM, WB1 via AV WB, all in the chain. 2008-09-17: WAMUQ ($2.01) and WB1 ($9.12) are not cap2000-eligible (price floor), so not attempted by the cap2000-only pull: N/A |
+| A3 | PASS | parity spot / closeunadj: LEH 13.645/13.73 (0.6%), WM 4.06/4.10 (1.0%), WB 14.87/14.90 (0.2%); all `verified` |
+| A4 | PASS | Sharadar WM (Waste Mgmt) maps to AV WMI on every date 2008-08..2009-01. AV WM maps only to WAMUQ. 0 (date, AV symbol) pairs claimed twice after `av_keep` |
+| A5 | PASS | rr25 > 0 on 95.4% of 25,210 name-dates (2008 92.4%, 2009 99.0%, 2010 98.6%) |
+| A6 | PASS | pc_vol_ratio median 0.395 (n = 35,779) |
+| A7 | PASS | cw_spread median -0.0169 (2008: -0.0135). Slightly negative, and less so than the builder's -0.022 note |
+| A8 | PASS | Share of eligible names with a chain, on tier-attempted dates only: cap2000 **0.957** (33 dates, min date 0.930); cap500-only 0.771; cap150-only 0.465 (first 9 dates) |
+| A9 | PASS | median ATM relative spread: cap2000 0.084 < cap500-only 0.150 < cap150-only 0.224 |
+| A10 | PASS | `forward_return_tradable_40` = close[t+40]/open[t+1]-1 on 400/400 sampled cap2000 rows (own trading days in SEP). The label basis is tradable |
+
+### 8.3 Exp B runner on null labels (`expB_*_SHUFFLED_TEST_*.json`)
+
+- Pool integrity: 100.00% of v2 cap2000-eligible name-dates are in panel v2.
+  There are 26,549 optionable cap2000 name-dates over 33 dates.
+- Shuffled labels:
+  - 0/5 factors pass the Holm screen, and 0/5 beat the IC null p80.
+  - The companion passes on 1/5 (opt_os_ratio). With a p80 null, about 20%
+    are expected to pass under the null.
+- Noise labels: 0/5 screen, 0/5 IC; the companion passes 1/5
+  (opt_cw_spread).
+- The 9-factor weights are normalized (candidate weights between -0.006 and
+  -0.203, not t-units). The null refits the candidate weight on every draw
+  (null weights vary by draw).
+- Confirm stage: exercised on nominate dates with one factor forced through.
+  It ran end to end, and hold-out read #7 is not used.
+
+### 8.4 WO-O1 on noise labels (`wo_o1_results_SHUFFLED_TEST_labels-noise_seed{7,8}.json`)
+
+- **Named survivorship check: PASS.**
+  - LEHMQ, 2008-08-20 entry: strikes 10 / 13 / 14 for the 0.20 / 0.30 /
+    0.45 buckets. Settled at Sharadar close 0.22 on 2008-09-19, status
+    normal, r = 1. Net loss / max loss = 0.976 / 0.980 / 0.981. The payoff
+    formula check is exact.
+  - WB1, 2008-08-20: in the pool (0.20 bucket, K 12.5), settled at 18.75,
+    and expired worthless. That is the real outcome, as section 4 predicted.
+  - WAMUQ: not in the pool on either date (price floor), so it is reported
+    rather than failed.
+- These are the only real-price numbers in Phase 1. They cover 4 contracts
+  and are never aggregated.
+- **Quote filter:**
+  - The nearest-delta contract fails on 1.5% of name-date-buckets, and 1.5%
+    end up with no trade. Reasons: F6 691, F1 10, F5 6, F4 5, F2 2.
+  - The no-trade share by ATM-IV quintile (low to high) is 1.5%, 1.1%,
+    0.9%, 0.6%, 0.4%. Drops do NOT concentrate in high-IV names, so there is
+    no survivorship-flattering sign.
+- Positions (arm a / arm b-icw8), per delta bucket: 0.20: 18,342 / 3,640;
+  0.30: 15,377 / 3,051; 0.45: 13,348 / 2,644.
+- **Arithmetic unit test:**
+  - Realized noise-label cycle excess minus the analytic expectation
+    (forward BS value at the contract's IV at settle-T).
+  - Seed 7 z: 0.20 -1.80, 0.30 +1.20, 0.45 -0.14. Seed 8 z: -0.04, +1.89,
+    -0.77. This is consistent with pure sampling noise.
+  - The rough "-half-spread/K" predictor was about 0.0015/cycle too
+    pessimistic. That comes from the 1-day T gap (chain T runs to the
+    Saturday listed expiry, settlement is Friday) and the American premium in
+    the mid. Both are real and small, and both favour the seller.
+- The icw8 score comes from t-1. Before 2020 it uses split-half weights by
+  score-date year parity. For example, entry 2008-01-02 is scored on
+  2007-12-31 with the even-year fit.
+
+### 8.5 Blocks and open items for Phase 2
+
+1. **Data:** the Windows copy per section 1. Exp B needs at least 120 of 134
+   nominate dates complete at cap2000, and the confirm stage needs all of
+   2019-02..2026-08.
+2. **Blend arm BLOCKED** (section 4.1). The unblock is a deterministic re-run
+   of the q75 cell with a byte comparison.
+3. **COO decision:** whether the cap2000 $10 price floor is the right short-put
+   universe (Amendment 1). WaMu is excluded by it. A floor-free variant
+   needs sub-$10 $2B+ chains that the cap2000-only pull did not fetch after
+   2008-09-17.
+4. **COO flag:** NW lag 39 on monthly observations (section 3, item 5).
+5. The unified-chain builder and feature builder on integration also see the
+   F0 adjusted-deliverable duplicates (`pivot_table(aggfunc="first")`). This
+   affects `opt_cw_spread` on a handful of names on 3 dates. It is not fixed
+   here: those files are not WO-25's to edit.
