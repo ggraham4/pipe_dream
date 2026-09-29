@@ -184,4 +184,139 @@ PRODUCTION_WEIGHTS_V9_V2 = {
 
 ## 4. Results
 
-(Filled after the method commit.)
+Run on 2026-09-29, after the method commit 0aa87b4. Code:
+`final/src/reweight/backtest_reweight.py`. Outputs:
+`final/out/reweight/backtest_reweight_{A,B,picks}.json` and run logs `backtest_reweight_{A,B}.log`.
+**Hold-out read #7.** It FITS the SI weight on 2020-01..2026-07-30.
+
+### 4.1 Headline
+
+- **The rule is unchanged.** The name-check passes exactly: the same function
+  reproduces `PRODUCTION_WEIGHTS` and `PRODUCTION_WEIGHTS_V9_SEAS` from the v1 t's at 4 dp.
+- **The t's reproduce exactly.** All 8 non-SI period-A t's match WO-23 with a
+  max abs diff of 0.0. SI's B t is −2.89373885, which also equals WO-23.
+- **Reconcile passes.** Live icw9_seas reproduces WO-23 to 1e-9: A +0.0348652006, B −0.02016.
+- **icw9_v2 is WORSE than live icw9_seas in both periods, as a book.**
+  - A in-sample: +2.60 vs +3.49 %/yr. It is below live on all 40 offsets, and its sd40 is 0.53 vs 0.22.
+  - B: −2.61 vs −2.02 %/yr (12/40 offsets better).
+  - This holds even though icw9_v2's 8 t's are the v2 A t's and the book is read on v2 A.
+  - Why: the ICW rule targets pooled rank IC, not the decile_volq book's
+    excess. The v1-fit weights put 48% on gross_profitability and 13% on
+    accruals. On this cap150 book those weights happen to beat the
+    v2-fit weights, which spread weight into days_to_next_filing_seasonal,
+    volatility_60 and net_issuance_pct. This is a description, not a p-value claim.
+- **Honest A number (split-half OOS): +2.55 %/yr**, 40/40 offsets positive, but
+  post-2011-10 is −0.08. It is close to the in-sample +2.60, so the v2 re-derivation
+  is not badly overfit on A. It is simply a weaker book than the live weights.
+- **The SI fit helps in B, but not enough.** icw9_v2 minus icw9_v2-with-SI-at-floor is
+  **+0.54 %/yr** (sd40 0.43, 38/40 offsets positive). That is in-sample by
+  construction. Without it, the re-derived 8 lose 1.13 %/yr to live in B (8/40 offsets better).
+- **SI does nothing in A, as expected (2.4).** icw9_v2 and its SI-at-floor twin differ by
+  +3e-6 %/yr, which is 4-dp rounding of the 8 weights.
+- **Picks change a lot:** on 2026-09-25, icw9_v2 shares 147 of live icw9_seas's 300 names (49%).
+
+**Once SI is fit on 2020-26, no untouched historical test remains for this
+model. Only the forward ledgers can confirm it.**
+
+### 4.2 Weights (4 dp; full precision in `icw9_v2_weights.json`)
+
+| factor | live icw9_seas | icw9_v2 | Δ |
+|---|---|---|---|
+| momentum_12_1 | +0.0402 | +0.0197 | −0.0205 |
+| pct_from_high_252 | +0.0105 | +0.0553 | +0.0448 |
+| volatility_60 | −0.0105 | −0.0962 | −0.0857 |
+| gross_profitability | +0.4808 | +0.2544 | −0.2264 |
+| accruals | −0.1314 | −0.0051 | +0.1263 |
+| net_issuance_pct | −0.1129 | −0.2147 | −0.1018 |
+| days_to_next_filing_seasonal | −0.0105 | −0.1660 | −0.1555 |
+| short_interest_days_to_cover | −0.0105 | −0.0958 | −0.0853 |
+| seas | +0.1928 | +0.0928 | −0.1000 |
+
+Split-half weights (A OOS; the SI entry has no effect in A):
+
+| factor | odd-fit (scores even yrs) | even-fit (scores odd yrs) | t odd | t even |
+|---|---|---|---|---|
+| momentum_12_1 | +0.0220 | +0.0086 | +1.33 | +0.53 |
+| pct_from_high_252 | +0.0484 | +0.0174 | +1.74 | +1.20 |
+| volatility_60 | −0.0624 | −0.1042 | −1.95 | −2.22 |
+| gross_profitability | +0.3338 | +0.1695 | +6.07 | +2.98 |
+| accruals | −0.0066 | −0.0086 | −0.03 | −0.53 |
+| net_issuance_pct | −0.2122 | −0.2047 | −4.22 | −3.39 |
+| days_to_next_filing_seasonal | −0.1497 | −0.1816 | −3.28 | −3.12 |
+| short_interest_days_to_cover | −0.1246 | −0.1624 | (B t −2.89) | (B t −2.89) |
+| seas | +0.0403 | +0.1431 | +1.61 | +2.67 |
+
+### 4.3 Backtests (excess vs SPY, %/yr, cap150, decile_volq, 40 offsets, net 15 bp)
+
+| variant | label | mean40 | sd40 | offsets + | min40 | LOYO min (yr) | post-2011-10 |
+|---|---|---|---|---|---|---|---|
+| **A 2007-2019** live icw9_seas | in-sample (v1 t's) | +3.49 | 0.22 | 40/40 | +2.95 | +2.46 (2009) | +0.51 |
+| A icw9_v2 | IN-SAMPLE for the 8 | +2.60 | 0.53 | 40/40 | +1.57 | +1.66 (2008) | +0.12 |
+| A icw9_v2 full precision | in-sample | +2.60 | 0.53 | 40/40 | +1.57 | +1.66 (2008) | +0.11 |
+| A icw9_v2 split-half OOS (stitched) | out-of-sample (8); SI at B-fit, no effect | **+2.55** | 0.47 | 40/40 | +1.42 | +1.47 (2009) | −0.08 |
+| A live icw9_seas split-half | — | N/A (in-sample only) | | | | | |
+| **B 2020-01..2026-07-30** live icw9_seas | OOS (unfitted; WO-23 read #5) | −2.02 | 1.03 | 0/40 | −3.93 | −8.39 (2020) | — |
+| B icw9_v2 | IN-SAMPLE for SI; OOS for the 8 | −2.61 | 0.73 | 0/40 | −3.89 | −7.44 (2020) | — |
+| B icw9_v2 full precision | same | −2.61 | 0.73 | 0/40 | −3.88 | −7.45 (2020) | — |
+| B icw9_v2, SI at floor | OOS for all 9 | −3.14 | 0.85 | 0/40 | −4.71 | −8.05 (2020) | — |
+
+Paired per-offset differences:
+
+| pair | period | mean40 | sd40 | offsets + |
+|---|---|---|---|---|
+| icw9_v2 − live | A | −0.89 | 0.46 | 0/40 |
+| icw9_v2 − live | B | −0.59 | 1.01 | 12/40 |
+| icw9_v2 − icw9_v2 SI-at-floor (the SI-fit contribution) | B | +0.54 | 0.43 | 38/40 |
+| icw9_v2 SI-at-floor − live | B | −1.13 | 1.06 | 8/40 |
+| icw9_v2 − icw9_v2 SI-at-floor (SI no-op check) | A | +0.0003 | 0.009 | 21/40 |
+
+Split-half detail. Each half is its own test years only, on the full A grid:
+
+| book | test years | mean40 | sd40 | offsets + | LOYO min |
+|---|---|---|---|---|---|
+| icw9_v2 odd-fit | even | +4.62 | 0.68 | 40/40 | +2.73 (2008) |
+| icw9_v2 even-fit | odd | +0.74 | 0.89 | 32/40 | −1.71 (2009) |
+| icw9_v2 in-sample (context) | even | +4.45 | 0.85 | 40/40 | +2.59 |
+| icw9_v2 in-sample (context) | odd | +0.95 | 1.00 | 32/40 | −1.08 |
+| live icw9_seas (in-sample, context) | even | +6.28 | 0.77 | 40/40 | +4.53 |
+| live icw9_seas (in-sample, context) | odd | +1.03 | 0.76 | 37/40 | −1.42 |
+
+Artifacts, as pinned in the method: late-December 40-day labels spill into the next year, and
+turnover is computed across the skipped year in the restricted books.
+
+B per-year excess (%/yr, offset-averaged):
+
+| year | live icw9_seas | icw9_v2 | icw9_v2 SI floor |
+|---|---|---|---|
+| 2020 | +33.33 | +24.15 | +24.00 |
+| 2021 | −18.30 | −16.82 | −17.49 |
+| 2022 | +3.88 | +6.64 | +6.36 |
+| 2023 | −11.53 | −8.51 | −8.66 |
+| 2024 | −5.66 | −6.61 | −7.35 |
+| 2025 | −15.15 | −10.81 | −11.89 |
+| 2026 (Jan-Jul) | −0.32 | −9.29 | −10.15 |
+
+icw9_v2 is ahead of live in 4 of 7 B years (2021, 2022, 2023, 2025). It trails on the
+mean because 2020 is so large (+33 vs +24) and because of 2026.
+
+### 4.4 Pick overlap (latest working-panel date 2026-09-25, cap150, 3,048 eligible)
+
+| vs live icw9_seas (300 picks) | shared | share | weight overlap |
+|---|---|---|---|
+| icw9_v2 | 147 | 0.49 | 0.479 |
+| icw9_v2, SI at floor | 150 | 0.50 | 0.487 |
+
+Coverage on that date: seas 86.1%, SI 99.8%. Replication check: the main checkout's
+`current_signal_composite.csv` for 2026-09-25 is still the **icw8** model, because WO-20-seas
+is not deployed. The replicated icw8 picks equal that CSV exactly. icw9_v2 shares 135 names with icw8.
+
+### 4.5 Reading (no decision; Gabe's call)
+
+- As pinned, the only honest period-A number is the split-half OOS **+2.55 %/yr**. The
+  live model has no OOS A number. Its +3.49 is in-sample, but on v1 t's, so it is not in-sample to the v2 panel's A t's either.
+- In the data we have, re-deriving on v2 does not improve the book: A is −0.89 and B is
+  −0.59 %/yr vs live. The one piece that helps in B, the SI weight, was fit on B.
+- B is exhausted for this model after this read. **No untouched historical test
+  remains for icw9_v2. Only the forward ledgers can confirm it.**
+- Nothing is applied. `PRODUCTION_WEIGHTS*` are unchanged. The block in 3.3 is ready to paste
+  if Gabe chooses it.

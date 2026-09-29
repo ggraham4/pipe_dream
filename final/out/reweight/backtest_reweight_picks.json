@@ -1,0 +1,40 @@
+{
+ "as_of": "2026-09-25",
+ "n_eligible": 3048,
+ "seas_coverage": 0.8608923884514436,
+ "si_coverage": 0.9980314960629921,
+ "icw9_v2_vs_live": {
+  "n_live": 300,
+  "n_other": 300,
+  "shared": 147,
+  "share_of_live": 0.49,
+  "weight_overlap": 0.4789
+ },
+ "icw9_v2_si_floor_vs_live": {
+  "n_live": 300,
+  "n_other": 300,
+  "shared": 150,
+  "share_of_live": 0.5,
+  "weight_overlap": 0.4869
+ },
+ "main_checkout_meta": {
+  "as_of": "2026-09-25",
+  "model_version": null,
+  "factor_weights": {
+   "momentum_12_1": 0.0497,
+   "pct_from_high_252": 0.013,
+   "volatility_60": -0.013,
+   "gross_profitability": 0.5956,
+   "accruals": -0.1627,
+   "net_issuance_pct": -0.1399,
+   "days_to_next_filing_seasonal": -0.013,
+   "short_interest_days_to_cover": -0.013
+  }
+ },
+ "live_csv_match": {
+  "main_checkout_serves": "icw8 PRODUCTION_WEIGHTS",
+  "replicated_icw8_picks_equal_csv": true,
+  "icw9_v2_vs_icw8_shared": 135
+ },
+ "prereg": "final/models/2026-09-29-icw-v2-reweight.md @ 0aa87b4"
+}

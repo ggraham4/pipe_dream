@@ -1,0 +1,8 @@
+[10:55:09] [B] cap150: 5,220,610 rows, 5,066 tickers, 1652 dates 2020-01-02..2026-07-30
+[10:55:13] [B] SI t -2.89373885 == WO-23 -2.89373885 PASS
+[10:55:28] [B] live_icw9_seas           -0.02016 sd40 0.01026 pos 0/40 LOYO min -0.08392 (2020)
+[10:55:30] [B] icw9_v2                  -0.02607 sd40 0.00728 pos 0/40 LOYO min -0.07444 (2020)
+[10:55:33] [B] icw9_v2_full_precision   -0.02611 sd40 0.00727 pos 0/40 LOYO min -0.07448 (2020)
+[10:55:36] [B] icw9_v2_si_floor         -0.03144 sd40 0.00853 pos 0/40 LOYO min -0.08053 (2020)
+[10:55:36] [B] RECONCILE OK
+[10:55:36] wrote backtest_reweight_B.json

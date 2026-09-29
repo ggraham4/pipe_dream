@@ -1,0 +1,15 @@
+[10:51:17] [A] cap150: 9,756,141 rows, 6,508 tickers, 3272 dates 2007-01-03..2019-12-31
+[10:51:28] [A] momentum_12_1                    t full +1.389763 odd +1.3344 even +0.5290
+[10:51:41] [A] pct_from_high_252                t full +2.093019 odd +1.7356 even +1.2026
+[10:51:54] [A] volatility_60                    t full -2.903109 odd -1.9488 even -2.2151
+[10:52:05] [A] gross_profitability              t full +6.029238 odd +6.0716 even +2.9761
+[10:52:18] [A] accruals                         t full -0.394640 odd -0.0327 even -0.5340
+[10:52:29] [A] net_issuance_pct                 t full -5.245329 odd -4.2239 even -3.3865
+[10:52:38] [A] days_to_next_filing_seasonal     t full -4.282976 odd -3.2749 even -3.1181
+[10:52:38] [A] short_interest_days_to_cover     t full +nan odd +nan even +nan
+[10:52:48] [A] seas                             t full +2.835578 odd +1.6118 even +2.6691
+[10:52:48] [A] t reproduction PASS (8 non-SI factors, 1e-6)
+[10:54:01] [A] RECONCILE OK live icw9_seas +0.0348652006
+[10:54:22] [A] live +0.03487 icw9_v2 +0.02599 (full prec +0.02598); SI no-op diff +3.17e-06
+[10:55:03] [A] split-half OOS stitched +0.02550 (sd40 0.00472); fit-odd/test-even +0.04615; fit-even/test-odd +0.00736 (238s)
+[10:55:03] wrote backtest_reweight_A.json
