@@ -1,0 +1,9 @@
+[15:19:54] [A] cap150: 9,756,141 rows, 6,508 tickers, 3272 dates 2007-01-03..2019-12-31
+[15:20:35] [A] books built (53s)
+[15:20:37] reconcile {'name': 'A full icw9_seas', 'got': 0.03486520057904396, 'wo31_exact': 0.03486520057904396, 'diff_exact': 0.0, 'spec': 0.0349, 'diff_spec': -3.479942095604288e-05}
+[15:20:38] reconcile {'name': 'A full icw8', 'got': 0.028541632641009042, 'wo31_exact': 0.028541632641009042, 'diff_exact': 0.0, 'spec': 0.0285, 'diff_spec': 4.1632641009040766e-05}
+[15:20:39] reconcile {'name': 'A pre icw9_seas', 'got': 0.08626483962009682, 'wo31_exact': 0.08626483962009682, 'diff_exact': 0.0}
+[15:20:39] reconcile {'name': 'A pre icw8', 'got': 0.07752581091234244, 'wo31_exact': 0.07752581091234244, 'diff_exact': 0.0}
+[15:20:40] reconcile {'name': 'A post icw9_seas', 'got': 0.005091125577234209, 'wo31_exact': 0.005091125577234209, 'diff_exact': 0.0, 'spec': 0.0051, 'diff_spec': -8.874422765790986e-06}
+[15:20:41] reconcile {'name': 'A post icw8', 'got': 0.00012178267308571079, 'wo31_exact': 0.00012178267308571079, 'diff_exact': 0.0, 'spec': 0.0001, 'diff_spec': 2.1782673085710786e-05}
+[15:20:41] [A] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-aae4f860e1b828969/final/out/sizegate/parts/A_chains.json (58s)
