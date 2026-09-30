@@ -506,7 +506,9 @@ def comparison_frame(era: str = "holdout") -> pd.DataFrame | None:
 # retrain
 # --------------------------------------------------------------------------
 PIT_STEP_LABELS = [
+    "Top up SPY.csv (yfinance) -- relative_strength_20 is computed against it",
     "Top up the Sharadar price/marketcap panel from the newest month on disk (needs SHARADAR_API_KEY)",
+    "Check SPY has a close for the newest Sharadar day",
     "Rebuild the point-in-time universe",
     "Rebuild price features",
     "Rebuild fundamental features",
@@ -555,7 +557,8 @@ def sharadar_pull_command() -> list[str]:
 
 
 def retrain_commands() -> list[list[str]]:
-    """The exact commands a refresh runs, in order: top up the Sharadar panel,
+    """The exact commands a refresh runs, in order: top up SPY.csv and the
+    Sharadar panel, check SPY covers the panel's newest day,
     rebuild the point-in-time universe, rebuild price then fundamental
     features, export OHLCV for execution, retrain both signals and recompute
     today's picks, then rebuild the app's comparison chart.
@@ -570,7 +573,15 @@ def retrain_commands() -> list[list[str]]:
     chart is simply drawn without the USMV line and says why."""
     py = sys.executable
     return [
+        # 2026-09-29: SPY.csv is a yfinance cache the Sharadar top-up never
+        # refreshed. When it lagged, every stock's relative_strength_20 on the
+        # newest days was NaN, current_signal_pit.py dropped all of today's
+        # rows, and the run failed with a misleading market_cap error. Top it
+        # up first, then refuse to go on if it still has no close for the
+        # newest Sharadar day (Yahoo leaves today's close blank for a while).
+        [py, str(paths.SCRIPTS_DIR / "local_data_pull.py"), "--refresh-recent", "SPY"],
         sharadar_pull_command(),
+        [py, str(Path(__file__).resolve().parent / "check_spy_fresh.py")],
         [py, str(paths.SRC_DIR / "build_pit_universe.py")],
         [py, str(paths.SRC_DIR / "build_features_sharadar.py")],
         [py, str(paths.SRC_DIR / "build_features_fundamentals_sharadar.py")],
