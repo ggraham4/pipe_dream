@@ -1,0 +1,5 @@
+[15:28:44] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[15:30:41] picks built (122s)
+[15:30:52] R252 vs EXP: diff -0.0111/yr, t -1.76, offsets+ 0/40, LOYO min -0.0153 -> KILL
+[15:30:52] R756 vs EXP: diff +0.0019/yr, t +0.42, offsets+ 27/40, LOYO min -0.0003 -> KILL
+[15:30:53] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-ae2ebd3a1386cb352/final/out/rollweights/rollweights_eval.json (134s)

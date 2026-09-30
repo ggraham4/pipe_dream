@@ -1,0 +1,16 @@
+[15:22:42] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[15:22:49] v1 cap150 6,691,650 rows 2007-01-03..2019-12-31; v2 U 9,756,141 rows; calendar 3272 2007-01-03..2019-12-31 (16s)
+[15:23:32] IC series (3272, 9) saved (58s)
+[15:23:32]   momentum_12_1                    t +1.382341  w +0.040157 -> +0.0402 live +0.0402
+[15:23:32]   pct_from_high_252                t +0.836261  w +0.010503 -> +0.0105 live +0.0105
+[15:23:32]   volatility_60                    t -0.209594  w -0.010503 -> -0.0105 live -0.0105
+[15:23:32]   gross_profitability              t +5.577533  w +0.480773 -> +0.4808 live +0.4808
+[15:23:32]   accruals                         t -2.250811  w -0.131371 -> -0.1314 live -0.1314
+[15:23:32]   net_issuance_pct                 t -2.074939  w -0.112900 -> -0.1129 live -0.1129
+[15:23:32]   days_to_next_filing_seasonal     t -0.770342  w -0.010503 -> -0.0105 live -0.0105
+[15:23:32]   short_interest_days_to_cover     t +nan  w -0.010503 -> -0.0105 live -0.0105
+[15:23:32]   seas                             t +2.835578  w +0.192788 -> +0.1928 live +0.1928
+[15:23:32] full-window rule reproduces live icw9_seas weights to 4dp
+[15:23:32] weight paths saved (58s); R756 == EXP until 2010-03-05
+[15:24:06] reconcile: scorer eq True; book +0.0348710 vs +0.0348710
+[15:24:06] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-ae2ebd3a1386cb352/final/out/rollweights/build_validate.json
