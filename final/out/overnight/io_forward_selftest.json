@@ -1,0 +1,61 @@
+{
+ "weights": {
+  "icw10_rule_vs_frozen_4dp_max": 0.0,
+  "icw9seas_rule_vs_live_4dp_max": 0.0,
+  "unrounded_renorm_vs_icw9seas_max": 0.0,
+  "rounded_renorm_vs_live_icw9seas_max": 0.00010535033521755915,
+  "renorm_tol": 0.0002,
+  "renormalized": {
+   "momentum_12_1": 0.040095,
+   "pct_from_high_252": 0.010517,
+   "volatility_60": -0.010517,
+   "gross_profitability": 0.480741,
+   "accruals": -0.131326,
+   "net_issuance_pct": -0.112922,
+   "days_to_next_filing_seasonal": -0.010517,
+   "short_interest_days_to_cover": -0.010517,
+   "seas": 0.192849
+  },
+  "sum_abs_icw10": 1.0,
+  "pass": true
+ },
+ "date": "2026-09-24",
+ "rows": 3048,
+ "icw8_vs_v3_max_abs": 9.974659986866641e-17,
+ "icw9_seas_equals_seas_forward": true,
+ "icw10_equals_independent_score": true,
+ "csv_round_trip_exact": true,
+ "io_info": {
+  "files": "2025-07..2026-09",
+  "file_mtimes": {
+   "2025-07": "2026-09-09 05:03",
+   "2025-08": "2026-09-09 05:03",
+   "2025-09": "2026-09-09 05:03",
+   "2025-10": "2026-09-09 05:03",
+   "2025-11": "2026-09-09 05:03",
+   "2025-12": "2026-09-09 05:04",
+   "2026-01": "2026-09-09 05:04",
+   "2026-02": "2026-09-09 05:04",
+   "2026-03": "2026-09-09 05:04",
+   "2026-04": "2026-09-09 05:04",
+   "2026-05": "2026-09-09 05:04",
+   "2026-06": "2026-09-09 05:05",
+   "2026-07": "2026-09-09 05:05",
+   "2026-08": "2026-09-09 05:05",
+   "2026-09": "2026-09-30 00:52"
+  },
+  "spliced_rows_in_window": 3045,
+  "dropped_splitlike_rows_in_window": 1,
+  "dropped_splitlike_tickers": [
+   "RUSHA"
+  ],
+  "window_first_day": "2025-09-24",
+  "sep_max_date_used": "2026-09-24",
+  "rows": 3048,
+  "io_coverage_rows": 0.9671916010498688,
+  "seas_target_month": "2026-10"
+ },
+ "spearman_icw10_vs_icw9_seas": 0.9016641037807331,
+ "top300_overlap_icw10_vs_icw9_seas": 201,
+ "todo_now": []
+}
