@@ -1,0 +1,201 @@
+{
+  "work_order": "WO-33 step 2",
+  "stage": "build2",
+  "holdout_read": 13,
+  "window": "2020-01-02..2026-07-30",
+  "pre2020_ic_equal_step1_maxabs": 0.0,
+  "csv_roundtrip_maxabs_vs_step1_csv": 9.8879238130678e-17,
+  "paths_pre2020_identical_to_step1": true,
+  "stability_2020_2026": {
+    "R252": {
+      "n_refits": 79,
+      "mean_L1_change_per_refit": 0.3482953801072565,
+      "mean_abs_change_per_factor": {
+        "momentum_12_1": 0.0486271485233829,
+        "pct_from_high_252": 0.03365262628214104,
+        "volatility_60": 0.028295325727505347,
+        "gross_profitability": 0.06827047199280281,
+        "accruals": 0.02388962238119032,
+        "net_issuance_pct": 0.03552720470376836,
+        "days_to_next_filing_seasonal": 0.01648628693755514,
+        "short_interest_days_to_cover": 0.06800107815667218,
+        "seas": 0.025545615402238438
+      },
+      "weight_sign_flip_share": 0.0,
+      "weight_sign_flip_note": "signs fixed by the rule (sign_k * magnitude): 0 by construction",
+      "t_sign_disagrees_with_fixed_sign_share": {
+        "momentum_12_1": 0.16455696202531644,
+        "pct_from_high_252": 0.3037974683544304,
+        "volatility_60": 0.379746835443038,
+        "gross_profitability": 0.189873417721519,
+        "accruals": 0.6455696202531646,
+        "net_issuance_pct": 0.3037974683544304,
+        "days_to_next_filing_seasonal": 0.5189873417721519,
+        "short_interest_days_to_cover": 0.1917808219178082,
+        "seas": 0.4430379746835443
+      },
+      "weight_mean": {
+        "momentum_12_1": 0.12341063040972589,
+        "pct_from_high_252": 0.09008590157118623,
+        "volatility_60": -0.08705639073156286,
+        "gross_profitability": 0.20323969275454296,
+        "accruals": -0.07445383873826232,
+        "net_issuance_pct": -0.13609518407852755,
+        "days_to_next_filing_seasonal": -0.03764520613096466,
+        "short_interest_days_to_cover": -0.1925807244632875,
+        "seas": 0.055432431121939976
+      },
+      "weight_min": {
+        "momentum_12_1": 0.00960609510213204,
+        "pct_from_high_252": 0.011190389443901558,
+        "volatility_60": -0.34429147294518586,
+        "gross_profitability": 0.0071664063150658755,
+        "accruals": -0.3246853152991464,
+        "net_issuance_pct": -0.5572165457224627,
+        "days_to_next_filing_seasonal": -0.2226824596711705,
+        "short_interest_days_to_cover": -0.7180890946953896,
+        "seas": 0.0071664063150658755
+      },
+      "weight_max": {
+        "momentum_12_1": 0.5022836178163724,
+        "pct_from_high_252": 0.42477253774867624,
+        "volatility_60": -0.011190389443901558,
+        "gross_profitability": 0.7052554424644466,
+        "accruals": -0.0071664063150658755,
+        "net_issuance_pct": -0.012379170808863284,
+        "days_to_next_filing_seasonal": -0.0071664063150658755,
+        "short_interest_days_to_cover": -0.01711850242418427,
+        "seas": 0.3599480893289171
+      }
+    },
+    "R756": {
+      "n_refits": 79,
+      "mean_L1_change_per_refit": 0.1348621858617222,
+      "mean_abs_change_per_factor": {
+        "momentum_12_1": 0.01285212767372114,
+        "pct_from_high_252": 0.009420318539137674,
+        "volatility_60": 0.005448404358182486,
+        "gross_profitability": 0.03407978570248569,
+        "accruals": 0.008593840414603884,
+        "net_issuance_pct": 0.012859793974665279,
+        "days_to_next_filing_seasonal": 0.002505638919347655,
+        "short_interest_days_to_cover": 0.03666889740707664,
+        "seas": 0.012433378872501745
+      },
+      "weight_sign_flip_share": 0.0,
+      "weight_sign_flip_note": "signs fixed by the rule (sign_k * magnitude): 0 by construction",
+      "t_sign_disagrees_with_fixed_sign_share": {
+        "momentum_12_1": 0.0759493670886076,
+        "pct_from_high_252": 0.012658227848101266,
+        "volatility_60": 0.1518987341772152,
+        "gross_profitability": 0.05063291139240506,
+        "accruals": 0.4050632911392405,
+        "net_issuance_pct": 0.17721518987341772,
+        "days_to_next_filing_seasonal": 0.6075949367088608,
+        "short_interest_days_to_cover": 0.1643835616438356,
+        "seas": 0.6075949367088608
+      },
+      "weight_mean": {
+        "momentum_12_1": 0.08517907109805223,
+        "pct_from_high_252": 0.05708531468498319,
+        "volatility_60": -0.046066566523159165,
+        "gross_profitability": 0.35789799450559995,
+        "accruals": -0.04439772293352464,
+        "net_issuance_pct": -0.1534758856441649,
+        "days_to_next_filing_seasonal": -0.020220907930699538,
+        "short_interest_days_to_cover": -0.1919404464035871,
+        "seas": 0.04373609027622937
+      },
+      "weight_min": {
+        "momentum_12_1": 0.011410246623616194,
+        "pct_from_high_252": 0.007927239793662697,
+        "volatility_60": -0.1435744820053462,
+        "gross_profitability": 0.014054260520025319,
+        "accruals": -0.1305568967175765,
+        "net_issuance_pct": -0.42285449243924245,
+        "days_to_next_filing_seasonal": -0.042029992390757415,
+        "short_interest_days_to_cover": -0.5086922555645946,
+        "seas": 0.008562561385583816
+      },
+      "weight_max": {
+        "momentum_12_1": 0.3465262519713425,
+        "pct_from_high_252": 0.1625800101259689,
+        "volatility_60": -0.007927239793662697,
+        "gross_profitability": 0.8087665216651482,
+        "accruals": -0.008664151696427251,
+        "net_issuance_pct": -0.007927239793662697,
+        "days_to_next_filing_seasonal": -0.007927239793662697,
+        "short_interest_days_to_cover": -0.01453497127857709,
+        "seas": 0.17277792103121015
+      }
+    },
+    "EXP": {
+      "n_refits": 79,
+      "mean_L1_change_per_refit": 0.054110739870283316,
+      "mean_abs_change_per_factor": {
+        "momentum_12_1": 0.003951021017669686,
+        "pct_from_high_252": 0.0014732877303651817,
+        "volatility_60": 0.0002535964884041077,
+        "gross_profitability": 0.01139792302049047,
+        "accruals": 0.006584470893056367,
+        "net_issuance_pct": 0.005705059712465554,
+        "days_to_next_filing_seasonal": 0.0002535964884041077,
+        "short_interest_days_to_cover": 0.01786721008961801,
+        "seas": 0.006624574429809827
+      },
+      "weight_sign_flip_share": 0.0,
+      "weight_sign_flip_note": "signs fixed by the rule (sign_k * magnitude): 0 by construction",
+      "t_sign_disagrees_with_fixed_sign_share": {
+        "momentum_12_1": 0.0,
+        "pct_from_high_252": 0.0,
+        "volatility_60": 0.16455696202531644,
+        "gross_profitability": 0.0,
+        "accruals": 0.0,
+        "net_issuance_pct": 0.0,
+        "days_to_next_filing_seasonal": 0.0,
+        "short_interest_days_to_cover": 0.1643835616438356,
+        "seas": 0.0
+      },
+      "weight_mean": {
+        "momentum_12_1": 0.04855373159477554,
+        "pct_from_high_252": 0.017692719061977842,
+        "volatility_60": -0.008752016358325858,
+        "gross_profitability": 0.4443271522827342,
+        "accruals": -0.11060730133796826,
+        "net_issuance_pct": -0.14021289139331608,
+        "days_to_next_filing_seasonal": -0.008752016358325858,
+        "short_interest_days_to_cover": -0.09880740758424666,
+        "seas": 0.12229476402832971
+      },
+      "weight_min": {
+        "momentum_12_1": 0.010157501773546114,
+        "pct_from_high_252": 0.006227220607397977,
+        "volatility_60": -0.010973534236616057,
+        "gross_profitability": 0.3100857380088697,
+        "accruals": -0.189039441052325,
+        "net_issuance_pct": -0.17955158662261336,
+        "days_to_next_filing_seasonal": -0.010973534236616057,
+        "short_interest_days_to_cover": -0.39960175031011413,
+        "seas": 0.08366412174935589
+      },
+      "weight_max": {
+        "momentum_12_1": 0.09246053144846866,
+        "pct_from_high_252": 0.040656631323202824,
+        "volatility_60": -0.006227220607397977,
+        "gross_profitability": 0.5483305669841732,
+        "accruals": -0.03977819661249951,
+        "net_issuance_pct": -0.03193893894203926,
+        "days_to_next_filing_seasonal": -0.006227220607397977,
+        "short_interest_days_to_cover": -0.009993778605449555,
+        "seas": 0.19380426208493903
+      }
+    }
+  },
+  "short_interest_note": "short_interest_days_to_cover has no v1 data before 2020, so its t is NaN (floor weight) until its matured IC dates reach n>=10 in the window",
+  "reconcile_B_live": {
+    "mean40": -0.020163649457176646,
+    "ref_wo23_B": -0.02016365566661011,
+    "ok": true
+  },
+  "runtime_s": 122.1887092590332
+}
