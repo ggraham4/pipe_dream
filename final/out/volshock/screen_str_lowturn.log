@@ -1,0 +1,28 @@
+[10:15:03] frozen rule reproduces PRODUCTION_WEIGHTS and PRODUCTION_WEIGHTS_V9_SEAS to 4dp
+[10:15:09] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[10:17:00] harness reconcile OK: {'decile_icw8_frozen': [0.028541632641009042, 0.028541632641009042], 'oos_fit_odd_test_even': [0.04041110565685588, 0.040411105656855885], 'oos_fit_even_test_odd': [0.055397983383733786, 0.055397983383733786]}
+[10:17:25] [str_lowturn] IC -0.00977 t -2.33 | H1 -0.00860 H2 -0.01113 | sector both -2.44 | max year share 0.296287072781412 (2009)
+[10:19:23] [str_lowturn] icw9_seas +0.02550  +cand +0.02564  inc +0.00014 offsets<=0 20/40  t fit -1.22/-2.14  w -0.0162/-0.1033
+[10:20:17] [str_lowturn] null 0: refit +0.02554 (t -0.08/-0.32)  weight-matched +0.02537
+[10:21:15] [str_lowturn] null 1: refit +0.02533 (t +0.59/+1.04)  weight-matched +0.02507
+[10:22:13] [str_lowturn] null 2: refit +0.02551 (t +0.05/+0.82)  weight-matched +0.02521
+[10:23:21] [str_lowturn] null 3: refit +0.02525 (t +0.16/+1.46)  weight-matched +0.02521
+[10:24:26] [str_lowturn] null 4: refit +0.02546 (t -0.16/+0.08)  weight-matched +0.02584
+[10:25:32] [str_lowturn] null 5: refit +0.02553 (t +0.79/+0.24)  weight-matched +0.02537
+[10:26:31] [str_lowturn] null 6: refit +0.02547 (t +0.63/-1.17)  weight-matched +0.02547
+[10:27:23] [str_lowturn] null 7: refit +0.02545 (t +1.71/-1.31)  weight-matched +0.02559
+[10:29:32] [str_lowturn] null 8: refit +0.02533 (t -1.28/-2.11)  weight-matched +0.02537
+[10:30:46] [str_lowturn] null 9: refit +0.02547 (t +0.12/+0.09)  weight-matched +0.02509
+[10:32:35] [str_lowturn] null 10: refit +0.02553 (t +0.07/+0.94)  weight-matched +0.02516
+[10:34:39] [str_lowturn] null 11: refit +0.02552 (t -0.12/-0.72)  weight-matched +0.02478
+[10:36:13] [str_lowturn] null 12: refit +0.02550 (t -1.31/+0.81)  weight-matched +0.02531
+[10:37:19] [str_lowturn] null 13: refit +0.02565 (t +0.11/-2.04)  weight-matched +0.02586
+[10:38:40] [str_lowturn] null 14: refit +0.02511 (t +2.91/-1.09)  weight-matched +0.02575
+[10:39:55] [str_lowturn] null 15: refit +0.02547 (t +0.40/+0.84)  weight-matched +0.02543
+[10:40:38] [str_lowturn] null 16: refit +0.02559 (t -0.13/-0.84)  weight-matched +0.02543
+[10:41:36] [str_lowturn] null 17: refit +0.02561 (t -0.04/-0.35)  weight-matched +0.02589
+[10:42:30] [str_lowturn] null 18: refit +0.02532 (t +1.93/+0.85)  weight-matched +0.02527
+[10:43:22] [str_lowturn] null 19: refit +0.02549 (t -1.94/-0.31)  weight-matched +0.02571
+[10:43:22] [str_lowturn] gates {'g1_pooled_t': True, 'g2_both_halves_right_sign': True, 'g3_sector_both_sides_t': True, 'g4_zero_offset_flips_book_increment': False, 'g5_year_share': True, 'g6_beats_null_p80': True, 'g7_gate_a': True} -> DEAD
+[10:48:29] [str_lowturn] descriptive {"median_spearman_vs_r_5d": 0.2762178550656526, "median_spearman_vs_r_21d": 0.5970792536139939, "median_spearman_vs_momentum_12_1": 5.9335728247840924e-05, "median_spearman_vs_io_gap": 0.06827589520390917, "median_spearman_vs_volatility_60": -0.009336323727043606, "median_spearman_vs_pct_from_high_252": 0.26196504873536297, "median_spearman_vs_seas": 0.004677811454446058, "eligible_only_ic": {"mean": -0.01559481427493688, "t": -2.390916767446216, "n": 3272}, "icw10_io_increment": {"icw10_io": 0.025996052124453405, "icw10_io_plus_cand": 0.026773985362957504, "increment_mean40": 0.0007779332385040901, "offsets_increment_gt_0": 28, "cand_weight_fit_odd_even": [-0.014745842190895583, -0.08265727770013621]}}
+[10:48:29] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a79a9999a5df053aa/final/out/volshock/str_lowturn_screen_report.json (2007s)
