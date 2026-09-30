@@ -1,0 +1,8 @@
+[11:56:33] [B] cap2000: 2,538,257 rows, 2,766 tickers, 1652 dates 2020-01-02..2026-07-30
+[11:56:46] [B cap2000] books built {'rows': 2538257, 'tickers': 2766, 'calendar_dates': 1652, 'first': '2020-01-02', 'last': '2026-07-30', 'mean_pool_names_per_date': 1536.475181598063, 'mean_book_names_per_date': {'icw9_seas': 152.37106537530266, 'icw8': 152.37469733656175}} (17s)
+[11:56:47] [B cap2000] SEP 972 tickers 2019-12..2026-09 (18s)
+[11:56:48] [B cap2000] icw9_seas div basis {'dates': 1652, 'names': 251717, 'missing_in_sep': 0, 'series_end_floor': 1385, 'gross_max_abs_diff': np.float64(4.139238729550243e-09), 'worst': '2020-12-29', 'gross_adj_max_abs_diff': np.float64(4.139238729550243e-09), 'mismatch_not_floor': 0}; 0 name-label mismatches > 1e-6, first []
+[11:56:50] [B cap2000] icw8 div basis {'dates': 1652, 'names': 251723, 'missing_in_sep': 0, 'series_end_floor': 1141, 'gross_max_abs_diff': np.float64(4.144691478913387e-09), 'worst': '2020-12-29', 'gross_adj_max_abs_diff': np.float64(4.144691478913387e-09), 'mismatch_not_floor': 0}; 0 name-label mismatches > 1e-6, first []
+[11:56:51] [B cap2000 full] icw9_seas: book -0.0192 (1/40) pool -0.0487 sel +0.0294 | SPYh -0.0271 IWMh +0.0032 IWM.8h +0.0300
+[11:56:51] [B cap2000 full] icw8: book -0.0156 (1/40) pool -0.0487 sel +0.0330 | SPYh -0.0222 IWMh +0.0081 IWM.8h +0.0349
+[11:56:51] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a224b0b3e3e4eaba0/final/out/pool/parts/B_cap2000.json (23s)
