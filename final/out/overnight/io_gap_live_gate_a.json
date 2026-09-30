@@ -1,0 +1,721 @@
+{
+ "t": "2026-09-25",
+ "open_populated": {
+  "2026-05": {
+   "rows": 125097,
+   "open_nan": 0.0,
+   "open_nonpos": 0.0
+  },
+  "2026-06": {
+   "rows": 132022,
+   "open_nan": 0.0,
+   "open_nonpos": 0.0
+  },
+  "2026-07": {
+   "rows": 138799,
+   "open_nan": 0.0,
+   "open_nonpos": 0.0
+  },
+  "2026-08": {
+   "rows": 132810,
+   "open_nan": 0.0,
+   "open_nonpos": 0.0
+  },
+  "2026-09": {
+   "rows": 126256,
+   "open_nan": 0.0,
+   "open_nonpos": 0.0
+  }
+ },
+ "cross_section": {
+  "n": 3048,
+  "coverage_guarded": 0.9655511811023622,
+  "coverage_raw": 0.9655511811023622,
+  "guarded_boundaries": [
+   "2026-04|2026-09",
+   "2026-07|2026-09",
+   "2026-08|2026-09"
+  ],
+  "file_mtimes_used": {
+   "2025-07": "2026-09-09 05:03",
+   "2025-08": "2026-09-09 05:03",
+   "2025-09": "2026-09-09 05:03",
+   "2025-10": "2026-09-09 05:03",
+   "2025-11": "2026-09-09 05:03",
+   "2025-12": "2026-09-09 05:04",
+   "2026-01": "2026-09-09 05:04",
+   "2026-02": "2026-09-09 05:04",
+   "2026-03": "2026-09-09 05:04",
+   "2026-04": "2026-09-09 05:04",
+   "2026-05": "2026-09-09 05:04",
+   "2026-06": "2026-09-09 05:05",
+   "2026-07": "2026-09-09 05:05",
+   "2026-08": "2026-09-09 05:05",
+   "2026-09": "2026-09-30 00:52"
+  },
+  "spliced_rows_in_window": 3041,
+  "dropped_splitlike_rows_in_window": 1,
+  "dropped_splitlike_tickers": [
+   "RUSHA"
+  ],
+  "spearman_guarded_vs_raw": 0.9999472382420241,
+  "n_changed_gt_1e-12": 460,
+  "max_abs_change": 0.05826890812397578,
+  "median_abs_change": 0.0,
+  "top_changes": [
+   {
+    "ticker": "TPVG",
+    "guarded": -0.0768228016822835,
+    "raw": -0.018553893558307725,
+    "d": -0.05826890812397578,
+    "actions_after_0908": "dividend:2026-09-16:0.29"
+   },
+   {
+    "ticker": "INSW",
+    "guarded": 0.09609677163229424,
+    "raw": 0.1443558018182119,
+    "d": -0.04825903018591765,
+    "actions_after_0908": "dividend:2026-09-10:5.05"
+   },
+   {
+    "ticker": "RWT",
+    "guarded": -0.5607367666398496,
+    "raw": -0.5134838817893042,
+    "d": -0.04725288485054546,
+    "actions_after_0908": "dividend:2026-09-23:0.18"
+   },
+   {
+    "ticker": "TCPC",
+    "guarded": 0.16315249864387577,
+    "raw": 0.2064796709870126,
+    "d": -0.04332717234313682,
+    "actions_after_0908": "dividend:2026-09-16:0.17"
+   },
+   {
+    "ticker": "RUSHA",
+    "guarded": 0.12669454539643996,
+    "raw": 0.08860278078032321,
+    "d": 0.03809176461611674,
+    "actions_after_0908": "dividend:2026-09-09:0.14"
+   },
+   {
+    "ticker": "FSK",
+    "guarded": 0.12438523659228345,
+    "raw": 0.16183408928499993,
+    "d": -0.03744885269271647,
+    "actions_after_0908": "dividend:2026-09-16:0.44"
+   },
+   {
+    "ticker": "TRTX",
+    "guarded": -0.5365769380716077,
+    "raw": -0.49930224685544067,
+    "d": -0.037274691216167,
+    "actions_after_0908": ""
+   },
+   {
+    "ticker": "BCSF",
+    "guarded": -0.5663122927224274,
+    "raw": -0.5290728089148115,
+    "d": -0.03723948380761599,
+    "actions_after_0908": "dividend:2026-09-15:0.42"
+   },
+   {
+    "ticker": "PSBD",
+    "guarded": 0.015551173748721975,
+    "raw": 0.05155999628597907,
+    "d": -0.036008822537257096,
+    "actions_after_0908": "dividend:2026-09-25:0.36"
+   },
+   {
+    "ticker": "WU",
+    "guarded": -0.2797840515698756,
+    "raw": -0.244465065213221,
+    "d": -0.03531898635665462,
+    "actions_after_0908": "dividend:2026-09-16:0.235"
+   },
+   {
+    "ticker": "NMFC",
+    "guarded": -0.04638221426744314,
+    "raw": -0.011281345136323284,
+    "d": -0.03510086913111986,
+    "actions_after_0908": "dividend:2026-09-16:0.25"
+   },
+   {
+    "ticker": "WHF",
+    "guarded": 0.25391452331711833,
+    "raw": 0.28855315765313294,
+    "d": -0.034638634336014607,
+    "actions_after_0908": "dividend:2026-09-21:0.25"
+   }
+  ]
+ },
+ "outliers_gt_50pct": {
+  "valid_days_checked": 750979,
+  "n": 51,
+  "rows": [
+   {
+    "ticker": "AGEN",
+    "date": "2026-07-13",
+    "on_ret": 0.617910447761194,
+    "close": 6.12,
+    "open": 5.42,
+    "actions": ""
+   },
+   {
+    "ticker": "AGL",
+    "date": "2026-05-07",
+    "on_ret": 0.5651705565529624,
+    "close": 60.66,
+    "open": 43.59,
+    "actions": ""
+   },
+   {
+    "ticker": "ALLO",
+    "date": "2026-04-13",
+    "on_ret": 0.5036764705882353,
+    "close": 3.06,
+    "open": 4.09,
+    "actions": ""
+   },
+   {
+    "ticker": "BLZE",
+    "date": "2026-05-05",
+    "on_ret": 0.601293103448276,
+    "close": 7.59,
+    "open": 7.43,
+    "actions": ""
+   },
+   {
+    "ticker": "BNC",
+    "date": "2026-09-08",
+    "on_ret": 0.5386819484240686,
+    "close": 5.25,
+    "open": 5.37,
+    "actions": ""
+   },
+   {
+    "ticker": "BWMN",
+    "date": "2026-08-10",
+    "on_ret": 0.5552699228791775,
+    "close": 42.42,
+    "open": 42.35,
+    "actions": ""
+   },
+   {
+    "ticker": "CAPR",
+    "date": "2026-08-14",
+    "on_ret": 0.819477434679335,
+    "close": 6.65,
+    "open": 7.66,
+    "actions": ""
+   },
+   {
+    "ticker": "CELC",
+    "date": "2025-10-20",
+    "on_ret": 0.5248267898383372,
+    "close": 70.58,
+    "open": 79.23,
+    "actions": ""
+   },
+   {
+    "ticker": "CHRN",
+    "date": "2025-12-30",
+    "on_ret": 0.6025641025641025,
+    "close": 10.58,
+    "open": 8.75,
+    "actions": ""
+   },
+   {
+    "ticker": "CRVS",
+    "date": "2026-01-20",
+    "on_ret": 0.6782608695652173,
+    "close": 21.41,
+    "open": 13.51,
+    "actions": ""
+   },
+   {
+    "ticker": "CYPH",
+    "date": "2025-10-06",
+    "on_ret": 0.50093808630394,
+    "close": 0.764,
+    "open": 0.8,
+    "actions": ""
+   },
+   {
+    "ticker": "DFTX",
+    "date": "2026-06-22",
+    "on_ret": 0.5759803921568626,
+    "close": 36.67,
+    "open": 38.58,
+    "actions": ""
+   },
+   {
+    "ticker": "DOCS",
+    "date": "2026-08-07",
+    "on_ret": 0.8811713455953534,
+    "close": 27.4,
+    "open": 38.865,
+    "actions": ""
+   },
+   {
+    "ticker": "EVC",
+    "date": "2026-05-06",
+    "on_ret": 0.6307614871626721,
+    "close": 7.69,
+    "open": 6.49,
+    "actions": ""
+   },
+   {
+    "ticker": "EVMN",
+    "date": "2026-02-10",
+    "on_ret": 0.7374926427310183,
+    "close": 29.03,
+    "open": 29.52,
+    "actions": ""
+   },
+   {
+    "ticker": "FAC",
+    "date": "2026-06-09",
+    "on_ret": 0.6806722689075627,
+    "close": 16.0,
+    "open": 20.0,
+    "actions": "tickerchangeto:2026-06-08:nan;tickerchangefrom:2026-06-08:nan;spacmerger:2026-06-08:nan;sicchangeto:2026-06-08:3690.0;sicchangefrom:2026-06-08:6770.0;namechangeto:2026-06-08:nan;namechangefrom:2026-06-08:nan"
+   },
+   {
+    "ticker": "FIRY",
+    "date": "2026-07-28",
+    "on_ret": 0.6704545454545454,
+    "close": 9.84,
+    "open": 13.965,
+    "actions": ""
+   },
+   {
+    "ticker": "GBTG",
+    "date": "2026-05-04",
+    "on_ret": 0.5691399662731872,
+    "close": 9.34,
+    "open": 9.305,
+    "actions": ""
+   },
+   {
+    "ticker": "GLND",
+    "date": "2026-03-26",
+    "on_ret": 0.7982989064398542,
+    "close": 13.0,
+    "open": 14.8,
+    "actions": "tickerchangeto:2026-03-26:nan;tickerchangefrom:2026-03-26:nan;spacmerger:2026-03-26:nan;sicchangeto:2026-03-26:1381.0;sicchangefrom:2026-03-26:6770.0;namechangeto:2026-03-26:nan;namechangefrom:2026-03-26:nan;relation:2026-03-25:nan"
+   },
+   {
+    "ticker": "GPRO",
+    "date": "2026-09-01",
+    "on_ret": 0.5410958904109592,
+    "close": 1.23,
+    "open": 1.35,
+    "actions": ""
+   },
+   {
+    "ticker": "GTE",
+    "date": "2026-08-05",
+    "on_ret": 0.5124450951683748,
+    "close": 9.44,
+    "open": 10.33,
+    "actions": ""
+   },
+   {
+    "ticker": "INBX",
+    "date": "2025-10-24",
+    "on_ret": 0.7323695345557125,
+    "close": 57.29,
+    "open": 49.13,
+    "actions": ""
+   },
+   {
+    "ticker": "INBX",
+    "date": "2026-04-22",
+    "on_ret": 0.7593958135109422,
+    "close": 115.09,
+    "open": 147.93,
+    "actions": ""
+   },
+   {
+    "ticker": "INDP",
+    "date": "2025-12-24",
+    "on_ret": 0.5256410256410258,
+    "close": 2.65,
+    "open": 2.975,
+    "actions": ""
+   },
+   {
+    "ticker": "INOD",
+    "date": "2026-05-08",
+    "on_ret": 0.5977212971078001,
+    "close": 84.89,
+    "open": 72.92,
+    "actions": ""
+   },
+   {
+    "ticker": "KOD",
+    "date": "2026-03-26",
+    "on_ret": 0.5564835164835165,
+    "close": 39.76,
+    "open": 35.41,
+    "actions": ""
+   },
+   {
+    "ticker": "LVWR",
+    "date": "2026-07-24",
+    "on_ret": 0.6428571428571428,
+    "close": 1.46,
+    "open": 1.265,
+    "actions": ""
+   },
+   {
+    "ticker": "MOVE",
+    "date": "2026-08-04",
+    "on_ret": 0.7472118959107804,
+    "close": 13.73,
+    "open": 18.8,
+    "actions": ""
+   },
+   {
+    "ticker": "MRNA",
+    "date": "2026-08-19",
+    "on_ret": 0.8463310038119444,
+    "close": 174.38,
+    "open": 116.245,
+    "actions": ""
+   },
+   {
+    "ticker": "MXL",
+    "date": "2026-04-24",
+    "on_ret": 0.5766423357664234,
+    "close": 60.32,
+    "open": 54.0,
+    "actions": ""
+   },
+   {
+    "ticker": "OMER",
+    "date": "2025-12-24",
+    "on_ret": 0.8788571428571431,
+    "close": 15.36,
+    "open": 16.44,
+    "actions": ""
+   },
+   {
+    "ticker": "OPTU",
+    "date": "2026-06-01",
+    "on_ret": 0.8085106382978722,
+    "close": 1.16,
+    "open": 1.19,
+    "actions": ""
+   },
+   {
+    "ticker": "OTLK",
+    "date": "2026-05-26",
+    "on_ret": 0.5000000000000002,
+    "close": 0.4,
+    "open": 0.465,
+    "actions": ""
+   },
+   {
+    "ticker": "PACS",
+    "date": "2025-11-20",
+    "on_ret": 0.5264408793820562,
+    "close": 26.14,
+    "open": 25.69,
+    "actions": ""
+   },
+   {
+    "ticker": "QTTB",
+    "date": "2025-12-01",
+    "on_ret": 0.9406392694063926,
+    "close": 3.82,
+    "open": 4.25,
+    "actions": ""
+   },
+   {
+    "ticker": "QTTB",
+    "date": "2026-07-13",
+    "on_ret": 0.6333630686886705,
+    "close": 21.38,
+    "open": 18.31,
+    "actions": ""
+   },
+   {
+    "ticker": "QURE",
+    "date": "2026-06-17",
+    "on_ret": 0.6135605779918488,
+    "close": 48.16,
+    "open": 43.55,
+    "actions": ""
+   },
+   {
+    "ticker": "REPL",
+    "date": "2026-05-29",
+    "on_ret": 0.6944444444444444,
+    "close": 8.69,
+    "open": 7.93,
+    "actions": ""
+   },
+   {
+    "ticker": "RHLD",
+    "date": "2025-11-03",
+    "on_ret": 0.7921531360304099,
+    "close": 144.97,
+    "open": 132.01,
+    "actions": ""
+   },
+   {
+    "ticker": "RXT",
+    "date": "2026-05-07",
+    "on_ret": 0.7511013215859031,
+    "close": 3.52,
+    "open": 3.975,
+    "actions": ""
+   },
+   {
+    "ticker": "SIDU",
+    "date": "2025-12-22",
+    "on_ret": 0.6767241379310343,
+    "close": 2.29,
+    "open": 1.945,
+    "actions": ""
+   },
+   {
+    "ticker": "SLAB",
+    "date": "2026-02-04",
+    "on_ret": 0.5022690674864589,
+    "close": 203.41,
+    "open": 205.24,
+    "actions": ""
+   },
+   {
+    "ticker": "SOC",
+    "date": "2025-12-18",
+    "on_ret": 0.5246212121212124,
+    "close": 8.25,
+    "open": 8.05,
+    "actions": ""
+   },
+   {
+    "ticker": "SRZN",
+    "date": "2026-09-24",
+    "on_ret": 0.8910891089108911,
+    "close": 33.68,
+    "open": 30.56,
+    "actions": ""
+   },
+   {
+    "ticker": "USDE",
+    "date": "2026-07-02",
+    "on_ret": 0.8653846153846153,
+    "close": 2.78,
+    "open": 3.88,
+    "actions": ""
+   },
+   {
+    "ticker": "UTZ",
+    "date": "2026-07-21",
+    "on_ret": 0.8899328859060402,
+    "close": 14.06,
+    "open": 14.08,
+    "actions": ""
+   },
+   {
+    "ticker": "VISN",
+    "date": "2026-04-17",
+    "on_ret": 0.5376459725595398,
+    "close": 19.09,
+    "open": 19.15,
+    "actions": "dividend:2026-04-17:10.0"
+   },
+   {
+    "ticker": "VISN",
+    "date": "2026-08-27",
+    "on_ret": 0.917423616845582,
+    "close": 11.63,
+    "open": 11.61,
+    "actions": "dividend:2026-08-28:5.0"
+   },
+   {
+    "ticker": "WHWK",
+    "date": "2025-10-16",
+    "on_ret": 0.6476190476190474,
+    "close": 2.61,
+    "open": 3.46,
+    "actions": ""
+   },
+   {
+    "ticker": "WVE",
+    "date": "2025-12-08",
+    "on_ret": 0.7122830440587449,
+    "close": 18.52,
+    "open": 12.825,
+    "actions": ""
+   },
+   {
+    "ticker": "ZD",
+    "date": "2026-03-03",
+    "on_ret": 0.5915744377008209,
+    "close": 41.48,
+    "open": 44.58,
+    "actions": ""
+   }
+  ]
+ },
+ "fresh_consistent_basis": {
+  "WHLR": {
+   "fresh_rows": 312,
+   "store_rows": 312,
+   "median_close": 4449.6,
+   "min_close_store_window": 0.68,
+   "spliced_days": [],
+   "dropped_days": [
+    "2026-09-01"
+   ],
+   "live_guarded": -4.092790305100143,
+   "live_raw": -4.092790305100143,
+   "fresh_consistent": -4.240089444895012,
+   "fresh_consistent_same_drops": -4.094973159512658,
+   "abs_diff_live_guarded_vs_fresh_same_drops": 0.0021828544125144234,
+   "abs_diff_live_raw_vs_fresh": 0.14729913979486842,
+   "abs_diff_live_guarded_vs_fresh": 0.14729913979486842,
+   "actions_after_0908": "split:2026-09-22:0.11111",
+   "in_cap150_cross": false
+  },
+  "HUBC": {
+   "fresh_rows": 312,
+   "store_rows": 312,
+   "median_close": 57625.0,
+   "min_close_store_window": 0.675,
+   "spliced_days": [],
+   "dropped_days": [
+    "2026-09-01"
+   ],
+   "live_guarded": -4.049305755831262,
+   "live_raw": -4.049305755831262,
+   "fresh_consistent": -4.029060795026931,
+   "fresh_consistent_same_drops": -4.048927746315278,
+   "abs_diff_live_guarded_vs_fresh_same_drops": 0.00037800951598399024,
+   "abs_diff_live_raw_vs_fresh": 0.020244960804331136,
+   "abs_diff_live_guarded_vs_fresh": 0.020244960804331136,
+   "actions_after_0908": "split:2026-09-14:0.04",
+   "in_cap150_cross": false
+  },
+  "ASX": {
+   "fresh_rows": 312,
+   "store_rows": 312,
+   "median_close": 21.215,
+   "min_close_store_window": 9.5,
+   "spliced_days": [
+    "2026-09-01"
+   ],
+   "dropped_days": [],
+   "live_guarded": -0.5335412368883401,
+   "live_raw": -0.5335412368883401,
+   "fresh_consistent": -0.5335412368883401,
+   "fresh_consistent_same_drops": -0.5335412368883401,
+   "abs_diff_live_guarded_vs_fresh_same_drops": 0.0,
+   "abs_diff_live_raw_vs_fresh": 0.0,
+   "abs_diff_live_guarded_vs_fresh": 0.0,
+   "actions_after_0908": "",
+   "in_cap150_cross": false
+  },
+  "BNTC": {
+   "fresh_rows": 312,
+   "store_rows": 312,
+   "median_close": 12.41,
+   "min_close_store_window": 9.59,
+   "spliced_days": [
+    "2026-09-01"
+   ],
+   "dropped_days": [],
+   "live_guarded": 0.29633002559932237,
+   "live_raw": 0.29633002559932237,
+   "fresh_consistent": 0.29633002559932237,
+   "fresh_consistent_same_drops": 0.29633002559932237,
+   "abs_diff_live_guarded_vs_fresh_same_drops": 0.0,
+   "abs_diff_live_raw_vs_fresh": 0.0,
+   "abs_diff_live_guarded_vs_fresh": 0.0,
+   "actions_after_0908": "",
+   "in_cap150_cross": true
+  },
+  "TPVG": {
+   "fresh_rows": 312,
+   "store_rows": 312,
+   "median_close": 5.6,
+   "min_close_store_window": 4.42,
+   "spliced_days": [
+    "2026-09-01"
+   ],
+   "dropped_days": [],
+   "live_guarded": -0.0768228016822835,
+   "live_raw": -0.018553893558307725,
+   "fresh_consistent": -0.07696465571472116,
+   "fresh_consistent_same_drops": -0.07696465571472116,
+   "abs_diff_live_guarded_vs_fresh_same_drops": 0.00014185403243766048,
+   "abs_diff_live_raw_vs_fresh": 0.05841076215641344,
+   "abs_diff_live_guarded_vs_fresh": 0.00014185403243766048,
+   "actions_after_0908": "dividend:2026-09-16:0.29",
+   "in_cap150_cross": true
+  },
+  "INSW": {
+   "fresh_rows": 312,
+   "store_rows": 312,
+   "median_close": 62.47,
+   "min_close_store_window": 37.03,
+   "spliced_days": [
+    "2026-09-01"
+   ],
+   "dropped_days": [],
+   "live_guarded": 0.09609677163229424,
+   "live_raw": 0.1443558018182119,
+   "fresh_consistent": 0.09610161202805376,
+   "fresh_consistent_same_drops": 0.09610161202805376,
+   "abs_diff_live_guarded_vs_fresh_same_drops": 4.840395759514449e-06,
+   "abs_diff_live_raw_vs_fresh": 0.048254189790158136,
+   "abs_diff_live_guarded_vs_fresh": 4.840395759514449e-06,
+   "actions_after_0908": "dividend:2026-09-10:5.05",
+   "in_cap150_cross": true
+  },
+  "RWT": {
+   "fresh_rows": 312,
+   "store_rows": 312,
+   "median_close": 5.59,
+   "min_close_store_window": 3.55,
+   "spliced_days": [
+    "2026-09-01"
+   ],
+   "dropped_days": [],
+   "live_guarded": -0.5607367666398496,
+   "live_raw": -0.5134838817893042,
+   "fresh_consistent": -0.5607154200675758,
+   "fresh_consistent_same_drops": -0.5607154200675758,
+   "abs_diff_live_guarded_vs_fresh_same_drops": 2.1346572273817088e-05,
+   "abs_diff_live_raw_vs_fresh": 0.047231538278271645,
+   "abs_diff_live_guarded_vs_fresh": 2.1346572273817088e-05,
+   "actions_after_0908": "dividend:2026-09-23:0.18",
+   "in_cap150_cross": true
+  },
+  "AAPL": {
+   "fresh_rows": 312,
+   "store_rows": 312,
+   "median_close": 269.89,
+   "min_close_store_window": 202.38,
+   "spliced_days": [
+    "2026-09-01"
+   ],
+   "dropped_days": [],
+   "live_guarded": 0.2198023193955565,
+   "live_raw": 0.2198023193955565,
+   "fresh_consistent": 0.2198023193955565,
+   "fresh_consistent_same_drops": 0.2198023193955565,
+   "abs_diff_live_guarded_vs_fresh_same_drops": 0.0,
+   "abs_diff_live_raw_vs_fresh": 0.0,
+   "abs_diff_live_guarded_vs_fresh": 0.0,
+   "actions_after_0908": "",
+   "in_cap150_cross": true
+  }
+ },
+ "api_calls": 8
+}

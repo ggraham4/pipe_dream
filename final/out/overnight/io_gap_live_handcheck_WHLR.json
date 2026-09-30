@@ -1,0 +1,19 @@
+{
+ "ticker": "WHLR",
+ "t": "2026-09-25",
+ "window": "2025-09-25..2026-09-25",
+ "hand_nvalid_guarded": 250,
+ "hand_io_gap_guarded": -4.092790305100144,
+ "live_io_gap": -4.092790305100143,
+ "abs_diff": 8.881784197001252e-16,
+ "hand_io_gap_unguarded": -4.092790305100144,
+ "live_io_gap_unguarded": -4.092790305100143,
+ "abs_diff_unguarded": 8.881784197001252e-16,
+ "guarded_days": [
+  [
+   "2026-09-01",
+   "drop"
+  ]
+ ],
+ "pass": true
+}

@@ -1,0 +1,19 @@
+{
+ "ticker": "AAPL",
+ "t": "2026-09-25",
+ "window": "2025-09-25..2026-09-25",
+ "hand_nvalid_guarded": 252,
+ "hand_io_gap_guarded": 0.2198023193955565,
+ "live_io_gap": 0.2198023193955565,
+ "abs_diff": 0.0,
+ "hand_io_gap_unguarded": 0.2198023193955565,
+ "live_io_gap_unguarded": 0.2198023193955565,
+ "abs_diff_unguarded": 0.0,
+ "guarded_days": [
+  [
+   "2026-09-01",
+   "splice"
+  ]
+ ],
+ "pass": true
+}

@@ -1,0 +1,61 @@
+{
+ "reference": "/Users/ggraham/pipe_dream/.claude/worktrees/overnight-intraday/final/out/overnight/io_gap_factor_v2.parquet",
+ "dates": {
+  "2008-01-02": {
+   "rows": 4303,
+   "finite": 3978,
+   "max_abs_diff": 7.105427357601002e-15,
+   "nan_pattern_equal": true,
+   "nvalid_equal": true,
+   "guarded_rows": 0,
+   "files": "2006-11..2008-01",
+   "pass": true
+  },
+  "2012-12-31": {
+   "rows": 3917,
+   "finite": 3652,
+   "max_abs_diff": 2.4868995751603507e-14,
+   "nan_pattern_equal": true,
+   "nvalid_equal": true,
+   "guarded_rows": 0,
+   "files": "2011-10..2012-12",
+   "pass": true
+  },
+  "2015-06-15": {
+   "rows": 4100,
+   "finite": 3851,
+   "max_abs_diff": 1.2545520178264269e-14,
+   "nan_pattern_equal": true,
+   "nvalid_equal": true,
+   "guarded_rows": 0,
+   "files": "2014-04..2015-06",
+   "pass": true
+  },
+  "2019-01-02": {
+   "rows": 3969,
+   "finite": 3710,
+   "max_abs_diff": 7.105427357601002e-15,
+   "nan_pattern_equal": true,
+   "nvalid_equal": true,
+   "guarded_rows": 0,
+   "files": "2017-11..2019-01",
+   "pass": true
+  },
+  "2019-12-31": {
+   "rows": 3970,
+   "finite": 3724,
+   "max_abs_diff": 9.769962616701378e-15,
+   "nan_pattern_equal": true,
+   "nvalid_equal": true,
+   "guarded_rows": 0,
+   "files": "2018-10..2019-12",
+   "pass": true
+  },
+  "loader_equals_frozen_load_sep": {
+   "date": "2019-12-31",
+   "rows": 1794885,
+   "equal": true
+  }
+ },
+ "pass": true
+}

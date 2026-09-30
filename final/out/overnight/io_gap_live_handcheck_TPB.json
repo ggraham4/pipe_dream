@@ -1,0 +1,19 @@
+{
+ "ticker": "TPB",
+ "t": "2026-09-25",
+ "window": "2025-09-25..2026-09-25",
+ "hand_nvalid_guarded": 252,
+ "hand_io_gap_guarded": -0.5715845143652091,
+ "live_io_gap": -0.5715845143652087,
+ "abs_diff": 3.3306690738754696e-16,
+ "hand_io_gap_unguarded": -0.5704129585726588,
+ "live_io_gap_unguarded": -0.5704129585726585,
+ "abs_diff_unguarded": 3.3306690738754696e-16,
+ "guarded_days": [
+  [
+   "2026-09-01",
+   "splice"
+  ]
+ ],
+ "pass": true
+}
