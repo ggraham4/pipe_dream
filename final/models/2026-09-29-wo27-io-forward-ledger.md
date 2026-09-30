@@ -328,3 +328,72 @@ restart.
 ## Results
 
 (Written after the pre-registration commit. Sections 0-8 above are unchanged.)
+
+### 2026-09-29 evening: isolation harness PASS 12/12; no live record yet
+
+The pre-registration was committed as **ebd1633** at 2026-09-29T21:12:18-04:00.
+Every io row written since then went to scratch stores under
+`/tmp/wo27_iso/runs/`. **No io record exists in the live store.**
+`prediction_ledger_io.csv` is absent there, and so is `prediction_ledger_seas.csv`:
+the seas ledger's first record is also W40.
+
+**Harness** (`final/src/overnight/wo27_isolation_test.py all`), output
+`final/out/overnight/wo27_isolation_test.json`:
+- The baseline is integration 9bdbfa7's pre-WO-27 `record_weekly.py` on the
+  same scratch inputs.
+- **All 12 modes PASS.**
+- In every mode, v3/ext/hedge/sue/seas/blend_seas content (`recorded_at`
+  removed) is identical to the baseline, and so are the record-log rows of
+  those ledgers.
+- In every mode, v3/ext/hedge recorded 2026-09-18 and the main store is
+  unchanged. The fingerprint covers out/reset2026, data/sharadar top level,
+  out/ top level, the SEP month dir mtimes and sha1 of v3/ext/hedge.
+
+Mode by mode (the expected skip or record happened in each):
+- **happy:** io recorded 3,057 rows, icw9_seas vs the seas CSV max |d| 0.0,
+  io coverage 96.5%.
+- **io_import / io_plan:** skipped, logged as `plan: …`.
+- **io_build:** skipped, logged.
+- **io_missing:** the real missing-file path was exercised (2026-03 removed),
+  skipped, logged.
+- **io_lowcov:** the real 70% floor fired at 48.1%, skipped, logged.
+- **io_record:** skipped, logged.
+- **io_half:** reported at the end, rc 1, after every other ledger had
+  recorded.
+- **io_guardfail:** rc 0 with the guard-log path unwritable.
+- **seas_skip:** the seas record was missing, so io was skipped at record time
+  ("seas ledger has no rows"), logged.
+- **second_run:** run 1 skipped io; run 2 recorded io against the seas CSV
+  (diff 0.0) and added nothing to any other ledger.
+
+**Iteration 1 of 3** was a code fix to match section 4. It changes no rule.
+- The first harness run found two problems:
+  - an io import or plan failure was only printed, never written to
+    `ledger_io_guard_log.csv`;
+  - a non-file guard-log path crashed `prefix_hashes`.
+- The fix, in `record_weekly.py`:
+  - `plan()` keeps the io plan error, and a real (non-`--plan`) run logs it
+    as `io_skipped` with no date;
+  - `prefix_hashes` uses `is_file()`.
+- Re-run: 12/12.
+
+**Live plan** (worktree code on the live store, 2026-09-29 21:28):
+- `record_weekly.py --plan` rc 0. Every ledger, io included, shows missing
+  weeks [].
+- Live ledger sha1: v3 963d5e3b, ext 1eba78b3, hedge 1c0738be (unchanged).
+
+**First record week: 2026-W40.** The expected panel date is 2026-10-02. It can
+be recorded by the first Retrain / `refresh_working_panel.py --record-weekly`
+after the panel has a W41 date (≥ 10-05). It is on time only if recorded by
+about 2026-10-09.
+
+**Disclosure: a skipped io week is usually lost, not deferred.**
+- `second_run` retried on the same panel.
+- In live, a skipped io date is retried at the next Retrain, which first
+  refreshes the panel. A refresh can change past cross-sections (the
+  seas_forward docstring: 5 names added to 09-24).
+- The retry then fails v3/seas pairing and logs `io_skipped` on every later
+  run. This is conservative, and such a retry would be `recorded_late` and
+  never counted anyway.
+- **Action:** a Retrain / `--record-weekly` must run between about 10-05 and
+  10-09. Otherwise the W40 seas and io records are both late and never count.

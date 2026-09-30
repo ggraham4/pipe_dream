@@ -1,0 +1,898 @@
+{
+ "modes": {
+  "baseline": {
+   "mode": "baseline",
+   "rc": 0,
+   "dates": {
+    "prediction_ledger_v3.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_ext.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_hedge.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_sue.csv": [],
+    "prediction_ledger_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_blend_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_io.csv": []
+   },
+   "content": {
+    "prediction_ledger_v3.csv": "7402b2cc97d49d565c2c56af8c994ae8cb1d14dc6751fd7cf68b663752938cef",
+    "prediction_ledger_ext.csv": "71b9e95113016080fd05fdebd1840b2cfe93cf7543950f3fc4958fa14f93be7e",
+    "prediction_ledger_hedge.csv": "b2cc37b3e1ae0ba79a1dc3c254aad3703510885f0766092007ec01aac47b54f0",
+    "prediction_ledger_sue.csv": null,
+    "prediction_ledger_seas.csv": "e74f3065f7a5216543940085a825c304ac674c2beb3b08476662417b70f5baf1",
+    "prediction_ledger_blend_seas.csv": "b7510dec4c74bd94988ebcbc510b49093ed613cc260ca61b9af0335e719c0e4a"
+   },
+   "log_other": "a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437",
+   "io_guard_logged": false,
+   "io_guard_rows": [],
+   "main_store_unchanged": true,
+   "main_store_changed": [],
+   "subprocess_rc": 0,
+   "log_tail": [
+    "  ],",
+    "  \"prediction_ledger_blend_seas.csv\": [",
+    "   \"2026-09-18\"",
+    "  ],",
+    "  \"prediction_ledger_io.csv\": []",
+    " },",
+    " \"log_other\": \"a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437\",",
+    " \"io_guard_logged\": false,",
+    " \"io_guard_rows\": [],",
+    " \"main_store_unchanged\": true,",
+    " \"main_store_changed\": []",
+    "}"
+   ]
+  },
+  "happy": {
+   "mode": "happy",
+   "rc": 0,
+   "dates": {
+    "prediction_ledger_v3.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_ext.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_hedge.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_sue.csv": [],
+    "prediction_ledger_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_blend_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_io.csv": [
+     "2026-09-18"
+    ]
+   },
+   "content": {
+    "prediction_ledger_v3.csv": "7402b2cc97d49d565c2c56af8c994ae8cb1d14dc6751fd7cf68b663752938cef",
+    "prediction_ledger_ext.csv": "71b9e95113016080fd05fdebd1840b2cfe93cf7543950f3fc4958fa14f93be7e",
+    "prediction_ledger_hedge.csv": "b2cc37b3e1ae0ba79a1dc3c254aad3703510885f0766092007ec01aac47b54f0",
+    "prediction_ledger_sue.csv": null,
+    "prediction_ledger_seas.csv": "e74f3065f7a5216543940085a825c304ac674c2beb3b08476662417b70f5baf1",
+    "prediction_ledger_blend_seas.csv": "b7510dec4c74bd94988ebcbc510b49093ed613cc260ca61b9af0335e719c0e4a"
+   },
+   "log_other": "a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437",
+   "io_guard_logged": false,
+   "io_guard_rows": [],
+   "io_rows": 3057,
+   "io_vs_seas_icw9_max_abs": 0.0,
+   "io_coverage": 0.9653254824991822,
+   "main_store_unchanged": true,
+   "main_store_changed": [],
+   "subprocess_rc": 0,
+   "log_tail": [
+    "   \"2026-09-18\"",
+    "  ]",
+    " },",
+    " \"log_other\": \"a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437\",",
+    " \"io_guard_logged\": false,",
+    " \"io_guard_rows\": [],",
+    " \"io_rows\": 3057,",
+    " \"io_vs_seas_icw9_max_abs\": 0.0,",
+    " \"io_coverage\": 0.9653254824991822,",
+    " \"main_store_unchanged\": true,",
+    " \"main_store_changed\": []",
+    "}"
+   ]
+  },
+  "io_import": {
+   "mode": "io_import",
+   "rc": 0,
+   "dates": {
+    "prediction_ledger_v3.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_ext.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_hedge.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_sue.csv": [],
+    "prediction_ledger_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_blend_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_io.csv": []
+   },
+   "content": {
+    "prediction_ledger_v3.csv": "7402b2cc97d49d565c2c56af8c994ae8cb1d14dc6751fd7cf68b663752938cef",
+    "prediction_ledger_ext.csv": "71b9e95113016080fd05fdebd1840b2cfe93cf7543950f3fc4958fa14f93be7e",
+    "prediction_ledger_hedge.csv": "b2cc37b3e1ae0ba79a1dc3c254aad3703510885f0766092007ec01aac47b54f0",
+    "prediction_ledger_sue.csv": null,
+    "prediction_ledger_seas.csv": "e74f3065f7a5216543940085a825c304ac674c2beb3b08476662417b70f5baf1",
+    "prediction_ledger_blend_seas.csv": "b7510dec4c74bd94988ebcbc510b49093ed613cc260ca61b9af0335e719c0e4a"
+   },
+   "log_other": "a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437",
+   "io_guard_logged": true,
+   "io_guard_rows": [
+    "2026-09-29T21:23:18.443788,io,,,io_skipped,plan: ImportError: FORCED io_forward import failure (isolation test)"
+   ],
+   "main_store_unchanged": true,
+   "main_store_changed": [],
+   "subprocess_rc": 0,
+   "log_tail": [
+    "   \"2026-09-18\"",
+    "  ],",
+    "  \"prediction_ledger_io.csv\": []",
+    " },",
+    " \"log_other\": \"a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437\",",
+    " \"io_guard_logged\": true,",
+    " \"io_guard_rows\": [",
+    "  \"2026-09-29T21:23:18.443788,io,,,io_skipped,plan: ImportError: FORCED io_forward import failure (isolation test)\"",
+    " ],",
+    " \"main_store_unchanged\": true,",
+    " \"main_store_changed\": []",
+    "}"
+   ]
+  },
+  "io_plan": {
+   "mode": "io_plan",
+   "rc": 0,
+   "dates": {
+    "prediction_ledger_v3.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_ext.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_hedge.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_sue.csv": [],
+    "prediction_ledger_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_blend_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_io.csv": []
+   },
+   "content": {
+    "prediction_ledger_v3.csv": "7402b2cc97d49d565c2c56af8c994ae8cb1d14dc6751fd7cf68b663752938cef",
+    "prediction_ledger_ext.csv": "71b9e95113016080fd05fdebd1840b2cfe93cf7543950f3fc4958fa14f93be7e",
+    "prediction_ledger_hedge.csv": "b2cc37b3e1ae0ba79a1dc3c254aad3703510885f0766092007ec01aac47b54f0",
+    "prediction_ledger_sue.csv": null,
+    "prediction_ledger_seas.csv": "e74f3065f7a5216543940085a825c304ac674c2beb3b08476662417b70f5baf1",
+    "prediction_ledger_blend_seas.csv": "b7510dec4c74bd94988ebcbc510b49093ed613cc260ca61b9af0335e719c0e4a"
+   },
+   "log_other": "a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437",
+   "io_guard_logged": true,
+   "io_guard_rows": [
+    "2026-09-29T21:23:45.721102,io,,,io_skipped,plan: RuntimeError: FORCED io side_ledgers failure (isolation test)"
+   ],
+   "main_store_unchanged": true,
+   "main_store_changed": [],
+   "subprocess_rc": 0,
+   "log_tail": [
+    "   \"2026-09-18\"",
+    "  ],",
+    "  \"prediction_ledger_io.csv\": []",
+    " },",
+    " \"log_other\": \"a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437\",",
+    " \"io_guard_logged\": true,",
+    " \"io_guard_rows\": [",
+    "  \"2026-09-29T21:23:45.721102,io,,,io_skipped,plan: RuntimeError: FORCED io side_ledgers failure (isolation test)\"",
+    " ],",
+    " \"main_store_unchanged\": true,",
+    " \"main_store_changed\": []",
+    "}"
+   ]
+  },
+  "io_build": {
+   "mode": "io_build",
+   "rc": 0,
+   "dates": {
+    "prediction_ledger_v3.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_ext.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_hedge.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_sue.csv": [],
+    "prediction_ledger_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_blend_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_io.csv": []
+   },
+   "content": {
+    "prediction_ledger_v3.csv": "7402b2cc97d49d565c2c56af8c994ae8cb1d14dc6751fd7cf68b663752938cef",
+    "prediction_ledger_ext.csv": "71b9e95113016080fd05fdebd1840b2cfe93cf7543950f3fc4958fa14f93be7e",
+    "prediction_ledger_hedge.csv": "b2cc37b3e1ae0ba79a1dc3c254aad3703510885f0766092007ec01aac47b54f0",
+    "prediction_ledger_sue.csv": null,
+    "prediction_ledger_seas.csv": "e74f3065f7a5216543940085a825c304ac674c2beb3b08476662417b70f5baf1",
+    "prediction_ledger_blend_seas.csv": "b7510dec4c74bd94988ebcbc510b49093ed613cc260ca61b9af0335e719c0e4a"
+   },
+   "log_other": "a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437",
+   "io_guard_logged": true,
+   "io_guard_rows": [
+    "2026-09-29T21:24:12.926889,io,2026-09-18,2026-W38,io_skipped,date: RuntimeError: FORCED build_io_rows failure (isolation test)"
+   ],
+   "main_store_unchanged": true,
+   "main_store_changed": [],
+   "subprocess_rc": 0,
+   "log_tail": [
+    "   \"2026-09-18\"",
+    "  ],",
+    "  \"prediction_ledger_io.csv\": []",
+    " },",
+    " \"log_other\": \"a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437\",",
+    " \"io_guard_logged\": true,",
+    " \"io_guard_rows\": [",
+    "  \"2026-09-29T21:24:12.926889,io,2026-09-18,2026-W38,io_skipped,date: RuntimeError: FORCED build_io_rows failure (isolation test)\"",
+    " ],",
+    " \"main_store_unchanged\": true,",
+    " \"main_store_changed\": []",
+    "}"
+   ]
+  },
+  "io_missing": {
+   "mode": "io_missing",
+   "rc": 0,
+   "dates": {
+    "prediction_ledger_v3.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_ext.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_hedge.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_sue.csv": [],
+    "prediction_ledger_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_blend_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_io.csv": []
+   },
+   "content": {
+    "prediction_ledger_v3.csv": "7402b2cc97d49d565c2c56af8c994ae8cb1d14dc6751fd7cf68b663752938cef",
+    "prediction_ledger_ext.csv": "71b9e95113016080fd05fdebd1840b2cfe93cf7543950f3fc4958fa14f93be7e",
+    "prediction_ledger_hedge.csv": "b2cc37b3e1ae0ba79a1dc3c254aad3703510885f0766092007ec01aac47b54f0",
+    "prediction_ledger_sue.csv": null,
+    "prediction_ledger_seas.csv": "e74f3065f7a5216543940085a825c304ac674c2beb3b08476662417b70f5baf1",
+    "prediction_ledger_blend_seas.csv": "b7510dec4c74bd94988ebcbc510b49093ed613cc260ca61b9af0335e719c0e4a"
+   },
+   "log_other": "a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437",
+   "io_guard_logged": true,
+   "io_guard_rows": [
+    "2026-09-29T21:24:50.431011,io,2026-09-18,2026-W38,io_skipped,date: SystemExit: io_gap_live: SEP month file missing: /tmp/wo27_iso/runs/io_missing/sep_missing_one/2026-03.parquet"
+   ],
+   "main_store_unchanged": true,
+   "main_store_changed": [],
+   "subprocess_rc": 0,
+   "log_tail": [
+    "   \"2026-09-18\"",
+    "  ],",
+    "  \"prediction_ledger_io.csv\": []",
+    " },",
+    " \"log_other\": \"a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437\",",
+    " \"io_guard_logged\": true,",
+    " \"io_guard_rows\": [",
+    "  \"2026-09-29T21:24:50.431011,io,2026-09-18,2026-W38,io_skipped,date: SystemExit: io_gap_live: SEP month file missing: /tmp/wo27_iso/runs/io_missing/sep_missing_one/2026-03.parquet\"",
+    " ],",
+    " \"main_store_unchanged\": true,",
+    " \"main_store_changed\": []",
+    "}"
+   ]
+  },
+  "io_lowcov": {
+   "mode": "io_lowcov",
+   "rc": 0,
+   "dates": {
+    "prediction_ledger_v3.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_ext.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_hedge.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_sue.csv": [],
+    "prediction_ledger_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_blend_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_io.csv": []
+   },
+   "content": {
+    "prediction_ledger_v3.csv": "7402b2cc97d49d565c2c56af8c994ae8cb1d14dc6751fd7cf68b663752938cef",
+    "prediction_ledger_ext.csv": "71b9e95113016080fd05fdebd1840b2cfe93cf7543950f3fc4958fa14f93be7e",
+    "prediction_ledger_hedge.csv": "b2cc37b3e1ae0ba79a1dc3c254aad3703510885f0766092007ec01aac47b54f0",
+    "prediction_ledger_sue.csv": null,
+    "prediction_ledger_seas.csv": "e74f3065f7a5216543940085a825c304ac674c2beb3b08476662417b70f5baf1",
+    "prediction_ledger_blend_seas.csv": "b7510dec4c74bd94988ebcbc510b49093ed613cc260ca61b9af0335e719c0e4a"
+   },
+   "log_other": "a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437",
+   "io_guard_logged": true,
+   "io_guard_rows": [
+    "2026-09-29T21:25:31.526285,io,2026-09-18,2026-W38,io_skipped,date: SystemExit: io: io_gap coverage 48.1% < 70% of 3057 rows on 2026-09-18"
+   ],
+   "main_store_unchanged": true,
+   "main_store_changed": [],
+   "subprocess_rc": 0,
+   "log_tail": [
+    "   \"2026-09-18\"",
+    "  ],",
+    "  \"prediction_ledger_io.csv\": []",
+    " },",
+    " \"log_other\": \"a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437\",",
+    " \"io_guard_logged\": true,",
+    " \"io_guard_rows\": [",
+    "  \"2026-09-29T21:25:31.526285,io,2026-09-18,2026-W38,io_skipped,date: SystemExit: io: io_gap coverage 48.1% < 70% of 3057 rows on 2026-09-18\"",
+    " ],",
+    " \"main_store_unchanged\": true,",
+    " \"main_store_changed\": []",
+    "}"
+   ]
+  },
+  "io_record": {
+   "mode": "io_record",
+   "rc": 0,
+   "dates": {
+    "prediction_ledger_v3.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_ext.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_hedge.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_sue.csv": [],
+    "prediction_ledger_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_blend_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_io.csv": []
+   },
+   "content": {
+    "prediction_ledger_v3.csv": "7402b2cc97d49d565c2c56af8c994ae8cb1d14dc6751fd7cf68b663752938cef",
+    "prediction_ledger_ext.csv": "71b9e95113016080fd05fdebd1840b2cfe93cf7543950f3fc4958fa14f93be7e",
+    "prediction_ledger_hedge.csv": "b2cc37b3e1ae0ba79a1dc3c254aad3703510885f0766092007ec01aac47b54f0",
+    "prediction_ledger_sue.csv": null,
+    "prediction_ledger_seas.csv": "e74f3065f7a5216543940085a825c304ac674c2beb3b08476662417b70f5baf1",
+    "prediction_ledger_blend_seas.csv": "b7510dec4c74bd94988ebcbc510b49093ed613cc260ca61b9af0335e719c0e4a"
+   },
+   "log_other": "a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437",
+   "io_guard_logged": true,
+   "io_guard_rows": [
+    "2026-09-29T21:26:11.517451,io,2026-09-18,2026-W38,io_skipped,record: RuntimeError: FORCED record_io failure (isolation test)"
+   ],
+   "main_store_unchanged": true,
+   "main_store_changed": [],
+   "subprocess_rc": 0,
+   "log_tail": [
+    "   \"2026-09-18\"",
+    "  ],",
+    "  \"prediction_ledger_io.csv\": []",
+    " },",
+    " \"log_other\": \"a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437\",",
+    " \"io_guard_logged\": true,",
+    " \"io_guard_rows\": [",
+    "  \"2026-09-29T21:26:11.517451,io,2026-09-18,2026-W38,io_skipped,record: RuntimeError: FORCED record_io failure (isolation test)\"",
+    " ],",
+    " \"main_store_unchanged\": true,",
+    " \"main_store_changed\": []",
+    "}"
+   ]
+  },
+  "io_half": {
+   "mode": "io_half",
+   "rc": 1,
+   "dates": {
+    "prediction_ledger_v3.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_ext.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_hedge.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_sue.csv": [],
+    "prediction_ledger_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_blend_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_io.csv": [
+     "2026-09-18"
+    ]
+   },
+   "content": {
+    "prediction_ledger_v3.csv": "7402b2cc97d49d565c2c56af8c994ae8cb1d14dc6751fd7cf68b663752938cef",
+    "prediction_ledger_ext.csv": "71b9e95113016080fd05fdebd1840b2cfe93cf7543950f3fc4958fa14f93be7e",
+    "prediction_ledger_hedge.csv": "b2cc37b3e1ae0ba79a1dc3c254aad3703510885f0766092007ec01aac47b54f0",
+    "prediction_ledger_sue.csv": null,
+    "prediction_ledger_seas.csv": "e74f3065f7a5216543940085a825c304ac674c2beb3b08476662417b70f5baf1",
+    "prediction_ledger_blend_seas.csv": "b7510dec4c74bd94988ebcbc510b49093ed613cc260ca61b9af0335e719c0e4a"
+   },
+   "log_other": "a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437",
+   "io_guard_logged": true,
+   "io_guard_rows": [
+    "2026-09-29T21:26:52.851331,io,2026-09-18,2026-W38,io_skipped,record: RuntimeError: FORCED failure AFTER the io append (isolation test)"
+   ],
+   "io_rows": 3057,
+   "io_vs_seas_icw9_max_abs": 0.0,
+   "io_coverage": 0.9653254824991822,
+   "main_store_unchanged": true,
+   "main_store_changed": [],
+   "subprocess_rc": 0,
+   "log_tail": [
+    " \"log_other\": \"a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437\",",
+    " \"io_guard_logged\": true,",
+    " \"io_guard_rows\": [",
+    "  \"2026-09-29T21:26:52.851331,io,2026-09-18,2026-W38,io_skipped,record: RuntimeError: FORCED failure AFTER the io append (isolation test)\"",
+    " ],",
+    " \"io_rows\": 3057,",
+    " \"io_vs_seas_icw9_max_abs\": 0.0,",
+    " \"io_coverage\": 0.9653254824991822,",
+    " \"main_store_unchanged\": true,",
+    " \"main_store_changed\": []",
+    "}",
+    "RECORD_WEEKLY FAILED: SUE/side-ledger post-record problem (v3/ext/hedge recorded): prediction_ledger_io.csv 2026-09-18: record raised AFTER appending (FORCED failure AFTER the io append (isolation test)); half-written record, fix by hand"
+   ]
+  },
+  "io_guardfail": {
+   "mode": "io_guardfail",
+   "rc": 0,
+   "dates": {
+    "prediction_ledger_v3.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_ext.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_hedge.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_sue.csv": [],
+    "prediction_ledger_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_blend_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_io.csv": []
+   },
+   "content": {
+    "prediction_ledger_v3.csv": "7402b2cc97d49d565c2c56af8c994ae8cb1d14dc6751fd7cf68b663752938cef",
+    "prediction_ledger_ext.csv": "71b9e95113016080fd05fdebd1840b2cfe93cf7543950f3fc4958fa14f93be7e",
+    "prediction_ledger_hedge.csv": "b2cc37b3e1ae0ba79a1dc3c254aad3703510885f0766092007ec01aac47b54f0",
+    "prediction_ledger_sue.csv": null,
+    "prediction_ledger_seas.csv": "e74f3065f7a5216543940085a825c304ac674c2beb3b08476662417b70f5baf1",
+    "prediction_ledger_blend_seas.csv": "b7510dec4c74bd94988ebcbc510b49093ed613cc260ca61b9af0335e719c0e4a"
+   },
+   "log_other": "a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437",
+   "io_guard_logged": false,
+   "io_guard_rows": [],
+   "main_store_unchanged": true,
+   "main_store_changed": [],
+   "subprocess_rc": 0,
+   "log_tail": [
+    "  ],",
+    "  \"prediction_ledger_blend_seas.csv\": [",
+    "   \"2026-09-18\"",
+    "  ],",
+    "  \"prediction_ledger_io.csv\": []",
+    " },",
+    " \"log_other\": \"a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437\",",
+    " \"io_guard_logged\": false,",
+    " \"io_guard_rows\": [],",
+    " \"main_store_unchanged\": true,",
+    " \"main_store_changed\": []",
+    "}"
+   ]
+  },
+  "seas_skip": {
+   "mode": "seas_skip",
+   "rc": 0,
+   "dates": {
+    "prediction_ledger_v3.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_ext.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_hedge.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_sue.csv": [],
+    "prediction_ledger_seas.csv": [],
+    "prediction_ledger_blend_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_io.csv": []
+   },
+   "content": {
+    "prediction_ledger_v3.csv": "7402b2cc97d49d565c2c56af8c994ae8cb1d14dc6751fd7cf68b663752938cef",
+    "prediction_ledger_ext.csv": "71b9e95113016080fd05fdebd1840b2cfe93cf7543950f3fc4958fa14f93be7e",
+    "prediction_ledger_hedge.csv": "b2cc37b3e1ae0ba79a1dc3c254aad3703510885f0766092007ec01aac47b54f0",
+    "prediction_ledger_sue.csv": null,
+    "prediction_ledger_seas.csv": null,
+    "prediction_ledger_blend_seas.csv": "b7510dec4c74bd94988ebcbc510b49093ed613cc260ca61b9af0335e719c0e4a"
+   },
+   "log_other": "e52cbb061ad7cb03ceeb55a2fb4491462d1f5d363dc983460d2e7e969c4cbaa3",
+   "io_guard_logged": true,
+   "io_guard_rows": [
+    "2026-09-29T21:27:53.142785,io,2026-09-18,2026-W38,io_skipped,record: SystemExit: io pairing: seas ledger has no rows for 2026-09-18 (seas skipped?)"
+   ],
+   "main_store_unchanged": true,
+   "main_store_changed": [],
+   "subprocess_rc": 0,
+   "log_tail": [
+    "   \"2026-09-18\"",
+    "  ],",
+    "  \"prediction_ledger_io.csv\": []",
+    " },",
+    " \"log_other\": \"e52cbb061ad7cb03ceeb55a2fb4491462d1f5d363dc983460d2e7e969c4cbaa3\",",
+    " \"io_guard_logged\": true,",
+    " \"io_guard_rows\": [",
+    "  \"2026-09-29T21:27:53.142785,io,2026-09-18,2026-W38,io_skipped,record: SystemExit: io pairing: seas ledger has no rows for 2026-09-18 (seas skipped?)\"",
+    " ],",
+    " \"main_store_unchanged\": true,",
+    " \"main_store_changed\": []",
+    "}"
+   ]
+  },
+  "second_run": {
+   "mode": "second_run",
+   "run1_rc": 0,
+   "run1_io_dates": [],
+   "run2_new_other_records": 0,
+   "rc": 0,
+   "dates": {
+    "prediction_ledger_v3.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_ext.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_hedge.csv": [
+     "2026-09-08",
+     "2026-09-18"
+    ],
+    "prediction_ledger_sue.csv": [],
+    "prediction_ledger_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_blend_seas.csv": [
+     "2026-09-18"
+    ],
+    "prediction_ledger_io.csv": [
+     "2026-09-18"
+    ]
+   },
+   "content": {
+    "prediction_ledger_v3.csv": "7402b2cc97d49d565c2c56af8c994ae8cb1d14dc6751fd7cf68b663752938cef",
+    "prediction_ledger_ext.csv": "71b9e95113016080fd05fdebd1840b2cfe93cf7543950f3fc4958fa14f93be7e",
+    "prediction_ledger_hedge.csv": "b2cc37b3e1ae0ba79a1dc3c254aad3703510885f0766092007ec01aac47b54f0",
+    "prediction_ledger_sue.csv": null,
+    "prediction_ledger_seas.csv": "e74f3065f7a5216543940085a825c304ac674c2beb3b08476662417b70f5baf1",
+    "prediction_ledger_blend_seas.csv": "b7510dec4c74bd94988ebcbc510b49093ed613cc260ca61b9af0335e719c0e4a"
+   },
+   "log_other": "a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437",
+   "io_guard_logged": true,
+   "io_guard_rows": [
+    "2026-09-29T21:28:20.660377,io,2026-09-18,2026-W38,io_skipped,date: RuntimeError: FORCED build_io_rows failure (run 1) (isolation test)"
+   ],
+   "io_rows": 3057,
+   "io_vs_seas_icw9_max_abs": 0.0,
+   "io_coverage": 0.9653254824991822,
+   "main_store_unchanged": true,
+   "main_store_changed": [],
+   "subprocess_rc": 0,
+   "log_tail": [
+    " },",
+    " \"log_other\": \"a6cc55dc1642d4d884b3a07180a71c35054c04d1de9d186c7e3d692f0df4b437\",",
+    " \"io_guard_logged\": true,",
+    " \"io_guard_rows\": [",
+    "  \"2026-09-29T21:28:20.660377,io,2026-09-18,2026-W38,io_skipped,date: RuntimeError: FORCED build_io_rows failure (run 1) (isolation test)\"",
+    " ],",
+    " \"io_rows\": 3057,",
+    " \"io_vs_seas_icw9_max_abs\": 0.0,",
+    " \"io_coverage\": 0.9653254824991822,",
+    " \"main_store_unchanged\": true,",
+    " \"main_store_changed\": []",
+    "}"
+   ]
+  }
+ },
+ "verdict": {
+  "baseline": {
+   "pass": true,
+   "others_identical_to_baseline": {
+    "prediction_ledger_v3.csv": true,
+    "prediction_ledger_ext.csv": true,
+    "prediction_ledger_hedge.csv": true,
+    "prediction_ledger_sue.csv": true,
+    "prediction_ledger_seas.csv": true,
+    "prediction_ledger_blend_seas.csv": true
+   },
+   "sidecar_rows_identical": true,
+   "io_dates": [],
+   "core_recorded": true,
+   "rc": 0,
+   "extra": true,
+   "main_store_unchanged": true
+  },
+  "happy": {
+   "pass": true,
+   "others_identical_to_baseline": {
+    "prediction_ledger_v3.csv": true,
+    "prediction_ledger_ext.csv": true,
+    "prediction_ledger_hedge.csv": true,
+    "prediction_ledger_sue.csv": true,
+    "prediction_ledger_seas.csv": true,
+    "prediction_ledger_blend_seas.csv": true
+   },
+   "sidecar_rows_identical": true,
+   "io_dates": [
+    "2026-09-18"
+   ],
+   "core_recorded": true,
+   "rc": 0,
+   "extra": true,
+   "main_store_unchanged": true
+  },
+  "io_import": {
+   "pass": true,
+   "others_identical_to_baseline": {
+    "prediction_ledger_v3.csv": true,
+    "prediction_ledger_ext.csv": true,
+    "prediction_ledger_hedge.csv": true,
+    "prediction_ledger_sue.csv": true,
+    "prediction_ledger_seas.csv": true,
+    "prediction_ledger_blend_seas.csv": true
+   },
+   "sidecar_rows_identical": true,
+   "io_dates": [],
+   "core_recorded": true,
+   "rc": 0,
+   "extra": true,
+   "main_store_unchanged": true
+  },
+  "io_plan": {
+   "pass": true,
+   "others_identical_to_baseline": {
+    "prediction_ledger_v3.csv": true,
+    "prediction_ledger_ext.csv": true,
+    "prediction_ledger_hedge.csv": true,
+    "prediction_ledger_sue.csv": true,
+    "prediction_ledger_seas.csv": true,
+    "prediction_ledger_blend_seas.csv": true
+   },
+   "sidecar_rows_identical": true,
+   "io_dates": [],
+   "core_recorded": true,
+   "rc": 0,
+   "extra": true,
+   "main_store_unchanged": true
+  },
+  "io_build": {
+   "pass": true,
+   "others_identical_to_baseline": {
+    "prediction_ledger_v3.csv": true,
+    "prediction_ledger_ext.csv": true,
+    "prediction_ledger_hedge.csv": true,
+    "prediction_ledger_sue.csv": true,
+    "prediction_ledger_seas.csv": true,
+    "prediction_ledger_blend_seas.csv": true
+   },
+   "sidecar_rows_identical": true,
+   "io_dates": [],
+   "core_recorded": true,
+   "rc": 0,
+   "extra": true,
+   "main_store_unchanged": true
+  },
+  "io_missing": {
+   "pass": true,
+   "others_identical_to_baseline": {
+    "prediction_ledger_v3.csv": true,
+    "prediction_ledger_ext.csv": true,
+    "prediction_ledger_hedge.csv": true,
+    "prediction_ledger_sue.csv": true,
+    "prediction_ledger_seas.csv": true,
+    "prediction_ledger_blend_seas.csv": true
+   },
+   "sidecar_rows_identical": true,
+   "io_dates": [],
+   "core_recorded": true,
+   "rc": 0,
+   "extra": true,
+   "main_store_unchanged": true
+  },
+  "io_lowcov": {
+   "pass": true,
+   "others_identical_to_baseline": {
+    "prediction_ledger_v3.csv": true,
+    "prediction_ledger_ext.csv": true,
+    "prediction_ledger_hedge.csv": true,
+    "prediction_ledger_sue.csv": true,
+    "prediction_ledger_seas.csv": true,
+    "prediction_ledger_blend_seas.csv": true
+   },
+   "sidecar_rows_identical": true,
+   "io_dates": [],
+   "core_recorded": true,
+   "rc": 0,
+   "extra": true,
+   "main_store_unchanged": true
+  },
+  "io_record": {
+   "pass": true,
+   "others_identical_to_baseline": {
+    "prediction_ledger_v3.csv": true,
+    "prediction_ledger_ext.csv": true,
+    "prediction_ledger_hedge.csv": true,
+    "prediction_ledger_sue.csv": true,
+    "prediction_ledger_seas.csv": true,
+    "prediction_ledger_blend_seas.csv": true
+   },
+   "sidecar_rows_identical": true,
+   "io_dates": [],
+   "core_recorded": true,
+   "rc": 0,
+   "extra": true,
+   "main_store_unchanged": true
+  },
+  "io_half": {
+   "pass": true,
+   "others_identical_to_baseline": {
+    "prediction_ledger_v3.csv": true,
+    "prediction_ledger_ext.csv": true,
+    "prediction_ledger_hedge.csv": true,
+    "prediction_ledger_sue.csv": true,
+    "prediction_ledger_seas.csv": true,
+    "prediction_ledger_blend_seas.csv": true
+   },
+   "sidecar_rows_identical": true,
+   "io_dates": [
+    "2026-09-18"
+   ],
+   "core_recorded": true,
+   "rc": 1,
+   "extra": true,
+   "main_store_unchanged": true
+  },
+  "io_guardfail": {
+   "pass": true,
+   "others_identical_to_baseline": {
+    "prediction_ledger_v3.csv": true,
+    "prediction_ledger_ext.csv": true,
+    "prediction_ledger_hedge.csv": true,
+    "prediction_ledger_sue.csv": true,
+    "prediction_ledger_seas.csv": true,
+    "prediction_ledger_blend_seas.csv": true
+   },
+   "sidecar_rows_identical": true,
+   "io_dates": [],
+   "core_recorded": true,
+   "rc": 0,
+   "extra": true,
+   "main_store_unchanged": true
+  },
+  "seas_skip": {
+   "pass": true,
+   "others_identical_to_baseline": {
+    "prediction_ledger_v3.csv": true,
+    "prediction_ledger_ext.csv": true,
+    "prediction_ledger_hedge.csv": true,
+    "prediction_ledger_sue.csv": true,
+    "prediction_ledger_blend_seas.csv": true
+   },
+   "sidecar_rows_identical": true,
+   "io_dates": [],
+   "core_recorded": true,
+   "rc": 0,
+   "extra": true,
+   "main_store_unchanged": true
+  },
+  "second_run": {
+   "pass": true,
+   "others_identical_to_baseline": {
+    "prediction_ledger_v3.csv": true,
+    "prediction_ledger_ext.csv": true,
+    "prediction_ledger_hedge.csv": true,
+    "prediction_ledger_sue.csv": true,
+    "prediction_ledger_seas.csv": true,
+    "prediction_ledger_blend_seas.csv": true
+   },
+   "sidecar_rows_identical": true,
+   "io_dates": [
+    "2026-09-18"
+   ],
+   "core_recorded": true,
+   "rc": 0,
+   "extra": true,
+   "main_store_unchanged": true
+  }
+ },
+ "all_pass": true
+}

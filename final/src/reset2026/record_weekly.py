@@ -155,7 +155,7 @@ def recorded_weeks(csv):
 def prefix_hashes():
     h = {}
     for p in ALL_LEDGERS + [LOG_CSV, ANN_CSV, SUE_GUARD_CSV, SUE_REF_LOG, SEAS_GUARD_CSV, IO_GUARD_CSV]:
-        if p.exists():
+        if p.is_file():     # is_file, not exists: a non-file path (WO-27 harness) must not crash the run
             b = p.read_bytes()
             h[p] = (len(b), hashlib.sha256(b).hexdigest())   # keyed by full path (sidecars live in 2 dirs)
     return h
@@ -189,9 +189,12 @@ def plan():
         sides += _seas_forward().side_ledgers()
     except (Exception, SystemExit) as e:   # noqa: BLE001
         log(f"SEAS plan FAILED (seas side ledgers skipped this run; v3/ext/hedge/sue unaffected): {type(e).__name__}: {e}")
+    global _IO_PLAN_ERROR
+    _IO_PLAN_ERROR = None
     try:        # WO-27: io in its OWN try -- an io failure never blocks seas either
         sides += _io_forward().side_ledgers()
     except (Exception, SystemExit) as e:   # noqa: BLE001
+        _IO_PLAN_ERROR = f"plan: {type(e).__name__}: {e}"
         log(f"IO plan FAILED (io side ledger skipped this run; others unaffected): {type(e).__name__}: {e}")
     for L in sides:
         try:
@@ -225,6 +228,7 @@ def _side_keys():
 
 
 SEAS_SIDES = ("seas", "blend_seas")
+_IO_PLAN_ERROR = None       # set by plan() when io import/plan fails; logged by run() (not by --plan)
 
 
 def _io_guard(iso, event, detail):
@@ -310,6 +314,7 @@ def run(dry=False):
         log(f"{led}: missing weeks {[(w, d.date().isoformat()) for w, d in items]}")
     if dry:
         return 0
+    io_plan_error = _IO_PLAN_ERROR
     before = prefix_hashes()
     import prediction_ledger as PL
     import forward_hedge as FH
@@ -481,6 +486,8 @@ def run(dry=False):
             except (Exception, SystemExit) as e:   # noqa: BLE001
                 side_deferred.append(f"{csv.name} {iso}: sidecar step after the record failed: {type(e).__name__}: {e}")
                 log(f"{L.name} sidecar step FAILED for {iso} (hedge still records; run will report it): {e}")
+    if io_plan_error:          # WO-27: an io import/plan failure is logged too (no dates are known then)
+        _io_guard("", "io_skipped", io_plan_error)
     for name, sk in side_skipped.items():
         for iso, why in sorted(sk.items()):
             if name == "io":
