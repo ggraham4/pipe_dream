@@ -1,0 +1,566 @@
+{
+  "A6_pit": {
+    "finite_rows": 13202173,
+    "violations": 0,
+    "last_input_equals_t": true,
+    "pass": true
+  },
+  "A1_basis_scan": {
+    "k_change_events": 3543,
+    "split_like": 3262,
+    "basis_mismatch_all": 39,
+    "basis_mismatch_panel_tickers": 5,
+    "basis_mismatch_examples": [
+      {
+        "ticker": "ASTI",
+        "date": "2017-05-09",
+        "ratio_adj": "1.8",
+        "ratio_unadj": "1.0",
+        "split_like": "False",
+        "basis_mismatch": "True",
+        "panel": "True",
+        "first_row_of_month_file": "False"
+      },
+      {
+        "ticker": "CHUC",
+        "date": "2013-01-22",
+        "ratio_adj": "0.01",
+        "ratio_unadj": "1.0",
+        "split_like": "False",
+        "basis_mismatch": "True",
+        "panel": "True",
+        "first_row_of_month_file": "False"
+      },
+      {
+        "ticker": "EXPE",
+        "date": "2011-12-21",
+        "ratio_adj": "0.48844133099824866",
+        "ratio_unadj": "0.9768826619964973",
+        "split_like": "False",
+        "basis_mismatch": "True",
+        "panel": "True",
+        "first_row_of_month_file": "False"
+      },
+      {
+        "ticker": "NEOM",
+        "date": "2013-12-17",
+        "ratio_adj": "1.6923076923076923",
+        "ratio_unadj": "1.0",
+        "split_like": "False",
+        "basis_mismatch": "True",
+        "panel": "True",
+        "first_row_of_month_file": "False"
+      },
+      {
+        "ticker": "NRF",
+        "date": "2014-06-30",
+        "ratio_adj": "0.4926303854875283",
+        "ratio_unadj": "0.9852607709750566",
+        "split_like": "False",
+        "basis_mismatch": "True",
+        "panel": "True",
+        "first_row_of_month_file": "False"
+      }
+    ],
+    "other_unclassified": 242,
+    "basis_mismatch_on_month_file_boundary": 1,
+    "month_boundary_examples": [
+      {
+        "ticker": "CDSS",
+        "date": "2008-12-01",
+        "ratio_adj": "0.625",
+        "ratio_unadj": "1.0",
+        "split_like": "False",
+        "basis_mismatch": "True",
+        "panel": "False",
+        "first_row_of_month_file": "True"
+      }
+    ],
+    "max_tickers_same_boundary_day": 1,
+    "boundary_mismatch_on_panel_tickers": 0,
+    "pass": true
+  },
+  "A2_split_candidates_named": [
+    {
+      "ticker": "GOOGL",
+      "date": "2014-04-03",
+      "ratio_adj": "1.0059494472998662",
+      "ratio_unadj": "0.5029764943198419",
+      "split_like": "True",
+      "basis_mismatch": "False",
+      "panel": "True",
+      "first_row_of_month_file": "False"
+    },
+    {
+      "ticker": "MA",
+      "date": "2014-01-22",
+      "ratio_adj": "1.0177402013488417",
+      "ratio_unadj": "0.10177402013488417",
+      "split_like": "True",
+      "basis_mismatch": "False",
+      "panel": "True",
+      "first_row_of_month_file": "False"
+    },
+    {
+      "ticker": "MNST",
+      "date": "2006-07-10",
+      "ratio_adj": "0.9072067828544511",
+      "ratio_unadj": "0.22684003925417073",
+      "split_like": "True",
+      "basis_mismatch": "False",
+      "panel": "True",
+      "first_row_of_month_file": "False"
+    },
+    {
+      "ticker": "MNST",
+      "date": "2012-02-16",
+      "ratio_adj": "0.9950428120775126",
+      "ratio_unadj": "0.4975119707069759",
+      "split_like": "True",
+      "basis_mismatch": "False",
+      "panel": "True",
+      "first_row_of_month_file": "False"
+    },
+    {
+      "ticker": "MNST",
+      "date": "2016-11-10",
+      "ratio_adj": "0.9577337315594172",
+      "ratio_unadj": "0.3192548457651406",
+      "split_like": "True",
+      "basis_mismatch": "False",
+      "panel": "True",
+      "first_row_of_month_file": "False"
+    },
+    {
+      "ticker": "NFLX",
+      "date": "2015-07-15",
+      "ratio_adj": "0.9776825744744445",
+      "ratio_unadj": "0.13966695132365498",
+      "split_like": "True",
+      "basis_mismatch": "False",
+      "panel": "True",
+      "first_row_of_month_file": "False"
+    },
+    {
+      "ticker": "V",
+      "date": "2015-03-19",
+      "ratio_adj": "0.9983860844615798",
+      "ratio_unadj": "0.2495983860724026",
+      "split_like": "True",
+      "basis_mismatch": "False",
+      "panel": "True",
+      "first_row_of_month_file": "False"
+    }
+  ],
+  "A2_splits": [
+    {
+      "ticker": "AAPL",
+      "split_day": "2014-06-09",
+      "split_factor": 7.000021686328939,
+      "shares_adj_ratio": 1.0,
+      "turnover21_ratio_split_day": 1.0118801770697914,
+      "V5_adj_ratio_post4_vs_pre": 0.710105941672127,
+      "V5_raw_ratio_post4_vs_pre": 4.970741231692504,
+      "vol_shock_split_day_to_plus9": [
+        7.0,
+        8.0,
+        7.0,
+        6.0,
+        2.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "window": {
+        "2014-06-04": {
+          "volume_adj": 335482000.0,
+          "volume_raw": 11981351.350764554,
+          "V5": 1938037000.0,
+          "vol_shock": 9.0,
+          "turnover_21": 0.011867079179378516,
+          "shares_adj": 24118668000.0
+        },
+        "2014-06-05": {
+          "volume_adj": 303806000.0,
+          "volume_raw": 10850381.895419788,
+          "V5": 1865369000.0,
+          "vol_shock": 9.0,
+          "turnover_21": 0.011727377079269645,
+          "shares_adj": 24118668000.0
+        },
+        "2014-06-06": {
+          "volume_adj": 349938000.0,
+          "volume_raw": 12497746.995678237,
+          "V5": 1651286000.0,
+          "vol_shock": 7.0,
+          "turnover_21": 0.011859805619684896,
+          "shares_adj": 24118668000.0
+        },
+        "2014-06-09": {
+          "volume_adj": 301660000.0,
+          "volume_raw": 75415000.0,
+          "V5": 1583595000.0,
+          "vol_shock": 7.0,
+          "turnover_21": 0.012000702210460061,
+          "shares_adj": 24118668000.0
+        },
+        "2014-06-10": {
+          "volume_adj": 251108000.0,
+          "volume_raw": 62775667.862068966,
+          "V5": 1541994000.0,
+          "vol_shock": 8.0,
+          "turnover_21": 0.011920760182231338,
+          "shares_adj": 24118668000.0
+        },
+        "2014-06-11": {
+          "volume_adj": 182724000.0,
+          "volume_raw": 45681000.0,
+          "V5": 1389236000.0,
+          "vol_shock": 7.0,
+          "turnover_21": 0.011860571673203115,
+          "shares_adj": 24118668000.0
+        },
+        "2014-06-12": {
+          "volume_adj": 218996000.0,
+          "volume_raw": 54750186.455737345,
+          "V5": 1304426000.0,
+          "vol_shock": 6.0,
+          "turnover_21": 0.011977570553193387,
+          "shares_adj": 24118668000.0
+        },
+        "2014-06-13": {
+          "volume_adj": 218100000.0,
+          "volume_raw": 54525000.0,
+          "V5": 1172588000.0,
+          "vol_shock": 2.0,
+          "turnover_21": 0.01207963731267257,
+          "shares_adj": 24118668000.0
+        },
+        "2014-06-16": {
+          "volume_adj": 142244000.0,
+          "volume_raw": 35561000.0,
+          "V5": 1013172000.0,
+          "vol_shock": 1.0,
+          "turnover_21": 0.011904704648184512,
+          "shares_adj": 24118668000.0
+        },
+        "2014-06-17": {
+          "volume_adj": 118904000.0,
+          "volume_raw": 29726000.0,
+          "V5": 880968000.0,
+          "vol_shock": 1.0,
+          "turnover_21": 0.01159403440798085,
+          "shares_adj": 24118668000.0
+        },
+        "2014-06-18": {
+          "volume_adj": 134056000.0,
+          "volume_raw": 33513999.999999996,
+          "V5": 832300000.0,
+          "vol_shock": 1.0,
+          "turnover_21": 0.011231345580033492,
+          "shares_adj": 24118668000.0
+        },
+        "2014-06-19": {
+          "volume_adj": 142112000.0,
+          "volume_raw": 35528000.0,
+          "V5": 755416000.0,
+          "vol_shock": 1.0,
+          "turnover_21": 0.01104827458409671,
+          "shares_adj": 24118668000.0
+        },
+        "2014-06-20": {
+          "volume_adj": 403592000.0,
+          "volume_raw": 100895780.26619734,
+          "V5": 940908000.0,
+          "vol_shock": 1.0,
+          "turnover_21": 0.011456438955047088,
+          "shares_adj": 24118668000.0
+        },
+        "2014-06-23": {
+          "volume_adj": 174776000.0,
+          "volume_raw": 43693037.89496862,
+          "V5": 973440000.0,
+          "vol_shock": 1.0,
+          "turnover_21": 0.01140513706170317,
+          "shares_adj": 24118668000.0
+        },
+        "2014-06-24": {
+          "volume_adj": 156144000.0,
+          "volume_raw": 39036000.0,
+          "V5": 1010680000.0,
+          "vol_shock": 2.0,
+          "turnover_21": 0.011254955033566688,
+          "shares_adj": 24118668000.0
+        },
+        "2014-06-25": {
+          "volume_adj": 147476000.0,
+          "volume_raw": 36869000.0,
+          "V5": 1024100000.0,
+          "vol_shock": 2.0,
+          "turnover_21": 0.010857337719045007,
+          "shares_adj": 24118668000.0
+        }
+      },
+      "pass": true
+    },
+    {
+      "ticker": "NFLX",
+      "split_day": "2015-07-15",
+      "split_factor": 7.000099631363954,
+      "shares_adj_ratio": 0.9999999999999999,
+      "turnover21_ratio_split_day": 1.0257431591411297,
+      "V5_adj_ratio_post4_vs_pre": 1.4981668264621284,
+      "V5_raw_ratio_post4_vs_pre": 10.486979580558577,
+      "vol_shock_split_day_to_plus9": [
+        8.0,
+        10.0,
+        10.0,
+        9.0,
+        9.0,
+        9.0,
+        4.0,
+        3.0,
+        3.0,
+        2.0
+      ],
+      "window": {
+        "2015-07-10": {
+          "volume_adj": 216366000.0,
+          "volume_raw": 3090988.2721128417,
+          "V5": 847403000.0,
+          "vol_shock": 6.0,
+          "turnover_21": 0.049832256975940216,
+          "shares_adj": 4243450470.0
+        },
+        "2015-07-13": {
+          "volume_adj": 332050000.0,
+          "volume_raw": 4743705.501618123,
+          "V5": 1061369000.0,
+          "vol_shock": 8.0,
+          "turnover_21": 0.05057082933827892,
+          "shares_adj": 4243450470.0000005
+        },
+        "2015-07-14": {
+          "volume_adj": 197364000.0,
+          "volume_raw": 2819445.5849701115,
+          "V5": 1043000000.0,
+          "vol_shock": 8.0,
+          "turnover_21": 0.051632139957893404,
+          "shares_adj": 4243450470.0000005
+        },
+        "2015-07-15": {
+          "volume_adj": 308986000.0,
+          "volume_raw": 30898600.0,
+          "V5": 1222079000.0,
+          "vol_shock": 8.0,
+          "turnover_21": 0.05296131435362654,
+          "shares_adj": 4243450470.0
+        },
+        "2015-07-16": {
+          "volume_adj": 634610000.0,
+          "volume_raw": 63461000.0,
+          "V5": 1689376000.0,
+          "vol_shock": 10.0,
+          "turnover_21": 0.05828245575957301,
+          "shares_adj": 4243450470.0
+        },
+        "2015-07-17": {
+          "volume_adj": 251369000.0,
+          "volume_raw": 25136900.0,
+          "V5": 1724379000.0,
+          "vol_shock": 10.0,
+          "turnover_21": 0.05975799658970355,
+          "shares_adj": 4260048310.0
+        },
+        "2015-07-20": {
+          "volume_adj": 226769000.0,
+          "volume_raw": 22676900.0,
+          "V5": 1619098000.0,
+          "vol_shock": 9.0,
+          "turnover_21": 0.0612909324808416,
+          "shares_adj": 4260048309.9999995
+        },
+        "2015-07-21": {
+          "volume_adj": 140854000.0,
+          "volume_raw": 14085400.0,
+          "V5": 1562588000.0,
+          "vol_shock": 9.0,
+          "turnover_21": 0.06065049708768387,
+          "shares_adj": 4260048310.0
+        },
+        "2015-07-22": {
+          "volume_adj": 105005000.0,
+          "volume_raw": 10500500.0,
+          "V5": 1358607000.0,
+          "vol_shock": 9.0,
+          "turnover_21": 0.05995383608577859,
+          "shares_adj": 4260048310.0
+        },
+        "2015-07-23": {
+          "volume_adj": 83068000.0,
+          "volume_raw": 8306800.0,
+          "V5": 807065000.0,
+          "vol_shock": 4.0,
+          "turnover_21": 0.059135647286993866,
+          "shares_adj": 4260048310.0
+        },
+        "2015-07-24": {
+          "volume_adj": 81251000.0,
+          "volume_raw": 8125100.0,
+          "V5": 636947000.0,
+          "vol_shock": 3.0,
+          "turnover_21": 0.05142125902770517,
+          "shares_adj": 4260048309.9999995
+        },
+        "2015-07-27": {
+          "volume_adj": 113026000.0,
+          "volume_raw": 11302600.0,
+          "V5": 523204000.0,
+          "vol_shock": 3.0,
+          "turnover_21": 0.04803200615972983,
+          "shares_adj": 4260048310.0
+        },
+        "2015-07-28": {
+          "volume_adj": 111559000.0,
+          "volume_raw": 11155900.0,
+          "V5": 493909000.0,
+          "vol_shock": 2.0,
+          "turnover_21": 0.04589042525938598,
+          "shares_adj": 4260048310.0000005
+        },
+        "2015-07-29": {
+          "volume_adj": 66956000.0,
+          "volume_raw": 6695600.0,
+          "V5": 455860000.0,
+          "vol_shock": 1.0,
+          "turnover_21": 0.043891755772131134,
+          "shares_adj": 4260048310.0000005
+        },
+        "2015-07-30": {
+          "volume_adj": 142292000.0,
+          "volume_raw": 14229200.0,
+          "V5": 515084000.0,
+          "vol_shock": 2.0,
+          "turnover_21": 0.04359539204156963,
+          "shares_adj": 4260048310.0
+        },
+        "2015-07-31": {
+          "volume_adj": 163491000.0,
+          "volume_raw": 16349099.999999998,
+          "V5": 597324000.0,
+          "vol_shock": 3.0,
+          "turnover_21": 0.04377979638898687,
+          "shares_adj": 4260048309.9999995
+        }
+      },
+      "pass": true
+    }
+  ],
+  "A3_dead_name": {
+    "ticker": "LEHMQ",
+    "cap150_rows_2008": 184,
+    "last_cap150_date": "2008-09-30",
+    "finite_vol_shock": 184,
+    "finite_r_1m": 184,
+    "finite_turnover_21": 184,
+    "pass": true
+  },
+  "A4_label_trace": [
+    {
+      "ticker": "AAPL",
+      "t": "2014-06-02",
+      "t_plus_1": "2014-06-03",
+      "open_t_plus_1": 22.445,
+      "t_plus_40": "2014-07-29",
+      "close_t_plus_40": 24.595,
+      "recomputed": 0.09578970817554011,
+      "panel": 0.09578970817554011,
+      "abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "ticker": "LEHMQ",
+      "t": "2008-06-16",
+      "t_plus_1": "2008-06-17",
+      "open_t_plus_1": 27.82,
+      "t_plus_40": "2008-08-12",
+      "close_t_plus_40": 16.21,
+      "recomputed": -0.4173256649892164,
+      "panel": -0.4173256649892164,
+      "abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "ticker": "NFLX",
+      "t": "2015-07-01",
+      "t_plus_1": "2015-07-02",
+      "open_t_plus_1": 9.4,
+      "t_plus_40": "2015-08-27",
+      "close_t_plus_40": 11.766,
+      "recomputed": 0.25170212765957434,
+      "panel": 0.25170212765957434,
+      "abs_diff": 0.0,
+      "pass": true
+    }
+  ],
+  "A5_hand_check": [
+    {
+      "ticker": "AAPL",
+      "t": "2014-06-13",
+      "vol_shock_loop": 2.0,
+      "vol_shock_build": 2.0,
+      "vol21_loop": 291344761.9047619,
+      "vol21_build": 291344761.9047619,
+      "r_1m_loop": 0.07590759075907583,
+      "r_1m_build": 0.07590759075907583,
+      "pass": true
+    },
+    {
+      "ticker": "LEHMQ",
+      "t": "2008-06-16",
+      "vol_shock_loop": 10.0,
+      "vol_shock_build": 10.0,
+      "vol21_loop": 65216394.47619048,
+      "vol21_build": 65216394.47619048,
+      "r_1m_loop": -0.39245030154121074,
+      "r_1m_build": -0.39245030154121074,
+      "pass": true
+    },
+    {
+      "ticker": "NFLX",
+      "t": "2015-07-24",
+      "vol_shock_loop": 3.0,
+      "vol_shock_build": 3.0,
+      "vol21_loop": 219057047.6190476,
+      "vol21_build": 219057047.6190476,
+      "r_1m_loop": 0.12791417371570035,
+      "r_1m_build": 0.12791417371570035,
+      "pass": true
+    },
+    {
+      "ticker": "MU",
+      "t": "2012-03-15",
+      "vol_shock_loop": 5.0,
+      "vol_shock_build": 5.0,
+      "vol21_loop": 31447190.476190478,
+      "vol21_build": 31447190.476190478,
+      "r_1m_loop": 0.058752997601918544,
+      "r_1m_build": 0.058752997601918544,
+      "pass": true
+    },
+    {
+      "ticker": "AAPL",
+      "t": "2019-12-31",
+      "vol_shock_loop": 7.0,
+      "vol_shock_build": 7.0,
+      "vol21_loop": 114070761.90476191,
+      "vol21_build": 114070761.90476191,
+      "r_1m_loop": 0.0987846494641682,
+      "r_1m_build": 0.0987846494641682,
+      "pass": true
+    }
+  ],
+  "pass": true
+}
