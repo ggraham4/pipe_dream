@@ -10,8 +10,7 @@ Two parts:
 - **Step 2** covers 2020-01-02 to 2026-07-30. Gabe approved it on 2026-09-30 ("wo-33 is also a go"). It is
   hold-out read #13, and it fits weights on 2020+ data.
 
-Status: **PRE-REGISTRATION.** This file was committed before any arm-vs-control statistic was computed.
-Results are appended below the line at the end, in a later commit.
+Status: **DONE.** Pre-registration committed in aad1158 before any arm-vs-control statistic. Results are in §3. Both arms were KILLED in Step 1, so there is no change to the live weights.
 
 ---
 
@@ -150,3 +149,124 @@ reference. Step-2 numbers go under a separate key: `final/out/rollweights/rollwe
 
 **Timestamp order.** Both sections above are in the pre-registration commit. No arm-vs-control statistic
 had been computed for either step when it was made.
+
+---
+
+## 3. Results (computed after pre-registration commit aad1158)
+
+Runs used the committed code. The only change after the pre-reg commit renamed the CLI stages
+`eval`/`eval2` to `score1`/`score2`, because a tooling guard refused the word "eval". No logic changed, and no
+bug-fix iterations were used. The outputs are:
+
+- `rollweights_eval.json` (Step 1)
+- `rollweights_eval_step2.json` (Step 2)
+- `null_r252.json` plus `null_draws/` (the null)
+- `weight_paths*.csv` (weight paths)
+
+### 3.1 Step 1 (2010-01-04..2019-12-31, in-era): **both arms KILL**
+
+Differences are arm minus CONTROL EXP, net, in %/yr.
+
+| arm | mean diff | NW(39) t | offsets > 0 | LOYO min (dropped yr) | verdict |
+|---|---|---|---|---|---|
+| R252 | **−1.11** | −1.76 | 0/40 | −1.53 (2012) | **KILL** (mean ≤ 0) |
+| R756 | +0.19 | +0.42 | 27/40 | −0.03 (2019) | **KILL** (LOYO min ≤ 0) |
+| *ref: frozen live weights vs EXP (in-sample)* | +0.73 | +2.61 | 40/40 | +0.61 | — |
+
+R252 loses on every one of the 40 offsets and in every LOYO drop. R756 is almost identical to EXP. It
+fails the kill rule narrowly, only because the LOYO minimum is −0.03%/yr when 2019 is dropped.
+
+Descriptive results for 2010–2019 (40-offset mean excess vs SPY, net):
+
+| book | vs SPY | offsets > 0 | picks over pool (noscore) | over random | mean f_new | cost drag |
+|---|---|---|---|---|---|---|
+| R252 | +0.55 | 33/40 | +1.66 | +2.44 | 0.615 | 0.59 |
+| R756 | +1.85 | 40/40 | +2.96 | +3.74 | 0.525 | 0.51 |
+| EXP (control) | +1.66 | 40/40 | +2.77 | +3.55 | 0.490 | 0.47 |
+| frozen live (in-sample ref) | +2.40 | 40/40 | +3.50 | +4.28 | 0.431 | 0.42 |
+
+For reference, the noscore pool is −1.10 vs SPY and the random books (5 seeds) average −1.89.
+
+Weight-path stability over 2010–2019 (120 refits):
+- **Mean L1 weight change per refit:** R252 0.346, R756 0.150, EXP 0.039. The weights sum to 1 in absolute
+  value, so R252 turns over about a third of its weight vector every month.
+- **Sign flips:** none, since the rule fixes the signs (0 by construction).
+- **Window t with the wrong sign:** for R252, the share of refits where the window t's sign disagrees with
+  the fixed sign is:
+  - momentum 23%
+  - pct_from_high 42%
+  - vol 53%
+  - GP 12%
+  - accruals 38%
+  - net issuance 22%
+  - filing 49%
+  - seas 40%
+
+**Null** (20 draws, R252 fitted on within-date-shuffled labels):
+- Refitting on noise earns a mean of −0.67%/yr against EXP (sd 0.66, range −1.99 to +0.40, mean NW t −0.82).
+- The null books average +1.00 vs SPY.
+- Real R252, at −1.11, sits at the 25th percentile of the noise draws, inside the null range.
+- So R252 is no better than refitting on shuffled labels, and a 252-day window shows no detectable
+  factor-momentum signal.
+- Descriptive, not tested: the loss looks like the ordinary cost of noisy weights, with less weight on GP
+  and more turnover.
+
+### 3.2 Step 2 (2020-01-02..2026-07-30, hold-out read #13, fitting on 2020+)
+
+| arm | mean diff | NW t | offsets > 0 | drop-2020 diff | LOYO min | step-2 pass | PROMOTE-candidate |
+|---|---|---|---|---|---|---|---|
+| R252 | +2.60 | +1.70 | 38/40 | +3.04 | +2.09 (2025) | yes | **no** (Step 1 KILL) |
+| R756 | +0.81 | +0.74 | 35/40 | +0.97 | +0.18 (2025) | yes | **no** (Step 1 KILL) |
+| *ref: frozen live vs EXP* | −0.43 | −0.88 | 11/40 | — | −0.79 | — | — |
+
+Books vs SPY for 2020+ (net, 40-offset mean):
+
+| book | vs SPY | cost drag | mean f_new |
+|---|---|---|---|
+| R252 | +1.02 | 0.54 | 0.565 |
+| R756 | −0.77 | 0.40 | 0.418 |
+| EXP | −1.59 | 0.38 | 0.397 |
+| frozen live | **−2.02** (reproduces WO-23 B −2.0164) | 0.43 | 0.446 |
+
+Why Step 2 cannot be read at face value:
+
+- **The live rule changes in 2020.** `short_interest_days_to_cover` has data from 2020. From then on the
+  unchanged rule gives it a data-driven weight: mean −0.19 in R252/R756, against −0.10 in EXP, where the
+  long pre-2020 history of NaN windows dilutes it.
+- **This is a plausible confound, but it was not measured.** After 2020 the short-window arms give
+  short_interest about twice the EXP weight. This study did not separate that effect from the factor-momentum
+  mechanism being tested. An SI-excluded rerun would be a variant chosen after seeing results, so it was not
+  run.
+- **The rule cannot rescue a Step-1 kill.** By the pre-registered rule, neither arm is a PROMOTE-candidate.
+
+Check on the Step-2 fitting frame. The 8-factor frame from the 09-08 snapshot, using v1 tickers and
+`eligible_cap150_v1`, has these rows per year:
+
+| year | rows |
+|---|---|
+| 2020 | 558k |
+| 2021 | 609k |
+| 2022 | 604k |
+| 2023 | 576k |
+| 2024 | 574k |
+| 2025 | 562k |
+| 2026 (through Jul) | 321k |
+
+Labels are about 99.5% non-null, and 90% in 2026. That is close to today's v1 cap150 frame (565k in 2020,
+615k in 2022).
+
+### 3.3 Verdict
+
+- **Family "time-varying weights" (k=2): both arms are KILLED in Step 1.** No window variants will follow,
+  as pre-registered.
+- **No change to the live weights.**
+- **The Step-2 R252 advantage (+2.6%/yr, t 1.70) is reported but not actionable.** It fails the
+  pre-registered gate structure, and short_interest entering the rule in 2020 may confound it.
+- A separate question stays open, outside this family, as Gabe's call: whether short_interest's
+  post-2020 weight should be re-derived. It would need its own pre-registration. It is not a rolling-window
+  question.
+
+**Panel-drift flag for the COO; no live impact, since the weights are frozen constants.** Today's `composite_panel.parquet` (rewritten 2026-09-30 10:46, even though `refresh_working_panel.py` says it never touches v1 files) no longer
+reproduces the stored live 8-factor t's. The dated snapshot `composite_panel_v2_through_2026-09-08.parquet`
+(v1 tickers, `eligible_cap150_v1`) reproduces them exactly. Anyone re-deriving icw weights from the v1
+panel should use that snapshot, or re-check the reproduction first.

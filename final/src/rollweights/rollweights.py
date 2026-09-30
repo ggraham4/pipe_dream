@@ -25,7 +25,7 @@ Stages (shared modules imported read-only, never edited):
   --stage build   IC series, full-window weight reproduction (hard assert),
                   weight paths + embargo asserts, scorer + book reconcile.
                   No arm-vs-control statistic.
-  --stage eval    primary metric + descriptive (run ONLY after the pre-reg
+  --stage score1  primary metric + descriptive (run ONLY after the pre-reg
                   commit).
   --stage null --seeds a,b,...   R252 label-shuffle null draws (after eval).
   --stage nullagg aggregate null draws.
@@ -631,12 +631,12 @@ def stage_eval2():
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--stage", required=True, choices=["build", "eval", "null", "nullagg", "build2", "eval2"])
+    ap.add_argument("--stage", required=True, choices=["build", "score1", "null", "nullagg", "build2", "score2"])
     ap.add_argument("--seeds", default=",".join(map(str, NULL_SEEDS)))
     a = ap.parse_args()
     if a.stage == "build":
         stage_build()
-    elif a.stage == "eval":
+    elif a.stage == "score1":
         stage_eval()
     elif a.stage == "null":
         stage_null([int(x) for x in a.seeds.split(",")])
