@@ -242,4 +242,78 @@ Base book for gate 6 (no candidate): icw9_seas split-half OOS **+2.550%/yr**.
 
 ## Results
 
-(appended after the pre-registration commit)
+Pre-registration commit **7dd10fc** (2026-09-30T10:14:47-04:00, pushed to
+origin/worktree-agent-a79a9999a5df053aa) came before any candidate number.
+Both trials ran 2026-09-30 10:15-10:48 on that code, iteration 1 of 3, with
+no code changes. Panel sha256 at start `30f636fd…e0ff`, the same as at
+pre-registration. The harness reconcile passed again before any candidate
+number was computed (icw8 +0.028541633, both OOS ICs exact). Reports:
+`final/out/volshock/vol_shock_screen_report.json` and
+`final/out/volshock/str_lowturn_screen_report.json`. Logs:
+`screen_vol_shock.log` and `screen_str_lowturn.log`.
+
+### 28a `vol_shock`: **DEAD** (5 of 7 gates fail)
+
+| gate | result | bar | pass |
+|---|---|---|---|
+| 1 pooled NW(39) IC | +0.0011, **t +0.46** (3,272 dates) | t ≥ +2.24 | no |
+| 2 halves | 2007-13 +0.0030; 2014-19 **−0.0011** | both > 0 | no |
+| 3 sector both-sides | t +0.55 (factor-only +0.74) | ≥ +1.0 | no |
+| 4 book-increment offsets | 12/40 offsets ≤ 0 (mean +0.029 pp/yr) | 0/40 | no |
+| 5 max year share | 1.76 (2008); the summed IC is tiny, so the shares are unstable | ≤ 0.45 | no |
+| 6 book vs icw9_seas | +2.579%/yr vs base +2.550; null p50 +2.553, p80 +2.561; real above all 20 draws | > p80 | yes |
+| 7 Gate A | PASS | clean | yes |
+
+- The gate-6 pass is not evidence. The fitted weight sits at about the floor
+  (+0.007 / +0.010; fitted t +0.23 / +0.42), and the null is only 0.01 pp
+  wide. The OOS composite IC is unchanged (0.04836 vs 0.04831).
+- Descriptive:
+  - The weight-matched null has the same p80, and the real book is above all
+    20 draws.
+  - The icw10_io base increment is +0.030 pp/yr, with 24/40 offsets > 0.
+  - The daily-IC offset means flip sign in 15/40 offsets.
+  - Median Spearman with r_5d is +0.05, with pct_from_high_252 +0.04, and
+    with the others |ρ| < 0.02.
+- **Family verdict:** the volume-shock family is closed. No daily-formation,
+  window-length or dollar-volume variants.
+
+### 28b `str_lowturn`: **DEAD** (gate 4 fails; the other 6 pass)
+
+| gate | result | bar | pass |
+|---|---|---|---|
+| 1 pooled NW(39) IC | −0.0098, **t −2.33** | t ≤ −2.24 | yes |
+| 2 halves | 2007-13 −0.0086 (t −1.44); 2014-19 −0.0111 (t −1.91) | both < 0 | yes |
+| 3 sector both-sides | t −2.44 (factor-only −2.45) | ≤ −1.0 | yes |
+| 4 book-increment offsets | **20/40 offsets ≤ 0** (mean +0.014 pp/yr) | 0/40 | **no** |
+| 5 max year share | 0.296 (2009); LOYO t −1.72..−3.09 | ≤ 0.45 | yes |
+| 6 book vs icw9_seas | +2.564%/yr vs base +2.550; null p50 +2.548, p80 +2.553; real at the 95th percentile of the null | > p80 | yes |
+| 7 Gate A | PASS | clean | yes |
+
+- **Why it dies.** The signal is real at the IC level: it survives sector
+  demeaning, both halves, and every leave-one-year-out drop. It does not
+  improve the live book, though. The gain is +0.014 pp/yr, and half of the 40
+  grid offsets are worse. The fitted weight is unstable across halves
+  (−0.016 fit on odd years, −0.103 fit on even years; fitted t −1.22 / −2.14).
+- The verdict does not depend on how gate 4 is read. Under the WO-13/18
+  reading (daily-IC offset means), 1/40 offsets flips sign, which also fails a
+  0/40 bar.
+- Descriptive, cannot rescue:
+  - The weight-matched null puts the real book at the **75th percentile**
+    (p80 +2.572), below p80. So with the fitted weight held fixed, the real
+    candidate does not beat shuffled values.
+  - The icw10_io base increment is +0.078 pp/yr, with 28/40 offsets > 0.
+  - The IC of r_1m on eligible rows only is −0.0156, t −2.39.
+  - Median Spearman with r_21d is +0.60 (by construction), with r_5d +0.28,
+    with pct_from_high_252 +0.26 and with io_gap +0.07. It is about 0 with
+    momentum_12_1, volatility_60 and seas.
+- **Family verdict:** the short-term reversal family is closed at 2 trials.
+  No tercile, decile, window or turnover-threshold variants.
+
+### Summary for the COO
+
+| trial | verdict | failed gates |
+|---|---|---|
+| 28a vol_shock (volume family k=2) | **DEAD** | 1, 2, 3, 4, 5 |
+| 28b str_lowturn (reversal family k=2) | **DEAD** | 4 |
+
+No 2020+ data was read. Nothing touches live weights, the ledgers or the app.
