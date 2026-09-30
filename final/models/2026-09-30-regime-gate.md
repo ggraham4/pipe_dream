@@ -147,4 +147,69 @@ approves.
 
 ## 2. Results
 
-(Filled after the pre-reg commit.)
+These were computed after pre-reg commit 878a605, in one run with no bug-fix
+iterations. Step 1 reconcile: all checks pass (icw8 +0.0285416,
+icw9_seas +0.0348652, pool −0.002485).
+
+The full period, in %/yr, is book = pool + selection:
+
+| model | book vs SPY | pool vs SPY | selection over pool | offsets + | LOYO min | drop 2008 | selection vs random |
+|---|---|---|---|---|---|---|---|
+| icw8 | +2.85 | −0.25 | +3.10 | 40/40 | +2.47 | +2.55 | +3.90 |
+| icw9_seas | +3.49 | −0.25 | +3.74 | 40/40 | +3.15 | +3.22 | +4.56 |
+
+The table below is by regime state. Figures are %/yr; "sel" is selection over pool; "+/−" counts offsets of 40; episodes are runs ≥ 40d.
+
+| def | state | n win | ep | pool vs SPY | icw8 book | icw8 sel | +/− | LOYO min | drop08 | icw9s book | icw9s sel | +/− | LOYO min | drop08 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| trend_pit | up | 1791 | 10 | −1.08 | +2.08 | +3.16 | 40/0 | +1.92 | +3.16 | +2.86 | +3.94 | 40/0 | +3.00 | +3.94 |
+| trend_pit | flat | 1148 | 10 | −1.26 | −0.70 | **+0.56** | **26/14** | −0.13 | −0.13 | +0.39 | +1.65 | 39/1 | +0.81 | +0.81 |
+| trend_pit | down | 332 | 2 | +7.73 | +19.35 | +11.62 | 40/0 | +11.03 | +11.40 | +17.65 | +9.92 | 40/0 | +9.53 | +9.54 |
+| vol | high | 1375 | 8 | +1.02 | +4.24 | +3.22 | 40/0 | +1.74 | +1.74 | +4.96 | +3.94 | 40/0 | +2.57 | +2.57 |
+| vol | low | 1867 | 9 | −1.34 | +1.73 | +3.06 | 40/0 | +2.22 | +3.06 | +2.28 | +3.62 | 40/0 | +2.67 | +3.62 |
+| size | small_lead | 1550 | 8 | −0.35 | +4.63 | +4.98 | 40/0 | +3.92 | +4.42 | +5.01 | +5.36 | 40/0 | +4.21 | +4.96 |
+| size | large_lead | 1618 | 8 | −0.02 | +1.59 | +1.61 | 39/1 | +0.61 | +1.00 | +2.36 | +2.38 | 40/0 | +1.53 | +1.68 |
+| calyear (non-PIT ref) | up / flat / down | 2013 / 1006 / 253 | — | +0.70 / −3.51 / +5.15 | | +1.84 / +3.95 / +9.66 | 40/0 each | | | | +2.36 / +4.92 / +9.83 | 40/0 each | | |
+
+The icw8 trend_pit flat LOYO min comes from dropping 2008. The pool
+contributes −0.25 %/yr in full; `regime_phase0.json` has every field.
+
+### 2.1 Decision map outcome: **(C)**, per the pre-registered rule
+
+- **(B) not hit.** No state, for either model, has selection < 0. The only
+  weak cell is icw8 trend_pit flat: +0.56 point, 26/40 offsets positive,
+  14 negative (well short of 30 negative), and −0.13 with 2008 dropped.
+  trend_pit down could not trigger B, since it has 2 episodes, both in
+  2008-09.
+- **(A) not met.** icw8 trend_pit flat has 26/40 positive, below 30.
+  icw9_seas (the live Theoretical weights) meets A in every state. The map
+  requires both models, so the outcome is C.
+- **Robustness of the reading.** Using raw run counts for episodes doesn't
+  change the outcome (C). The secondary basis, selection vs random, gives
+  **A**: icw8 flat is +1.28 there. The secondary doesn't decide (§1.1), but
+  it shows the C comes from the one icw8 cell, not from any state where
+  selection breaks down.
+
+### 2.2 Reading (descriptive)
+
+- Selection over the pool is positive in every regime state of every PIT
+  definition, for both models. It is largest in the 2008-09 down state
+  (+10 to +12, one episode), in high vol (+3.2 / +3.9) and when small
+  caps lead (+5.0 / +5.4), and smallest in flat trailing-trend markets and
+  when large caps lead (+0.6 to +2.4). The size split moves selection by
+  about 3.4 %/yr but never flips its sign.
+- The pool's return vs SPY varies more by regime than selection's sign
+  does: −1.3 in flat and low-vol markets, +1.0 in high vol, +7.7 in the
+  2008-09 down state. It barely differs between the size states (−0.35 vs −0.02).
+- **No gross-exposure gate is justified.** No state has negative selection,
+  so cutting exposure in any state would give up positive expected
+  selection. The regime gate is closed for this model (C). What remains
+  is the pool-vs-SPY question (market / size timing, or a hedge). That is
+  the COO's WO-21 "universe bet" item, not a regime gate on selection.
+- The old calendar-year trend split (look-ahead) reads more favourably in
+  "flat" (+3.95) than the PIT split (+0.56). This is one concrete way the
+  old non-PIT report overstated regime robustness.
+
+Caveats: in-sample weights (icw9_seas t's are full-era); same-state
+windows overlap across offsets; the down state is essentially one episode
+(2008-09). No 2020+ data was read.
