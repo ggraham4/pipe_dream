@@ -1,0 +1,15 @@
+[11:51:28] [A] cap150: 9,756,141 rows, 6,508 tickers, 3272 dates 2007-01-03..2019-12-31
+[11:52:36] [A cap150] books built {'rows': 9756141, 'tickers': 6508, 'calendar_dates': 3272, 'first': '2007-01-03', 'last': '2019-12-31', 'mean_pool_names_per_date': 2981.705684596577, 'mean_book_names_per_date': {'icw9_seas': 295.40189486552566, 'icw8': 295.40922982885087}} (80s)
+[11:52:41] [A cap150] reconcile icw8_full: +0.0285416 vs +0.0285416 diff +0.0e+00
+[11:52:41] [A cap150] reconcile icw8_full_vs_0.0285416: +0.0285416 vs +0.0285416 diff +3.3e-08
+[11:52:41] [A cap150] reconcile pool_post: -0.0198815 vs -0.0198815 diff +0.0e+00
+[11:52:44] [A cap150] SEP 2634 tickers 2006-12..2020-03 (87s)
+[11:52:50] [A cap150] icw9_seas div basis {'dates': 3272, 'names': 966555, 'missing_in_sep': 0, 'series_end_floor': 9723, 'gross_max_abs_diff': np.float64(1.4886751831255651e-09), 'worst': '2009-03-06', 'gross_adj_max_abs_diff': np.float64(1.4886751831255651e-09), 'mismatch_not_floor': 0}; 0 name-label mismatches > 1e-6, first []
+[11:52:57] [A cap150] icw8 div basis {'dates': 3272, 'names': 966579, 'missing_in_sep': 0, 'series_end_floor': 9703, 'gross_max_abs_diff': np.float64(1.8008354807363958e-09), 'worst': '2009-03-11', 'gross_adj_max_abs_diff': np.float64(1.8008354807363958e-09), 'mismatch_not_floor': 0}; 0 name-label mismatches > 1e-6, first []
+[11:53:02] [A cap150 full] icw9_seas: book +0.0349 (40/40) pool -0.0025 sel +0.0374 | SPYh +0.0241 IWMh +0.0306 IWM.8h +0.0496
+[11:53:02] [A cap150 full] icw8: book +0.0285 (40/40) pool -0.0025 sel +0.0310 | SPYh +0.0185 IWMh +0.0249 IWM.8h +0.0440
+[11:53:04] [A cap150 pre] icw9_seas: book +0.0863 (40/40) pool +0.0273 sel +0.0589 | SPYh +0.0744 IWMh +0.0587 IWM.8h +0.0651
+[11:53:04] [A cap150 pre] icw8: book +0.0775 (40/40) pool +0.0273 sel +0.0502 | SPYh +0.0675 IWMh +0.0517 IWM.8h +0.0582
+[11:53:08] [A cap150 post] icw9_seas: book +0.0051 (38/40) pool -0.0199 sel +0.0250 | SPYh -0.0050 IWMh +0.0142 IWM.8h +0.0405
+[11:53:08] [A cap150 post] icw8: book +0.0001 (21/40) pool -0.0199 sel +0.0200 | SPYh -0.0099 IWMh +0.0093 IWM.8h +0.0356
+[11:53:08] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a224b0b3e3e4eaba0/final/out/pool/parts/A_cap150.json (111s)

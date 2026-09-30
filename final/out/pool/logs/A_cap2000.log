@@ -1,0 +1,12 @@
+[11:55:16] [A] cap2000: 3,802,861 rows, 2,789 tickers, 3272 dates 2007-01-03..2019-12-31
+[11:55:36] [A cap2000] books built {'rows': 3802861, 'tickers': 2789, 'calendar_dates': 3272, 'first': '2007-01-03', 'last': '2019-12-31', 'mean_pool_names_per_date': 1162.2435819070904, 'mean_book_names_per_date': {'icw9_seas': 115.47738386308069, 'icw8': 115.48135696821515}} (30s)
+[11:55:38] [A cap2000] SEP 1088 tickers 2006-12..2020-03 (32s)
+[11:55:40] [A cap2000] icw9_seas div basis {'dates': 3272, 'names': 377842, 'missing_in_sep': 0, 'series_end_floor': 2891, 'gross_max_abs_diff': np.float64(2.2690670453684447e-09), 'worst': '2008-09-11', 'gross_adj_max_abs_diff': np.float64(2.2690670453684447e-09), 'mismatch_not_floor': 0}; 0 name-label mismatches > 1e-6, first []
+[11:55:43] [A cap2000] icw8 div basis {'dates': 3272, 'names': 377855, 'missing_in_sep': 0, 'series_end_floor': 2965, 'gross_max_abs_diff': np.float64(1.9406235507446468e-09), 'worst': '2008-09-25', 'gross_adj_max_abs_diff': np.float64(1.9406235507446468e-09), 'mismatch_not_floor': 0}; 0 name-label mismatches > 1e-6, first []
+[11:55:48] [A cap2000 full] icw9_seas: book +0.0286 (40/40) pool -0.0041 sel +0.0327 | SPYh +0.0186 IWMh +0.0250 IWM.8h +0.0441
+[11:55:48] [A cap2000 full] icw8: book +0.0284 (40/40) pool -0.0041 sel +0.0325 | SPYh +0.0195 IWMh +0.0259 IWM.8h +0.0449
+[11:55:49] [A cap2000 pre] icw9_seas: book +0.0680 (40/40) pool +0.0222 sel +0.0458 | SPYh +0.0578 IWMh +0.0421 IWM.8h +0.0485
+[11:55:49] [A cap2000 pre] icw8: book +0.0697 (40/40) pool +0.0222 sel +0.0475 | SPYh +0.0624 IWMh +0.0466 IWM.8h +0.0530
+[11:55:52] [A cap2000 post] icw9_seas: book +0.0057 (37/40) pool -0.0195 sel +0.0253 | SPYh -0.0041 IWMh +0.0151 IWM.8h +0.0414
+[11:55:52] [A cap2000 post] icw8: book +0.0044 (39/40) pool -0.0195 sel +0.0239 | SPYh -0.0054 IWMh +0.0138 IWM.8h +0.0401
+[11:55:52] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a224b0b3e3e4eaba0/final/out/pool/parts/A_cap2000.json (47s)

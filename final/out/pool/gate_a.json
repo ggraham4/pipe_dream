@@ -1,0 +1,303 @@
+{
+  "sample_date_invariants": {
+    "2008-06-16": {
+      "eligible_cap150": 3027,
+      "eligible_cap500": 2076,
+      "eligible_cap2000": 995,
+      "flag_below_floor": {
+        "eligible_cap150": 2,
+        "eligible_cap500": 0,
+        "eligible_cap2000": 0
+      },
+      "cap2000_not_cap150": 3,
+      "cap500_not_cap150": 0,
+      "flag_below_floor_rows": [
+        {
+          "ticker": "ASTI",
+          "market_cap": 0.0,
+          "close": 260400000000000.0,
+          "eligible_cap150": true,
+          "eligible_cap500": false,
+          "eligible_cap2000": false
+        },
+        {
+          "ticker": "WINT",
+          "market_cap": 0.0,
+          "close": 1292759999.897,
+          "eligible_cap150": true,
+          "eligible_cap500": false,
+          "eligible_cap2000": false
+        }
+      ]
+    },
+    "2012-06-15": {
+      "eligible_cap150": 2823,
+      "eligible_cap500": 2031,
+      "eligible_cap2000": 992,
+      "flag_below_floor": {
+        "eligible_cap150": 0,
+        "eligible_cap500": 0,
+        "eligible_cap2000": 0
+      },
+      "cap2000_not_cap150": 2,
+      "cap500_not_cap150": 0,
+      "flag_below_floor_rows": []
+    },
+    "2015-06-15": {
+      "eligible_cap150": 3189,
+      "eligible_cap500": 2481,
+      "eligible_cap2000": 1409,
+      "flag_below_floor": {
+        "eligible_cap150": 0,
+        "eligible_cap500": 0,
+        "eligible_cap2000": 0
+      },
+      "cap2000_not_cap150": 1,
+      "cap500_not_cap150": 0,
+      "flag_below_floor_rows": []
+    },
+    "2019-06-14": {
+      "eligible_cap150": 3002,
+      "eligible_cap500": 2356,
+      "eligible_cap2000": 1389,
+      "flag_below_floor": {
+        "eligible_cap150": 0,
+        "eligible_cap500": 0,
+        "eligible_cap2000": 0
+      },
+      "cap2000_not_cap150": 5,
+      "cap500_not_cap150": 0,
+      "flag_below_floor_rows": []
+    },
+    "2021-06-15": {
+      "eligible_cap150": 3652,
+      "eligible_cap500": 2855,
+      "eligible_cap2000": 1792,
+      "flag_below_floor": {
+        "eligible_cap150": 0,
+        "eligible_cap500": 0,
+        "eligible_cap2000": 0
+      },
+      "cap2000_not_cap150": 3,
+      "cap500_not_cap150": 0,
+      "flag_below_floor_rows": []
+    },
+    "2023-06-15": {
+      "eligible_cap150": 3158,
+      "eligible_cap500": 2472,
+      "eligible_cap2000": 1503,
+      "flag_below_floor": {
+        "eligible_cap150": 0,
+        "eligible_cap500": 0,
+        "eligible_cap2000": 0
+      },
+      "cap2000_not_cap150": 2,
+      "cap500_not_cap150": 0,
+      "flag_below_floor_rows": []
+    },
+    "2026-06-15": {
+      "eligible_cap150": 3090,
+      "eligible_cap500": 2486,
+      "eligible_cap2000": 1620,
+      "flag_below_floor": {
+        "eligible_cap150": 0,
+        "eligible_cap500": 0,
+        "eligible_cap2000": 0
+      },
+      "cap2000_not_cap150": 6,
+      "cap500_not_cap150": 0,
+      "flag_below_floor_rows": []
+    }
+  },
+  "name_check": {
+    "date": "2023-06-15",
+    "cap2000_only_rows_that_date": [
+      {
+        "ticker": "CAVA",
+        "market_cap": 4876475927.84,
+        "close": 43.78
+      },
+      {
+        "ticker": "LVWR",
+        "market_cap": 2068621778.72,
+        "close": 10.22
+      }
+    ],
+    "cap2000_only": {
+      "ticker": "CAVA",
+      "master": {
+        "name": "CAVA GROUP INC",
+        "exchange": "NYSE",
+        "isdelisted": "N",
+        "scalemarketcap": "5 - Large",
+        "firstpricedate": "2023-06-15",
+        "lastpricedate": "2026-09-25"
+      },
+      "row": {
+        "market_cap": 4876475927.84,
+        "close": 43.78,
+        "volatility_60": NaN,
+        "eligible_cap150": false,
+        "eligible_cap500": false,
+        "eligible_cap2000": true,
+        "eligible_cap2000_v1": true,
+        "eligible_cap150_v1": false
+      },
+      "first_panel_date": "2023-06-15",
+      "first_cap150_date": "2023-06-29",
+      "why": "cap2000 keeps the $10 price floor and has no dollar-volume floor; cap150/cap500 need a trailing 20d median $vol, which a name listed on/just before this date lacks"
+    },
+    "cap150_only": {
+      "ticker": "SCM",
+      "master": {
+        "name": "STELLUS CAPITAL INVESTMENT CORP",
+        "exchange": "NYSE",
+        "isdelisted": "N",
+        "scalemarketcap": "3 - Small",
+        "firstpricedate": "2012-11-08",
+        "lastpricedate": "2026-09-25"
+      },
+      "row": {
+        "market_cap": 292117158.92,
+        "close": 14.02,
+        "volatility_60": 0.011620595513732403,
+        "eligible_cap150": true,
+        "eligible_cap500": false,
+        "eligible_cap2000": false,
+        "eligible_cap2000_v1": false,
+        "eligible_cap150_v1": true
+      },
+      "why": "market cap between $150M and $500M on the date"
+    }
+  },
+  "dead_names": {
+    "A": {
+      "ticker": "SHPG",
+      "master": {
+        "name": "SHIRE PLC",
+        "exchange": "NASDAQ",
+        "isdelisted": "Y",
+        "scalemarketcap": "5 - Large",
+        "firstpricedate": "1998-03-25",
+        "lastpricedate": "2019-01-07"
+      },
+      "last_panel_date": "2019-01-07",
+      "days_in_pool": {
+        "eligible_cap150": 3518,
+        "eligible_cap500": 3518,
+        "eligible_cap2000": 3527
+      },
+      "last_date_in_pool": {
+        "eligible_cap150": "2019-01-07",
+        "eligible_cap500": "2019-01-07",
+        "eligible_cap2000": "2019-01-07"
+      }
+    },
+    "B": {
+      "ticker": "FYBR",
+      "master": {
+        "name": "FRONTIER COMMUNICATIONS PARENT INC",
+        "exchange": "NASDAQ",
+        "isdelisted": "Y",
+        "scalemarketcap": "4 - Mid",
+        "firstpricedate": "2021-05-04",
+        "lastpricedate": "2026-01-20"
+      },
+      "last_panel_date": "2026-01-20",
+      "days_in_pool": {
+        "eligible_cap150": 1175,
+        "eligible_cap500": 1175,
+        "eligible_cap2000": 1184
+      },
+      "last_date_in_pool": {
+        "eligible_cap150": "2026-01-20",
+        "eligible_cap500": "2026-01-20",
+        "eligible_cap2000": "2026-01-20"
+      }
+    },
+    "cap150_small_dead": {
+      "ticker": "SPA",
+      "master": {
+        "name": "SPARTON CORP",
+        "exchange": "NYSE",
+        "isdelisted": "Y",
+        "scalemarketcap": "2 - Micro",
+        "firstpricedate": "1986-01-01",
+        "lastpricedate": "2019-03-04"
+      },
+      "days_in_pool": {
+        "eligible_cap150": 1359,
+        "eligible_cap500": 0,
+        "eligible_cap2000": 0
+      },
+      "last_panel_date": "2019-03-04"
+    }
+  },
+  "pit_flip": {
+    "ticker": "AB",
+    "window": "2012-06-15..2015-06-15",
+    "n_flips_cap2000": 15,
+    "first_cap2000_date": "2013-01-07",
+    "rows_around_first": [
+      {
+        "date": "2013-01-02",
+        "market_cap": 1892068422.58,
+        "close": 17.99,
+        "eligible_cap2000": false,
+        "eligible_cap2000_v1": false
+      },
+      {
+        "date": "2013-01-03",
+        "market_cap": 1892068422.58,
+        "close": 17.99,
+        "eligible_cap2000": false,
+        "eligible_cap2000_v1": false
+      },
+      {
+        "date": "2013-01-04",
+        "market_cap": 1964638028.56,
+        "close": 18.68,
+        "eligible_cap2000": false,
+        "eligible_cap2000_v1": false
+      },
+      {
+        "date": "2013-01-07",
+        "market_cap": 2019328166.3999999,
+        "close": 19.2,
+        "eligible_cap2000": true,
+        "eligible_cap2000_v1": true
+      },
+      {
+        "date": "2013-01-08",
+        "market_cap": 2010914299.0400002,
+        "close": 19.12,
+        "eligible_cap2000": true,
+        "eligible_cap2000_v1": true
+      },
+      {
+        "date": "2013-01-09",
+        "market_cap": 2036155901.12,
+        "close": 19.36,
+        "eligible_cap2000": true,
+        "eligible_cap2000_v1": true
+      },
+      {
+        "date": "2013-01-10",
+        "market_cap": 2057190569.52,
+        "close": 19.56,
+        "eligible_cap2000": true,
+        "eligible_cap2000_v1": true
+      },
+      {
+        "date": "2013-01-11",
+        "market_cap": 2101363373.16,
+        "close": 19.98,
+        "eligible_cap2000": true,
+        "eligible_cap2000_v1": true
+      }
+    ],
+    "cap2000_true_below_2B_in_window": 0,
+    "v1_vs_v2_rows_differ_in_window": 0
+  },
+  "pit_note": "v2 flags are computed per row from that date's market cap, price and trailing 20d $vol (downcap_universe.py); membership flips as market cap crosses the floor, and delisted names are present up to their last price date."
+}

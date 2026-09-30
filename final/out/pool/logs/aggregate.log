@@ -1,0 +1,30 @@
+[11:59:10] reconcile WO-21 A cap150 icw8 full: +0.0285416 vs +0.0285416 diff +0.0e+00 OK
+[11:59:10] reconcile WO-21 A cap150 icw8 pre: +0.0775258 vs +0.0775258 diff +0.0e+00 OK
+[11:59:10] reconcile WO-21 A cap150 icw8 post: +0.0001218 vs +0.0001218 diff +0.0e+00 OK
+[11:59:10] reconcile WO-21 A cap150 pool post: -0.0198815 vs -0.0198815 diff +0.0e+00 OK
+[11:59:10] reconcile WO-21 A cap150 pool pre: +0.0273451 vs +0.0273451 diff +0.0e+00 OK
+[11:59:10] reconcile WO-23 A cap150 icw9_seas full: +0.0348652 vs +0.0348652 diff +0.0e+00 OK
+[11:59:10] reconcile WO-24 B cap150 icw8 book: -0.0199180 vs -0.0199180 diff +9.7e-10 OK
+[11:59:10] reconcile WO-24 B cap150 icw8 selection over pool: +0.0285373 vs +0.0285373 diff -1.5e-09 OK
+[11:59:10] reconcile WO-24 B cap150 icw9_seas book: -0.0201636 vs -0.0201637 diff +6.2e-09 OK
+[11:59:10] reconcile WO-24 B cap150 icw9_seas selection over pool: +0.0282917 vs +0.0282917 diff +3.7e-09 OK
+[11:59:10] reconcile WO-24 B cap150 pool: -0.0484553 vs -0.0484553 diff +2.5e-09 OK
+[11:59:10] reconcile readout col c A cap150 icw8: +0.0285416 vs +0.0285416 diff +0.0e+00 OK (non-blocking)
+[11:59:10] reconcile WO-7 A cap150 pool: -0.0024850 vs -0.0024850 diff -2.3e-16 OK (non-blocking)
+[11:59:10] reconcile WO-9 A cap150 icw8 price_only_15bp full: +0.0228482 vs +0.0228482 diff -8.7e-17 OK
+[11:59:10] reconcile WO-9 A cap150 icw8 price_only_15bp common: +0.0092182 vs +0.0092182 diff -4.9e-17 OK
+[11:59:10] reconcile WO-9 A cap150 icw8 tradable_15bp full: +0.0255567 vs +0.0255567 diff -8.7e-17 OK
+[11:59:10] reconcile WO-9 A cap150 icw8 tradable_15bp common: +0.0108425 vs +0.0108425 diff -5.0e-17 OK
+[11:59:10] reconcile readout col c A cap500 icw8: +0.0265961 vs +0.0265961 diff +0.0e+00 OK (non-blocking)
+[11:59:10] reconcile WO-7 A cap500 pool: -0.0016835 vs -0.0016835 diff -4.8e-16 OK (non-blocking)
+[11:59:10] reconcile WO-9 A cap500 icw8 price_only_15bp full: +0.0207399 vs +0.0207399 diff -1.7e-17 OK (non-blocking)
+[11:59:10] reconcile WO-9 A cap500 icw8 price_only_15bp common: +0.0068668 vs +0.0068668 diff -1.7e-18 OK (non-blocking)
+[11:59:10] reconcile WO-9 A cap500 icw8 tradable_15bp full: +0.0232972 vs +0.0232972 diff -1.7e-17 OK (non-blocking)
+[11:59:10] reconcile WO-9 A cap500 icw8 tradable_15bp common: +0.0081836 vs +0.0081836 diff +0.0e+00 OK (non-blocking)
+[11:59:10] reconcile readout col c A cap2000 icw8: +0.0283678 vs +0.0283678 diff +0.0e+00 OK (non-blocking)
+[11:59:10] reconcile WO-7 A cap2000 pool: -0.0041435 vs -0.0041435 diff -3.6e-16 OK (non-blocking)
+[11:59:10] reconcile WO-9 A cap2000 icw8 price_only_15bp full: +0.0220654 vs +0.0220654 diff -2.4e-17 OK (non-blocking)
+[11:59:10] reconcile WO-9 A cap2000 icw8 price_only_15bp common: +0.0127924 vs +0.0127924 diff -8.7e-18 OK (non-blocking)
+[11:59:10] reconcile WO-9 A cap2000 icw8 tradable_15bp full: +0.0259549 vs +0.0259549 diff -2.8e-17 OK (non-blocking)
+[11:59:10] reconcile WO-9 A cap2000 icw8 tradable_15bp common: +0.0147875 vs +0.0147875 diff -1.0e-17 OK (non-blocking)
+[11:59:10] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a224b0b3e3e4eaba0/final/out/pool/pool_hedge_read.json; blocking reconcile PASS
