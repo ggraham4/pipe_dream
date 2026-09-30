@@ -1,0 +1,30 @@
+[11:43:06] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[11:43:42] universe 9,756,141 rows (43s)
+[11:44:02]   reconcile icw8_vs_wo21_0.0285416: OK
+[11:44:02]   reconcile icw8_exact_1e-9: OK
+[11:44:02]   reconcile icw9_seas_vs_wo20: OK
+[11:44:02]   reconcile pool_vs_wo21_noscore: OK
+[11:44:02] icw8 +0.0285416  icw9_seas +0.0348652  pool -0.002485035
+[11:44:54] random icw8 done (115s)
+[11:45:45] random icw9_seas done (166s)
+[11:45:45] icw8      trend_pit          up         n= 1791 book  +2.08 pool  -1.08 sel  +3.16 +40/-0 loyo +1.92 d08 +3.16 | vs rnd +3.96
+[11:45:45] icw8      trend_pit          flat       n= 1148 book  -0.70 pool  -1.26 sel  +0.56 +26/-14 loyo -0.13 d08 -0.13 | vs rnd +1.28
+[11:45:45] icw8      trend_pit          down       n=  332 book +19.35 pool  +7.73 sel +11.62 +40/-0 loyo +11.03 d08 +11.40 | vs rnd +12.59
+[11:45:45] icw8      vol                high       n= 1375 book  +4.24 pool  +1.02 sel  +3.22 +40/-0 loyo +1.74 d08 +1.74 | vs rnd +4.01
+[11:45:45] icw8      vol                low        n= 1867 book  +1.73 pool  -1.34 sel  +3.06 +40/-0 loyo +2.22 d08 +3.06 | vs rnd +3.86
+[11:45:45] icw8      size               small_lead n= 1550 book  +4.63 pool  -0.35 sel  +4.98 +40/-0 loyo +3.92 d08 +4.42 | vs rnd +5.80
+[11:45:45] icw8      size               large_lead n= 1618 book  +1.59 pool  -0.02 sel  +1.61 +39/-1 loyo +0.61 d08 +1.00 | vs rnd +2.38
+[11:45:45] icw8      calyear_ref_nonpit up         n= 2013 book  +2.54 pool  +0.70 sel  +1.84 +40/-0 loyo +0.91 d08 +1.84 | vs rnd +2.61
+[11:45:45] icw8      calyear_ref_nonpit flat       n= 1006 book  +0.44 pool  -3.51 sel  +3.95 +40/-0 loyo +1.72 d08 +3.95 | vs rnd +4.72
+[11:45:45] icw8      calyear_ref_nonpit down       n=  253 book +14.81 pool  +5.15 sel  +9.66 +40/-0 loyo +nan d08 +nan | vs rnd +10.69
+[11:45:45] icw9_seas trend_pit          up         n= 1791 book  +2.86 pool  -1.08 sel  +3.94 +40/-0 loyo +3.00 d08 +3.94 | vs rnd +4.77
+[11:45:45] icw9_seas trend_pit          flat       n= 1148 book  +0.39 pool  -1.26 sel  +1.65 +39/-1 loyo +0.81 d08 +0.81 | vs rnd +2.42
+[11:45:45] icw9_seas trend_pit          down       n=  332 book +17.65 pool  +7.73 sel  +9.92 +40/-0 loyo +9.53 d08 +9.54 | vs rnd +10.82
+[11:45:45] icw9_seas vol                high       n= 1375 book  +4.96 pool  +1.02 sel  +3.94 +40/-0 loyo +2.57 d08 +2.57 | vs rnd +4.77
+[11:45:45] icw9_seas vol                low        n= 1867 book  +2.28 pool  -1.34 sel  +3.62 +40/-0 loyo +2.67 d08 +3.62 | vs rnd +4.44
+[11:45:45] icw9_seas size               small_lead n= 1550 book  +5.01 pool  -0.35 sel  +5.36 +40/-0 loyo +4.21 d08 +4.96 | vs rnd +6.18
+[11:45:45] icw9_seas size               large_lead n= 1618 book  +2.36 pool  -0.02 sel  +2.38 +40/-0 loyo +1.53 d08 +1.68 | vs rnd +3.21
+[11:45:45] icw9_seas calyear_ref_nonpit up         n= 2013 book  +3.06 pool  +0.70 sel  +2.36 +40/-0 loyo +1.63 d08 +2.36 | vs rnd +3.15
+[11:45:45] icw9_seas calyear_ref_nonpit flat       n= 1006 book  +1.40 pool  -3.51 sel  +4.92 +40/-0 loyo +2.95 d08 +4.92 | vs rnd +5.75
+[11:45:45] icw9_seas calyear_ref_nonpit down       n=  253 book +14.99 pool  +5.15 sel  +9.83 +40/-0 loyo +nan d08 +nan | vs rnd +10.94
+[11:45:45] decision C (raw-episode C, vs-random A); wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a67c99c8cb2646a15/final/out/regime/regime_phase0.json (166s)
