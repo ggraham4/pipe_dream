@@ -1,0 +1,3 @@
+[10:48:56] pool {'rows_lt2020_all_forms': 244447, 'rows_dedup': 244447, 'rows_8k_original': 241940, 'rows_8ka_excluded': 2507, 'ciks': 6619, 'by_source': {'8k_item202.parquet': 137546, '8k_item202_v2topup.parquet': 104394}}
+[10:49:23] coverage v1-present 0.9424 v1-absent 0.9150 gap +2.74pp -> PASS
+[10:49:24] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-ad838240373d22717/final/out/ear/ear_factor_v2.parquet (9,758,582 rows, live 0.861) in 29s

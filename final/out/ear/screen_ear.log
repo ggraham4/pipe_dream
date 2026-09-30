@@ -1,0 +1,29 @@
+[11:07:36] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[11:09:39] harness reconcile OK: {'decile_icw8_frozen': [0.028541632641009042, 0.028541632641009042], 'oos_fit_odd_test_even': [0.04041110565685588, 0.040411105656855885], 'oos_fit_even_test_odd': [0.055397983383733786, 0.055397983383733786]}
+[11:10:47] base icw9_seas reconcile OK +0.025496 == WO-18 +0.025496
+[11:10:53] label trace 1.00000 of 9,560,097
+[11:11:36] IC +0.01235 t +3.26 | 07-13 +0.01555 14-19 +0.00863 | sector both +2.79 | max year share 0.2764781513813877 (2007)
+[11:12:12] icw9_seas +0.02550 icw10 +0.02564 inc flips 20/40 | ear t fit +3.10/+1.41
+[11:12:39] null 0: refit +0.02556 weight-matched +0.02498 (t +0.79/+1.05)
+[11:13:05] null 1: refit +0.02546 weight-matched +0.02510 (t +0.58/+0.01)
+[11:13:30] null 2: refit +0.02546 weight-matched +0.02535 (t +0.31/+0.05)
+[11:13:57] null 3: refit +0.02510 weight-matched +0.02415 (t -0.79/-2.11)
+[11:14:24] null 4: refit +0.02561 weight-matched +0.02525 (t +0.99/+0.57)
+[11:14:55] null 5: refit +0.02540 weight-matched +0.02455 (t +0.29/+0.23)
+[11:15:23] null 6: refit +0.02562 weight-matched +0.02514 (t +0.75/-0.07)
+[11:15:51] null 7: refit +0.02549 weight-matched +0.02529 (t +1.79/+0.36)
+[11:16:18] null 8: refit +0.02471 weight-matched +0.02460 (t -2.95/+1.15)
+[11:16:47] null 9: refit +0.02569 weight-matched +0.02503 (t +0.11/-1.31)
+[11:17:19] null 10: refit +0.02552 weight-matched +0.02477 (t -1.23/+0.47)
+[11:17:48] null 11: refit +0.02559 weight-matched +0.02462 (t +1.30/+0.20)
+[11:18:26] null 12: refit +0.02531 weight-matched +0.02526 (t +0.19/-0.36)
+[11:19:02] null 13: refit +0.02569 weight-matched +0.02531 (t -1.57/-0.14)
+[11:19:32] null 14: refit +0.02551 weight-matched +0.02500 (t -1.41/+0.17)
+[11:20:04] null 15: refit +0.02550 weight-matched +0.02485 (t +0.09/-0.40)
+[11:20:31] null 16: refit +0.02533 weight-matched +0.02456 (t -0.59/+0.40)
+[11:20:57] null 17: refit +0.02555 weight-matched +0.02479 (t +0.06/-0.08)
+[11:21:23] null 18: refit +0.02575 weight-matched +0.02501 (t +0.29/+2.26)
+[11:21:48] null 19: refit +0.02532 weight-matched +0.02459 (t -1.30/-0.62)
+[11:21:56] gates {'g1_pooled_t_ge_2.24': True, 'g2_halves_2007_2013_and_2014_2019_positive': True, 'g3_sector_both_sides_t_ge_1': True, 'g4_zero_book_increment_offset_flips': False, 'g5_max_year_share_le_0.45': True, 'g6_beats_null_p80': True, 'g7_gate_A_clean': True} -> DEAD
+[11:23:22] descriptive {"loyo_icw9_seas": {"loyo_min": 0.01473863780491363, "loyo_min_dropped_year": 2009, "loyo_max": 0.035574188143279985}, "loyo_icw10": {"loyo_min": 0.015619106935135893, "loyo_min_dropped_year": 2009, "loyo_max": 0.035856780152525726}, "ic_live_rows_only": {"mean": 0.013359780966275703, "t": 3.230309458953994, "n": 3272}, "coverage_sue_io_gap": [0.8251408010605833, 0.9649189161985257], "median_spearman_ear_vs_sue": 0.1450858381842587, "median_spearman_ear_live_vs_sue": 0.15333711512774953, "median_spearman_ear_vs_momentum_12_1": 0.13829587254152373, "median_spearman_ear_live_vs_momentum_12_1": 0.15197985343023918, "median_spearman_ear_vs_io_gap": 0.037156064057884394, "median_spearman_ear_live_vs_io_gap": 0.0405627898941414, "icw9_seas_sue": 0.02564022639791303, "icw9_seas_sue_ear": 0.026782327660768157, "increment_over_seas_sue": 0.001142101262855126, "sue_t_fit_odd_even": [1.8197331205766913, 1.2165826331485592]}
+[11:23:22] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-ad838240373d22717/final/out/ear/ear_screen_report.json (955s)
