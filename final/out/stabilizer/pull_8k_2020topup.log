@@ -1,0 +1,8 @@
+[10:57:21] cap150 2020+ tickers 5,737 -> 5,713 CIKs; in pool 4,344; known zero-2.02 41; to pull 1,328; tickers with no CIK ['ASBH', 'RCBC']
+[10:58:52]   250/1328 CIKs, 4,464 rows, 260 fresh requests, 91s
+[11:00:22]   500/1328 CIKs, 6,040 rows, 510 fresh requests, 181s
+[11:01:51]   750/1328 CIKs, 6,808 rows, 760 fresh requests, 270s
+[11:03:14]   1000/1328 CIKs, 8,104 rows, 1010 fresh requests, 353s
+[11:04:25]   1250/1328 CIKs, 8,466 rows, 1260 fresh requests, 424s
+[11:04:47] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-afcd45cd69ed78d09/final/out/stabilizer/8k_item202_2020topup.parquet: 8,476 rows, 603 CIKs, 2004-10-20..2026-10-01
+[11:04:47] meta: 725 CIKs with zero 2.02s, 0 404s
