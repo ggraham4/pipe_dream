@@ -391,6 +391,12 @@ COO ruling: this is a bug fix, not an iteration. The count stays at 0 of 3.
   eligible names with a matching put is never below 92.9%. All four
   holiday dates have normal counts (1,370, 1,592, 1,473, 1,579). The COO
   rules on whether to proceed.
+- **COO ruling (2026-10-01): proceed, all 225 entry dates in.** The
+  half-of-median test measured the size of the eligible universe and is
+  withdrawn. The presence check applied is the share of cap2000-eligible
+  names with a matching put, at least 92.9% on every date. Nothing in the
+  spec changes and iterations stay at 0 of 3. The real-label run followed
+  this ruling.
 - This fix and the code change are committed before the real-label run.
 
 ### 4.1 Blend arm: BLOCKED
