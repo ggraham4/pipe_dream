@@ -164,3 +164,81 @@ nominated anything (rate 0.12)**, under the one-in-five ceiling. Stage 2 was
 also run end to end on shuffled labels for V5 and V3
 (`stage2_SHUFFLED_TEST_labels-shuffled.json`); pool integrity on 2019-2026 is
 100.00%, and both runs returned KILL.
+
+## Results
+
+Pre-registration committed as `c19b698` before Stage 1 ran. No iterations
+used (0 of 3). Trial tally now 24.
+
+**Verdict: KILL at Stage 1.** No variant was nominated, so Stage 2 did not
+run and **hold-out read #16 was not used**. For plumbing, the 2019-2026
+outcomes were loaded twice (V5, then V3) with labels permuted within date,
+demeaned, and SPY set to 0. No real-label statistic was computed on that
+window. Whether that loading matters is for the COO to judge. The V3 run
+overwrote the V5 run, so `stage2_SHUFFLED_TEST_labels-shuffled.json` holds
+V3 only.
+
+The deciding number: **leave-one-year-out minimum −0.06 %/yr** (2010
+dropped) for V6 (drop the bottom 20%), the best variant and the only one
+above the null (+0.13 against +0.03 %/yr). V6 is also −0.05 on offset 1.
+Every other variant is below the base.
+
+These two failing margins are about the size of the 2018-10-17 top-up's
+effect on V0's offset 1 (0.04). The verdict follows the pre-registered rule
+on the pre-registered file; nothing was rerun.
+
+Stage 1, 2008-01 to 2018-12, 133 dates, %/yr over SPY
+(`final/out/cwweights/stage1_nominate.json`). Base 5.37 (offsets 5.17 / 5.56,
+odd years 4.41, even years 6.15, turnover 0.263).
+
+| variant | %/yr over SPY | diff from base | diff offset 1 / 2 | diff odd / even years | LOYO min of diff (year dropped) | turnover | nominated |
+|---|---|---|---|---|---|---|---|
+| V0, x 0.353 (reference) | 3.63 | −1.73 | −1.45 / −2.02 | | | 0.539 | n/a |
+| V1, x 0.05 | 5.25 | −0.11 | +0.29 / −0.51 | −0.23 / −0.01 | −0.29 (2018) | 0.274 | no |
+| V2, x 0.10 | 4.85 | −0.52 | −0.12 / −0.91 | −0.36 / −0.65 | −0.70 (2017) | 0.305 | no |
+| V3, x 0.20 | 3.87 | −1.49 | −1.25 / −1.73 | −1.11 / −1.81 | −1.77 (2018) | 0.399 | no |
+| V4, x 0.214 | 3.98 | −1.38 | −1.39 / −1.37 | −0.82 / −1.85 | −1.63 (2017) | 0.414 | no |
+| V5, drop bottom 10% | 5.09 | −0.28 | −0.10 / −0.46 | −0.63 / +0.02 | −0.50 (2018) | 0.294 | no |
+| V6, drop bottom 20% | 5.49 | +0.13 | −0.05 / +0.30 | −0.40 / +0.55 | −0.06 (2010) | 0.341 | no |
+
+Nulls (100 shuffles of cw_spread within date):
+- Max-over-six null: 80th percentile **+0.03 %/yr**, median −0.17.
+- Random thinning (the V5 and V6 columns of the same draws): V5 80th
+  percentile −0.06, median −0.25, real −0.28 (below the median of random
+  thinning). V6 80th percentile −0.09, median −0.41, real +0.13 (above).
+- Per-variant null medians for the weighted variants: V1 −0.39, V2 −0.81,
+  V3 −1.72, V4 −1.85. The real weighted variants lose less than a noise
+  factor at the same weight (V3 −1.49 against −1.72) but still lose.
+
+What the table shows:
+- The loss grows steadily with the weight (−0.11, −0.52, −1.49, −1.73 at
+  0.05, 0.10, 0.20, 0.353). No weight tried improves the book, so the
+  Experiment B failure was not caused by the rule over-weighting the factor.
+- Turnover rises with the weight (0.26 to 0.54 new names per rebalance).
+  That part of the loss is cost is inferred, not verified: no gross-of-cost
+  difference was computed.
+- Removing the bottom decile does not help the long book (−0.28, at the
+  median of random thinning, −0.25), although that decile carries the
+  factor's return spread. The base book already under-holds those names:
+  5.7% of its picks (4.9% by weight) sit in the bottom cw_spread decile
+  against 10% by chance, and 13.4% in the bottom quintile against 20%
+  (label-free count on the Stage 1 picks, made after the result).
+- V6's +0.13 is small, sits on one offset and on even years, and turns
+  negative when 2010 is dropped.
+
+Closed by this result: cw_spread as a weighted factor and as an exclusion
+screen for the long book. Only reopening condition: a short book with real
+borrow-cost data.
+
+Checks run:
+- Base and V0 reproduce Experiment B (section 3), offset 2 to every digit.
+- Fast path equals `ET.score_frame` + `run_expB.portfolio` to 1e-9 on base,
+  V0 and all six variants, on real labels inside the Stage 1 run and on
+  shuffled labels before it.
+- Shuffled-label nomination rate 0.12 (6 of 50); 0.20 when only the
+  above-null condition is applied, as designed.
+- `run_cw.py --mode stage2` refuses: "Stage 1 nominated nothing".
+
+Not verified: that the 10 added name-dates are the same 10 tickers as the
+repaired `error` rows. The counts, the date and the rebuild time agree; the
+ticker lists were not compared because the pre-top-up file no longer exists.
