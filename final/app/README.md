@@ -87,6 +87,16 @@ overlap, and the options backtest win rate.
   `out/current_signal_pit.csv`, `out/current_signal_pit_xrank.csv` and
   `out/current_signal_compare.json`. A "Retrain both signals" button reruns the
   whole point-in-time sequence in the background and streams the log.
+- *Rolling weights (candidate — unverified)* — **(2026-10-01)** tracking only,
+  never traded. The Theoretical model's nine factors with weights refit every
+  21 trading days on the trailing 1 year (`icw9_r252`). Shows the top of the
+  latest weekly record's ranking (a ranking, not the decile-by-volatility
+  portfolio; the ledger doesn't store that), the refit's weights and trailing-1y
+  t next to the live weights, and a forward tracker. Reads
+  `out/reset2026/prediction_ledger_r252.csv`, `r252_weight_path.csv`,
+  `prediction_ledger_r252_scores.csv` and `ledger_r252_guard_log.csv` through
+  `lib/rolling_model.py`, which computes no model quantity. Missing files give
+  an empty state. A second model is one more entry in `rolling_model.MODELS`.
 - *Query a Ticker* — **(2026-09-24)** answers each ticker for **both** the
   blend (Today's Picks, cap2000) and the theoretical model (composite alone,
   cap150), one row per ticker, with a "Both models pick it" column. Blend
