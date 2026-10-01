@@ -73,6 +73,11 @@ RULES (frozen; COO implementation of Gabe's ruling)
     record. Imported in its OWN try; any r252 failure skips only the r252
     record, is logged to ledger_r252_guard_log.csv (written here, without
     importing r252_forward), and never stops v3/ext/hedge/sue/seas/blend_seas/io.
+    WO-34b (2026-10-01): after all records of a non-dry run, r252_forward.score()
+    (maintains prediction_ledger_r252_scores.csv) and r252_forward.write_picks()
+    (final/out/current_signal_r252.csv + _meta.json) run, each in its own try.
+    A failure is a logged skip (r252_score_skipped / r252_picks_skipped in
+    ledger_r252_guard_log.csv), never a STOP, and touches no ledger.
 """
 import argparse
 import hashlib
@@ -285,6 +290,17 @@ def _r252_guard(iso, event, detail):
         row.to_csv(R252_GUARD_CSV, mode="a", header=not R252_GUARD_CSV.exists(), index=False)
     except (Exception, SystemExit) as e:   # noqa: BLE001
         log(f"could not write r252 guard log for {iso}: {type(e).__name__}: {e}")
+
+
+def _r252_post():
+    """WO-34b: r252 score + picks file, each isolated. Never raises."""
+    for event, call in (("r252_score_skipped", lambda RF: RF.score()),
+                        ("r252_picks_skipped", lambda RF: RF.write_picks())):
+        try:
+            call(_r252_forward())
+        except (Exception, SystemExit) as e:   # noqa: BLE001
+            log(f"R252 post-step FAILED ({event}; every ledger unaffected): {type(e).__name__}: {e}")
+            _r252_guard("", event, f"{type(e).__name__}: {e}")
 
 
 def _seas_guard(SS, iso, event, detail, ledger):
@@ -556,6 +572,7 @@ def run(dry=False):
         logrows.append([HEDGE.name, iso, iso_week(d), ra, _late(iso, ra), _rows_for(HEDGE, iso)])
     if logrows:
         append_log(logrows)
+    _r252_post()               # WO-34b: score + picks, guarded; after every ledger has recorded
     check_prefixes(before)
     check_manifest(man_before)
     if sue_deferred or side_deferred:
