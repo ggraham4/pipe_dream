@@ -72,6 +72,7 @@ final/scripts/td_data_delisted_repaired_causal/
 # Reproduce: final/scripts/av_options_run_pull.sh, final/src/build_option_chain_unified.py,
 # final/scripts/sharadar_backfill_1998.sh (see final/models/2026-09-22-alpha-vantage-spin.md).
 final/data/alphavantage/
+final/data/schwab/
 final/data/options_unified/
 final/data/sharadar_backfill/
 
