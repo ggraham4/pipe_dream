@@ -1,5 +1,7 @@
 # pipe_dream model dashboard
 
+**No trading (Gabe, 2026-10-01):** the app shows recommendations only. No agent, script, job or app code may place, modify or cancel any order unless Gabe himself types out the exact trade details as confirmation. The Schwab API keys are market-data only. See AGENTS.md standing constraint #7.
+
 > **STATUS AS OF 2026-09-16 (Rounds 18–19) — READ FIRST.**
 >
 > The Stock tab now shows **two signals side by side**, plus SPY and USMV as
