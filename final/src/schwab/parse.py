@@ -8,9 +8,12 @@ API's own timestamps converted to UTC. The raw Sharadar-style ticker is in
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta, timezone
-from zoneinfo import ZoneInfo
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-NY = ZoneInfo("America/New_York")
+try:
+    NY = ZoneInfo("America/New_York")
+except ZoneInfoNotFoundError as e:        # Windows ships no time-zone database
+    raise ImportError("time-zone data not found: run `py -3.11 -m pip install tzdata`") from e
 
 
 def ms_to_utc(ms):

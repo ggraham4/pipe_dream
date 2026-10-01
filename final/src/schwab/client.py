@@ -155,8 +155,11 @@ class TokenStore:
         fd = os.open(str(tmp), os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
         with os.fdopen(fd, "w") as f:
             json.dump(tok, f)
-        os.chmod(tmp, 0o600)
-        os.replace(tmp, self.path)
+        try:
+            os.chmod(tmp, 0o600)      # no effect on Windows: the user-profile ACL protects it
+        except OSError:
+            pass
+        os.replace(tmp, self.path)    # atomic on POSIX and Windows; overwrites the old file
 
 
 def check_scope(token_response: dict):

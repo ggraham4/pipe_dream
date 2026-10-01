@@ -1,8 +1,9 @@
 """Write-once parquet snapshots, the sqlite pull log, the frozen universe and
 a small NYSE calendar.
 
-Layout under the data root (default /Users/ggraham/pipe_dream/final/data/schwab,
-gitignored, never committed):
+Layout under the data root (default /Users/ggraham/pipe_dream/final/data/schwab on
+the Mac, <repo>/final/data/schwab elsewhere, see `resolve_main_root`; gitignored,
+never committed):
 
     quotes/date=YYYY-MM-DD/quotes_<snapshot>_part0001.parquet
     chains/date=YYYY-MM-DD/chains_<snapshot>_part0001.parquet
@@ -19,22 +20,51 @@ on the same day writes new files under a new snapshot id (UTC time).
 from __future__ import annotations
 
 import os
+import shutil
 import sqlite3
+import sys
 from datetime import date, datetime, timedelta, timezone
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 
 import pandas as pd
 
 from .client import to_schwab_symbol
 from .parse import ny_today
 
-MAIN_ROOT = Path("/Users/ggraham/pipe_dream/final")
+MAC_MAIN_ROOT = Path("/Users/ggraham/pipe_dream/final")
+ROOT_ENV = "PIPE_DREAM_ROOT"
+
+
+def resolve_main_root(env=None, here=None, mac_default=MAC_MAIN_ROOT, platform=None):
+    """The project's `final` directory.
+
+    1. env PIPE_DREAM_ROOT: the repo root (the folder that holds `final`), or
+       the `final` folder itself.
+    2. on macOS, the main checkout /Users/ggraham/pipe_dream/final when it
+       exists, so a run from any Mac worktree writes to the one live archive.
+    3. otherwise the checkout this file sits in (<repo>/final/src/schwab/store.py).
+    """
+    env = os.environ if env is None else env
+    val = (env.get(ROOT_ENV) or "").strip()
+    if val:
+        p = Path(val).expanduser()
+        return p if p.name == "final" and not (p / "final").is_dir() else p / "final"
+    platform = sys.platform if platform is None else platform
+    if platform == "darwin" and Path(mac_default).is_dir():
+        return Path(mac_default)
+    return Path(here or __file__).resolve().parents[2]
+
+
+MAIN_ROOT = resolve_main_root()
 DEFAULT_DATA_ROOT = MAIN_ROOT / "data" / "schwab"
 WORKING_PANEL = MAIN_ROOT / "out" / "reset2026" / "composite_panel_v2.parquet"
 KINDS = ("quotes", "chains", "expirations", "pricehistory", "hours")
 BENCHMARKS = ("SPY", "IWM", "USMV", "QQQ")
 REFERENCE_NAMES = ("AAPL", "SPY", "MSFT", "NVDA", "JPM")
 TIERS = ("cap2000", "cap500", "cap150")
+EXPORT_COLUMNS = ("ticker", "schwab_symbol", "in_cap2000", "panel_date", "universe_name")
+UNIVERSE_WARN_DAYS = 10      # exported universe older than this: loud warning
+UNIVERSE_REFUSE_DAYS = 45    # older than this: the pull refuses
 
 
 class WriteOnceError(RuntimeError):
@@ -89,12 +119,23 @@ class SnapshotWriter:
         tmp = part / f".{path.name}.{os.getpid()}.tmp"
         df.to_parquet(tmp, index=False)
         try:
-            os.link(tmp, path)                    # fails if the target exists
+            try:
+                os.link(tmp, path)                # fails if the target exists
+            except FileExistsError:
+                raise
+            except OSError:
+                # no hard links on this volume (exFAT, some network shares):
+                # exclusive create, which also fails if the target exists
+                with open(path, "xb") as dst, open(tmp, "rb") as src:
+                    shutil.copyfileobj(src, dst)
         except FileExistsError:
             raise WriteOnceError(f"refusing to overwrite {path}") from None
         finally:
             os.unlink(tmp)
-        os.chmod(path, 0o444)
+        try:
+            os.chmod(path, 0o444)                 # Windows: sets the read-only attribute
+        except OSError:
+            pass
         self._parts[kind] = n
         return path
 
@@ -149,7 +190,117 @@ class PullLog:
         self.db.close()
 
 
+class MergedPullLog:
+    """Read-only view over every pull_log*.sqlite in a data root.
+
+    After a Windows -> Mac sync the Mac holds its own pull_log.sqlite and the
+    other machine's log under another name (pull_log_windows.sqlite). The
+    checker needs the best status seen on either machine.
+    """
+
+    def __init__(self, root):
+        self.paths = sorted(Path(root).glob("pull_log*.sqlite"))
+        self.logs = [PullLog(p) for p in self.paths]
+
+    def __len__(self):
+        return len(self.logs)
+
+    def best_status(self, session_date, kind):
+        rank = {"ok": 2, "empty": 1, "error": 0}
+        out = {}
+        for log in self.logs:
+            for t, s in log.best_status(session_date, kind).items():
+                if rank.get(s, -1) > rank.get(out.get(t), -1):
+                    out[t] = s
+        return out
+
+    def close(self):
+        for log in self.logs:
+            log.close()
+
+
 # ------------------------------------------------------------------ universe
+def looks_like_path(name):
+    r"""True for C:\x\u.csv, /x/u.csv, u.csv, u.txt; False for cap150 or AAPL,MSFT."""
+    s = str(name)
+    return (len(PureWindowsPath(s).parts) > 1 or len(PurePosixPath(s).parts) > 1
+            or PureWindowsPath(s).suffix.lower() in (".csv", ".txt"))
+
+
+def read_universe_csv(path):
+    """A csv with a `ticker` column, read as text (a ticker "NA" stays a ticker)."""
+    return pd.read_csv(path, dtype=str, keep_default_na=False)
+
+
+def is_exported_universe(df):
+    return all(c in df.columns for c in EXPORT_COLUMNS)
+
+
+def load_exported_universe(path):
+    """An `export-universe` csv -> the frame build_universe returns on the Mac."""
+    df = read_universe_csv(path)
+    if not is_exported_universe(df):
+        raise ValueError(f"{path} is not an export-universe file (needs {EXPORT_COLUMNS})")
+    df = df[df["ticker"].str.strip() != ""].drop_duplicates("ticker").reset_index(drop=True)
+    for c in [c for c in df.columns if c.startswith("in_") or c == "is_benchmark"]:
+        df[c] = df[c].str.strip().str.lower().isin(("true", "1"))
+    return df
+
+
+def export_universe(name, out, panel_path=None, now=None):
+    """Write the universe (built from the panel, on the Mac) to one csv for a
+    machine that has no panel. `out` is replaced atomically."""
+    panel_path = panel_path or WORKING_PANEL
+    df = build_universe(name, panel_path)
+    if df["panel_date"].isna().all():
+        raise FileNotFoundError(f"working panel not found: {panel_path}")
+    now = now or datetime.now(timezone.utc)
+    df["exported_utc"] = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+    out = Path(out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    tmp = out.with_name(out.name + ".tmp")
+    df.to_csv(tmp, index=False)
+    os.replace(tmp, out)
+    return df
+
+
+def universe_age_days(uni, session_date):
+    """Calendar days from the universe's panel date (else its export time) to
+    the session date. None when the frame carries neither."""
+    for col in ("panel_date", "exported_utc"):
+        if col in uni.columns and len(uni):
+            try:
+                made = date.fromisoformat(str(uni[col].iloc[0])[:10])
+            except ValueError:
+                continue
+            return (date.fromisoformat(str(session_date)) - made).days
+    return None
+
+
+def universe_freshness(uni, session_date, warn_days=UNIVERSE_WARN_DAYS,
+                       refuse_days=UNIVERSE_REFUSE_DAYS):
+    """-> (level, age_days), level ok | warn | refuse. For exported files only."""
+    age = universe_age_days(uni, session_date)
+    if age is None or age > refuse_days:
+        return "refuse", age
+    return ("warn" if age > warn_days else "ok"), age
+
+
+def universe_label(name):
+    """File label of the frozen universe: the tier name, also for an exported
+    csv of that tier (so days pulled on Windows count for the checker)."""
+    if name in TIERS or name == "panel":
+        return name
+    p = Path(str(name))
+    if looks_like_path(name) and p.suffix.lower() == ".csv" and p.exists():
+        df = read_universe_csv(p)
+        if is_exported_universe(df) and len(df):
+            label = str(df["universe_name"].iloc[0])
+            if label in TIERS or label == "panel":
+                return label
+    return "custom"
+
+
 def build_universe(name="cap150", panel_path=WORKING_PANEL):
     """Universe frame: ticker, schwab_symbol, in_cap2000/500/150, is_benchmark, panel_date.
 
@@ -157,7 +308,15 @@ def build_universe(name="cap150", panel_path=WORKING_PANEL):
     cap2000, panel (every ticker on the latest panel date), a comma list
     ("AAPL,MSFT"), or a path to a file with one ticker per line / a `ticker`
     column. Benchmarks and the five reference names are always added.
+    A csv written by `export_universe` is returned as it is (flags and panel
+    date come from the file), so a machine without the panel can use it.
     """
+    name = str(name)
+    if name not in TIERS and name != "panel" and looks_like_path(name):
+        if not Path(name).exists():
+            raise FileNotFoundError(f"universe file not found: {name}")
+        if Path(name).suffix.lower() == ".csv" and is_exported_universe(read_universe_csv(name)):
+            return load_exported_universe(name)
     panel_date, flags = None, None
     if Path(panel_path).exists():
         import pyarrow.compute as pc
@@ -176,8 +335,8 @@ def build_universe(name="cap150", panel_path=WORKING_PANEL):
                        else flags.index[flags[f"eligible_{name}"].astype(bool)])
     elif Path(name).exists():
         txt = Path(name)
-        if txt.suffix == ".csv":
-            tickers = pd.read_csv(txt, dtype=str)["ticker"].dropna().tolist()
+        if txt.suffix.lower() == ".csv":
+            tickers = [t for t in read_universe_csv(txt)["ticker"].str.strip() if t]
         else:
             tickers = [l.strip() for l in txt.read_text().splitlines()
                        if l.strip() and not l.startswith("#")]
@@ -203,7 +362,7 @@ def build_universe(name="cap150", panel_path=WORKING_PANEL):
 
 
 def universe_path(root, session_date, name):
-    label = name if (name in TIERS or name == "panel") else "custom"
+    label = universe_label(name)
     return Path(root) / "universe" / f"date={session_date}" / f"universe_{label}.csv"
 
 
@@ -211,7 +370,8 @@ def frozen_universe(root, session_date, name="cap150", panel_path=WORKING_PANEL,
     """The universe for `session_date`: frozen on first use, reused afterwards."""
     path = universe_path(root, session_date, name)
     if path.exists():
-        return pd.read_csv(path, dtype={"ticker": str, "schwab_symbol": str}), path, False
+        return pd.read_csv(path, dtype={"ticker": str, "schwab_symbol": str},
+                           keep_default_na=False, na_values=[""]), path, False
     df = build_universe(name, panel_path)
     if write:
         path.parent.mkdir(parents=True, exist_ok=True)

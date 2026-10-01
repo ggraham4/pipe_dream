@@ -10,7 +10,8 @@ import sys
 import tempfile
 import unittest
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
+from unittest import mock
 
 import pandas as pd
 
@@ -175,7 +176,8 @@ class Tokens(unittest.TestCase):
             self.assertEqual(post[2]["code"], "C0DE@")              # url-decoded
             self.assertTrue(post[3]["Authorization"].startswith("Basic "))
             tok_path = Path(tmp) / "tok.json"
-            self.assertEqual(stat.S_IMODE(os.stat(tok_path).st_mode), 0o600)
+            if os.name == "posix":       # Windows has no mode bits; the profile ACL protects it
+                self.assertEqual(stat.S_IMODE(os.stat(tok_path).st_mode), 0o600)
 
             self.assertEqual(cl.get("markets", {"markets": "equity"}), {"ok": 1})
             self.assertEqual(s.calls[-1][3]["Authorization"], "Bearer A1")
@@ -477,6 +479,315 @@ class Acceptance(unittest.TestCase):
             ["2026-10-05", "2026-10-06", "2026-10-08", "2026-10-09", "2026-10-12"]))
         self.assertEqual(len(checks.latest_consecutive_days(
             ["2026-10-08", "2026-10-09", "2026-10-12", "2026-10-13", "2026-10-14"])), 5)
+
+
+def _cli():
+    sys.path.insert(0, str(Path(C.__file__).parents[2] / "scripts"))
+    import schwab_check
+    import schwab_pull
+    return schwab_pull, schwab_check
+
+
+def _no_client(*_a, **_k):
+    raise AssertionError("this test must stop before a Schwab client is built")
+
+
+def write_panel(tmp, panel_date="2026-09-30"):
+    """A tiny working panel: two dates, the eligibility flags, a close."""
+    rows = []
+    for d, names in (("2025-12-01", ["OLD"]), (panel_date, ["AAPL", "BRK.B", "NA", "TINY", "MID"])):
+        for t in names:
+            rows.append({"ticker": t, "date": d, "close": 10.0,
+                         "eligible_cap2000": t in ("AAPL", "BRK.B"),
+                         "eligible_cap500": t in ("AAPL", "BRK.B", "MID"),
+                         "eligible_cap150": t != "OLD"})
+    p = Path(tmp) / "panel.parquet"
+    pd.DataFrame(rows).to_parquet(p)
+    return p
+
+
+class WindowsHandoff(unittest.TestCase):
+    """WO-41b: the collector on a machine that has no panel and no Mac paths."""
+
+    def test_root_resolution_with_and_without_env(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp).resolve()
+            (tmp / "repo" / "final" / "src" / "schwab").mkdir(parents=True)
+            (tmp / "mac" / "final").mkdir(parents=True)
+            here = tmp / "repo" / "final" / "src" / "schwab" / "store.py"
+            mac = tmp / "mac" / "final"
+            r = store.resolve_main_root
+            # 1. the env var wins, given as the repo root or as the final folder
+            self.assertEqual(r({"PIPE_DREAM_ROOT": str(tmp / "repo")}, here, mac, "darwin"),
+                             tmp / "repo" / "final")
+            self.assertEqual(r({"PIPE_DREAM_ROOT": str(tmp / "repo" / "final")}, here, mac, "win32"),
+                             tmp / "repo" / "final")
+            self.assertEqual(r({"PIPE_DREAM_ROOT": str(tmp / "new")}, here, mac, "win32"),
+                             tmp / "new" / "final")
+            # 2. no env, on the Mac: the main checkout when it exists (today's behaviour)
+            self.assertEqual(r({}, here, mac, "darwin"), mac)
+            # 3. no env, elsewhere (or no main checkout): the checkout the file sits in
+            self.assertEqual(r({}, here, mac, "win32"), tmp / "repo" / "final")
+            self.assertEqual(r({}, here, tmp / "absent", "darwin"), tmp / "repo" / "final")
+            self.assertEqual(r({"PIPE_DREAM_ROOT": "  "}, here, mac, "win32"), tmp / "repo" / "final")
+        # the module default still hangs off the resolved root; the data root stays overridable
+        self.assertEqual(store.DEFAULT_DATA_ROOT, store.MAIN_ROOT / "data" / "schwab")
+        self.assertEqual(store.MAIN_ROOT.name, "final")
+        with mock.patch.dict(os.environ, {"PIPE_DREAM_SCHWAB_DATA": "/x/env"}):
+            self.assertEqual(store.data_root(), Path("/x/env"))
+            self.assertEqual(store.data_root("/x/flag"), Path("/x/flag"))
+
+    def test_export_universe_round_trip(self):
+        schwab_pull, _ = _cli()
+        with tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(schwab_pull, "make_client", _no_client):
+            panel = write_panel(tmp)
+            out = Path(tmp) / "win" / "universe_cap150.csv"
+            self.assertEqual(schwab_pull.main(["export-universe", "--universe", "cap150"]), 2)
+            self.assertEqual(schwab_pull.main(["export-universe", "--universe", "cap150", "--out",
+                                               str(out), "--panel", str(Path(tmp) / "no.parquet")]), 2)
+            self.assertFalse(out.exists())
+            self.assertEqual(schwab_pull.main(["export-universe", "--universe", "cap150", "--out",
+                                               str(out), "--panel", str(panel)]), 0)
+            mac = store.build_universe("cap150", panel)
+            # the "Windows" side: no panel anywhere
+            win = store.build_universe(str(out), Path(tmp) / "no_panel.parquet")
+            for col in store.EXPORT_COLUMNS + ("is_benchmark", "in_cap500", "in_cap150"):
+                self.assertEqual(win[col].tolist(), mac[col].tolist(), col)
+            self.assertEqual(set(win["ticker"]),
+                             {"AAPL", "BRK.B", "NA", "TINY", "MID"} | set(store.BENCHMARKS)
+                             | set(store.REFERENCE_NAMES))
+            by = win.set_index("ticker")
+            self.assertEqual(by.at["BRK.B", "schwab_symbol"], "BRK/B")
+            self.assertIn("NA", by.index)                           # not read as a missing value
+            self.assertTrue(by.at["AAPL", "in_cap2000"])
+            self.assertFalse(by.at["TINY", "in_cap2000"])
+            self.assertEqual(win["in_cap2000"].dtype, bool)
+            self.assertEqual(set(win["panel_date"]), {"2026-09-30"})
+            self.assertEqual(set(win["universe_name"]), {"cap150"})
+            # frozen under the tier's name, so the checker counts a Windows day
+            root = Path(tmp) / "data"
+            df, path, is_new = store.frozen_universe(root, "2026-10-02", str(out),
+                                                     Path(tmp) / "no_panel.parquet")
+            self.assertTrue(is_new)
+            self.assertEqual(path.name, "universe_cap150.csv")
+            self.assertEqual(checks.target_dates(root), ["2026-10-02"])
+            again, path2, is_new2 = store.frozen_universe(root, "2026-10-02", str(out))
+            self.assertEqual((path2, is_new2), (path, False))
+            self.assertEqual(again["ticker"].tolist(), win["ticker"].tolist())
+            self.assertEqual(again["in_cap2000"].tolist(), win["in_cap2000"].tolist())
+            self.assertEqual(checks._universe_for(root, "2026-10-02")["ticker"].tolist(),
+                             win["ticker"].tolist())
+            # a plain ticker csv is still a custom list
+            plain = Path(tmp) / "mine.csv"
+            plain.write_text("ticker\nAAPL\nNA\n")
+            self.assertEqual(store.universe_label(str(plain)), "custom")
+            self.assertEqual(store.build_universe(str(plain), panel)["ticker"].tolist()[:2],
+                             ["AAPL", "NA"])
+
+    def test_stale_universe_warns_then_refuses(self):
+        schwab_pull, _ = _cli()
+        uni = pd.DataFrame({"ticker": ["AAPL"], "panel_date": ["2026-09-30"]})
+        f = store.universe_freshness
+        self.assertEqual(f(uni, "2026-10-01"), ("ok", 1))
+        self.assertEqual(f(uni, "2026-10-10"), ("ok", 10))
+        self.assertEqual(f(uni, "2026-10-11"), ("warn", 11))
+        self.assertEqual(f(uni, "2026-11-14"), ("warn", 45))
+        self.assertEqual(f(uni, "2026-11-15"), ("refuse", 46))
+        self.assertEqual(f(pd.DataFrame({"ticker": ["AAPL"]}), "2026-10-01"), ("refuse", None))
+        self.assertEqual(f(pd.DataFrame({"ticker": ["A"], "panel_date": ["None"],
+                                         "exported_utc": ["2026-10-01T12:00:00Z"]}),
+                           "2026-10-13"), ("warn", 12))
+        with tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(schwab_pull, "make_client", _no_client):
+            out = Path(tmp) / "universe_cap150.csv"
+            store.export_universe("cap150", out, write_panel(tmp))
+            said = []
+            self.assertIsNone(schwab_pull.check_universe_file(str(out), "2026-10-05", said.append))
+            self.assertEqual(said, [])
+            self.assertIsNone(schwab_pull.check_universe_file(str(out), "2026-10-20", said.append))
+            self.assertIn("WARNING: STALE UNIVERSE", said[0])        # loud, and the pull goes on
+            self.assertEqual(schwab_pull.check_universe_file(str(out), "2026-12-01", said.append), 4)
+            self.assertIn("REFUSED", said[1])
+            self.assertIsNone(schwab_pull.check_universe_file("cap150", "2030-01-01", said.append))
+            self.assertIsNone(schwab_pull.check_universe_file("AAPL,BRK.B", "2030-01-01", said.append))
+
+    def test_cli_refuses_old_or_missing_universe_file_before_any_client(self):
+        schwab_pull, _ = _cli()
+        with tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(schwab_pull, "make_client", _no_client):
+            out = Path(tmp) / "universe_cap150.csv"
+            store.export_universe("cap150", out, write_panel(tmp, panel_date="2026-01-05"))
+            data = Path(tmp) / "data"
+            rc = schwab_pull.main(["pricehistory", "--date", "2026-09-29", "--universe", str(out),
+                                   "--data-root", str(data)])
+            self.assertEqual(rc, 4)                                  # 267 days old
+            rc = schwab_pull.main(["pricehistory", "--date", "2026-09-29", "--universe",
+                                   str(Path(tmp) / "typo.csv"), "--data-root", str(data)])
+            self.assertEqual(rc, 2)                                  # not read as a ticker list
+            self.assertFalse(data.exists())
+            with self.assertRaises(FileNotFoundError):
+                store.build_universe(r"C:\pipe_dream\universe_cap150.csv")
+
+    def test_closed_day_exits_zero_and_writes_nothing(self):
+        schwab_pull, _ = _cli()
+        with tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(schwab_pull, "make_client", _no_client):
+            out = Path(tmp) / "universe_cap150.csv"
+            store.export_universe("cap150", out, write_panel(tmp))
+            data = Path(tmp) / "data"
+            for closed in ("2026-09-26", "2026-09-07"):              # a Saturday, Labor Day
+                rc = schwab_pull.main(["pricehistory", "--date", closed, "--universe", str(out),
+                                       "--data-root", str(data)])
+                self.assertEqual(rc, 0)
+            self.assertFalse(data.exists())
+
+    def test_unscheduled_closure_freezes_no_universe(self):
+        """Schwab says closed on a calendar trading day: exit 0, only the hours row."""
+        schwab_pull, _ = _cli()
+        with tempfile.TemporaryDirectory() as tmp:
+            closed = {"equity": {"equity": {"date": "2026-09-29", "isOpen": False}}}
+            s = FakeSession(post=[Resp(200, TOKEN)], get=[Resp(200, closed)])
+            cl, _ = make_client(tmp, s)
+            cl.login_with_redirect("https://127.0.0.1/?code=c")
+            out = Path(tmp) / "universe_cap150.csv"
+            store.export_universe("cap150", out, write_panel(tmp))
+            data = Path(tmp) / "data"
+            with mock.patch.object(schwab_pull, "make_client", lambda args: cl):
+                rc = schwab_pull.main(["pricehistory", "--date", "2026-09-29", "--universe",
+                                       str(out), "--data-root", str(data)])
+            self.assertEqual(rc, 0)
+            self.assertFalse((data / "universe").exists())
+            self.assertFalse((data / "pricehistory").exists())
+            self.assertEqual(checks.target_dates(data), [])
+            self.assertEqual(len([c for c in s.calls if c[0] == "GET"]), 1)
+
+    def test_open_day_freezes_the_exported_universe_as_cap150(self):
+        schwab_pull, _ = _cli()
+        with tempfile.TemporaryDirectory() as tmp:
+            hours = {"equity": {"EQ": {"date": "2026-09-29", "isOpen": True, "sessionHours": {
+                "regularMarket": [{"start": "2026-09-29T09:30:00-04:00",
+                                   "end": "2026-09-29T16:00:00-04:00"}]}}}}
+            candles = lambda url, params: Resp(200, {"symbol": params["symbol"], "candles": [  # noqa: E731
+                {"open": 1, "high": 2, "low": 1, "close": 1.5, "volume": 10,
+                 "datetime": int(datetime(2026, 9, 28, 5, tzinfo=UTC).timestamp() * 1000)}]})
+            s = FakeSession(post=[Resp(200, TOKEN)], get=[Resp(200, hours)] + [candles] * 20)
+            cl, _ = make_client(tmp, s)
+            cl.login_with_redirect("https://127.0.0.1/?code=c")
+            out = Path(tmp) / "universe_cap150.csv"
+            n = len(store.export_universe("cap150", out, write_panel(tmp)))
+            data = Path(tmp) / "data"
+            with mock.patch.object(schwab_pull, "make_client", lambda args: cl):
+                rc = schwab_pull.main(["pricehistory", "--date", "2026-09-29", "--universe",
+                                       str(out), "--data-root", str(data)])
+            self.assertEqual(rc, 0)
+            self.assertEqual(checks.target_dates(data), ["2026-09-29"])
+            got = store.read_kind(data, "pricehistory", "2026-09-29")
+            self.assertEqual(got["ticker"].nunique(), n)
+            self.assertIn("BRK/B", {c[2].get("symbol") for c in s.calls if c[0] == "GET"})
+
+    def test_status_min_refresh_days_exit_codes(self):
+        schwab_pull, _ = _cli()
+        with tempfile.TemporaryDirectory() as tmp:
+            s = FakeSession(post=[Resp(200, TOKEN)])
+            cl, clock = make_client(tmp, s)
+            run = lambda *a: schwab_pull.main(["status", "--data-root", tmp, *a])  # noqa: E731
+            with mock.patch.object(schwab_pull, "make_client", lambda args: cl):
+                self.assertEqual(run("--min-refresh-days", "2"), 11)     # never logged in
+                self.assertEqual(run(), 0)                               # plain status: unchanged
+                cl.login_with_redirect("https://127.0.0.1/?code=c")
+                self.assertEqual(run("--min-refresh-days", "2"), 0)
+                clock.t += 5.5 * 86400
+                self.assertEqual(run("--min-refresh-days", "2"), 10)     # 1.5 days left
+                clock.t += 2 * 86400
+                self.assertEqual(run("--min-refresh-days", "2"), 11)     # expired
+                self.assertEqual(run(), 0)
+            self.assertEqual([c[0] for c in s.calls], ["POST"])          # status calls no API
+
+            def no_creds(args):
+                raise C.LoginRequired("SCHWAB_APP_KEY / SCHWAB_APP_SECRET not found")
+            with mock.patch.object(schwab_pull, "make_client", no_creds):
+                self.assertEqual(run("--min-refresh-days", "2"), 12)
+
+    def test_windows_paths_and_file_names(self):
+        self.assertTrue(store.looks_like_path(r"C:\pipe_dream\universe_cap150.csv"))
+        self.assertTrue(store.looks_like_path("universe_cap150.csv"))
+        self.assertTrue(store.looks_like_path("/Users/x/u.txt"))
+        for name in ("cap150", "panel", "AAPL,MSFT", "BRK.B", "AAPL,BRK.B"):
+            self.assertFalse(store.looks_like_path(name), name)
+        # every folder and file name the collector creates is legal on NTFS
+        root = PureWindowsPath(r"C:\pipe_dream\final\data\schwab")
+        snap = store.new_snapshot_id(datetime(2026, 10, 2, 18, 45, 7, tzinfo=UTC))
+        with tempfile.TemporaryDirectory() as tmp:
+            w = store.SnapshotWriter(tmp, "2026-10-02", snap, today="2026-10-02")
+            made = [w.write(k, [{"ticker": "AAPL"}]).relative_to(tmp) for k in store.KINDS]
+            made.append(store.universe_path(tmp, "2026-10-02", "cap150").relative_to(tmp))
+        for rel in made:
+            win = root.joinpath(*rel.parts)
+            self.assertEqual(win.parts[:5], ("C:\\", "pipe_dream", "final", "data", "schwab"))
+            for part in rel.parts:
+                self.assertFalse(set(part) & set('<>:"/\\|?*'), part)
+                self.assertFalse(part.endswith((".", " ")), part)
+        self.assertEqual(str(PureWindowsPath(r"C:\pipe_dream") / "final" / "data" / "schwab"),
+                         str(root))
+        # the token file must stay outside the repo on either OS
+        with self.assertRaises(ValueError):
+            C.TokenStore(Path(tempfile.gettempdir()) / "r" / "final" / "tok.json",
+                         repo_root=Path(tempfile.gettempdir()) / "r")
+
+    def test_write_once_without_hard_links_and_token_save_without_chmod(self):
+        with tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(os, "link", side_effect=OSError("no hard links")), \
+                mock.patch.object(os, "chmod", side_effect=PermissionError("no chmod")):
+            w = store.SnapshotWriter(tmp, "2026-10-02", "S", today="2026-10-02")
+            p1 = w.write("quotes", [{"ticker": "AAPL", "x": 1}])
+            p2 = w.write("quotes", [{"ticker": "AAPL", "x": 2}])
+            self.assertNotEqual(p1, p2)
+            self.assertEqual(pd.read_parquet(p1)["x"].tolist(), [1])
+            self.assertEqual(sorted(x.name for x in p1.parent.iterdir()), [p1.name, p2.name])
+            ts = C.TokenStore(Path(tmp) / "tok.json")
+            ts.save({"a": 1})
+            ts.save({"a": 2})                                        # replaces the old file
+            self.assertEqual(ts.load(), {"a": 2})
+            self.assertEqual([x.name for x in Path(tmp).glob("tok*")], ["tok.json"])
+
+    def test_checker_reads_a_synced_folder_with_both_machines_logs(self):
+        _, schwab_check = _cli()
+        with tempfile.TemporaryDirectory() as tmp:
+            pp = Acceptance().build(tmp)                             # 5 days, cap150 universe files
+            days = Acceptance.DAYS
+            # day 1 pulled on the Mac, days 2-5 on Windows: "NOOPT" has no listed options
+            for d in days:
+                u = store.universe_path(tmp, d, "cap150")
+                df = pd.read_csv(u)
+                extra = pd.DataFrame({"ticker": [f"NOOPT{i}" for i in range(5)],
+                                      "schwab_symbol": [f"NOOPT{i}" for i in range(5)],
+                                      "in_cap2000": False})
+                pd.concat([df, extra]).to_csv(u, index=False)
+                w = store.SnapshotWriter(tmp, d, "S2", today=d)
+                ts = datetime.fromisoformat(d + "T19:00:00+00:00")
+                w.write("quotes", [{"ticker": t, "quote_time_utc": ts, "snapshot": "S2"}
+                                   for t in extra["ticker"]])
+                w.write("pricehistory", [{"ticker": t, "candle_date": d, "is_final": True,
+                                          "close": 100.0, "pulled_at_utc": ts}
+                                         for t in extra["ticker"]])
+            empties = [(f"NOOPT{i}", "empty", 0, "") for i in range(5)]
+            self.assertEqual(checks.t1_coverage(tmp, None)["status"], "FAIL")   # 200 of 205
+            mac = store.PullLog(Path(tmp) / "pull_log.sqlite")
+            mac.record(days[0], "chains", empties, "S")
+            mac.close()
+            self.assertEqual(checks.t1_coverage(tmp, store.MergedPullLog(tmp))["status"], "FAIL")
+            win = store.PullLog(Path(tmp) / "pull_log_windows.sqlite")
+            for d in days[1:]:
+                win.record(d, "chains", empties, "S")
+            win.record(days[0], "chains", [("NOOPT0", "error", 0, "x")], "S")   # never downgrades
+            win.close()
+            merged = store.MergedPullLog(tmp)
+            self.assertEqual(len(merged), 2)
+            self.assertEqual(merged.best_status(days[0], "chains")["NOOPT0"], "empty")
+            self.assertEqual(checks.t1_coverage(tmp, merged)["status"], "PASS")
+            merged.close()
+            self.assertEqual(schwab_check.main(["--data-root", tmp, "--panel", str(pp)]), 0)
 
 
 if __name__ == "__main__":
