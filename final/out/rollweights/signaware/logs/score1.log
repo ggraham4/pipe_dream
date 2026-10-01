@@ -1,0 +1,11 @@
+[09:19:21] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[09:20:23] [A] reconcile R252-EXP -0.011094 (0/40) vs WO-33 -0.011094 (0/40) ok=True
+[09:20:23] [A] SA252 vs EXP: diff -0.0044/yr t -0.78 offsets+ 7/40 LOYO min -0.0079 -> KILL
+[09:20:23] [A] SA252_vs_R252: +0.0067/yr t +1.66 40/40
+[09:20:23] [A] SA252_vs_LIVE: -0.0118/yr t -1.92 0/40
+[09:20:23] [A] SA252    vs SPY net +0.0122 cost 0.0055 f_new 0.573
+[09:20:23] [A] R252     vs SPY net +0.0055 cost 0.0059 f_new 0.615
+[09:20:23] [A] EXP      vs SPY net +0.0166 cost 0.0047 f_new 0.490
+[09:20:23] [A] LIVE_REF vs SPY net +0.0240 cost 0.0042 f_new 0.431
+[09:20:23] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a086ed9cc62b1ee11/final/out/rollweights/signaware/signaware_eval.json (70s)
+exit 0

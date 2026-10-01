@@ -1,0 +1,91 @@
+{
+ "work_order": "WO-39 sign-aware rolling weights (issued as WO-35, renumbered)",
+ "stage": "swap (descriptive, post hoc, no verdict)",
+ "definitions": {
+  "swapin": "EXP path with factor f's weight column replaced by SA252's, rows rescaled to sum|w|=1; minus EXP",
+  "swapout": "SA252 path with factor f's weight column replaced by EXP's, rescaled; minus EXP",
+  "swapout_loss": "(SA252 - EXP) - (swapout - EXP)"
+ },
+ "eras": {
+  "A": {
+   "SA252_minus_EXP": -0.0044412226513667495,
+   "factors": {
+    "momentum_12_1": {
+     "swapin": {
+      "mean_diff_ann_40offset": 0.000718018756201767,
+      "offsets_positive": 26,
+      "nw39_t": 0.2756101409813823,
+      "loyo_min": -0.00012032624655050283
+     },
+     "swapout": {
+      "mean_diff_ann_40offset": -0.00841890407988373,
+      "offsets_positive": 2,
+      "nw39_t": -1.736331912846647,
+      "loyo_min": -0.011720359351375479
+     },
+     "swapout_loss": 0.00397768142851698,
+     "mean_w_SA252": 0.10928518735414162,
+     "mean_w_EXP": 0.014908278401837423
+    },
+    "net_issuance_pct": {
+     "swapin": {
+      "mean_diff_ann_40offset": 0.0033686936746738934,
+      "offsets_positive": 39,
+      "nw39_t": 1.4049563337266104,
+      "loyo_min": 0.001897989830378003
+     },
+     "swapout": {
+      "mean_diff_ann_40offset": -0.005042113232941037,
+      "offsets_positive": 4,
+      "nw39_t": -1.036560356005314,
+      "loyo_min": -0.007340546979381346
+     },
+     "swapout_loss": 0.0006008905815742876,
+     "mean_w_SA252": -0.09474377081060141,
+     "mean_w_EXP": -0.10470313468478375
+    }
+   },
+   "runtime_s": 99.62955617904663
+  },
+  "B": {
+   "SA252_minus_EXP": 0.017580998862861835,
+   "factors": {
+    "momentum_12_1": {
+     "swapin": {
+      "mean_diff_ann_40offset": 0.0005397397564705404,
+      "offsets_positive": 23,
+      "nw39_t": 0.11251349519384718,
+      "loyo_min": -0.002704791413792384
+     },
+     "swapout": {
+      "mean_diff_ann_40offset": 0.010823630494502134,
+      "offsets_positive": 23,
+      "nw39_t": 0.6662938285413162,
+      "loyo_min": 0.00396612189211379
+     },
+     "swapout_loss": 0.0067573683683597,
+     "mean_w_SA252": 0.12453118257903975,
+     "mean_w_EXP": 0.0485537315947755
+    },
+    "net_issuance_pct": {
+     "swapin": {
+      "mean_diff_ann_40offset": 0.0028981146132621926,
+      "offsets_positive": 34,
+      "nw39_t": 0.8871425322687291,
+      "loyo_min": 0.000773902581348164
+     },
+     "swapout": {
+      "mean_diff_ann_40offset": 0.013560978687761516,
+      "offsets_positive": 31,
+      "nw39_t": 0.7938545292560424,
+      "loyo_min": 0.0039708127602166975
+     },
+     "swapout_loss": 0.004020020175100319,
+     "mean_w_SA252": -0.1339749019270342,
+     "mean_w_EXP": -0.14021289139331605
+    }
+   },
+   "runtime_s": 45.28899693489075
+  }
+ }
+}

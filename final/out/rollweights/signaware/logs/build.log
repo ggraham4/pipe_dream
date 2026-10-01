@@ -1,0 +1,7 @@
+[09:16:49] [2010_2019] refits 120, opposed cells 0.311, weight-changing 0.131, refits SA!=R252 0.625; L1/refit SA 0.278 R252 0.346
+[09:16:49] [2020_2026] refits 79, opposed cells 0.347, weight-changing 0.120, refits SA!=R252 0.557; L1/refit SA 0.268 R252 0.348
+[09:16:55] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[09:17:46] [A] reconcile R252-EXP -0.011094 (0/40) vs WO-33 -0.011094 (0/40) ok=True
+[09:18:12] [B] reconcile R252-EXP +0.026025 (38/40) vs WO-33 +0.026025 (38/40) ok=True
+[09:18:14] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a086ed9cc62b1ee11/final/out/rollweights/signaware/signaware_build.json (86s)
+exit 0

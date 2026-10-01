@@ -1,0 +1,10 @@
+[09:20:58] [B] reconcile R252-EXP +0.026025 (38/40) vs WO-33 +0.026025 (38/40) ok=True
+[09:20:58] [B] SA252 vs EXP: diff +0.0176/yr t +1.04 offsets+ 33/40 LOYO min +0.0104 ex2020 +0.0209 -> step2_pass True promote False (step 1 KILL)
+[09:20:58] [B] SA252_vs_R252: -0.0084/yr t -0.81 5/40
+[09:20:58] [B] SA252_vs_LIVE: +0.0219/yr t +1.16 39/40
+[09:20:58] [B] SA252    vs SPY net +0.0017 cost 0.0051 f_new 0.536
+[09:20:58] [B] R252     vs SPY net +0.0102 cost 0.0054 f_new 0.565
+[09:20:58] [B] EXP      vs SPY net -0.0159 cost 0.0038 f_new 0.397
+[09:20:58] [B] LIVE_REF vs SPY net -0.0202 cost 0.0043 f_new 0.446
+[09:20:58] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a086ed9cc62b1ee11/final/out/rollweights/signaware/signaware_eval_step2.json (34s)
+exit 0
