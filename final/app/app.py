@@ -465,12 +465,7 @@ def render_stock_theoretical():
             st.json(meta["picks_overlap_vs_icw8"])
     with st.expander("Backtest summary"):
         st.json(meta["backtest_summary"])
-    cols = ["ticker", "sector", "close", "market_cap", "volatility_60",
-            "composite_score", "weight"] + (["seas"] if "seas" in df.columns else [])
-    fmt = {"close": "${:.2f}", "market_cap": "${:,.0f}", "volatility_60": "{:.2%}",
-           "composite_score": "{:.3f}", "weight": "{:.2%}"}
-    if "seas" in cols:
-        fmt["seas"] = "{:.2%}"
+    cols, fmt = _composite_picks_cols_fmt(df)
     st.dataframe(df[cols].style.format(fmt, na_rep="—"), width="stretch", height=480)
     st.caption(meta["note"])
 
@@ -525,6 +520,18 @@ def render_stock_theoretical():
         c3.metric("Windows", f"{len(curve)}")
 
 
+def _composite_picks_cols_fmt(df):
+    """(columns, number formats) for a picks file in the Theoretical schema.
+    Shared by the Theoretical tab and the rolling-weights tab's picks."""
+    cols = ["ticker", "sector", "close", "market_cap", "volatility_60",
+            "composite_score", "weight"] + (["seas"] if "seas" in df.columns else [])
+    fmt = {"close": "${:.2f}", "market_cap": "${:,.0f}", "volatility_60": "{:.2%}",
+           "composite_score": "{:.3f}", "weight": "{:.2%}"}
+    if "seas" in cols:
+        fmt["seas"] = "{:.2%}"
+    return cols, fmt
+
+
 # --------------------------------------------------------------------------
 # Rolling weights (candidate -- unverified)
 # --------------------------------------------------------------------------
@@ -534,11 +541,28 @@ def _cached_rolling(mtimes: tuple):
     return {spec["key"]: rm.load(spec) for spec in rm.MODELS}
 
 
+def _rolling_refit_phrase(use_picks, w_idx, w_src, data) -> str:
+    """Which refit the weights table's rolling column shows, in words."""
+    ref = f"refit #{w_idx}" if w_idx is not None else "the refit"
+    if not use_picks:
+        return f"column is the refit the latest record used ({ref})."
+    txt = f"column is the refit the picks above used ({ref})."
+    if w_src == "meta":
+        txt += (" That refit is not in the weight path file yet (it is added with the "
+                "next weekly record), so the weights come from the picks file and "
+                "there is no trailing t to show.")
+    if data["has_record"] and data["refit_idx"] is not None and data["refit_idx"] != w_idx:
+        txt += (f" The latest weekly record ({data['panel_date']}) used an older "
+                f"refit, #{data['refit_idx']}.")
+    return txt
+
+
 def render_stock_rolling():
     """Rolling weights (candidate -- unverified). Added 2026-10-01 per Gabe:
     "ok I think it can be added to the live but as a separate tab until we
     verify on new data". TRACKING ONLY: reads the WO-34 forward side ledger
-    (lib/rolling_model.py); nothing here feeds Today's Picks, the Theoretical
+    and, since WO-34b, the candidate's own picks file (lib/rolling_model.py);
+    picks if present, else the ledger's top-N ranking, else an empty state; nothing here feeds Today's Picks, the Theoretical
     tab or any live weight. No score, weight, t or rank-IC is computed here."""
     st.subheader("Rolling weights (candidate — unverified)")
     st.warning(
@@ -567,24 +591,91 @@ def render_stock_rolling():
     live_weights = live_weights if isinstance(live_weights, dict) else None
     live_picks = set(theo_df["ticker"].astype(str)) if theo_df is not None and "ticker" in theo_df else None
 
+    has_picks = {k: d["picks"] is not None for k, d in loaded.items()}
     if not any(d["has_record"] for d in loaded.values()):
-        st.info(
-            "**No record yet.** The first weekly record is written after the next "
-            "\"Retrain ALL models\" (Data & Updates) on or after 2026-10-03. Until "
-            "then there is nothing to show here.",
-            icon=":material/hourglass_empty:",
-        )
+        if any(has_picks.values()):
+            st.info(
+                "**No weekly record yet.** The picks below are written on every "
+                "\"Retrain ALL models\" run; the forward tracker starts with the "
+                "first weekly record.",
+                icon=":material/hourglass_empty:",
+            )
+        else:
+            st.info(
+                "**No record yet.** The first weekly record is written after the next "
+                "\"Retrain ALL models\" (Data & Updates) on or after 2026-10-03. Until "
+                "then there is nothing to show here.",
+                icon=":material/hourglass_empty:",
+            )
 
-    # ---- (a) latest ranking -------------------------------------------------
-    specs = [s for s in rm.MODELS if loaded[s["key"]]["has_record"]]
-    if specs:
+    # Picks file first, else the ledger ranking, else nothing (empty state above).
+    specs = [s for s in rm.MODELS if has_picks[s["key"]] or loaded[s["key"]]["has_record"]]
+    spec = specs[0] if specs else None
+    if len(specs) > 1:
+        pick = st.segmented_control("Model", [s["short"] for s in specs],
+                                    default=specs[0]["short"], key="rolling_model_pick")
+        spec = next((s for s in specs if s["short"] == pick), specs[0])
+    data = loaded[spec["key"]] if spec is not None else None
+    use_picks = spec is not None and has_picks[spec["key"]]
+
+    # ---- (a1) current picks (WO-34b picks file) -----------------------------
+    if use_picks:
+        pmeta, blk = data["picks_meta"], rm.picks_block(spec, data)
+        st.markdown("#### Current picks (tracking only — not traded)")
+        ptab = rm.picks_table(data, live_picks)
+        n_elig = pmeta.get("n_eligible_universe")
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("As of", str(pmeta.get("as_of_date")))
+        c2.metric("Positions", f"{len(ptab):,}")
+        c3.metric(f"Eligible universe ({pmeta.get('tier', 'cap150')} tier)",
+                  f"{n_elig:,}" if isinstance(n_elig, int) else "—")
+        c4.metric("Weights refit on", str(blk.get("refit_date") or "—"))
+        theo_asof = theo_meta.get("as_of_date")
+        if live_picks is not None:
+            n_same = int((ptab["vs live Theoretical picks"] == "also a live pick").sum())
+            st.metric("Also live Theoretical picks", f"{n_same} of {len(ptab)}")
+            if theo_asof != pmeta.get("as_of_date"):
+                st.warning(
+                    f"These picks are as of {pmeta.get('as_of_date')}; the live "
+                    f"Theoretical picks are as of {theo_asof}. The comparison column "
+                    "sets two different days side by side. Run \"Retrain ALL models\" "
+                    "(Data & Updates) to bring both to the same date; if the dates still "
+                    "differ, see the guard log at the bottom of this tab.",
+                    icon=":material/event_busy:")
+        if isinstance(pmeta.get("construction"), str):
+            st.write("**Construction:** " + pmeta["construction"])
+        st.caption(
+            "**Displayed, not traded.** Same universe, date, seas and construction as "
+            "the Theoretical tab's picks; only the factor weights differ. The weight "
+            "column is what this candidate WOULD hold, shown for comparison. "
+            + ("The last column marks names that are not in the live Theoretical picks."
+               if live_picks is not None else
+               "The live Theoretical picks file is missing, so there is no comparison column.")
+        )
+        cols, fmt = _composite_picks_cols_fmt(ptab)
+        cols = [c for c in cols if c in ptab.columns] + [c for c in ["vs live Theoretical picks"]
+                                                         if c in ptab.columns]
+        st.dataframe(ptab[cols].style.format({k: v for k, v in fmt.items() if k in cols}, na_rep="—"),
+                     width="stretch", height=480)
+        if isinstance(pmeta.get("note"), str):
+            st.caption(pmeta["note"])
+        bits = [f"Model version: `{pmeta.get('model_version', 'unknown')}`"]
+        if blk.get("written_at"):
+            bits.append(f"picks written at {blk['written_at']}")
+        if data["has_record"]:
+            bits.append(f"latest weekly record {data['panel_date']}")
+        st.caption(" · ".join(bits))
+        theo_fw = set(live_weights or {})
+        r_fw = pmeta.get("factor_weights")
+        if theo_fw and isinstance(r_fw, dict) and set(r_fw) != theo_fw:
+            st.error("The picks file's factor set differs from the live Theoretical "
+                     f"model's ({sorted(set(r_fw) ^ theo_fw)}). This tab describes the "
+                     "candidate as the same factors with different weights; that is not "
+                     "true of this file.")
+
+    # ---- (a2) fallback: latest ranking (no picks file) -----------------------
+    if spec is not None and not use_picks:
         st.markdown("#### Latest ranking")
-        spec = specs[0]
-        if len(specs) > 1:
-            pick = st.segmented_control("Model", [s["short"] for s in specs],
-                                        default=specs[0]["short"], key="rolling_model_pick")
-            spec = next((s for s in specs if s["short"] == pick), specs[0])
-        data = loaded[spec["key"]]
         n_top = theo_meta.get("n_picks")
         n_top = int(n_top) if isinstance(n_top, (int, float)) and n_top > 0 else 300
         top = rm.top_table(spec, data, n_top, live_picks)
@@ -623,9 +714,15 @@ def render_stock_rolling():
         if data["version"] is not None:
             st.caption(f"Model version: `{data['version']}` · recorded at {data['recorded_at']}")
 
-        # ---- (b) weights ----------------------------------------------------
+    # ---- (b) weights --------------------------------------------------------
+    if spec is not None:
         st.markdown("#### Factor weights: rolling vs live")
-        wt = rm.weights_table(live_weights, loaded)
+        wrows, wsrc = {}, {}
+        for sp in rm.MODELS:
+            row, idx, src = rm.weights_row_for(sp, loaded[sp["key"]], has_picks[sp["key"]])
+            wrows[sp["key"]], wsrc[sp["key"]] = row, (idx, src)
+        w_idx, w_src = wsrc[spec["key"]]
+        wt = rm.weights_table(live_weights, wrows)
         if wt is None:
             st.info("The weight path file has no row for the refit this record used "
                     "(`r252_weight_path.csv`), so the weights can't be shown.")
@@ -643,13 +740,14 @@ def render_stock_rolling():
                 "Weights are signed and each column sums to 1 in absolute value. The "
                 "live column is the Theoretical model's fixed weights "
                 f"(`{theo_meta.get('model_version', 'unknown version')}`); the rolling "
-                "column is the refit the latest record used. \"Trailing-1y t\" is the "
+                + _rolling_refit_phrase(use_picks, w_idx, w_src, data) + " \"Trailing-1y t\" is the "
                 "t-statistic of that factor's rank-IC over the 252 matured dates the "
                 "refit used. The weight rule uses the SIZE of t and keeps each factor's "
                 "fixed sign, so a factor that ran against its sign for a year still gets "
                 "a large weight in the fixed direction. "
                 + (f":red[**{n_opp} factor(s) are marked {rm.OPPOSITE}**: their trailing t "
                    "points against the weight's sign.]" if n_opp else
+                   "" if w_src == "meta" else
                    "No factor's trailing t points against its weight at this refit.")
             )
 
@@ -673,11 +771,25 @@ def render_stock_rolling():
         "No live change follows from this without a separate decision by Gabe."
     )
     for spec in rm.MODELS:
+        sct = rm.scores_table(spec, loaded[spec["key"]])
+        if sct is not None:
+            with st.expander(f"{spec['short']}: scored records ({len(sct)})"):
+                st.caption("As written by the weekly run "
+                           f"(`{spec['scores'].name}`), newest first. `{spec['gain_col']}` = "
+                           f"`{spec['rho_col']}` − `{spec['rho_baseline_col']}`.")
+                st.dataframe(
+                    sct.style.format({c: "{:+.4f}" for c in (spec["rho_col"], spec["rho_baseline_col"],
+                                                             spec["gain_col"]) if c in sct.columns},
+                                     na_rep="—"),
+                    width="stretch", hide_index=True)
         guard = loaded[spec["key"]]["guard"]
         if guard is not None and len(guard):
-            with st.expander(f"{spec['short']}: skipped records ({len(guard)} logged)"):
-                st.caption("A skipped week is not back-filled as a counted record. "
-                           "Newest first.")
+            with st.expander(f"{spec['short']}: guard log ({len(guard)} logged)"):
+                st.caption("`r252_skipped`: no weekly record was written (a skipped week "
+                           "is not back-filled as a counted record). `r252_score_skipped`: "
+                           "matured records were not scored that run. `r252_picks_skipped`: "
+                           "the picks file was not rewritten, so the picks above can be "
+                           "older than the Theoretical tab's. Newest first.")
                 st.dataframe(guard.iloc[::-1].head(20), width="stretch", hide_index=True)
 
 

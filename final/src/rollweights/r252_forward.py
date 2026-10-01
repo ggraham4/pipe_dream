@@ -27,6 +27,17 @@ Weight rule = screen_insider.fit_weights on NW(39) t's (WO-33 window_t exactly).
     python final/src/rollweights/r252_forward.py plan      # dates still to record
     python final/src/rollweights/r252_forward.py score     # blind until a record date matures
     python final/src/rollweights/r252_forward.py status    # counted records / review state
+    python final/src/rollweights/r252_forward.py picks     # WO-34b: write current_signal_r252.csv + _meta.json
+    python final/src/rollweights/r252_forward.py weekly    # WO-34b: score + picks (what record_weekly runs)
+
+WO-34b (2026-10-01): two outputs for the app's rolling-weights tab, both
+TRACKING ONLY. (1) final/out/current_signal_r252.csv + _meta.json: the
+Theoretical scorer's picks (same panel date, v2 cap150 universe, seas, and
+composite.pick_decile_volq, all imported from current_signal_composite /
+its modules) with the current R252 weights instead of the frozen icw9_seas
+weights. (2) record_weekly.py calls score() and write_picks() after every
+non-dry run, each in its own try; a failure is a logged skip in
+ledger_r252_guard_log.csv (r252_score_skipped / r252_picks_skipped).
 
 Records are written ONLY through final/src/reset2026/record_weekly.py, after
 the seas (and io) ledgers. Isolated like WO-27 io: any r252 failure skips only
@@ -67,6 +78,10 @@ WO33_PATH2_CSV = HERE.parents[1] / "out" / "rollweights" / "weight_paths_step2.c
 WO33_IC2_PARQ = Path("/Users/ggraham/pipe_dream/.claude/worktrees/agent-ae2ebd3a1386cb352/"
                      "final/out/rollweights/ic_series_step2.parquet")          # gitignored; `pin` + optional selftest only
 R252_VERSION = "r252v1_wo33rule_2026-09-30"
+# WO-34b: picks files next to the Theoretical ones (main checkout's final/out, like current_signal_composite.py)
+PICKS_CSV = Path("/Users/ggraham/pipe_dream/final/out/current_signal_r252.csv")
+PICKS_META = Path("/Users/ggraham/pipe_dream/final/out/current_signal_r252_meta.json")
+PICKS_COLS = ["ticker", "sector", "close", "market_cap", "volatility_60", "composite_score", "weight", "seas"]
 INCOMPLETE_NOTE = ("incomplete_week: paired with the v3 record for this date, which is annotated "
                    "incomplete_week; descriptive only, never a counted record; WO-34 2026-09-30")
 
@@ -457,6 +472,144 @@ def side_ledgers():
     return [Side()]
 
 
+# ================================================================== WO-34b: picks file (Theoretical schema)
+def _csc():
+    """The live Theoretical scorer, imported lazily so that a problem there can
+    only ever skip the picks file, never the r252 ledger record."""
+    if str(SRC) not in sys.path:
+        sys.path.insert(0, str(SRC))
+    import current_signal_composite as CSC
+    return CSC
+
+
+def build_picks(t=None, weights=None):
+    """current_signal_composite.main()'s steps, by import, with other weights:
+    W.working_cross_section (v2 universe rule) -> eligible_cap150 -> seas for
+    the whole eligible cross-section (coverage floor) ->
+    ICW.compute_composite_ic_weighted -> C.pick_decile_volq. `t` None = the
+    working panel's latest date (the Theoretical file's as-of). `weights`
+    None = the R252 weights in force at t (stored path + refits due by t; the
+    weight path is NOT appended here -- only a ledger record appends it).
+    Reads no label. Writes nothing. Returns (picks frame, meta)."""
+    CSC = _csc()
+    C, tier = CSC.C, CSC.TIER
+    needed = list(dict.fromkeys(["ticker", "date", "sector", "close", "market_cap", "volatility_60",
+                                 f"eligible_{tier}"] + C.FACTOR_COLS))
+    df_date, uinfo = W.working_cross_section(needed, date=t, path=CSC.PANEL)
+    if not len(df_date):
+        raise SystemExit(f"r252 picks: no panel rows for {t}")
+    as_of = df_date["date"].max()
+    elig = df_date[df_date[f"eligible_{tier}"]].reset_index(drop=True)
+    if len(elig) < 20:
+        raise SystemExit(f"r252 picks: only {len(elig)} eligible names on {as_of.date()}")
+    sf, seas_info = SL.seas_asof(elig["ticker"], as_of)
+    assert (sf["ticker"].to_numpy() == elig["ticker"].astype(str).to_numpy()).all()
+    elig = elig.copy()
+    elig["seas"] = sf["seas"].to_numpy(np.float64)
+    if not seas_info["coverage"] >= CSC.SEAS_MIN_COVERAGE:
+        raise SystemExit(f"r252 picks: seas coverage {seas_info['coverage']:.1%} on {as_of.date()} < "
+                         f"{CSC.SEAS_MIN_COVERAGE:.0%}")
+    if weights is None:
+        stored, new, _cal = refits_for(as_of)
+        w, r = weights_at(as_of, stored, new)
+        have = set(stored["refit_idx"].astype(int)) if len(stored) else set()
+        winfo = {"source": "R252 rolling weights (r252_weight_path.csv rule)", "r252_version": R252_VERSION,
+                 "refit_date": pd.Timestamp(r["refit_date"]).date().isoformat(), "refit_idx": int(r["refit_idx"]),
+                 "refit_in_weight_path": int(r["refit_idx"]) in have,
+                 "window_first_used": str(r["first_used"]), "window_last_used": str(r["last_used"])}
+    else:
+        w = {c: float(weights[c]) for c in FT}
+        winfo = {"source": "weights passed by the caller (test)", "r252_version": None, "refit_date": None,
+                 "refit_idx": None, "refit_in_weight_path": None, "window_first_used": None, "window_last_used": None}
+    scored = ICW.compute_composite_ic_weighted(elig, weights=w)
+    picks = C.pick_decile_volq(elig, scored)
+    if not picks:
+        raise SystemExit(f"r252 picks: pick_decile_volq returned no picks on {as_of.date()}")
+    picks8 = C.pick_decile_volq(elig, ICW.compute_composite_ic_weighted(elig, weights=ICW.PRODUCTION_WEIGHTS))
+    picks9 = C.pick_decile_volq(elig, ICW.compute_composite_ic_weighted(elig, weights=SS.WEIGHTS))
+    a, b = dict(picks), dict(picks9)
+    shared = set(a) & set(b)
+    tickers = [tk for tk, _ in picks]
+    out = elig[elig["ticker"].isin(tickers)][["ticker", "sector", "close", "market_cap", "volatility_60"]].copy()
+    out["composite_score"] = out["ticker"].map(dict(zip(scored["ticker"], scored["composite"])))
+    out["weight"] = out["ticker"].map(a)
+    out = out.sort_values("weight", ascending=False).reset_index(drop=True)
+    out["seas"] = out["ticker"].map(dict(zip(elig["ticker"], elig["seas"])))
+    out = out[PICKS_COLS]
+    meta = {      # the Theoretical meta's keys, in its order, then one extra block "r252"
+        "as_of_date": as_of.strftime("%Y-%m-%d"),
+        "tier": tier,
+        "n_eligible_universe": int(len(elig)),
+        "n_picks": int(len(out)),
+        "model_version": f"icw9_r252 ({R252_VERSION})" if weights is None else "caller weights (test)",
+        "n_factors": len(w),
+        "construction": "decile_volq: top decile by IC-weighted composite score "
+                        "within each of 5 trailing-volatility quintiles, "
+                        "inverse-vol weighted, 40-trading-day hold, no stop-loss",
+        "factor_signs": {k: SIGNS[k] for k in w},
+        "factor_weights": {k: round(v, 4) for k, v in w.items()},
+        "seas": {"definition": "Heston-Sadka: mean same-calendar-month return over the prior 10 years "
+                               "(target month = month of t+28 calendar days; >= 5 years; SEP closeadj)",
+                 "coverage": round(seas_info["coverage"], 4), "target_month": seas_info["target_month"],
+                 "months_used": seas_info["months_used"], "basis_flag": seas_info["basis_flag"],
+                 "code": "final/src/seasonality/seas_live.py"},
+        "picks_overlap_vs_icw8": CSC.overlap(picks, picks8),
+        "backtest_summary": {
+            "model_version": f"icw9_r252 ({R252_VERSION})",
+            "note": "No backtest number is carried in this file. R252 = the live icw9_seas factor set with "
+                    "rolling weights (trailing 252 matured label dates, refit every 21 trading days). "
+                    "Its walk-forward results and caveats are in the docs below; the forward record is "
+                    "the only evidence that counts from here.",
+            "docs": ["final/models/2026-09-30-rolling-weights.md", "final/models/2026-09-30-r252-forward.md"],
+            "forward_record": "prediction_ledger_r252.csv / prediction_ledger_r252_scores.csv (weekly; paired "
+                              "rho(icw9_r252) - rho(icw9_seas); first review at 26 counted matured records)",
+        },
+        "writeup": "final/models/2026-09-30-r252-forward.md",
+        "preregistration": "final/models/2026-09-30-r252-forward.md (sec. B5, review rule)",
+        "panel_source": W.WORKING_PANEL_SOURCE,
+        "universe_rule": "v2 eligible_cap150, SPACs excluded unless in the old 4,011-ticker grid "
+                         f"({uinfo.get('spac_rows_dropped_eligible_' + tier, 0)} eligible SPAC rows dropped)",
+        "role": "candidate",
+        "note": "TRACKING ONLY, NOT ACTED ON. Same universe, date, seas and decile_volq construction as the "
+                "Theoretical picks (current_signal_composite.csv); only the factor weights differ (current "
+                "R252 rolling weights). Unverified on new data; no live weight or pick change follows from "
+                "this file without a decision by Gabe.",
+        "r252": dict(winfo, factor_weights_full={k: float(v) for k, v in w.items()},
+                     picks_overlap_vs_icw9_seas={
+                         "n_icw9_r252": len(a), "n_icw9_seas": len(b), "shared": len(shared),
+                         "share_of_icw9_r252": round(len(shared) / max(len(a), 1), 4),
+                         "weight_overlap": round(float(sum(min(a[x], b[x]) for x in shared)), 4)},
+                     written_at=pd.Timestamp.now().isoformat()),
+    }
+    return out, meta
+
+
+def write_picks(t=None, weights=None, out_dir=None):
+    """Write current_signal_r252.csv + _meta.json (each via a temp file +
+    replace, so a failure never leaves a half-written file). `out_dir` writes
+    both into that directory instead (tests)."""
+    out, meta = build_picks(t=t, weights=weights)
+    csv, mj = PICKS_CSV, PICKS_META
+    if out_dir is not None:
+        od = Path(out_dir)
+        od.mkdir(parents=True, exist_ok=True)
+        csv, mj = od / PICKS_CSV.name, od / PICKS_META.name
+    tc, tm = csv.with_name(csv.name + ".tmp"), mj.with_name(mj.name + ".tmp")
+    try:
+        out.to_csv(tc, index=False)
+        tm.write_text(json.dumps(meta, indent=2))
+        tc.replace(csv)
+        tm.replace(mj)
+    finally:
+        for x in (tc, tm):
+            if x.exists():
+                x.unlink()
+    log(f"r252 picks as of {meta['as_of_date']}: {meta['n_picks']} picks from {meta['n_eligible_universe']} eligible "
+        f"(refit {meta['r252']['refit_idx']}, overlap vs icw9_seas {meta['r252']['picks_overlap_vs_icw9_seas']['shared']}) "
+        f"-> {csv}")
+    return out, meta
+
+
 # ================================================================== score / status (post-maturity only)
 def matured(pdate, cal):
     return int((cal > pd.Timestamp(pdate)).sum()) >= H + 1
@@ -681,5 +834,10 @@ if __name__ == "__main__":
         score()
     elif mode == "status":
         status()
+    elif mode == "picks":
+        write_picks()
+    elif mode == "weekly":
+        score()
+        write_picks()
     else:
         raise SystemExit(f"unknown mode {mode}")

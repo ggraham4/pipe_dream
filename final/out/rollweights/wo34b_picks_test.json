@@ -1,0 +1,36 @@
+{
+ "equal_with_icw9_seas_weights": {
+  "as_of_date": "2026-09-29",
+  "n_picks": 300,
+  "csv_bytes_identical": true,
+  "meta_shared_keys_equal": true
+ },
+ "equal_to_live_file_on_disk": true,
+ "r252_picks": {
+  "as_of_date": "2026-09-29",
+  "n_picks": 300,
+  "refit_idx": 4956,
+  "refit_date": "2026-09-16",
+  "refit_in_weight_path": false,
+  "factor_weights": {
+   "momentum_12_1": 0.0377,
+   "pct_from_high_252": 0.0377,
+   "volatility_60": -0.0377,
+   "gross_profitability": 0.08,
+   "accruals": -0.0377,
+   "net_issuance_pct": -0.0377,
+   "days_to_next_filing_seasonal": -0.097,
+   "short_interest_days_to_cover": -0.2703,
+   "seas": 0.3643
+  },
+  "overlap_vs_icw9_seas": {
+   "n_icw9_r252": 300,
+   "n_icw9_seas": 300,
+   "shared": 108,
+   "share_of_icw9_r252": 0.36,
+   "weight_overlap": 0.3133
+  }
+ },
+ "main_out_picks_files_untouched": true,
+ "pass": true
+}
