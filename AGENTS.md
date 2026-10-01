@@ -24,6 +24,11 @@ recording *his* decisions, not a spec to freely deviate from.
 
 ## Standing constraints — read before touching anything
 
+> **ABSOLUTE (Gabe, 2026-10-01): NEVER EXECUTE ANY TRADE without Gabe
+> typing out the exact trade details himself as confirmation.** Full text
+> is constraint #7 below. It is listed last only so the numbers #1-#6,
+> which other docs cite, don't move. It outranks everything else here.
+
 1. **Never push to / redeploy the live app without Gabe's explicit,
    in-the-moment permission**, even if a change looks obviously correct or
    beneficial. This has been an explicit standing instruction throughout
@@ -60,6 +65,21 @@ recording *his* decisions, not a spec to freely deviate from.
    git repo** (`SHARADAR_API_KEY` included) — those belong only in
    whatever out-of-repo secrets store this project's owner uses (e.g. the
    Claude Project's own docs, kept separate from git), never committed.
+
+7. **NEVER EXECUTE ANY TRADE WITHOUT GABE'S TYPED CONFIRMATION (absolute,
+   added 2026-10-01).** Gabe's words, verbatim: "NOTE YOU ARE NEVER TO EXECUTE ANY TRADES WITHOUT MY EXPRESS PERMISSION WHICH INVOLVES ME TYPING OUT THE EXACT TRADE DETAILS AS CONFIRMATION".
+   How it applies:
+   - No agent, subagent, script, scheduled job or app code may place,
+     modify or cancel any order unless Gabe himself has typed out the
+     exact trade details (symbol/contract, side, quantity, order type,
+     price) as confirmation.
+   - A "yes" or "go ahead", a standing instruction, or an agent restating
+     the trade for his approval does not count.
+   - One confirmation covers one trade.
+   - The Schwab (thinkorswim) Trader API credentials are market-data only
+     (Market Data Production product, no account or trading scope). No
+     code that can send orders may be written.
+   - Model picks are recommendations. Gabe places his own trades.
 
 ## Where to go next
 

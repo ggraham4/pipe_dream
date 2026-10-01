@@ -1,5 +1,12 @@
 # pipe_dream: current state of the project
 
+> **NEVER EXECUTE ANY TRADE (Gabe, 2026-10-01, absolute).** "NOTE YOU ARE NEVER TO EXECUTE ANY TRADES WITHOUT MY EXPRESS PERMISSION WHICH INVOLVES ME TYPING OUT THE EXACT TRADE DETAILS AS CONFIRMATION".
+> No agent, script, scheduled job or app code places, modifies or cancels an
+> order unless Gabe himself types the exact trade details. A "yes" doesn't
+> count, and one confirmation covers one trade. Model picks are
+> recommendations; Gabe places his own trades. Full text:
+> [`AGENTS.md`](AGENTS.md) standing constraint #7.
+
 **Consolidated 2026-09-23 by `pipe-dream-readme-manager`** (first full sweep),
 last refreshed **2026-09-29** (run 15, at the end of this paragraph); run 5 (2026-09-26) followed WO-9, WO-10/WO-11, WO-13 and WO-14 landing,
 the 10bfb19 app layout became official, and the ext ledger was committed
@@ -90,6 +97,10 @@ file records decisions and doesn't make them.
 
 These are Gabe's rules, copied byte-for-byte into [`AGENTS.md`](AGENTS.md). Read
 them there. They are not repeated here, so the two copies can't drift apart.
+
+**Constraint #7 (added 2026-10-01) is absolute: no trade is ever executed
+without Gabe typing out the exact trade details as confirmation.** See the
+callout at the top of this file and [`AGENTS.md`](AGENTS.md) #7.
 
 Two newer rules live outside the repo and interact with them. See
 [Open conflicts](#6-open-conflicts-and-decisions-for-gabe), item 1.
@@ -1525,6 +1536,14 @@ terminal. Sharadar, SEC EDGAR, yfinance, DoltHub and Alpha Vantage are
 unreachable from agent sandboxes, and keys (`SHARADAR_API_KEY`,
 `ALPHAVANTAGE_API_KEY`) never go in the repo.
 
+**Schwab API keys (registered 2026-10-01):** `SCHWAB_APP_KEY` and
+`SCHWAB_APP_SECRET` in `~/.config/pipe_dream/secrets.env`, never in the repo.
+Schwab (thinkorswim) Trader API, Market Data Production product only, with no
+account or trading scope. For the planned WO-41 forward collector (COO work
+order, not yet launched). Forward/live data only: no dead names and no
+historical option chains. No code that can send orders may be written
+([`AGENTS.md`](AGENTS.md) #7).
+
 | layer | how | source |
 |---|---|---|
 | Point-in-time Sharadar data, universe, feature panels, `td_data_sharadar/` | 9-step sequence (`sharadar_pull_pit_panel.py` … `export_sharadar_ohlc.py`) | [`DATA-PIPELINE-HANDOFF.md`](DATA-PIPELINE-HANDOFF.md) §3 |
@@ -1628,6 +1647,9 @@ permuted row.
 
 ### 8.2 Rules that bind new work
 
+- **No trade execution, ever, without Gabe's typed confirmation** (2026-10-01,
+  absolute). No order-sending code may be written, and the Schwab credentials
+  are market-data only. Full text: [`AGENTS.md`](AGENTS.md) #7.
 - **Pre-register before running.** Gates don't move after a result. Composite
   work goes in `final/src/reset2026/PREREGISTRATION.md` (protected, append-only)
   or its own dated pre-registration doc.
@@ -1821,7 +1843,7 @@ the file is on `integration`.
 
 | doc | date | status | one line |
 |---|---|---|---|
-| [`AGENTS.md`](AGENTS.md) | 2026-09-23 | landed | standing constraints + pointer |
+| [`AGENTS.md`](AGENTS.md) | 2026-10-01 | landed | standing constraints (#7 no-trade rule added 2026-10-01) + pointer |
 | [`DATA-PIPELINE-HANDOFF.md`](DATA-PIPELINE-HANDOFF.md) | 2026-09-09 | landed | Round 11 point-in-time Sharadar rebuild, reproduction, acceptance tests |
 | [`final/src/sweep/RUNBOOK.md`](final/src/sweep/RUNBOOK.md) | 2026-09-18 (commit) | landed | sweep package, Rounds 12-19, shuffle-null gate, bug ledger (§10 git rule stale) |
 | [`final/models/2026-09-17-model-architecture-research.md`](final/models/2026-09-17-model-architecture-research.md) | 2026-09-17 | landed | 15 ranked model-architecture options |
