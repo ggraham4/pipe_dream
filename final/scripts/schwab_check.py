@@ -7,6 +7,10 @@ Prints PASS / FAIL / NOT_EVALUABLE for each of the four acceptance tests
 (fixed 2026-10-01, see final/models/2026-10-01-schwab-collector.md) and an
 informational SPY cross-check against the yfinance cache the live retrain
 uses. Exit code: 0 all PASS, 1 any FAIL, 2 otherwise (not enough data yet).
+
+Run it on the Mac (T2 needs the Sharadar panel). It works on a folder synced
+from the Windows box: a day counts whichever machine pulled it, and the pull
+logs of both machines are read (every pull_log*.sqlite in the data root).
 """
 import argparse
 import sys
@@ -25,7 +29,9 @@ def spy_info(root):
     import pandas as pd
     sc = checks.schwab_closes(root)
     sc = sc[sc["ticker"] == "SPY"]
-    if sc.empty or not SPY_CACHE.exists():
+    if not SPY_CACHE.exists():
+        return f"SPY cross-check: skipped, no yfinance cache at {SPY_CACHE} (Mac only)"
+    if sc.empty:
         return "SPY cross-check: no data yet"
     y = pd.read_csv(SPY_CACHE)
     dcol = next((c for c in y.columns if c.lower() == "date"), y.columns[0])
@@ -49,7 +55,11 @@ def main(argv=None):
     ap.add_argument("--panel", default=str(store.WORKING_PANEL))
     args = ap.parse_args(argv)
     root = store.data_root(args.data_root)
-    log = store.PullLog(root / "pull_log.sqlite") if (root / "pull_log.sqlite").exists() else None
+    log = store.MergedPullLog(root) if root.exists() else None
+    if log is not None and not len(log):
+        log = None
+    print(f"data root {root} | pull logs: {[x.name for x in log.paths] if log else 'none'} | "
+          f"days with a {checks.TARGET_UNIVERSE} universe: {checks.target_dates(root)}")
     results = checks.run_all(root, args.panel, log)
     for r in results:
         print(f"[{r['status']}] {r['name']}: {r['detail']}")

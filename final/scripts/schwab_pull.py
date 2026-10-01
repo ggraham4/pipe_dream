@@ -20,9 +20,22 @@ Commands
     chains         one option-chain call per name
     pricehistory   daily candles, one call per name
     daily          market hours + quotes + chains + pricehistory
+    export-universe  write the universe to one csv for a machine without the panel
+                   (no API call): export-universe --universe cap150 --out FILE.csv
 
 Options: --universe cap150|cap500|cap2000|panel|AAPL,MSFT|path  --date YYYY-MM-DD
          --dry-run  --no-resume  --allow-closed  --data-root DIR  --rate N
+         --out FILE --panel PATH (export-universe)  --min-refresh-days N (status)
+         --visible-paste (login)
+
+Windows scheduled task: final/scripts/SCHWAB_PULL_WINDOWS.md. There the universe
+is an exported csv (--universe C:/pipe_dream/universe_cap150.csv); the pull
+warns when its panel date is more than 10 days old and refuses after 45.
+
+Exit codes: 0 done (also a closed market: nothing pulled), 1 login needed or
+error, 2 refused (bad date or universe file), 3 trading scope, 4 universe file
+too old. `status --min-refresh-days N`: 0 fine, 10 fewer than N days left,
+11 expired or not logged in, 12 app key/secret not found.
 
 Re-running the same command on the same day resumes: names already answered
 are skipped. Use --no-resume for a second full snapshot of the same day (it
@@ -30,6 +43,7 @@ goes to new files keyed by UTC time; nothing is overwritten).
 """
 import argparse
 import getpass
+import os
 import sys
 from datetime import date
 from pathlib import Path
@@ -56,27 +70,97 @@ def cmd_login(args):
     print("   " + client.authorize_url() + "\n")
     print("2. After you approve, the browser lands on https://127.0.0.1/?code=... and shows a\n"
           "   connection error. That is expected. Copy the full URL from the address bar.\n"
-          "3. Paste it below (input is hidden; the code expires in about 30 seconds).\n")
-    redirected = getpass.getpass("Redirected URL: ")
+          "3. Paste it below (input is hidden; the code expires in about 30 seconds).\n"
+          "   Windows: paste with a right-click or Ctrl+V, then Enter. If nothing is\n"
+          "   accepted, run `login --visible-paste` (the URL is then shown as you paste).\n")
+    if args.visible_paste:
+        redirected = input("Redirected URL: ")
+    else:
+        redirected = getpass.getpass("Redirected URL: ")
     try:
         client.login_with_redirect(redirected)
     except TradingScopeError as e:
         print(f"STOP: {e}")
         return 3
     st = client.token_status()
-    print(f"Logged in. Token file {TOKEN_FILE} (mode 600). Scope reported: {st['scope']}.")
+    how = "mode 600" if os.name == "posix" else "protected by the Windows user profile ACL"
+    print(f"Logged in. Token file {TOKEN_FILE} ({how}). Scope reported: {st['scope']}.")
     print(f"Refresh token good for about {st['refresh_days_left']} days; then run login again.")
     return 0
 
 
 def cmd_status(args):
-    client = make_client(args)
-    print("token:", client.token_status())
+    check = args.min_refresh_days is not None
+    try:
+        client = make_client(args)
+    except LoginRequired as e:
+        if not check:
+            raise
+        print(f"LOGIN NEEDED: {e}")
+        return 12
+    st = client.token_status()
+    print("token:", st)
+    if check:
+        left = st.get("refresh_days_left") if st.get("logged_in") else None
+        if left is None or left <= 0:
+            print("LOGIN NEEDED: no valid refresh token (expired or never logged in). "
+                  "Run `schwab_pull.py login`.")
+            return 11
+        if left < args.min_refresh_days:
+            print(f"LOGIN NEEDED: the refresh token has {left} days left (under "
+                  f"{args.min_refresh_days}). Run `schwab_pull.py login`.")
+            return 10
     root = store.data_root(args.data_root)
     if (root / "pull_log.sqlite").exists():
         log = store.PullLog(root / "pull_log.sqlite")
         print(f"pull log {args.date}:", log.summary(args.date) or "nothing yet")
     return 0
+
+
+def cmd_export_universe(args):
+    if not args.out:
+        print("REFUSED: export-universe needs --out FILE.csv")
+        return 2
+    try:
+        df = store.export_universe(args.universe, args.out, args.panel)
+    except FileNotFoundError as e:
+        print(f"REFUSED: {e}")
+        return 2
+    print(f"wrote {args.out}: {len(df)} names ({int(df['in_cap2000'].sum())} cap2000, "
+          f"{int(df['is_benchmark'].sum())} benchmarks), universe "
+          f"{df['universe_name'].iloc[0]}, panel date {df['panel_date'].iloc[0]}")
+    print(f"Copy it to the Windows box. The pull warns when the panel date is more than "
+          f"{store.UNIVERSE_WARN_DAYS} days old and refuses after {store.UNIVERSE_REFUSE_DAYS}.")
+    return 0
+
+
+def check_universe_file(name, session_date, out=print):
+    """Exit code for a universe given as a file: None to go on, 2 or 4 to refuse."""
+    if name in store.TIERS or name == "panel" or not store.looks_like_path(name):
+        return None
+    if not Path(name).exists():
+        out(f"REFUSED: universe file not found: {name}")
+        return 2
+    if Path(name).suffix.lower() != ".csv":
+        return None
+    df = store.read_universe_csv(name)
+    if not store.is_exported_universe(df):
+        return None                       # a plain ticker list: no age to check
+    level, age = store.universe_freshness(df, session_date)
+    panel_date = df["panel_date"].iloc[0] if len(df) else None
+    if level == "refuse":
+        out(f"REFUSED: universe file {name} is {age} days old (panel date {panel_date}; "
+            f"limit {store.UNIVERSE_REFUSE_DAYS}). On the Mac run `schwab_pull.py "
+            "export-universe --universe cap150 --out <file>` and copy the new file over. "
+            "Nothing pulled.")
+        return 4
+    if level == "warn":
+        bar = "!" * 78
+        out(f"{bar}\nWARNING: STALE UNIVERSE. {name} is {age} days old (panel date "
+            f"{panel_date}; refresh weekly; warn above {store.UNIVERSE_WARN_DAYS} days, refuse "
+            f"above {store.UNIVERSE_REFUSE_DAYS}). Pulling anyway. Export a new file on the Mac "
+            f"and copy it over.\n{bar}")
+    return None
 
 
 def cmd_pull(args, kinds):
@@ -91,7 +175,16 @@ def cmd_pull(args, kinds):
     if sd > today:
         print(f"REFUSED: {sd} is in the future")
         return 2
-    uni, upath, is_new = store.frozen_universe(root, sd, args.universe, write=not args.dry_run)
+    rc = check_universe_file(args.universe, sd)
+    if rc is not None:
+        return rc
+    if not args.dry_run and not args.allow_closed and not store.is_trading_day(sd):
+        # offline calendar: nothing is written and no API call is made
+        print(f"Market is closed on {sd} (weekend or NYSE holiday). Nothing pulled, nothing "
+              "written (use --allow-closed to override).")
+        return 0
+    # the universe is frozen to disk only once the market is known to be open
+    uni, upath, is_new = store.frozen_universe(root, sd, args.universe, write=False)
     n = len(uni)
     p = pull.plan(n, rate_per_min=args.rate, kinds=kinds)
     client = make_client(args)
@@ -134,6 +227,9 @@ def cmd_pull(args, kinds):
         if hrs["is_open"] is False and not args.allow_closed:
             print(f"Market is closed on {sd}. Nothing pulled (use --allow-closed to override).")
             return 0
+        if is_new:
+            upath.parent.mkdir(parents=True, exist_ok=True)
+            uni.to_csv(upath, index=False)
         cutoff = hrs["end"] + pull.FINAL_GRACE if hrs["end"] else None
         results = {}
         if "quotes" in kinds:
@@ -159,7 +255,7 @@ def main(argv=None):
                                  formatter_class=argparse.RawDescriptionHelpFormatter,
                                  epilog=__doc__)
     ap.add_argument("command", choices=["login", "status", "quotes", "chains", "pricehistory",
-                                        "daily"])
+                                        "daily", "export-universe"])
     ap.add_argument("--universe", default="cap150")
     ap.add_argument("--date", default=str(ny_today()),
                     help="session date, New York (default today)")
@@ -170,6 +266,14 @@ def main(argv=None):
     ap.add_argument("--rate", type=int, default=110, help="requests per minute (max 120)")
     ap.add_argument("--lookback-days", type=int, default=14,
                     help="calendar days of daily candles per pricehistory call")
+    ap.add_argument("--out", default=None, help="export-universe: the csv to write")
+    ap.add_argument("--panel", default=None,
+                    help="export-universe: panel parquet (default the working panel)")
+    ap.add_argument("--min-refresh-days", type=float, default=None,
+                    help="status: exit 10 if the refresh token has fewer days left, 11 if "
+                         "expired or not logged in")
+    ap.add_argument("--visible-paste", action="store_true",
+                    help="login: show the pasted URL (if hidden paste fails in the terminal)")
     args = ap.parse_args(argv)
     date.fromisoformat(args.date)
     if not 1 <= args.rate <= 120:
@@ -178,6 +282,8 @@ def main(argv=None):
         return cmd_login(args)
     if args.command == "status":
         return cmd_status(args)
+    if args.command == "export-universe":
+        return cmd_export_universe(args)
     kinds = ("quotes", "chains", "pricehistory") if args.command == "daily" else (args.command,)
     return cmd_pull(args, kinds)
 

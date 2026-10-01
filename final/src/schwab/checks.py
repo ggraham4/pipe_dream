@@ -42,7 +42,8 @@ def _universe_for(root, d, target_only=True):
     part = Path(root) / "universe" / f"date={d}"
     target = part / f"universe_{TARGET_UNIVERSE}.csv"
     if target.exists():
-        return pd.read_csv(target, dtype={"ticker": str})
+        return pd.read_csv(target, dtype={"ticker": str}, keep_default_na=False,
+                           na_values=[""])
     files = [] if target_only or not part.exists() else sorted(part.glob("universe_*.csv"))
     if not files:
         return None

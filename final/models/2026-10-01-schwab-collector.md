@@ -267,3 +267,68 @@ trading scope (nothing does).
   (field names, batch size, chain size, symbol forms such as `BRK/B`) is
   written from wrapper documentation and is untested against the live API.
   Expect small fixes on the first live run.
+
+## Windows handoff (WO-41b, 2026-10-01)
+
+Gabe, 2026-10-01: the daily pull moves to his Windows machine as a Scheduled
+Task, because that machine never sleeps. Branch `wo41b-schwab-windows`.
+Setup, sync and cutover steps: `final/scripts/SCHWAB_PULL_WINDOWS.md`.
+Phase 2 started on the Mac the same day (login, dry run, a 5-name smoke test
+on real payloads, day 1 of 5).
+
+What changed in the code (still market data only; the URL guard and its
+tests are untouched):
+
+- **Root.** `store.resolve_main_root`: env `PIPE_DREAM_ROOT`, else on macOS
+  `/Users/ggraham/pipe_dream/final` when it exists (so every Mac worktree
+  still writes to the one archive), else the checkout the file sits in. The
+  data root is still overridable with `--data-root` / `PIPE_DREAM_SCHWAB_DATA`.
+- **Universe without the panel.** `schwab_pull.py export-universe --universe
+  cap150 --out FILE.csv` on the Mac; Windows runs `--universe FILE.csv`. The
+  csv carries ticker, Schwab symbol, the tier flags, the panel date and the
+  universe name, and is frozen per session under the tier's own file name
+  (`universe_cap150.csv`), so a Windows day counts for T1. Age is measured
+  from the panel date: a loud warning above 10 days, a refusal (exit 4) above
+  45. Refresh weekly with the live panel refresh. A universe argument that
+  looks like a file and does not exist is now refused instead of being read
+  as a ticker list.
+- **Scheduled task.** `final/scripts/schwab_daily_task.ps1`: token check
+  (`status --min-refresh-days`, new, exit 10/11/12), `LOGIN NEEDED` line,
+  the pull, one retry after 10 minutes, a dated log, exit code passed on.
+- **Checker on a synced folder.** `schwab_check.py` reads every
+  `pull_log*.sqlite` in the data root and takes the best status per name, so
+  the Mac's own log (day 1) and the Windows log (copied as
+  `pull_log_windows.sqlite`) both count. Data files are write-once, so the
+  sync is a copy that skips existing files.
+- **Windows details.** `chmod` failures are ignored (the token file is
+  protected by the Windows user profile ACL, not by mode 600); the write-once
+  step falls back to an exclusive create where hard links are missing; a
+  missing `tzdata` package gives a clear message; `login --visible-paste` is
+  a fallback if the hidden paste fails in PowerShell.
+
+Two behaviour changes that also apply on the Mac:
+
+- On a weekend or NYSE holiday (offline calendar) `daily` now exits 0 before
+  any API call and writes nothing. Before, it stored an hours file and froze
+  a universe file for the closed day. `--allow-closed` and `--dry-run` are
+  unchanged.
+- The universe file is frozen only after the market-hours call says the
+  market is open. On a closure the calendar does not know, only the hours
+  row is written, so no empty day enters the T1 denominator.
+
+Cutover: only one machine pulls on a given day. Day 1 (2026-10-01) is on the
+Mac; Windows takes over on the next trading day after Gabe finishes the
+setup, with its own browser login (the Mac login expires about 2026-10-08).
+
+Checks: 36 offline unit tests pass on the Mac (the 25 from WO-41 plus 11:
+root resolution, export round trip, stale warn/refuse, refusal before any
+client is built, closed day, unscheduled closure, open day with an exported
+universe, token-status exit codes, Windows path and file-name rules, no hard
+links / no chmod, checker on a two-log folder). `export-universe` on the real
+panel wrote 3,080 names (1,607 cap2000, panel date 2026-09-30) to a temp
+file. No Schwab API call was made and `final/data/schwab/` was not touched.
+
+**Not tested on Windows**: the PowerShell script (never parsed), the
+`Register-ScheduledTask` commands, the hidden paste at login, the unit tests
+themselves, and a live pull. The Windows session should run the unit tests
+first.
