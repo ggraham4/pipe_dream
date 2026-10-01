@@ -64,6 +64,15 @@ RULES (frozen; COO implementation of Gabe's ruling)
     seas); any io failure skips only the io record, is logged to
     ledger_io_guard_log.csv (written here, without importing io_forward), and
     never stops v3/ext/hedge/sue/seas/blend_seas.
+10. WO-34 (2026-09-30, doc final/models/2026-09-30-r252-forward.md): side
+    ledger prediction_ledger_r252.csv from final/src/rollweights/r252_forward.py
+    (icw9_r252 = icw9_seas factors with WO-33's R252 rolling weights, refit
+    every 21 trading days, append-only path r252_weight_path.csv; vs icw9_seas
+    on v3's rows), written after io; its record step requires the seas record
+    for the same date. Dates = v3's dates after 2026-09-24 with no r252
+    record. Imported in its OWN try; any r252 failure skips only the r252
+    record, is logged to ledger_r252_guard_log.csv (written here, without
+    importing r252_forward), and never stops v3/ext/hedge/sue/seas/blend_seas/io.
 """
 import argparse
 import hashlib
@@ -101,11 +110,15 @@ SEAS_GUARD_CSV = R26 / "ledger_seas_guard_log.csv"
 # WO-27-io-fwd (2026-09-29): io side ledger (final/src/overnight/io_forward.py)
 IO = R26 / "prediction_ledger_io.csv"
 IO_GUARD_CSV = R26 / "ledger_io_guard_log.csv"
+# WO-34 (2026-09-30): r252 side ledger (final/src/rollweights/r252_forward.py)
+R252 = R26 / "prediction_ledger_r252.csv"
+R252_PATH = R26 / "r252_weight_path.csv"
+R252_GUARD_CSV = R26 / "ledger_r252_guard_log.csv"
 ALL_LEDGERS = [R26 / n for n in ("prediction_ledger.csv", "prediction_ledger_v2.csv",
                                  "prediction_ledger_v3.csv", "prediction_ledger_ext.csv",
                                  "prediction_ledger_hedge.csv", "prediction_ledger_sue.csv",
                                  "prediction_ledger_seas.csv", "prediction_ledger_blend_seas.csv",
-                                 "prediction_ledger_io.csv")]
+                                 "prediction_ledger_io.csv", "prediction_ledger_r252.csv")]
 LATE_DAYS = 7
 SUE_INCOMPLETE_NOTE = ("incomplete_week: paired with the v3 record for this date, which is annotated "
                        "incomplete_week; descriptive only, never a counted date; WO-15 2026-09-26")
@@ -154,7 +167,8 @@ def recorded_weeks(csv):
 
 def prefix_hashes():
     h = {}
-    for p in ALL_LEDGERS + [LOG_CSV, ANN_CSV, SUE_GUARD_CSV, SUE_REF_LOG, SEAS_GUARD_CSV, IO_GUARD_CSV]:
+    for p in ALL_LEDGERS + [LOG_CSV, ANN_CSV, SUE_GUARD_CSV, SUE_REF_LOG, SEAS_GUARD_CSV, IO_GUARD_CSV,
+                                R252_GUARD_CSV, R252_PATH]:
         if p.is_file():     # is_file, not exists: a non-file path (WO-27 harness) must not crash the run
             b = p.read_bytes()
             h[p] = (len(b), hashlib.sha256(b).hexdigest())   # keyed by full path (sidecars live in 2 dirs)
@@ -196,6 +210,13 @@ def plan():
     except (Exception, SystemExit) as e:   # noqa: BLE001
         _IO_PLAN_ERROR = f"plan: {type(e).__name__}: {e}"
         log(f"IO plan FAILED (io side ledger skipped this run; others unaffected): {type(e).__name__}: {e}")
+    global _R252_PLAN_ERROR
+    _R252_PLAN_ERROR = None
+    try:        # WO-34: r252 in its OWN try -- an r252 failure never blocks seas/io
+        sides += _r252_forward().side_ledgers()
+    except (Exception, SystemExit) as e:   # noqa: BLE001
+        _R252_PLAN_ERROR = f"plan: {type(e).__name__}: {e}"
+        log(f"R252 plan FAILED (r252 side ledger skipped this run; others unaffected): {type(e).__name__}: {e}")
     for L in sides:
         try:
             p[_side_keys()[L.name]] = [(iso_week(d), d) for d in L.todo([d for _w, d in p[V3.name]])]
@@ -222,13 +243,20 @@ def _io_forward():
     return IOF
 
 
+def _r252_forward():
+    sys.path.insert(0, str(HERE.parent / "rollweights"))
+    import r252_forward as RF
+    return RF
+
+
 def _side_keys():
     """side-ledger name -> todo key (the ledger file name)."""
-    return {"seas": SEAS.name, "blend_seas": BLEND_SEAS.name, "io": IO.name}
+    return {"seas": SEAS.name, "blend_seas": BLEND_SEAS.name, "io": IO.name, "r252": R252.name}
 
 
 SEAS_SIDES = ("seas", "blend_seas")
 _IO_PLAN_ERROR = None       # set by plan() when io import/plan fails; logged by run() (not by --plan)
+_R252_PLAN_ERROR = None     # WO-34: same, for r252
 
 
 def _io_guard(iso, event, detail):
@@ -243,6 +271,20 @@ def _io_guard(iso, event, detail):
         row.to_csv(IO_GUARD_CSV, mode="a", header=not IO_GUARD_CSV.exists(), index=False)
     except (Exception, SystemExit) as e:   # noqa: BLE001
         log(f"could not write io guard log for {iso}: {type(e).__name__}: {e}")
+
+
+def _r252_guard(iso, event, detail):
+    """WO-34: r252 skips go to ledger_r252_guard_log.csv, written HERE (no
+    r252_forward import needed). Never raises."""
+    try:
+        if R252_GUARD_CSV.exists() and not R252_GUARD_CSV.read_bytes().endswith(b"\n"):
+            raise SystemExit(f"{R252_GUARD_CSV.name} does not end in a newline; refusing to append")
+        row = pd.DataFrame([[pd.Timestamp.now().isoformat(), "r252", iso, iso_week(iso) if iso else "",
+                             event, str(detail)[:500]]],
+                           columns=["logged_at", "ledger", "panel_date", "iso_week", "event", "detail"])
+        row.to_csv(R252_GUARD_CSV, mode="a", header=not R252_GUARD_CSV.exists(), index=False)
+    except (Exception, SystemExit) as e:   # noqa: BLE001
+        log(f"could not write r252 guard log for {iso}: {type(e).__name__}: {e}")
 
 
 def _seas_guard(SS, iso, event, detail, ledger):
@@ -315,6 +357,7 @@ def run(dry=False):
     if dry:
         return 0
     io_plan_error = _IO_PLAN_ERROR
+    r252_plan_error = _R252_PLAN_ERROR
     before = prefix_hashes()
     import prediction_ledger as PL
     import forward_hedge as FH
@@ -400,6 +443,12 @@ def run(dry=False):
         except (Exception, SystemExit) as e:   # noqa: BLE001
             side_skipped["io"] = {d.date().isoformat(): f"preflight: {type(e).__name__}: {e}"
                                   for _w, d in todo[IO.name]}
+    if todo[R252.name]:         # WO-34: own try, after io (its record step needs the seas record)
+        try:
+            sides += list(_r252_forward().side_ledgers())
+        except (Exception, SystemExit) as e:   # noqa: BLE001
+            side_skipped["r252"] = {d.date().isoformat(): f"preflight: {type(e).__name__}: {e}"
+                                    for _w, d in todo[R252.name]}
     for L in sides:
         side_rows[L.name], side_skipped[L.name] = {}, {}
         for _w, d in todo[_side_keys()[L.name]]:
@@ -488,10 +537,14 @@ def run(dry=False):
                 log(f"{L.name} sidecar step FAILED for {iso} (hedge still records; run will report it): {e}")
     if io_plan_error:          # WO-27: an io import/plan failure is logged too (no dates are known then)
         _io_guard("", "io_skipped", io_plan_error)
+    if r252_plan_error:        # WO-34: likewise for r252
+        _r252_guard("", "r252_skipped", r252_plan_error)
     for name, sk in side_skipped.items():
         for iso, why in sorted(sk.items()):
             if name == "io":
                 _io_guard(iso, "io_skipped", why)
+            elif name == "r252":
+                _r252_guard(iso, "r252_skipped", why)
             elif SS is not None:
                 _seas_guard(SS, iso, f"{name}_skipped", why, name)
             else:
@@ -509,7 +562,7 @@ def run(dry=False):
         raise SystemExit("SUE/side-ledger post-record problem (v3/ext/hedge recorded): "
                          + " | ".join(sue_deferred + side_deferred))
     # one record per ISO week per ledger (weeks after START_AFTER)
-    for led in (V3, EXT, HEDGE, SUE, SEAS, BLEND_SEAS, IO):
+    for led in (V3, EXT, HEDGE, SUE, SEAS, BLEND_SEAS, IO, R252):
         for w, ds in recorded_weeks(led).items():
             if len(ds) > 1:
                 raise SystemExit(f"{led.name}: more than one record in {w}: {sorted(ds)}")
