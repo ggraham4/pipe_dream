@@ -5,8 +5,11 @@ model's picks. Pre-registration: final/models/2026-10-01-trailing-return-filter.
 
 r40(t) = closeadj[t]/closeadj[t-40] - 1 on the name's own SEP bars, data <= t.
 F0: exclude r40 < 0. F10: exclude r40 < -10%. Undefined r40 -> kept.
-Primary: excluded names get a NaN score BEFORE pick_decile_volq (book stays a
-full decile of the survivors). Descriptive: drop excluded names AFTER selection
+Primary (iteration 2, matches the work order): vol quintiles and per-bucket
+pick counts come from the full eligible set; within each bucket the top-ranked
+SURVIVORS fill the k slots (book stays full-size). Iteration 1 (excluded names
+get a NaN score, so the book is a decile of the survivors and holds fewer
+names) is kept as a descriptive row. Descriptive: drop excluded names AFTER selection
 and renormalise. Empty filtered book -> cash for that window (gross 0).
 Era B = hold-out read #18 (unfitted; rule fixed in advance).
 
@@ -152,6 +155,52 @@ def noscore_masked(book, keep, DD_mod):
         gross = sum((w / ws) * (1.0 + ret[t]) for t, w in pk) - 1.0
         out[d] = (gross, {t for t, _ in pk})
     return out
+
+
+def picks_fullsize(book, score, excl):
+    """composite.pick_decile_volq + pool_read.picks_w, but excluded names are
+    skipped when filling each vol bucket's k slots. Quintiles and k come from
+    the full valid set, so the book keeps the unfiltered name count unless a
+    bucket has fewer than k survivors (counted)."""
+    import composite as C
+    score = np.asarray(score, dtype=np.float64)
+    out, short = {}, {"buckets": 0, "buckets_short": 0, "dates_short": 0}
+    for d, s, e in book.sl:
+        if e - s < C.N_VOL_QUINTILES * 4:
+            continue
+        vol, comp, tick, ex = book.vol[s:e], score[s:e], book.tick[s:e], excl[s:e]
+        valid = np.isfinite(vol) & np.isfinite(comp)
+        if valid.sum() < C.N_VOL_QUINTILES * 4:
+            continue
+        idx = np.flatnonzero(valid)
+        vol_v, comp_v, tick_v, ex_v = vol[idx], comp[idx], tick[idx], ex[idx]
+        q = pd.qcut(vol_v, C.N_VOL_QUINTILES, labels=False, duplicates="drop")
+        picks, any_short = [], False
+        for bucket in np.unique(q):
+            b_idx = np.flatnonzero(q == bucket)
+            k = max(1, int(round(len(b_idx) * 0.10)))
+            order = b_idx[np.argsort(-comp_v[b_idx])]
+            order = order[~ex_v[order]][:k]
+            short["buckets"] += 1
+            if len(order) < k:
+                short["buckets_short"] += 1
+                any_short = True
+            for i in order:
+                picks.append((tick_v[i], vol_v[i]))
+        short["dates_short"] += int(any_short)
+        if not picks:
+            continue
+        inv_vol = np.array([1.0 / max(v, 1e-4) for _, v in picks])
+        w = inv_vol / inv_vol.sum()
+        pk = [(t, float(wi)) for (t, _), wi in zip(picks, w)]
+        ret = dict(zip(tick, book.ret[s:e]))
+        pk = [(t, w_) for t, w_ in pk if pd.notna(ret.get(t))]
+        if not pk:
+            continue
+        ws = sum(w_ for _, w_ in pk)
+        gross = sum((w_ / ws) * (1.0 + ret[t]) for t, w_ in pk) - 1.0
+        out[d] = (gross, {t for t, _ in pk}, [t for t, _ in pk], [w_ / ws for _, w_ in pk], [ret[t] for t, _ in pk])
+    return out, short
 
 
 def cash_fill(pk, ref):
@@ -332,6 +381,11 @@ def job(period, run):
     pool_ref = DD.noscore_picks(book)
     assert set(pool_u) == set(pool_ref) and all(abs(pool_u[d][0] - pool_ref[d][0]) < 1e-14 for d in pool_ref), "noscore oracle"
     ret = book.ret
+    for m in MODELS:      # oracle: no exclusions -> picks_fullsize == pool_read.picks_w exactly
+        o, sh0 = picks_fullsize(book, score[m], np.zeros(len(U), dtype=bool))
+        assert set(o) == set(pkw_u[m]) and sh0["buckets_short"] == 0
+        assert all(o[d][0] == pkw_u[m][d][0] and o[d][2] == pkw_u[m][d][2] and o[d][3] == pkw_u[m][d][3] for d in o), "fullsize oracle"
+    out["short_buckets"] = {}
     out["results"], out["excluded_vs_kept"], out["empty_book_dates"] = {}, {}, {}
     for a in ARMS:
         pool_f = noscore_masked(book, ~excl[a], DD)
@@ -366,21 +420,29 @@ def job(period, run):
             n_cash = cash_fill(pk_f, pkw_u[m])
             for d, v in pk_f.items():        # no excluded name may be held
                 assert not any(excl_by[a][d][t] for t in v[1])
+            pk_fs, short = picks_fullsize(book, score[m], excl[a])
+            n_cash_fs = cash_fill(pk_fs, pkw_u[m])
+            for d, v in pk_fs.items():
+                assert not any(excl_by[a][d][t] for t in v[1])
+            out["short_buckets"][f"{a}|{m}"] = short
             pk_post = post_select(pkw_u[m], excl_by[a])
-            out["empty_book_dates"][f"{a}|{m}"] = {"pre_selection": n_cash, "post_selection": int(sum(1 for v in pk_post.values() if not v[1])),
+            out["empty_book_dates"][f"{a}|{m}"] = {"pre_selection_fullsize": n_cash_fs, "pre_selection_survivor_decile": n_cash, "post_selection": int(sum(1 for v in pk_post.values() if not v[1])),
                                                   "pool": n_cash_pool}
             for wn, (wl, wh) in WINS[period].items():
                 _, ds = DD.window(pkw_u[m], all_dates, wl, wh)
                 dset = set(ds)
                 w_ = lambda pk: {d: v for d, v in pk.items() if d in dset}   # noqa: E731
                 cu = ch_u[(wn, m)]
-                cf = chains2(w_(pk_f), ds, spy, DR.COST_BPS, RB)
+                cf = chains2(w_(pk_fs), ds, spy, DR.COST_BPS, RB)
+                c1 = chains2(w_(pk_f), ds, spy, DR.COST_BPS, RB)
                 cp = chains2(w_(pk_post), ds, spy, DR.COST_BPS, RB)
                 cpu = chains2(w_(pool_u), ds, spy, DR.COST_BPS, RB)
                 cpf = chains2(w_(pool_f), ds, spy, DR.COST_BPS, RB)
                 py = (period == "B") or wn == "full"
                 r = diff_stats(DD, cu, cf, DROP_YEAR[period], per_year=py)
                 r["stats_unfiltered"], r["stats_filtered"] = book_stats(cu), book_stats(cf)
+                r["iter1_survivor_decile"] = diff_stats(DD, cu, c1, DROP_YEAR[period])
+                r["iter1_survivor_decile"]["stats_filtered"] = book_stats(c1)
                 r["post_selection_variant"] = diff_stats(DD, cu, cp, DROP_YEAR[period])
                 r["post_selection_variant"]["stats_filtered"] = book_stats(cp)
                 pd_ = diff_stats(DD, cpu, cpf, DROP_YEAR[period])
@@ -396,7 +458,8 @@ def job(period, run):
                 log(f"[{period} {wn} {m} {a}] unf {r['unfiltered']:+.4f} filt {r['filtered']:+.4f} diff {r['diff']:+.4f} "
                     f"({r['diff_offsets_pos']}/40) drop{DROP_YEAR[period]} {r[f'diff_drop{DROP_YEAR[period]}']} "
                     f"post-sel diff {r['post_selection_variant']['diff']:+.4f} pool {pd_['diff']:+.4f} "
-                    f"sel {r['pool_decomp']['selection_change']:+.4f} cash dates {n_cash}")
+                    f"sel {r['pool_decomp']['selection_change']:+.4f} names {r['stats_filtered']['names_mean']:.0f} vs "
+                    f"{r['stats_unfiltered']['names_mean']:.0f} short {short} iter1 diff {r['iter1_survivor_decile']['diff']:+.4f} cash {n_cash_fs}")
             (PARTS / f"{period}_run.json").write_text(json.dumps(out, indent=2, default=float))
     (PARTS / f"{period}_run.json").write_text(json.dumps(out, indent=2, default=float))
     log(f"[{period}] wrote {PARTS / f'{period}_run.json'} ({time.time()-T0:.0f}s)")
@@ -405,7 +468,7 @@ def job(period, run):
 def aggregate():
     P = {p: json.loads((PARTS / f"{p}_run.json").read_text()) for p in "AB"}
     res = {"work_order": "WO-40 trailing-return filter (issued as WO-36)", "family": "short-term trend filter, k=2 arms scored independently",
-           "holdout_read": 18, "units": "fractions per year (0.01 = 1%/yr), 40-offset mean of annualised excess vs SPY",
+           "holdout_read": 18, "iteration": "2: full-size book (primary); iteration 1 survivor-decile book kept under iter1_survivor_decile", "units": "fractions per year (0.01 = 1%/yr), 40-offset mean of annualised excess vs SPY",
            "arms": ARMS, "eras": {p: P[p] for p in "AB"}, "decision": {}}
     for m in MODELS:
         for a in ARMS:

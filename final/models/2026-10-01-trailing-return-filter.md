@@ -96,9 +96,21 @@ reversal family. No threshold or window variants after results.
 
 ## 2. Results (run after the pre-registration commit 2fd0f6a)
 
-**Verdict: KILL for both arms.** The filter costs 2.4 to 3.4 %/yr in 2020-26
-with 0 of 40 offsets positive, and is roughly zero in 2007-2019. No action;
-no variants were run. Source: `final/out/trailfilter/trailfilter.json`.
+**Verdict: KILL for both arms.** With a full-size book the filter costs
+1.5 to 1.6 %/yr in 2020-26 (0 to 4 of 40 offsets positive) and 0.4 to 1.0
+%/yr in 2007-2019. No action. Source: `final/out/trailfilter/trailfilter.json`.
+
+**Iteration note (bug fix, iteration 2 of 2).** The first run (commit 61fbf37)
+gave excluded names a NaN score, which made the book a decile of the
+*survivors*: about 167 names under F0 against about 300 unfiltered. The work
+order says the book stays full-size with next-ranked names filling in. The
+fix keeps the vol quintiles and per-bucket pick counts of the full eligible
+set and fills each bucket's slots with the top-ranked survivors (293 vs 295
+names in A, 310 vs 313 in B; 1.9% of buckets under F0 and 0.3% under F10 in
+A, 2.3% and 0.8% in B, had too few survivors to fill). With no exclusions the
+new picker reproduces the unfiltered book exactly (asserted). The full-size
+result is the primary; iteration 1 is kept below as a descriptive row. The
+verdict is KILL either way.
 
 ### Reconcile and Gate A (passed)
 
@@ -114,27 +126,33 @@ icw8 also reconciles (+2.854 / +0.012 / -1.992). Gate A: PIT max difference
 3,973 delisted tickers carry a finite r40 in era A and 1,431 in era B. r40 is
 undefined, so kept, on 0.5% (A) and 0.6% (B) of eligible rows.
 
-### Primary: filtered minus unfiltered, icw9_seas, net, %/yr
+### Primary: filtered minus unfiltered, icw9_seas, net, %/yr (full-size book)
 
 | arm | window | unfiltered | filtered | diff | offsets > 0 | drop-year diff |
 |---|---|---|---|---|---|---|
-| F0 | A full | +3.49 | +3.69 | +0.21 | 26/40 | -0.19 (2008 dropped) |
-| F0 | A post-2011 | +0.51 | +0.59 | +0.08 | 26/40 | |
-| F0 | B | -2.02 | -5.46 | **-3.45** | 0/40 | -2.72 (2020 dropped) |
-| F10 | A full | +3.49 | +3.33 | -0.16 | 22/40 | -0.31 (2008 dropped) |
-| F10 | A post-2011 | +0.51 | +0.42 | -0.09 | 16/40 | |
-| F10 | B | -2.02 | -4.46 | **-2.44** | 0/40 | -0.72 (2020 dropped) |
+| F0 | A full | +3.49 | +2.48 | **-1.01** | 6/40 | -0.70 (2008 dropped) |
+| F0 | A post-2011 | +0.51 | +0.28 | -0.23 | 12/40 | |
+| F0 | B | -2.02 | -3.62 | **-1.60** | 4/40 | -0.50 (2020 dropped) |
+| F10 | A full | +3.49 | +3.04 | **-0.45** | 13/40 | -0.18 (2008 dropped) |
+| F10 | A post-2011 | +0.51 | +0.57 | +0.06 | 26/40 | |
+| F10 | B | -2.02 | -3.55 | **-1.53** | 0/40 | -0.32 (2020 dropped) |
 
-- **F0: KILL** (B <= 0). The small era-A gain also fails the offsets check
-  (26 < 30) and turns negative with 2008 dropped.
+- **F0: KILL** (A-full and B both <= 0).
 - **F10: KILL** (A-full and B both <= 0).
-- icw8 robustness row: all four cells negative (F0 A -0.15, B -2.42; F10 A
-  -0.45, B -2.34).
+- icw8 robustness row: F0 A -0.71 (13/40), B -1.31 (5/40); F10 A -0.49
+  (11/40), B -1.11 (2/40). Same sign everywhere in the full windows. A
+  post-2011 is slightly positive for icw8 (+0.12, +0.09).
 
-Per-year diff in B (F0 / F10): 2020 -7.7 / -12.3, 2021 +0.1 / +0.8, 2022
--11.7 / -3.5, 2023 -3.6 / -1.2, 2024 -0.3 / +0.4, 2025 -0.6 / -0.9, 2026
-+0.5 / +0.3. The loss is concentrated in 2020 and 2022, the rebound years
-after sell-offs, which is the reversal pattern the prior pointed to.
+Per-year diff in B (F0 / F10): 2020 -8.0 / -8.5, 2021 +2.5 / +1.0, 2022
+-2.8 / -3.1, 2023 -2.6 / -1.0, 2024 -0.3 / +0.2, 2025 -0.2 / -0.1, 2026
+-0.3 / +1.8. The loss is concentrated in 2020, with 2022 and 2023 also
+negative: the rebound periods after sell-offs, which is the reversal pattern
+the prior pointed to. With 2020 dropped the B difference is still negative.
+
+**Iteration 1 row (book = decile of survivors, fewer names), descriptive:**
+F0 A full +0.21 (26/40; -0.19 with 2008 dropped), A post +0.08 (26/40), B
+-3.45 (0/40; -2.72 with 2020 dropped). F10 A full -0.16 (22/40), A post
+-0.09 (16/40), B -2.44 (0/40). Also KILL for both arms.
 
 ### Descriptive
 
@@ -167,51 +185,55 @@ effect Gabe is seeing. It does not turn into book return: the excluded picks
 beat the kept ones on 44-46% of dates in A and 48-49% in B, the gap is
 lopsided in time, and the filtered book pays more in costs.
 
-**Turnover and cost.** F0 raises mean new-name share per rebalance from 0.43
-to 0.67 (A) and 0.45 to 0.70 (B); cost drag goes from 0.42 to 0.64 %/yr (A)
-and 0.43 to 0.67 (B). F10: 0.43 to 0.52 (A), 0.45 to 0.57 (B); cost 0.42 to
-0.50 and 0.43 to 0.54 %/yr.
+**Turnover and cost (full-size book).** F0 raises the mean new-name share
+per rebalance from 0.43 to 0.65 (A) and 0.45 to 0.69 (B); cost drag goes from
+0.42 to 0.63 %/yr (A) and 0.43 to 0.66 (B). F10: 0.43 to 0.52 (A), 0.45 to
+0.56 (B); cost 0.42 to 0.50 and 0.43 to 0.54 %/yr.
 
-**Drawdown (net, 40-offset mean / worst offset) and worst 40-day window.**
+**Drawdown (net, 40-offset mean / worst offset) and worst 40-day window,
+full-size book.**
 
 | arm | window | max DD unfiltered | max DD filtered | worst window unf. | filtered |
 |---|---|---|---|---|---|
-| F0 | A full | -45.9% / -51.4% | -39.5% / -51.6% | -38.6% | -34.9% |
-| F0 | A post-2011 | -15.0% / -19.3% | -13.1% / -16.3% | -11.7% | -12.8% |
-| F0 | B | -28.1% / -33.9% | -33.2% / -45.1% | -33.9% | -33.6% |
-| F10 | A full | -45.9% / -51.4% | -42.0% / -50.7% | -38.6% | -36.9% |
-| F10 | B | -28.1% / -33.9% | -28.8% / -33.8% | -33.9% | -33.6% |
+| F0 | A full | -45.9% / -51.4% | -43.5% / -52.3% | -38.6% | -37.9% |
+| F0 | A post-2011 | -15.0% / -19.3% | -14.2% / -17.5% | -11.7% | -13.2% |
+| F0 | B | -28.1% / -33.9% | -27.5% / -33.3% | -33.9% | -33.3% |
+| F10 | A full | -45.9% / -51.4% | -45.5% / -53.0% | -38.6% | -39.1% |
+| F10 | A post-2011 | -15.0% / -19.3% | -15.3% / -19.3% | -11.7% | -12.3% |
+| F10 | B | -28.1% / -33.9% | -28.6% / -33.9% | -33.9% | -33.9% |
 
-The filter trimmed the average drawdown in era A (2008) but made it deeper
-in era B for F0. It is not a reliable risk reducer.
+Drawdowns are essentially unchanged. The filter does not reduce risk.
 
 **Picks-over-pool decomposition** (filtered minus unfiltered = pool change +
-selection change, %/yr):
+selection change, %/yr; pool = no-score book on the filtered set):
 
 | arm | window | total | pool change | selection change |
 |---|---|---|---|---|
-| F0 | A full | +0.21 | -0.83 | +1.04 |
-| F0 | A post-2011 | +0.08 | -0.55 | +0.63 |
-| F0 | B | -3.45 | -1.96 | -1.48 |
-| F10 | A full | -0.16 | -0.54 | +0.38 |
-| F10 | B | -2.44 | -1.93 | -0.51 |
+| F0 | A full | -1.01 | -0.83 | -0.18 |
+| F0 | A post-2011 | -0.23 | -0.55 | +0.32 |
+| F0 | B | -1.60 | -1.96 | +0.36 |
+| F10 | A full | -0.45 | -0.54 | +0.09 |
+| F10 | A post-2011 | +0.06 | -0.16 | +0.21 |
+| F10 | B | -1.53 | -1.93 | +0.40 |
 
-The filter makes the pool itself worse in every window (the no-score book on
-recent winners only underperforms the no-score book on everyone). In era A
-the model's selection inside the filtered pool was better, which offset it;
-in era B selection got worse too.
+The damage is in the pool: a no-score book built only from recent winners
+underperforms the no-score book on everyone in every window. The model's
+selection on top of that pool is about unchanged. So the filter does not
+sharpen the picks; it moves the book into a worse set of stocks.
 
 **After-selection variant** (drop flagged picks, hold fewer names): F0 A
-+0.35, A post +0.08, B -3.21; F10 A -0.11, A post -0.11, B -2.48. Same
-picture.
++0.35, A post +0.08, B -3.21; F10 A -0.11, A post -0.11, B -2.48. Negative in
+B for both arms.
 
 ### Caveats
 
-- **Book size.** The work order says the book "stays full-size". As
-  pre-registered here, the filtered book is a full decile of the surviving
-  names, so it holds fewer names than the unfiltered book (F0: 166 vs 295 in
-  A, 169 vs 313 in B). A variant that takes a larger fraction of survivors to
-  keep the name count equal was not run (no variants after results). The
-  pool change alone (-1.9 %/yr in B) makes a different verdict unlikely.
+- **Excluded picks vs book return.** In era A the flagged picks had a lower
+  average forward return, yet replacing them with the next-ranked survivors
+  lowered the book's return. The replacements are lower-ranked names, and the
+  book rebalances far more.
+- The pre-registration text described the first implementation ("a full
+  decile of the surviving set"). That did not match the work order and was
+  corrected as a bug fix (see the iteration note). No threshold or window was
+  changed.
 - Era B was read once, unfitted, as hold-out read #18.
 - Trial count: family "short-term trend filter", k=2, both arms killed.
