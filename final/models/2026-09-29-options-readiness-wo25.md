@@ -431,6 +431,26 @@ Otherwise the verdict is MIDDLE (COO decides).
   doc, and nothing is fit on 2020+. WO-O1 results are also broken out
   2008-2019 vs 2020+.
 - WO-24 used #6.
+- **Renumbering (WO-35, 2026-09-30, written before any Phase 2 real-label
+  number exists; COO ruling).** #7 and #8 were taken by other work between
+  this pre-registration and Phase 2. The Exp B confirm read (window
+  2019-01..2026-08, frozen weights, one shot) is now **hold-out read #14**.
+  The WO-O1 read (entries >= 2020-01-01) is now **hold-out read #15**.
+  - Nothing else about either read changes. This is a label change, not an
+    iteration.
+  - The runner code and its JSON output still carry the old strings (`"#7"`,
+    `"#8 (entries >= 2020)"`, key `from2020_holdout_read_8`). They mean #14
+    and #15. The code is not edited, so the Phase 2 diff stays plumbing-only.
+  - If nothing is admitted at the Exp B screen, #14 is recorded as not used.
+- **Phase 2 data root (WO-35, plumbing only).** The complete merged store is
+  `/Users/ggraham/pipe_dream/final/data/alphavantage_full/` (read-only).
+  `gate_a.py` reads it through `AV_DATA_ROOT` (default: that path), and
+  `check_arrival.py` takes `--data-root`. `gate_a.py` is run with `--dates`
+  listing the 225 planned dates, so the off-plan 2026-09-16 file on disk is
+  never built into a chain or feature partition. `gate_a.py` also gains a
+  presence-only named check A11 (SIVB February 2023, BBBY early 2023). No
+  statistical logic is changed. Phase 2 results go in
+  `final/models/2026-10-01-options-phase2.md`.
 
 ## 6. Phase 2 commands (one per experiment)
 

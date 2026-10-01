@@ -38,7 +38,9 @@ from wo25_io import read_on_dates             # noqa: E402
 
 MAIN = Path("/Users/ggraham/pipe_dream/final")
 DATA = MAIN / "data"
-AV = DATA / "alphavantage"
+# WO-35 plumbing: the complete merged store (Mac + Windows) lives in alphavantage_full.
+# Override with AV_DATA_ROOT; no statistical logic depends on this path.
+AV = Path(os.environ.get("AV_DATA_ROOT", str(DATA / "alphavantage_full")))
 OUT = HERE.parents[1] / "out" / "options_wo25"
 CHAIN = OUT / "chain" / "source=av_monthly"
 FCACHE = OUT / "features_cache"
@@ -258,6 +260,40 @@ def main():
     lb = label_basis_check(dates)
     put("A10", "forward_return_tradable_40 == close[t+40]/open[t+1]-1 (own trading days)",
         lb["match_rate"] >= 0.99, **lb)
+
+    # A11 (WO-35, Windows-era named presence check; no outcome statistic): SIVB on the Feb-2023
+    # monthly date with identity mapped in the pull log; BBBY on a monthly date in early 2023.
+    # A name that is not cap2000-eligible (mcap>=$2B AND closeunadj>$10) was never attempted by the
+    # cap2000-only pull: reported as N/A with the reason, not failed.
+    a11, ok11 = {}, True
+    for sym, lo, hi in [("SIVB", "2023-02-01", "2023-02-28"), ("BBBY", "2023-01-01", "2023-04-30")]:
+        wd = [d for d in dates if lo <= str(d.date()) <= hi]
+        r = L[(L.symbol == sym) & (L.date >= lo) & (L.date <= hi)]
+        uu = read_on_dates(UNIVERSE, ["date", "ticker", "marketcap", "closeunadj", "eligible_cap2000"], wd) if wd else pd.DataFrame()
+        cand = sorted(set(r.ticker) | {t for t in ([sym, sym + "Q"] if len(uu) else []) if (uu.ticker == t).any()})
+        rows_ = []
+        for d in wd:
+            for tk in cand or [sym]:
+                ur = uu[(uu.ticker == tk) & (uu.date == d)]
+                lr = r[(r.ticker == tk) & (r.date == str(d.date()))]
+                rows_.append({"date": str(d.date()), "sharadar_ticker": tk, "in_features": (d, tk) in have,
+                              "log_status": lr.status.iloc[0] if len(lr) else "not attempted",
+                              "av_symbol": lr.symbol.iloc[0] if len(lr) else None,
+                              "identity": lr.identity.iloc[0] if len(lr) else None,
+                              "spot_parity": lr.spot_parity.iloc[0] if len(lr) else None,
+                              "eligible_cap2000": bool(ur.eligible_cap2000.iloc[0]) if len(ur) else None,
+                              "marketcap_musd": float(ur.marketcap.iloc[0]) if len(ur) else None,
+                              "closeunadj": float(ur.closeunadj.iloc[0]) if len(ur) else None})
+        present = [x for x in rows_ if x["in_features"] and x["av_symbol"] == sym and x["identity"] == "verified"]
+        elig_missing = [x for x in rows_ if x["eligible_cap2000"] and not x["in_features"]]
+        if present:
+            st = "present"
+        elif elig_missing:
+            st = "MISSING although cap2000-eligible"; ok11 = False
+        else:
+            st = "absent: not cap2000-eligible on any monthly date in the window (mcap>=$2B AND closeunadj>$10); never attempted; N/A"
+        a11[sym] = {"window": [lo, hi], "status": st, "rows": rows_}
+    put("A11", "Windows-era named presence: SIVB Feb-2023, BBBY early 2023 (N/A if not cap2000-eligible)", ok11, detail=a11)
 
     # extra facts: adjusted-deliverable key duplicates, IV solve rate
     kd = {}
