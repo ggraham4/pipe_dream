@@ -89,10 +89,13 @@ overlap, and the options backtest win rate.
   whole point-in-time sequence in the background and streams the log.
 - *Rolling weights (candidate — unverified)* — **(2026-10-01)** tracking only,
   never traded. The Theoretical model's nine factors with weights refit every
-  21 trading days on the trailing 1 year (`icw9_r252`). Shows the top of the
-  latest weekly record's ranking (a ranking, not the decile-by-volatility
-  portfolio; the ledger doesn't store that), the refit's weights and trailing-1y
-  t next to the live weights, and a forward tracker. Reads
+  21 trading days on the trailing 1 year (`icw9_r252`). Shows the candidate's
+  own picks (`out/current_signal_r252.csv` + `_meta.json`, same schema and
+  construction as the Theoretical picks, with a marker for names not in the live
+  Theoretical picks; displayed, not traded). Without that file it falls back to
+  the top of the latest weekly record's ranking (a ranking, not a portfolio).
+  Also the refit's weights and trailing-1y t next to the live weights, and a
+  forward tracker with the weekly scores. Reads
   `out/reset2026/prediction_ledger_r252.csv`, `r252_weight_path.csv`,
   `prediction_ledger_r252_scores.csv` and `ledger_r252_guard_log.csv` through
   `lib/rolling_model.py`, which computes no model quantity. Missing files give

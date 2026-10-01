@@ -13,6 +13,23 @@ doc final/models/2026-09-30-r252-forward.md). This module never imports that
 code and never computes a score, a weight, a t or a rank-IC: it only reads,
 filters and joins. If a file is missing the tab shows an empty state.
 
+WO-34b (2026-10-01) added a real picks file, written on every non-dry weekly
+run (not only in weeks with a new record), in final/out/:
+  current_signal_r252.csv            the Theoretical picks file's schema: ticker,
+                                     sector, close, market_cap, volatility_60,
+                                     composite_score, weight, seas. Same universe,
+                                     date, seas and decile_volq construction as the
+                                     Theoretical picks; only the weights differ.
+  current_signal_r252_meta.json      the Theoretical meta's keys + one `r252` block
+                                     (refit_date, refit_idx, refit_in_weight_path,
+                                     factor_weights_full, picks_overlap_vs_icw9_seas,
+                                     written_at). QUIRK: its `picks_overlap_vs_icw8`
+                                     reuses the Theoretical helper, so the keys named
+                                     n_icw9_seas / share_of_icw9_seas hold the R252
+                                     count. Never display that key.
+The tab shows these picks when both files are readable, else the ledger's
+top-N ranking, else an empty state.
+
 Files (all under final/out/reset2026/, none exist before the first record):
   prediction_ledger_r252.csv         append-only, one block of rows per weekly
                                      record: panel_date, recorded_at, r252_version,
@@ -24,11 +41,14 @@ Files (all under final/out/reset2026/, none exist before the first record):
                                      w_<factor>, t_<factor>, r252_version, ...
   prediction_ledger_r252_scores.csv  one row per matured, scored record:
                                      panel_date, n_names, rho_icw9_r252,
-                                     rho_icw9_seas, gain. Written ONLY by
-                                     `r252_forward.py score` (not by the weekly run
-                                     as of 2026-10-01).
-  ledger_r252_guard_log.csv          skipped records: logged_at, ledger,
-                                     panel_date, iso_week, event, detail
+                                     rho_icw9_seas, gain, scored_at, version,
+                                     refit_idx. Written by the weekly run since
+                                     WO-34b; the first row appears ~41 trading days
+                                     after the first record.
+  ledger_r252_guard_log.csv          logged_at, ledger, panel_date, iso_week,
+                                     event, detail. Events: r252_skipped (no
+                                     record), r252_score_skipped,
+                                     r252_picks_skipped (picks file not rewritten)
   ledger_record_log.csv / ledger_record_annotations.csv
                                      shared; recorded_late / incomplete_week flags
 
@@ -36,6 +56,8 @@ To add a second model column (e.g. a sign-aware variant): append one dict to
 MODELS with that model's own files and column names. The tab loops over MODELS.
 """
 from __future__ import annotations
+
+import json
 
 import pandas as pd
 
@@ -57,6 +79,9 @@ MODELS = [
         "scores": R26 / "prediction_ledger_r252_scores.csv",
         "weight_path": R26 / "r252_weight_path.csv",
         "guard_log": R26 / "ledger_r252_guard_log.csv",
+        "picks": paths.OUT_DIR / "current_signal_r252.csv",
+        "picks_meta": paths.OUT_DIR / "current_signal_r252_meta.json",
+        "meta_block": "r252",                    # the model's own block in the picks meta
         "score_col": "icw9_r252_score",
         "rank_col": "icw9_r252_rank_pct",
         "version_col": "r252_version",
@@ -80,6 +105,7 @@ def mtimes() -> tuple:
     ps = [RECORD_LOG, RECORD_ANNOTATIONS]
     for m in MODELS:
         ps += [m["ledger"], m["scores"], m["weight_path"], m["guard_log"]]
+        ps += [m[k] for k in ("picks", "picks_meta") if k in m]
     return tuple(_mtime(p) for p in ps)
 
 
@@ -92,6 +118,83 @@ def _read(p):
         return pd.read_csv(p), None
     except Exception as e:  # noqa: BLE001 -- display only, never raise into the page
         return None, f"{p.name} could not be read ({type(e).__name__}: {e})"
+
+
+# The picks table needs these; the rest of the Theoretical schema is optional.
+PICKS_NEED = {"ticker", "composite_score", "weight"}
+PICKS_COLS = ["ticker", "sector", "close", "market_cap", "volatility_60",
+              "composite_score", "weight", "seas"]
+
+
+def load_picks(spec) -> tuple:
+    """(picks df, meta dict, errors). (None, {}, []) when the model has no
+    picks file yet. The pair is all-or-nothing: if one file is missing,
+    unreadable or the wrong shape, no picks are returned and the tab falls
+    back to the ledger ranking, with the reason in errors."""
+    csv, mj = spec.get("picks"), spec.get("picks_meta")
+    if csv is None or mj is None or (not csv.exists() and not mj.exists()):
+        return None, {}, []
+    fallback = "showing the ledger ranking instead of picks"
+    if not csv.exists() or not mj.exists():
+        missing = mj if csv.exists() else csv
+        return None, {}, [f"{missing.name} is missing while its pair exists; {fallback}"]
+    df, err = _read(csv)
+    if err:
+        return None, {}, [f"{err}; {fallback}"]
+    if df is None or df.empty or not PICKS_NEED <= set(df.columns):
+        return None, {}, [f"{csv.name} is empty or missing columns "
+                          f"{sorted(PICKS_NEED - set(df.columns))}; {fallback}"]
+    try:
+        meta = json.loads(mj.read_text())
+    except Exception as e:  # noqa: BLE001 -- display only
+        return None, {}, [f"{mj.name} could not be read ({type(e).__name__}: {e}); {fallback}"]
+    if not isinstance(meta, dict) or not meta.get("as_of_date"):
+        return None, {}, [f"{mj.name} has no as_of_date; {fallback}"]
+    df["ticker"] = df["ticker"].astype(str)
+    return df[[c for c in PICKS_COLS if c in df.columns]], meta, []
+
+
+def picks_block(spec, data: dict) -> dict:
+    """The model's own block of the picks meta ({} if absent or not a dict)."""
+    b = (data.get("picks_meta") or {}).get(spec.get("meta_block", ""))
+    return b if isinstance(b, dict) else {}
+
+
+def picks_table(data: dict, live_picks: set | None) -> pd.DataFrame:
+    """The picks file as written (its own order: weight descending), plus the
+    marker against the live Theoretical picks. Nothing is recomputed."""
+    df = data["picks"].copy()
+    if live_picks is not None:
+        df["vs live Theoretical picks"] = ["also a live pick" if t in live_picks
+                                           else "NOT a live pick" for t in df["ticker"]]
+    return df
+
+
+def weights_row_for(spec, data: dict, use_picks: bool):
+    """(row, refit_idx, source) for the weights table.
+
+    use_picks False: the refit the latest ledger RECORD used.
+    use_picks True: the refit the PICKS file used (its meta's refit_idx). That
+    can be newer than every row in the weight path (the path only grows when a
+    record is written); then the weights come from the meta's
+    factor_weights_full and there is no t to show."""
+    if not use_picks:
+        return data["weights_row"], data["refit_idx"], "record"
+    blk = picks_block(spec, data)
+    idx = blk.get("refit_idx")
+    idx = int(idx) if isinstance(idx, (int, float)) and not pd.isna(idx) else None
+    wp = data.get("weight_path")
+    if wp is not None and idx is not None:
+        hit = wp[wp["refit_idx"].astype("Int64") == idx]
+        if len(hit):
+            return hit.iloc[-1], idx, "path"
+    full = blk.get("factor_weights_full")
+    if isinstance(full, dict) and full:
+        try:
+            return pd.Series({f"w_{k}": float(v) for k, v in full.items()}), idx, "meta"
+        except (TypeError, ValueError):
+            pass
+    return None, idx, "none"
 
 
 def _excluded(spec) -> tuple[set, set]:
@@ -117,12 +220,23 @@ def load(spec) -> dict:
     keys: errors (list[str]), has_record (bool), dates (list[str]),
     latest (DataFrame of the newest record's rows, or None), panel_date,
     recorded_at, version, refit_idx, refit_date, weights_row (Series or None),
-    scores (DataFrame or None), late / incomplete (sets), guard (DataFrame or None)
+    scores (DataFrame or None), late / incomplete (sets), guard (DataFrame or None),
+    picks (DataFrame or None), picks_meta (dict), weight_path (DataFrame or None)
     """
     out = {"errors": [], "has_record": False, "dates": [], "latest": None,
            "panel_date": None, "recorded_at": None, "version": None,
            "refit_idx": None, "refit_date": None, "weights_row": None,
-           "scores": None, "late": set(), "incomplete": set(), "guard": None}
+           "scores": None, "late": set(), "incomplete": set(), "guard": None,
+           "picks": None, "picks_meta": {}, "weight_path": None}
+
+    # picks and the weight path don't depend on a ledger record existing
+    out["picks"], out["picks_meta"], errs = load_picks(spec)
+    out["errors"] += errs
+    wp, err = _read(spec["weight_path"])
+    if err:
+        out["errors"].append(err)
+    if wp is not None and "refit_idx" in wp.columns:
+        out["weight_path"] = wp
 
     guard, err = _read(spec["guard_log"])
     if err:
@@ -156,10 +270,8 @@ def load(spec) -> dict:
 
     # the weights the latest RECORD used (match on refit_idx -- the path can
     # already hold a newer refit than the latest record)
-    wp, err = _read(spec["weight_path"])
-    if err:
-        out["errors"].append(err)
-    if wp is not None and "refit_idx" in wp.columns and out["refit_idx"] is not None:
+    wp = out["weight_path"]
+    if wp is not None and out["refit_idx"] is not None:
         hit = wp[wp["refit_idx"].astype("Int64") == out["refit_idx"]]
         if len(hit):
             out["weights_row"] = hit.iloc[-1]
@@ -173,16 +285,17 @@ def load(spec) -> dict:
     return out
 
 
-def weights_table(live_weights: dict | None, loaded: dict[str, dict]) -> pd.DataFrame | None:
+def weights_table(live_weights: dict | None, rows: dict) -> pd.DataFrame | None:
     """One row per factor: the live Theoretical weight, then per model its
     weight, its trailing-1y t, and whether that t points against the weight.
 
     live_weights = the Theoretical meta's factor_weights (may be None).
-    loaded = {model key: load(spec)}. Returns None if no model has weights."""
+    rows = {model key: weight-path row (or a w_-only Series from the picks
+    meta), or None}. Returns None if no model has weights."""
     cols = {}
     factors = list(live_weights or {})
     for spec in MODELS:
-        row = loaded[spec["key"]]["weights_row"]
+        row = rows.get(spec["key"])
         if row is None:
             continue
         fs = [c[2:] for c in row.index if c.startswith("w_")]
@@ -225,6 +338,23 @@ def top_table(spec, data: dict, n: int, live_picks: set | None) -> pd.DataFrame:
         top["vs live Theoretical picks"] = ["also a live pick" if t in live_picks
                                             else "NOT a live pick" for t in top["ticker"]]
     return top
+
+
+def scores_table(spec, data: dict) -> pd.DataFrame | None:
+    """The recorder's per-record scores as written, newest first, plus whether
+    each record counts toward the review. None if nothing is scored yet."""
+    sc = data["scores"]
+    if sc is None or sc.empty:
+        return None
+    keep = [c for c in ["panel_date", "n_names", spec["rho_col"], spec["rho_baseline_col"],
+                        spec["gain_col"], "refit_idx", "scored_at"] if c in sc.columns]
+    df = sc[keep].sort_values("panel_date", ascending=False).reset_index(drop=True)
+    df.insert(1, "counts toward review", [
+        "no (recorded late)" if d in data["late"] else
+        "no (incomplete week)" if d in data["incomplete"] else
+        "no (not in the ledger)" if d not in data["dates"] else "yes"
+        for d in df["panel_date"]])
+    return df
 
 
 def tracker_row(spec, data: dict) -> dict:
