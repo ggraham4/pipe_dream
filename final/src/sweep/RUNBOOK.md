@@ -1,5 +1,7 @@
 # The sweep package — runbook and reference
 
+**No trading (Gabe, 2026-10-01):** no agent, script or job may place, modify or cancel any order unless Gabe himself types out the exact trade details as confirmation. See AGENTS.md standing constraint #7.
+
 **Covers Rounds 12–19 (2026-09-09 → 2026-09-16).** Supersedes the Round 12-only
 version of this file.
 

@@ -1,5 +1,7 @@
 # Data pipeline handoff — how the point-in-time dataset was built
 
+**No trading (Gabe, 2026-10-01):** no agent, script or job may place, modify or cancel any order unless Gabe himself types out the exact trade details as confirmation. See AGENTS.md standing constraint #7.
+
 **Written:** 2026-09-09 (Round 11) · **Audience:** the next agent on this project
 **Purpose:** reproduce this dataset from scratch, understand why each decision was
 made, and never have to re-litigate the data layer. Modelling effort should start

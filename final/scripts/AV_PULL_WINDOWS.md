@@ -1,5 +1,7 @@
 # Running the AV options pull on a Windows machine
 
+**No trading (Gabe, 2026-10-01):** no agent, script or job may place, modify or cancel any order unless Gabe himself types out the exact trade details as confirmation. See AGENTS.md standing constraint #7.
+
 The pull is rate-limited by Alpha Vantage (~70 calls/min), not by CPU, so a
 Windows box runs it exactly as fast as the Mac — and can stay on 24/7.
 Only the pull moves; building the chain/features and all modelling stay on
