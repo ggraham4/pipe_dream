@@ -5,7 +5,63 @@ COO. Branch `worktree-agent-a2af378619405ac32`. Pre-registration:
 [`2026-09-29-options-readiness-wo25.md`](2026-09-29-options-readiness-wo25.md)
 (sections 3, 4, 5, 6). Nothing in the spec was changed. Iterations used: 0 of 3.
 
-## Summary
+## Update, later on 2026-09-30: retry of 2018-10-17, and a second WO-O1 stop
+
+**State now: WO-O1 still has no number.** The completeness guard passes after
+the COO's retry, but the runner crashed part-way through on a holiday-expiry
+bug. Nothing was aggregated or written. Sections below this one describe the
+first pass and are kept as written, except where marked.
+
+**Retry (data fact, from the COO, with the arrival check re-run here).**
+- The COO re-pulled the 10 errored names on 2018-10-17 (COLB, DOV, ENV, EOG,
+  EPAM, EPAY, EPC, EPD, EPR, EQC) into `alphavantage_full` with the project's
+  pull script. All 10 came back `ok`, identity `verified`. The date's parquet
+  went from 460,730 to 463,504 rows (COO's figures, not re-counted here).
+- 6 names were never attempted and are still absent (ALLO, ESTC, LEXEB, LTHM,
+  PLAN, REZI).
+- `check_arrival.py` re-run: overall PASS, **134 of 134** and **91 of 91**
+  complete. 6 `error` rows remain (2008-12-17 and 2018-09-19).
+- Gate A re-run on the same 225 dates (2026-09-16 still excluded): **11 of 11
+  PASS**. Only 2018-10-17 was rebuilt: its chain went from 1,391 to 1,401
+  names. Chain partitions now equal the complete-date list (225 and 225).
+- **Exp B was not re-run.** Its screen ran with those 10 names missing on that
+  one date and was not repeated after the retry. The result stands as
+  recorded: 0 of 5 admitted, hold-out read #14 not used.
+
+**WO-O1 second stop: the runner cannot find the expiry when the 3rd Friday is
+Good Friday.**
+- `run_wo_o1.py --phase2` passed every guard and started. It crashed at entry
+  date 2019-03-20 with `ArrowTypeError: ... large_string vs null`, after
+  processing 135 of 225 entry dates. The crash is an empty ticker list passed
+  to the price loader.
+- Cause: `target_expiry` returns the 3rd Friday, and the runner keeps
+  contracts expiring on that day or the day after (the pre-2015 Saturday
+  listing). On 2019-04-19, 2022-04-15 and 2025-04-18 the 3rd Friday was Good
+  Friday, so the monthly contracts are listed as expiring the Thursday
+  before. No put matches, and the name list is empty.
+- Verified in the chain: 1,373 names have puts expiring 2019-04-18 on entry
+  2019-03-20; 1,594 expiring 2022-04-14 on entry 2022-03-16; 1,473 expiring
+  2025-04-17 on entry 2025-03-19. The earlier Good Friday cases (March 2008,
+  April 2014) are listed as the Saturday and work.
+- Phase 1 did not catch this because its 33 dates end in 2010.
+- **No WO-O1 number exists.** The crash came before any aggregation.
+  `wo_o1_results.json` and the positions file were not written, and the log
+  holds only per-date name counts. Entries from 2020 on were never reached,
+  so **hold-out read #15 is still not used**.
+- **Not fixed here.** The fix touches expiry selection in the frozen runner,
+  and there are two candidate behaviours that give different results. That is
+  the COO's call, and it must be written into the pre-reg doc and committed
+  before the run:
+  1. **Accept the holiday-adjusted expiry** (the Thursday, when the 3rd
+     Friday is a market holiday). This matches the spec's wording, "the first
+     standard monthly expiration", and keeps all 225 entry dates. Settlement
+     already resolves to the Thursday close. Recommended.
+  2. **Skip the three entry dates.** This runs on 222 dates and departs from
+     "entry dates are every monthly date in the pull's plan".
+- Whether this counts as an iteration is the COO's ruling. No WO-O1 number
+  existed when it was found.
+
+## Summary (first pass)
 
 | experiment | verdict | deciding number |
 |---|---|---|

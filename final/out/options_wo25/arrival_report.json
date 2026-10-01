@@ -6,16 +6,15 @@
   "log_rows": 312691,
   "log_status_by_pass": {
     "monthly": {
-      "ok": 300256,
+      "ok": 300266,
       "no_data": 12419,
-      "error": 16
+      "error": 6
     }
   },
-  "error_rows": 16,
+  "error_rows": 6,
   "error_rows_by_date": {
     "2008-12-17": 1,
-    "2018-09-19": 5,
-    "2018-10-17": 10
+    "2018-09-19": 5
   },
   "plan": {
     "monthly": 225,
@@ -58,10 +57,8 @@
   "monthly_cap2000_completeness": {
     "2008-01..2019-01": {
       "planned": 134,
-      "complete": 133,
-      "missing_or_partial": [
-        "2018-10-17 (0.989)"
-      ]
+      "complete": 134,
+      "missing_or_partial": []
     },
     "2019-02..": {
       "planned": 91,
@@ -200,6 +197,7 @@
     "2018-07-18",
     "2018-08-22",
     "2018-09-19",
+    "2018-10-17",
     "2018-11-21",
     "2018-12-19",
     "2019-01-16",
@@ -298,7 +296,7 @@
   "monthly_dates_not_in_plan": [
     "2026-09-16"
   ],
-  "exp_b_nominate_dates_complete": 132,
+  "exp_b_nominate_dates_complete": 133,
   "exp_b_screen_ready": true,
   "exp_b_confirm_ready": true,
   "fails": [],
