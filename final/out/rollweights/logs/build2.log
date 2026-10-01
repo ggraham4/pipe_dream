@@ -1,0 +1,2 @@
+[15:26:13] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[15:28:04] step2 build: live B -0.0201636 vs -0.0201637; wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-ae2ebd3a1386cb352/final/out/rollweights/build_validate_step2.json (122s)

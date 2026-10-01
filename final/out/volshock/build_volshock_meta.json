@@ -1,0 +1,25 @@
+{
+  "sep_first": "2006-06",
+  "sep_last": "2019-12",
+  "sep_digest": "3c323040c3da6beb1dca019de7c8f0d3b4f4ceb0e728a30784ff8706f6844df5",
+  "composite_panel_v2_sha256": "30f636fd4802b4f13278322bc0c6e766a4623853edf15e92b60c2b672e97e0ff",
+  "sep_rows": 19351914,
+  "calendar_days": 3420,
+  "rows_off_calendar": 0,
+  "volume_nonfinite_or_negative": 0,
+  "volume_zero_share": 0.03966610227804857,
+  "panel_close_vs_sep_close": {
+    "rows": 13253466,
+    "max_rel_diff": 0.0,
+    "share_gt_1e-9": 0.0
+  },
+  "rows": 13253466,
+  "nonnull": {
+    "vol_shock": 0.9904834705125437,
+    "r_1m": 0.995935553763823,
+    "turnover_21": 0.9886431971832877,
+    "r_5d": 0.9990355730342538
+  },
+  "factor_sha256": "7c595da6bd697913d75d602852a69040e57a9b2c286ee014a0eb7784c224e2d8",
+  "runtime_s": 61.00144290924072
+}

@@ -1,0 +1,11 @@
+[09:21:17] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[09:22:23] [A] swapin_momentum_12_1: +0.0007/yr t +0.28 26/40
+[09:22:32] [A] swapout_momentum_12_1: -0.0084/yr t -1.74 2/40
+[09:22:40] [A] swapin_net_issuance_pct: +0.0034/yr t +1.40 39/40
+[09:22:49] [A] swapout_net_issuance_pct: -0.0050/yr t -1.04 4/40
+[09:23:24] [B] swapin_momentum_12_1: +0.0005/yr t +0.11 23/40
+[09:23:28] [B] swapout_momentum_12_1: +0.0108/yr t +0.67 23/40
+[09:23:31] [B] swapin_net_issuance_pct: +0.0029/yr t +0.89 34/40
+[09:23:34] [B] swapout_net_issuance_pct: +0.0136/yr t +0.79 31/40
+[09:23:34] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a086ed9cc62b1ee11/final/out/rollweights/signaware/signaware_swap.json
+exit 0

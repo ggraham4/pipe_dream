@@ -1,0 +1,115 @@
+{
+ "pinned_reproduction": {
+  "n_refits": 41,
+  "max_abs_w": 0.0,
+  "max_abs_t": 0.0,
+  "tol": 1e-09,
+  "pass": true
+ },
+ "full_path_reproduction": {
+  "n_refits": 235,
+  "max_abs_w": 0.0,
+  "pass": true
+ },
+ "seam_check": {
+  "dates": "2026-01-02..2026-07-13",
+  "n_dates": 131,
+  "max_abs_ic_diff": {
+   "momentum_12_1": 8.415190620919555e-06,
+   "pct_from_high_252": 9.724247394163332e-06,
+   "volatility_60": 8.567763630656228e-06,
+   "gross_profitability": 1.1438008702999158e-05,
+   "accruals": 6.914685251033226e-06,
+   "net_issuance_pct": 2.424506553182215e-06,
+   "days_to_next_filing_seasonal": 1.5589259622916796e-06,
+   "short_interest_days_to_cover": 3.957775742772715e-06,
+   "seas": 0.0
+  },
+  "mean_abs_ic_diff": {
+   "momentum_12_1": 6.423809634289736e-08,
+   "pct_from_high_252": 7.42308961386514e-08,
+   "volatility_60": 6.540277580653609e-08,
+   "gross_profitability": 8.731304353434472e-08,
+   "accruals": 5.278385687811623e-08,
+   "net_issuance_pct": 1.850768361207798e-08,
+   "days_to_next_filing_seasonal": 1.1900198185432669e-08,
+   "short_interest_days_to_cover": 3.0212028570784085e-08,
+   "seas": 0.0
+  },
+  "live_nan_dates": {
+   "momentum_12_1": 0,
+   "pct_from_high_252": 0,
+   "volatility_60": 0,
+   "gross_profitability": 0,
+   "accruals": 0,
+   "net_issuance_pct": 0,
+   "days_to_next_filing_seasonal": 0,
+   "short_interest_days_to_cover": 0,
+   "seas": 0
+  },
+  "refit_4914_weights_pinned_vs_liveIC_max_abs": 0.0
+ },
+ "refits_due_now": {
+  "as_of": "2026-09-29",
+  "stored": 0,
+  "new": [
+   {
+    "refit_date": "2026-08-17",
+    "refit_idx": 4935,
+    "first_used": "2025-06-17",
+    "last_used": "2026-06-17",
+    "n_min": 252,
+    "n_live_dates": 0,
+    "w_momentum_12_1": 0.03441582186063964,
+    "w_pct_from_high_252": 0.03441582186063964,
+    "w_volatility_60": -0.03441582186063964,
+    "w_gross_profitability": 0.23553322968960286,
+    "w_accruals": -0.03441582186063964,
+    "w_net_issuance_pct": -0.03441582186063964,
+    "w_days_to_next_filing_seasonal": -0.0934982057268748,
+    "w_short_interest_days_to_cover": -0.24426210315716085,
+    "w_seas": 0.25462735212316323
+   },
+   {
+    "refit_date": "2026-09-16",
+    "refit_idx": 4956,
+    "first_used": "2025-07-18",
+    "last_used": "2026-07-20",
+    "n_min": 252,
+    "n_live_dates": 5,
+    "w_momentum_12_1": 0.03768236514103613,
+    "w_pct_from_high_252": 0.03768236514103613,
+    "w_volatility_60": -0.03768236514103613,
+    "w_gross_profitability": 0.0799986932737504,
+    "w_accruals": -0.03768236514103613,
+    "w_net_issuance_pct": -0.03768236514103613,
+    "w_days_to_next_filing_seasonal": -0.09697262687041612,
+    "w_short_interest_days_to_cover": -0.27034060695650547,
+    "w_seas": 0.36427624719414736
+   }
+  ]
+ },
+ "scorer": {
+  "date": "2026-09-24",
+  "panel": "composite_panel_v2_through_2026-09-24.parquet",
+  "rows": 3048,
+  "icw8_vs_v3_max_abs": 9.974659986866641e-17,
+  "icw9_seas_equals_seas_forward": true,
+  "icw9_r252_equals_independent_1e-12": true,
+  "refit_used": 4956,
+  "weights_used": {
+   "momentum_12_1": 0.0377,
+   "pct_from_high_252": 0.0377,
+   "volatility_60": -0.0377,
+   "gross_profitability": 0.08,
+   "accruals": -0.0377,
+   "net_issuance_pct": -0.0377,
+   "days_to_next_filing_seasonal": -0.097,
+   "short_interest_days_to_cover": -0.2703,
+   "seas": 0.3643
+  },
+  "spearman_r252_vs_icw9_seas": 0.41669636185492775,
+  "top300_overlap_r252_vs_icw9_seas": 101
+ },
+ "todo_now": []
+}

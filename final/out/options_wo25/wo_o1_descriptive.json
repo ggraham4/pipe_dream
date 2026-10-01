@@ -1,0 +1,119 @@
+{
+  "-0.45": {
+    "arm_a": {
+      "excess_ann_recomputed": -0.07700874594738606,
+      "n_cycles": 225,
+      "worst_excess_cycle": {
+        "entry": "2020-03-18",
+        "excess": -0.10611734575237634,
+        "book_R": 0.08985875908839243,
+        "spy_tr": 0.19597610484076877
+      },
+      "worst_book_return_cycle": {
+        "entry": "2020-02-19",
+        "book_R": -0.3213270363688666,
+        "spy_tr": -0.3221144405348937
+      },
+      "mean_cycle_R": 0.001243800255017503,
+      "mean_cycle_spy_tr": 0.007549275670394623,
+      "mean_positions_per_cycle": 756.9644444444444
+    },
+    "arm_b_icw8": {
+      "excess_ann_recomputed": -0.05051511415166076,
+      "n_cycles": 225,
+      "worst_excess_cycle": {
+        "entry": "2020-03-18",
+        "excess": -0.10768199288526131,
+        "book_R": 0.08829411195550746,
+        "spy_tr": 0.19597610484076877
+      },
+      "worst_book_return_cycle": {
+        "entry": "2020-02-19",
+        "book_R": -0.2839570973105886,
+        "spy_tr": -0.3221144405348937
+      },
+      "mean_cycle_R": 0.003413098584666122,
+      "mean_cycle_spy_tr": 0.007549275670394623,
+      "mean_positions_per_cycle": 150.76444444444445
+    },
+    "rows_without_score_in_arm_a": 705
+  },
+  "-0.3": {
+    "arm_a": {
+      "excess_ann_recomputed": -0.07925213976555893,
+      "n_cycles": 225,
+      "worst_excess_cycle": {
+        "entry": "2020-03-18",
+        "excess": -0.1397902279609128,
+        "book_R": 0.05618587687985596,
+        "spy_tr": 0.19597610484076877
+      },
+      "worst_book_return_cycle": {
+        "entry": "2020-02-19",
+        "book_R": -0.3083029857232483,
+        "spy_tr": -0.3221144405348937
+      },
+      "mean_cycle_R": 0.0010601111896590988,
+      "mean_cycle_spy_tr": 0.007549275670394623,
+      "mean_positions_per_cycle": 836.9955555555556
+    },
+    "arm_b_icw8": {
+      "excess_ann_recomputed": -0.059446926665437376,
+      "n_cycles": 225,
+      "worst_excess_cycle": {
+        "entry": "2020-03-18",
+        "excess": -0.13912322739320035,
+        "book_R": 0.05685287744756842,
+        "spy_tr": 0.19597610484076877
+      },
+      "worst_book_return_cycle": {
+        "entry": "2020-02-19",
+        "book_R": -0.27016902005435134,
+        "spy_tr": -0.3221144405348937
+      },
+      "mean_cycle_R": 0.002681761857551326,
+      "mean_cycle_spy_tr": 0.007549275670394623,
+      "mean_positions_per_cycle": 166.75555555555556
+    },
+    "rows_without_score_in_arm_a": 699
+  },
+  "-0.2": {
+    "arm_a": {
+      "excess_ann_recomputed": -0.08242785496538946,
+      "n_cycles": 225,
+      "worst_excess_cycle": {
+        "entry": "2020-03-18",
+        "excess": -0.1603304012292914,
+        "book_R": 0.03564570361147736,
+        "spy_tr": 0.19597610484076877
+      },
+      "worst_book_return_cycle": {
+        "entry": "2020-02-19",
+        "book_R": -0.2997371814187402,
+        "spy_tr": -0.3221144405348937
+      },
+      "mean_cycle_R": 0.0008000836580790895,
+      "mean_cycle_spy_tr": 0.007549275670394623,
+      "mean_positions_per_cycle": 925.6533333333333
+    },
+    "arm_b_icw8": {
+      "excess_ann_recomputed": -0.06720799271249178,
+      "n_cycles": 225,
+      "worst_excess_cycle": {
+        "entry": "2020-03-18",
+        "excess": -0.1586129796832318,
+        "book_R": 0.037363125157536974,
+        "spy_tr": 0.19597610484076877
+      },
+      "worst_book_return_cycle": {
+        "entry": "2020-02-19",
+        "book_R": -0.25871549629651197,
+        "spy_tr": -0.3221144405348937
+      },
+      "mean_cycle_R": 0.002046285840447315,
+      "mean_cycle_spy_tr": 0.007549275670394623,
+      "mean_positions_per_cycle": 184.4
+    },
+    "rows_without_score_in_arm_a": 822
+  }
+}

@@ -1,0 +1,156 @@
+{
+ "NO_OUTCOME_DATA": "quote-side facts only; nothing here uses a forward return or a settlement price",
+ "dates": [
+  "2008-01-02",
+  "2008-01-16",
+  "2008-02-20",
+  "2008-03-19",
+  "2008-04-16",
+  "2008-05-21",
+  "2008-06-18",
+  "2008-07-16",
+  "2008-08-20"
+ ],
+ "note_sizes": "AV leaves bid_size/ask_size unpopulated for most 2008-2009 chains (WO-25 Amendment 1), so the size leg of the fillable rule is close to unmeasurable on these dates; see among_sizes_populated",
+ "thin": {
+  "name_dates": 18767,
+  "names_per_date_median": 2061.0,
+  "pull_status_share": {
+   "ok": 0.6343,
+   "no_data": 0.3657
+  },
+  "share_with_chain_in_store(status ok)": 0.6343048968934832,
+  "share_with_chain_passing_identity_filter": 0.6241274577716204,
+  "names_with_chain_per_date_median": 1299.0,
+  "of_names_with_chain": {
+   "share_any_option_volume_that_day": 0.8472637240672757,
+   "median_total_option_volume_contracts": 70.0,
+   "share_volume_ge_100_contracts": 0.4477076752326475,
+   "median_total_open_interest_contracts": 5314.000000000005,
+   "median_rel_spread_atm(|delta| .3-.7)": 0.17554210976653217,
+   "share_with_opt_cw_spread": 0.9887304704174849
+  },
+  "share_of_all_names_with_any_option_volume": 0.5288005541642244,
+  "arm1_signal_names_per_date_median": 1281.0,
+  "arm2_030_delta_put": {
+   "name_dates_with_put_in_tolerance": 4319,
+   "share_of_all_name_dates": 0.23013800820589334,
+   "share_quoted(passes WO-O1 F0-F6)": 0.9641120629775412,
+   "quoted_entries": 4164,
+   "median_rel_spread_of_chosen_put": 0.3396226415094339,
+   "median_bid_usd": 0.5,
+   "median_open_interest_of_chosen_put": 100.0,
+   "share_chosen_put_zero_volume_that_day": 0.5782901056676273,
+   "share_of_quoted_with_sizes_populated(>=90% rule)": 0.26440922190201727,
+   "among_sizes_populated": {
+    "entries": 1101,
+    "median_bid_size": 25.0,
+    "share_bid_size_ge_5": 0.9927338782924614,
+    "fillable_strict_share": 0.4732061762034514
+   },
+   "share_quoted_OI_ge_50(oi-only fillable)": 0.601104707012488,
+   "fillable_share_of_quoted(pre-registered rule)": 0.5996637848222862,
+   "fillable_share_of_all_name_dates": 0.13305269888634305,
+   "fillable_entries_per_date": {
+    "2008-01-02": 199,
+    "2008-01-16": 247,
+    "2008-02-20": 304,
+    "2008-03-19": 281,
+    "2008-04-16": 286,
+    "2008-05-21": 289,
+    "2008-06-18": 256,
+    "2008-07-16": 307,
+    "2008-08-20": 328
+   },
+   "capacity": {
+    "fillable_entries_per_month_median": 286.0,
+    "VERDICT_volume_capped": {
+     "entries_with_capacity_per_month_median": 159.0,
+     "collateral_usd_per_month_median": 19243250.0,
+     "collateral_usd_per_month_min": 14630850.0,
+     "premium_usd_per_month_median": 984260.0,
+     "share_of_fillable_entries_with_zero_volume": 0.41409691629955947,
+     "rule": "min(bid_size where populated, floor(10% x OI), the contract's own volume that day) x 100 x strike"
+    },
+    "open_interest_only_UPPER_BOUND_DESCRIPTIVE": {
+     "collateral_usd_per_month_median": 49740800.0,
+     "collateral_usd_per_month_min": 32739350.0,
+     "premium_usd_per_month_median": 2158340.0,
+     "median_cap_contracts_per_entry": 29.0,
+     "rule": "min(bid_size where populated, floor(10% x OI)) x 100 x strike"
+    }
+   }
+  }
+ },
+ "cap2000_same_dates": {
+  "name_dates": 8793,
+  "names_per_date_median": 986.0,
+  "pull_status_share": {
+   "ok": 0.9452,
+   "no_data": 0.052,
+   "not attempted": 0.0028
+  },
+  "share_with_chain_in_store(status ok)": 0.9451836688274764,
+  "share_with_chain_passing_identity_filter": 0.9396110542476971,
+  "names_with_chain_per_date_median": 929.0,
+  "of_names_with_chain": {
+   "share_any_option_volume_that_day": 0.9686516581941419,
+   "median_total_option_volume_contracts": 887.5,
+   "share_volume_ge_100_contracts": 0.7891551682401355,
+   "median_total_open_interest_contracts": 37529.50000000001,
+   "median_rel_spread_atm(|delta| .3-.7)": 0.08187134502923989,
+   "share_with_opt_cw_spread": 0.9984265311062697
+  },
+  "share_of_all_names_with_any_option_volume": 0.9101558057545776,
+  "arm1_signal_names_per_date_median": 929.0,
+  "arm2_030_delta_put": {
+   "name_dates_with_put_in_tolerance": 4523,
+   "share_of_all_name_dates": 0.5143864437620834,
+   "share_quoted(passes WO-O1 F0-F6)": 0.985407915100597,
+   "quoted_entries": 4457,
+   "median_rel_spread_of_chosen_put": 0.13953488372093015,
+   "median_bid_usd": 0.95,
+   "median_open_interest_of_chosen_put": 815.0,
+   "share_chosen_put_zero_volume_that_day": 0.21404532196544762,
+   "share_of_quoted_with_sizes_populated(>=90% rule)": 0.21269912497195423,
+   "among_sizes_populated": {
+    "entries": 948,
+    "median_bid_size": 33.0,
+    "share_bid_size_ge_5": 0.9841772151898734,
+    "fillable_strict_share": 0.6687763713080169
+   },
+   "share_quoted_OI_ge_50(oi-only fillable)": 0.8880412833744671,
+   "fillable_share_of_quoted(pre-registered rule)": 0.8851245232218982,
+   "fillable_share_of_all_name_dates": 0.4486523370863187,
+   "fillable_entries_per_date": {
+    "2008-01-02": 360,
+    "2008-01-16": 454,
+    "2008-02-20": 435,
+    "2008-03-19": 455,
+    "2008-04-16": 448,
+    "2008-05-21": 415,
+    "2008-06-18": 448,
+    "2008-07-16": 491,
+    "2008-08-20": 439
+   },
+   "capacity": {
+    "fillable_entries_per_month_median": 448.0,
+    "VERDICT_volume_capped": {
+     "entries_with_capacity_per_month_median": 375.0,
+     "collateral_usd_per_month_median": 430410950.0,
+     "collateral_usd_per_month_min": 288710550.0,
+     "premium_usd_per_month_median": 12109711.0,
+     "share_of_fillable_entries_with_zero_volume": 0.1482889733840304,
+     "rule": "min(bid_size where populated, floor(10% x OI), the contract's own volume that day) x 100 x strike"
+    },
+    "open_interest_only_UPPER_BOUND_DESCRIPTIVE": {
+     "collateral_usd_per_month_median": 663220600.0,
+     "collateral_usd_per_month_min": 424774150.0,
+     "premium_usd_per_month_median": 17338089.0,
+     "median_cap_contracts_per_entry": 99.0,
+     "rule": "min(bid_size where populated, floor(10% x OI)) x 100 x strike"
+    }
+   }
+  }
+ }
+}

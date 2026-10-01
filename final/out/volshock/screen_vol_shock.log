@@ -1,0 +1,28 @@
+[10:15:00] frozen rule reproduces PRODUCTION_WEIGHTS and PRODUCTION_WEIGHTS_V9_SEAS to 4dp
+[10:15:07] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[10:17:00] harness reconcile OK: {'decile_icw8_frozen': [0.028541632641009042, 0.028541632641009042], 'oos_fit_odd_test_even': [0.04041110565685588, 0.040411105656855885], 'oos_fit_even_test_odd': [0.055397983383733786, 0.055397983383733786]}
+[10:17:23] [vol_shock] IC +0.00107 t +0.46 | H1 +0.00295 H2 -0.00113 | sector both +0.55 | max year share 1.7612107786641777 (2008)
+[10:19:19] [vol_shock] icw9_seas +0.02550  +cand +0.02579  inc +0.00029 offsets<=0 12/40  t fit +0.23/+0.42  w +0.0074/+0.0100
+[10:20:04] [vol_shock] null 0: refit +0.02571 (t +0.58/-0.96)  weight-matched +0.02571
+[10:21:05] [vol_shock] null 1: refit +0.02561 (t +0.55/-0.55)  weight-matched +0.02561
+[10:21:53] [vol_shock] null 2: refit +0.02528 (t -0.65/+0.90)  weight-matched +0.02528
+[10:23:03] [vol_shock] null 3: refit +0.02562 (t -1.54/+0.97)  weight-matched +0.02549
+[10:24:04] [vol_shock] null 4: refit +0.02553 (t +0.95/-0.14)  weight-matched +0.02553
+[10:25:00] [vol_shock] null 5: refit +0.02545 (t +0.43/-0.54)  weight-matched +0.02545
+[10:26:06] [vol_shock] null 6: refit +0.02554 (t +0.82/-0.53)  weight-matched +0.02554
+[10:26:55] [vol_shock] null 7: refit +0.02552 (t +0.29/+0.55)  weight-matched +0.02552
+[10:27:56] [vol_shock] null 8: refit +0.02558 (t -0.10/-0.43)  weight-matched +0.02558
+[10:30:07] [vol_shock] null 9: refit +0.02540 (t +0.32/+0.99)  weight-matched +0.02540
+[10:31:17] [vol_shock] null 10: refit +0.02539 (t -0.78/+1.46)  weight-matched +0.02565
+[10:33:06] [vol_shock] null 11: refit +0.02522 (t -1.13/+0.02)  weight-matched +0.02530
+[10:35:02] [vol_shock] null 12: refit +0.02578 (t -0.37/-1.09)  weight-matched +0.02578
+[10:36:25] [vol_shock] null 13: refit +0.02503 (t -2.21/+0.04)  weight-matched +0.02557
+[10:37:29] [vol_shock] null 14: refit +0.02472 (t -1.55/-2.43)  weight-matched +0.02541
+[10:38:49] [vol_shock] null 15: refit +0.02524 (t +1.42/-1.05)  weight-matched +0.02546
+[10:39:55] [vol_shock] null 16: refit +0.02516 (t -1.58/+1.69)  weight-matched +0.02551
+[10:40:37] [vol_shock] null 17: refit +0.02554 (t +0.36/+0.44)  weight-matched +0.02554
+[10:41:30] [vol_shock] null 18: refit +0.02555 (t -0.83/+0.35)  weight-matched +0.02555
+[10:42:23] [vol_shock] null 19: refit +0.02561 (t +1.05/+0.81)  weight-matched +0.02561
+[10:42:23] [vol_shock] gates {'g1_pooled_t': False, 'g2_both_halves_right_sign': False, 'g3_sector_both_sides_t': False, 'g4_zero_offset_flips_book_increment': False, 'g5_year_share': False, 'g6_beats_null_p80': True, 'g7_gate_a': True} -> DEAD
+[10:47:02] [vol_shock] descriptive {"median_spearman_vs_r_5d": 0.0514808899757698, "median_spearman_vs_r_21d": 0.020241067386886, "median_spearman_vs_momentum_12_1": 0.012360345510411232, "median_spearman_vs_io_gap": 0.0059835919852483065, "median_spearman_vs_volatility_60": 0.011900041217387636, "median_spearman_vs_pct_from_high_252": 0.037079249961170194, "median_spearman_vs_seas": -0.00744858709892822, "icw10_io_increment": {"icw10_io": 0.025996052124453405, "icw10_io_plus_cand": 0.026291582081860644, "increment_mean40": 0.00029552995740723747, "offsets_increment_gt_0": 24, "cand_weight_fit_odd_even": [0.006744700885969292, 0.007865900721570838]}}
+[10:47:02] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a79a9999a5df053aa/final/out/volshock/vol_shock_screen_report.json (1922s)

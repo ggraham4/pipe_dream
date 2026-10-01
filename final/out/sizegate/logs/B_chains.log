@@ -1,0 +1,5 @@
+[15:20:49] [B] cap150: 5,220,610 rows, 5,066 tickers, 1652 dates 2020-01-02..2026-07-30
+[15:21:06] [B] books built (21s)
+[15:21:07] reconcile {'name': 'B full icw9_seas', 'got': -0.020163649457176646, 'wo31_exact': -0.020163649457176646, 'diff_exact': 0.0, 'spec': -0.0202, 'diff_spec': 3.6350542823353205e-05}
+[15:21:07] reconcile {'name': 'B full icw8', 'got': -0.01991796273485032, 'wo31_exact': -0.01991796273485032, 'diff_exact': 0.0, 'spec': -0.0199, 'diff_spec': -1.7962734850319323e-05}
+[15:21:07] [B] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-aae4f860e1b828969/final/out/sizegate/parts/B_chains.json (22s)

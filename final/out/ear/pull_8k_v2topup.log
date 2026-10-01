@@ -1,0 +1,18 @@
+[10:17:37] WO-5 request list 3,971 CIKs; v2 (2007-2019) 6,832; top-up 3,600
+[10:17:37] 3,600 CIKs to pull
+[10:20:10]   250/3600 CIKs, 12,381 rows, 337 fresh requests, 152s
+[10:22:35]   500/3600 CIKs, 24,946 rows, 675 fresh requests, 298s
+[10:24:52]   750/3600 CIKs, 36,116 rows, 986 fresh requests, 434s
+[10:27:13]   1000/3600 CIKs, 47,446 rows, 1309 fresh requests, 575s
+[10:29:35]   1250/3600 CIKs, 58,633 rows, 1614 fresh requests, 718s
+[10:31:57]   1500/3600 CIKs, 69,184 rows, 1928 fresh requests, 860s
+[10:34:21]   1750/3600 CIKs, 79,656 rows, 2246 fresh requests, 1004s
+[10:36:39]   2000/3600 CIKs, 88,600 rows, 2546 fresh requests, 1142s
+[10:38:55]   2250/3600 CIKs, 98,086 rows, 2848 fresh requests, 1278s
+[10:40:53]   2500/3600 CIKs, 106,340 rows, 3129 fresh requests, 1396s
+[10:42:53]   2750/3600 CIKs, 114,323 rows, 3415 fresh requests, 1516s
+[10:44:42]   3000/3600 CIKs, 123,006 rows, 3689 fresh requests, 1625s
+[10:46:27]   3250/3600 CIKs, 130,190 rows, 3951 fresh requests, 1730s
+[10:48:10]   3500/3600 CIKs, 135,932 rows, 4204 fresh requests, 1832s
+[10:48:47] wrote /Users/ggraham/pipe_dream/final/data/edgar/8k_item202_v2topup.parquet: 137,982 rows, 3,505 CIKs, 2004-08-23..2026-09-28
+[10:48:47] meta: 95 CIKs with zero 2.02s, 0 404s

@@ -31,7 +31,7 @@ import streamlit as st
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lib import (paths, stock_model as sm, options_model as om, data_refresh as dr,
                  pit_model as pm, blend_model as bm, composite_model as cm,
-                 model_agreement as ma, key_guard as kg)
+                 model_agreement as ma, key_guard as kg, rolling_model as rm)
 
 st.set_page_config(page_title="pipe_dream — Model Dashboard", layout="wide", page_icon="📈")
 
@@ -523,6 +523,162 @@ def render_stock_theoretical():
         c1.metric("Terminal wealth (icw8, net)" if has_seas else "Terminal wealth (composite, net)", f"{term['composite_net_cum']:.2f}x")
         c2.metric("Terminal wealth (SPY)", f"{term['spy_cum']:.2f}x")
         c3.metric("Windows", f"{len(curve)}")
+
+
+# --------------------------------------------------------------------------
+# Rolling weights (candidate -- unverified)
+# --------------------------------------------------------------------------
+@st.cache_data(max_entries=4)
+def _cached_rolling(mtimes: tuple):
+    """All rolling-weights files, re-read when any of them changes on disk."""
+    return {spec["key"]: rm.load(spec) for spec in rm.MODELS}
+
+
+def render_stock_rolling():
+    """Rolling weights (candidate -- unverified). Added 2026-10-01 per Gabe:
+    "ok I think it can be added to the live but as a separate tab until we
+    verify on new data". TRACKING ONLY: reads the WO-34 forward side ledger
+    (lib/rolling_model.py); nothing here feeds Today's Picks, the Theoretical
+    tab or any live weight. No score, weight, t or rank-IC is computed here."""
+    st.subheader("Rolling weights (candidate — unverified)")
+    st.warning(
+        "**Tracking only. Nothing on this tab is traded, and it changes no live "
+        "pick or weight.** This is the Theoretical model's nine factors "
+        "(icw9_seas) with the weights refit every 21 trading days on the trailing "
+        "1 year (`icw9_r252`).\n\n"
+        "**The backtest was mixed.** 2010–2019: −1.1%/yr against the all-history "
+        "control, ahead at 0 of 40 start dates. 2020–26: +2.6%/yr, ahead at 38 of "
+        "40 (hold-out read #13, so not a clean test). About half "
+        "its edge over the live model comes from weighting short interest.\n\n"
+        "**The verdict comes from forward data.** First review after "
+        f"{rm.FIRST_REVIEW} finished weekly records (about late May 2027), final "
+        f"keep/drop at {rm.FINAL_REVIEW} (about late November 2027). "
+        "Details: `final/models/2026-09-30-r252-forward.md`.",
+        icon=":material/science:",
+    )
+    loaded = _cached_rolling(rm.mtimes())
+    for data in loaded.values():
+        for err in data["errors"]:
+            st.error(err)
+
+    theo_df, theo_meta = cm.get_signal()
+    theo_meta = theo_meta if isinstance(theo_meta, dict) else {}
+    live_weights = theo_meta.get("factor_weights")
+    live_weights = live_weights if isinstance(live_weights, dict) else None
+    live_picks = set(theo_df["ticker"].astype(str)) if theo_df is not None and "ticker" in theo_df else None
+
+    if not any(d["has_record"] for d in loaded.values()):
+        st.info(
+            "**No record yet.** The first weekly record is written after the next "
+            "\"Retrain ALL models\" (Data & Updates) on or after 2026-10-03. Until "
+            "then there is nothing to show here.",
+            icon=":material/hourglass_empty:",
+        )
+
+    # ---- (a) latest ranking -------------------------------------------------
+    specs = [s for s in rm.MODELS if loaded[s["key"]]["has_record"]]
+    if specs:
+        st.markdown("#### Latest ranking")
+        spec = specs[0]
+        if len(specs) > 1:
+            pick = st.segmented_control("Model", [s["short"] for s in specs],
+                                        default=specs[0]["short"], key="rolling_model_pick")
+            spec = next((s for s in specs if s["short"] == pick), specs[0])
+        data = loaded[spec["key"]]
+        n_top = theo_meta.get("n_picks")
+        n_top = int(n_top) if isinstance(n_top, (int, float)) and n_top > 0 else 300
+        top = rm.top_table(spec, data, n_top, live_picks)
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("Record date", data["panel_date"])
+        c2.metric("Names scored", f"{len(data['latest']):,}")
+        c3.metric("Weights refit on", str(data["refit_date"] or "—"))
+        if live_picks is not None:
+            n_same = int((top["vs live Theoretical picks"] == "also a live pick").sum())
+            c4.metric(f"Top {len(top)} also live Theoretical picks", f"{n_same} of {len(top)}")
+        flags = [w for w, on in (("recorded late", data["panel_date"] in data["late"]),
+                                 ("incomplete week", data["panel_date"] in data["incomplete"])) if on]
+        if flags:
+            st.caption(f":orange[This record is flagged {' and '.join(flags)}: it is shown "
+                       "but does not count toward the review.]")
+        st.caption(
+            f"**This is a ranking, not a portfolio.** The table is the {len(top)} "
+            f"highest `{spec['score_col']}` names in the latest weekly record (cap150 "
+            f"tier). {len(top)} is the live Theoretical model's position count. The "
+            "Theoretical tab's picks are built differently (top decile inside each "
+            "volatility quintile, inverse-volatility weighted); the forward ledger "
+            "does not store that construction, price, market cap or weights, so they "
+            "are not shown and no weight is implied. "
+            + (f"The last column compares against the live Theoretical picks as of "
+               f"{theo_meta.get('as_of_date', '?')}; the record date above can differ."
+               if live_picks is not None else
+               "The live Theoretical picks file is missing, so there is no comparison column.")
+        )
+        fmt = {spec["score_col"]: "{:.3f}", spec["rank_col"]: "{:.1%}",
+               spec["baseline_col"]: "{:.3f}", "seas": "{:.2%}"}
+        st.dataframe(
+            top.rename(columns={spec["baseline_col"]: f"{spec['baseline_col']} (live Theoretical score)"})
+               .style.format({(f"{k} (live Theoretical score)" if k == spec["baseline_col"] else k): v
+                              for k, v in fmt.items() if k in top.columns}, na_rep="—"),
+            width="stretch", height=480)
+        if data["version"] is not None:
+            st.caption(f"Model version: `{data['version']}` · recorded at {data['recorded_at']}")
+
+        # ---- (b) weights ----------------------------------------------------
+        st.markdown("#### Factor weights: rolling vs live")
+        wt = rm.weights_table(live_weights, loaded)
+        if wt is None:
+            st.info("The weight path file has no row for the refit this record used "
+                    "(`r252_weight_path.csv`), so the weights can't be shown.")
+        else:
+            flag_cols = [c for c in wt.columns if c.endswith("t vs weight")]
+            n_opp = int(sum((wt[c] == rm.OPPOSITE).sum() for c in flag_cols))
+            num = {c: ("{:+.2f}" if c.endswith("trailing-1y t") else "{:+.4f}")
+                   for c in wt.columns if c not in ["factor", *flag_cols]}
+            st.dataframe(
+                wt.style.format(num, na_rep="—").map(
+                    lambda v: "color: #d9534f; font-weight: 600" if v == rm.OPPOSITE else "",
+                    subset=flag_cols),
+                width="stretch", hide_index=True)
+            st.caption(
+                "Weights are signed and each column sums to 1 in absolute value. The "
+                "live column is the Theoretical model's fixed weights "
+                f"(`{theo_meta.get('model_version', 'unknown version')}`); the rolling "
+                "column is the refit the latest record used. \"Trailing-1y t\" is the "
+                "t-statistic of that factor's rank-IC over the 252 matured dates the "
+                "refit used. The weight rule uses the SIZE of t and keeps each factor's "
+                "fixed sign, so a factor that ran against its sign for a year still gets "
+                "a large weight in the fixed direction. "
+                + (f":red[**{n_opp} factor(s) are marked {rm.OPPOSITE}**: their trailing t "
+                   "points against the weight's sign.]" if n_opp else
+                   "No factor's trailing t points against its weight at this refit.")
+            )
+
+    # ---- (c) forward tracker ------------------------------------------------
+    st.markdown("#### Forward tracker")
+    rows = [rm.tracker_row(s, loaded[s["key"]]) for s in rm.MODELS]
+    diff = "mean rank-IC difference vs live Theoretical"
+    st.dataframe(
+        pd.DataFrame(rows).style.format({diff: "{:+.4f}"}, na_rep="—"),
+        width="stretch", hide_index=True)
+    n_scored = max(r["matured and scored"] for r in rows)
+    st.caption(
+        "Each weekly record is scored once its 40-trading-day return is known: "
+        "rank-IC of the rolling-weights score minus rank-IC of the live Theoretical "
+        "score, on the same names. The mean is over counted records only (recorded "
+        "on time, full week). "
+        + ("**No record has matured yet, so there is no difference to show.** The "
+           "first can mature about two months after the first record. "
+           if n_scored == 0 else "")
+        + f"Review at {rm.FIRST_REVIEW} scored records, keep/drop at {rm.FINAL_REVIEW}. "
+        "No live change follows from this without a separate decision by Gabe."
+    )
+    for spec in rm.MODELS:
+        guard = loaded[spec["key"]]["guard"]
+        if guard is not None and len(guard):
+            with st.expander(f"{spec['short']}: skipped records ({len(guard)} logged)"):
+                st.caption("A skipped week is not back-filled as a counted record. "
+                           "Newest first.")
+                st.dataframe(guard.iloc[::-1].head(20), width="stretch", hide_index=True)
 
 
 def _signal_mtimes() -> tuple:
@@ -1241,7 +1397,11 @@ with tab_stock:
     # 2026-09-22: "Theoretical Model" added -- the composite ALONE (no q75
     # contribution), for direct comparison against the blend in Today's
     # Picks, per Gabe's request.
-    t1, t2, t3, t4 = st.tabs(["Today's Picks", "Theoretical Model", "Query a Ticker", "Universe"])
+    #
+    # 2026-10-01: "Rolling weights (candidate)" added LAST, as its own tab, per
+    # Gabe ("a separate tab until we verify on new data"). Tracking only.
+    t1, t2, t3, t4, t5 = st.tabs(["Today's Picks", "Theoretical Model", "Query a Ticker", "Universe",
+                                  "Rolling weights (candidate — unverified)"])
     with t1:
         render_stock_pit()
     with t2:
@@ -1250,6 +1410,8 @@ with tab_stock:
         render_stock_query()
     with t4:
         render_stock_universe()
+    with t5:
+        render_stock_rolling()
 
 with tab_options:
     t1, t2, t3, t4, t5 = st.tabs(["Today's Picks", "Query a Ticker", "Model Weights", "Backtest & History", "Universe"])

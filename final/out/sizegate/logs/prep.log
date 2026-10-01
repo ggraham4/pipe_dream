@@ -1,0 +1,8 @@
+[15:21:08] name-check IWM 2008: total -0.3414 (target -0.3414) price -0.3513
+[15:21:08] name-check IWM 2017: total +0.1458 (target +0.1458) price +0.1306
+[15:21:08] name-check SPY 2008: total -0.3680 (target -0.3680) price -0.3828
+[15:21:08] name-check SPY 2017: total +0.2171 (target +0.2170) price +0.1938
+[15:21:08] [A] share SPY 0.566, undefined 1, tr/px disagree 142, large-lead episodes >=40d 11; chains full {'share_spy_mean40': 0.5660079795242396, 'switches_mean40': 17.35, 'switches_min_max': [13, 23], 'rebalances_per_chain_mean': 81.8}
+[15:21:08] [B] share SPY 0.743, undefined 0, tr/px disagree 2, large-lead episodes >=40d 4; chains full {'share_spy_mean40': 0.7433217189314749, 'switches_mean40': 6.55, 'switches_min_max': [4, 8], 'rebalances_per_chain_mean': 41.3}
+[15:21:09] WO-30 reproduction: {'n_compared': 3168, 'price_only_mismatch_days': 0, 'wo30_undefined': 104, 'total_return_vs_wo30_disagree_days': 136, 'wo30_share_large_lead': 0.5107323232323232}
+[15:21:09] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-aae4f860e1b828969/final/out/sizegate/prep.json

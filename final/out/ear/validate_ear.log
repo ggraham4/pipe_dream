@@ -1,0 +1,5 @@
+[10:49:39] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[10:51:44] harness reconcile OK: {'decile_icw8_frozen': [0.028541632641009042, 0.028541632641009042], 'oos_fit_odd_test_even': [0.04041110565685588, 0.040411105656855885], 'oos_fit_even_test_odd': [0.055397983383733786, 0.055397983383733786]}
+[10:52:50] base icw9_seas reconcile OK +0.025496 == WO-18 +0.025496
+[10:52:57] label trace 1.00000 of 9,560,097
+[10:52:57] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-ad838240373d22717/final/out/ear/validate_ear.json (validate only; no EAR outcome statistic). Gate A True

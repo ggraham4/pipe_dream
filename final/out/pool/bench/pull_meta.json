@@ -1,0 +1,55 @@
+{
+  "work_order": "WO-31",
+  "pulled_at": "2026-09-30 11:45:53",
+  "source": "yfinance auto_adjust=False",
+  "window": [
+    "2006-01-01",
+    "2026-10-01"
+  ],
+  "SPY": {
+    "rows": 5218,
+    "first": "2006-01-03",
+    "last": "2026-09-30",
+    "file": "final/out/pool/bench/SPY.parquet",
+    "sha256": "3d5c346f5aa661a6a7f3392fa7067a1d190757745797630d471951da94456e69"
+  },
+  "IWM": {
+    "rows": 5218,
+    "first": "2006-01-03",
+    "last": "2026-09-30",
+    "file": "final/out/pool/bench/IWM.parquet",
+    "sha256": "b24ce6b1fd338b7ef72bf068abe0bde84a3a51fb4e63314272645450ac045bab"
+  },
+  "iwm_vs_wo9_csv": {
+    "rows": 3420,
+    "max_rel_open": 2.220446049250313e-16,
+    "max_rel_close": 2.220446049250313e-16,
+    "max_abs_ret40_price": 4.440892098500626e-16,
+    "max_abs_ret40_total": 1.996958463479359e-06,
+    "tol_price": 1e-06,
+    "tol_total": 1e-05,
+    "note": "adj_close is re-scaled by later dividends at each pull; float rounding ~2e-6"
+  },
+  "spy_vs_outcome_cache_v2": {
+    "n_dates": 4924,
+    "max_abs_diff": 0.003195845866577507,
+    "worst_date": "2026-07-30",
+    "tol": 1e-06,
+    "dates_over_tol": {
+      "2026-07-27": [
+        0.04640212655067444,
+        0.046253334499226195
+      ],
+      "2026-07-28": [
+        0.038771845400333405,
+        0.037623184666554677
+      ],
+      "2026-07-30": [
+        0.03261817246675491,
+        0.03581401833333242
+      ]
+    },
+    "note": "[cache, fresh pull]. SPY.csv today equals the fresh pull on every bar, so the cache was built from earlier SPY bars for these exits. WO-31 keeps the cache's SPY price leg (harness basis) and takes only the dividend leg from this pull."
+  },
+  "iwm_covers_all_panel_dates": true
+}

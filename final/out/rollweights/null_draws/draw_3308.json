@@ -1,0 +1,75 @@
+{
+  "seed": 3308,
+  "mean_diff_ann_40offset": -0.017858682855383702,
+  "offsets_positive": 0,
+  "offset_diff_min": -0.030986662779089846,
+  "offset_diff_max": -0.005996047718111875,
+  "per_date_diff_mean_per40d": -0.002834825124615897,
+  "per_date_diff_ann": -0.017859398285080152,
+  "nw39_t": -2.091269990976132,
+  "n_dates": 2516,
+  "loyo_min": -0.022594367290329403,
+  "loyo_min_dropped_year": 2015,
+  "book_vs_spy_mean40": -0.0012247653518230807,
+  "stability": {
+    "n_refits": 120,
+    "mean_L1_change_per_refit": 0.40399009378738304,
+    "mean_abs_change_per_factor": {
+      "momentum_12_1": 0.07157149745201463,
+      "pct_from_high_252": 0.04311063560289961,
+      "volatility_60": 0.04822274882619386,
+      "gross_profitability": 0.04856860429919794,
+      "accruals": 0.03979924702912001,
+      "net_issuance_pct": 0.056997704919658124,
+      "days_to_next_filing_seasonal": 0.03574393967193265,
+      "short_interest_days_to_cover": 0.0099107935909547,
+      "seas": 0.05006492239541146
+    },
+    "weight_sign_flip_share": 0.0,
+    "weight_sign_flip_note": "signs fixed by the rule (sign_k * magnitude): 0 by construction",
+    "t_sign_disagrees_with_fixed_sign_share": {
+      "momentum_12_1": 0.5,
+      "pct_from_high_252": 0.55,
+      "volatility_60": 0.5083333333333333,
+      "gross_profitability": 0.44166666666666665,
+      "accruals": 0.4166666666666667,
+      "net_issuance_pct": 0.4166666666666667,
+      "days_to_next_filing_seasonal": 0.23333333333333334,
+      "short_interest_days_to_cover": null,
+      "seas": 0.5416666666666666
+    },
+    "weight_mean": {
+      "momentum_12_1": 0.19812766458654982,
+      "pct_from_high_252": 0.09640847302514578,
+      "volatility_60": -0.12024406164455118,
+      "gross_profitability": 0.12901674992052825,
+      "accruals": -0.08153933073502909,
+      "net_issuance_pct": -0.1091220694276888,
+      "days_to_next_filing_seasonal": -0.10317410784088053,
+      "short_interest_days_to_cover": -0.0408172541012372,
+      "seas": 0.12155028871838924
+    },
+    "weight_min": {
+      "momentum_12_1": 0.01955615862172437,
+      "pct_from_high_252": 0.01955615862172437,
+      "volatility_60": -0.6264714469159971,
+      "gross_profitability": 0.014312963101337003,
+      "accruals": -0.5294247471243597,
+      "net_issuance_pct": -0.5575478421438164,
+      "days_to_next_filing_seasonal": -0.6548688710370448,
+      "short_interest_days_to_cover": -0.11111111111111113,
+      "seas": 0.014312963101337003
+    },
+    "weight_max": {
+      "momentum_12_1": 0.698776243859705,
+      "pct_from_high_252": 0.402238313564853,
+      "volatility_60": -0.014312963101337003,
+      "gross_profitability": 0.6147781173325078,
+      "accruals": -0.014312963101337003,
+      "net_issuance_pct": -0.014312963101337003,
+      "days_to_next_filing_seasonal": -0.015836572704617996,
+      "short_interest_days_to_cover": -0.014312963101337003,
+      "seas": 0.641461933981134
+    }
+  }
+}

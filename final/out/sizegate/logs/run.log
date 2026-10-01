@@ -1,0 +1,10 @@
+[15:21:35] [A full icw9_seas] ungated +0.0349 gated +0.0195 diff -0.0154 (0/40) loyo-min -0.0249 (2019) SPY share 0.566 switches 17.35
+[15:21:35] [A full icw8] ungated +0.0285 gated +0.0179 diff -0.0106 (1/40) loyo-min -0.0212 (2007) SPY share 0.566 switches 17.35
+[15:21:35] [A pre icw9_seas] ungated +0.0863 gated +0.0686 diff -0.0177 (4/40) loyo-min -0.0481 (2007) SPY share 0.423 switches 6.33
+[15:21:35] [A pre icw8] ungated +0.0775 gated +0.0661 diff -0.0114 (13/40) loyo-min -0.0453 (2007) SPY share 0.423 switches 6.33
+[15:21:35] [A post icw9_seas] ungated +0.0051 gated -0.0089 diff -0.0140 (0/40) loyo-min -0.0296 (2019) SPY share 0.649 switches 11.35
+[15:21:35] [A post icw8] ungated +0.0001 gated -0.0099 diff -0.0100 (1/40) loyo-min -0.0263 (2019) SPY share 0.649 switches 11.35
+[15:21:35] [B full icw9_seas] ungated -0.0202 gated -0.0182 diff +0.0019 (22/40) loyo-min -0.0248 (2025) SPY share 0.743 switches 6.55
+[15:21:35] [B full icw8] ungated -0.0199 gated -0.0155 diff +0.0044 (21/40) loyo-min -0.0232 (2025) SPY share 0.743 switches 6.55
+[15:21:35] decision {'A_full': -0.01540663376340129, 'B': 0.0019429859352296619, 'A_full_drop2008': -0.005129003207487706, 'B_drop2020': 0.052025901335564784} -> KILL
+[15:21:35] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-aae4f860e1b828969/final/out/sizegate/sizegate.json
