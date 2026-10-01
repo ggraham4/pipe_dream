@@ -1,0 +1,1221 @@
+{
+ "prereg": "final/models/2026-10-01-stabilizer-rule-ear.md @ 3c6a321",
+ "candidate": "ear",
+ "era": "2007-01-02..2019-12-31",
+ "screen_failed_gates": [
+  "g4_zero_book_increment_offset_flips"
+ ],
+ "cand_weight_fit_odd_even": [
+  0.13532821017481714,
+  0.04028085587096687
+ ],
+ "rows": 9756141,
+ "shuffle": "screen_ear.shuffle_live (live signed ranks permuted among live rows; neutral stays 0)",
+ "reconcile": {
+  "tol": 0.0001,
+  "base": {
+   "excess_cagr_vs_spy_mean40": [
+    0.025496490150004037,
+    0.025496490150004037
+   ],
+   "sd40": [
+    0.0047198437378678125,
+    0.0047198437378678125
+   ],
+   "min40": [
+    0.01420122860370331,
+    0.01420122860370331
+   ],
+   "loyo_min": [
+    0.01473863780491363,
+    0.01473863780491363
+   ]
+  },
+  "cand": {
+   "excess_cagr_vs_spy_mean40": [
+    0.025640533455270998,
+    0.025640533455270998
+   ],
+   "sd40": [
+    0.004225240768457198,
+    0.004225240768457198
+   ],
+   "min40": [
+    0.015454117877624657,
+    0.015454117877624657
+   ],
+   "loyo_min": [
+    0.015619106935135893,
+    0.015619106935135893
+   ]
+  },
+  "increment_per_offset_max_abs_diff": 0.0,
+  "headline_pct": {
+   "base": [
+    2.55,
+    0.47
+   ],
+   "ear": [
+    2.56,
+    0.42
+   ]
+  }
+ },
+ "base": {
+  "excess_cagr_vs_spy_mean40": 0.025496490150004037,
+  "sd40": 0.0047198437378678125,
+  "min40": 0.01420122860370331,
+  "loyo_min": 0.01473863780491363,
+  "offsets_positive": 40,
+  "loyo_min_dropped_year": 2009,
+  "per_offset": [
+   0.025980618433324342,
+   0.028279353611936273,
+   0.03184561592834877,
+   0.03054930455824605,
+   0.029200255584323268,
+   0.03403444631638852,
+   0.024639775993242574,
+   0.02347820467677119,
+   0.024983425883254962,
+   0.0243795038523032,
+   0.02668085054432056,
+   0.025262169304068036,
+   0.031231197026686433,
+   0.02596567208553477,
+   0.024221131788183494,
+   0.02263872167792108,
+   0.027040336228311434,
+   0.028182725557180734,
+   0.02916841980182425,
+   0.02266768213761857,
+   0.023792025555312447,
+   0.02102429335451313,
+   0.022997943766902538,
+   0.01993257938488206,
+   0.019668238460784433,
+   0.016014611152239004,
+   0.01420122860370331,
+   0.015842152487870544,
+   0.022498723123763775,
+   0.02212013374595492,
+   0.024951949912627495,
+   0.024034532720403252,
+   0.02915784000259554,
+   0.028606652380135378,
+   0.028136934275674874,
+   0.03252062918656078,
+   0.03456744079179043,
+   0.031069934318472905,
+   0.027675325952218995,
+   0.020617025833967233
+  ]
+ },
+ "cand_book": {
+  "excess_cagr_vs_spy_mean40": 0.025640533455270998,
+  "sd40": 0.004225240768457198,
+  "min40": 0.015454117877624657,
+  "loyo_min": 0.015619106935135893,
+  "offsets_positive": 40,
+  "loyo_min_dropped_year": 2009,
+  "per_offset": [
+   0.025452063620009437,
+   0.027788025354060455,
+   0.03013224450962408,
+   0.028050604894733117,
+   0.027138444739938365,
+   0.031095197167674418,
+   0.02345532572332193,
+   0.02799202741961472,
+   0.026233233207735688,
+   0.027734627418350397,
+   0.028631683377341236,
+   0.02721144886909802,
+   0.03509053777556532,
+   0.028749581724422588,
+   0.025463183240446226,
+   0.024655987620062644,
+   0.029043790347739382,
+   0.03048081707969516,
+   0.031198281125141208,
+   0.02551573676645764,
+   0.026252591668437075,
+   0.022519119255500673,
+   0.021716308934794988,
+   0.02101667301135502,
+   0.01921712426933311,
+   0.01733071115516687,
+   0.015454117877624657,
+   0.018185601488950334,
+   0.024573875976202753,
+   0.021747087278708176,
+   0.02014251581360155,
+   0.021780099877515547,
+   0.028163664897864288,
+   0.026636723934189418,
+   0.02682302065839821,
+   0.0285344742878964,
+   0.030372430072577044,
+   0.029160429515223154,
+   0.024535425911134286,
+   0.020346500345334317
+  ]
+ },
+ "S2": {
+  "mean_increment": 0.00014404330526695871,
+  "a_mean_increment_ge_0": true,
+  "b_worst_offset_not_lower": true,
+  "c_loyo_min_not_lower": true,
+  "min40_base_cand": [
+   0.01420122860370331,
+   0.015454117877624657
+  ],
+  "loyo_min_base_cand": [
+   0.01473863780491363,
+   0.015619106935135893
+  ],
+  "pass": true
+ },
+ "S1": {
+  "statistic": "sd40(base) - sd40(base+cand), ddof=0, weight-matched null (real fitted weights, no refit)",
+  "n_draws": 100,
+  "real_sd_reduction": 0.0004946029694106145,
+  "null_p50": -0.00029787487614513176,
+  "null_p80": 9.605224699651984e-06,
+  "null_mean": -0.0002778166235862606,
+  "null_sd": 0.00033487463186861,
+  "null_min": -0.001017455389698452,
+  "null_max": 0.0005200435079352221,
+  "percentile_of_real": 0.99,
+  "pass": true,
+  "first_20_draws_reproduce_report_weight_matched_null": true,
+  "descriptive": {
+   "min40": {
+    "base": 0.01420122860370331,
+    "real": 0.015454117877624657,
+    "null_p50": 0.01421064146066512,
+    "null_p80": 0.015163003954707138,
+    "percentile_of_real": 0.87
+   },
+   "mean40": {
+    "base": 0.025496490150004037,
+    "real": 0.025640533455270998,
+    "null_p50": 0.024862820106612366,
+    "null_p80": 0.025115022801749473,
+    "percentile_of_real": 1.0
+   },
+   "loyo_min": {
+    "base": 0.01473863780491363,
+    "real": 0.015619106935135893,
+    "null_p50": 0.014204919687650471,
+    "null_p80": 0.014452442030570504,
+    "percentile_of_real": 1.0
+   },
+   "null_share_sd_reduction_gt_0": 0.22
+  }
+ },
+ "null_draws": [
+  {
+   "seed": 0,
+   "excess_cagr_vs_spy_mean40": 0.024980228855873993,
+   "sd40": 0.004939514882013294,
+   "min40": 0.01440739269289535,
+   "loyo_min": 0.014538143517788704,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00021967114414548142
+  },
+  {
+   "seed": 1,
+   "excess_cagr_vs_spy_mean40": 0.025102590722854277,
+   "sd40": 0.005104287481382995,
+   "min40": 0.011677669354672283,
+   "loyo_min": 0.014297389774089531,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0003844437435151825
+  },
+  {
+   "seed": 2,
+   "excess_cagr_vs_spy_mean40": 0.025350986752270144,
+   "sd40": 0.005225392904300317,
+   "min40": 0.015488437208968961,
+   "loyo_min": 0.014888336517566969,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0005055491664325042
+  },
+  {
+   "seed": 3,
+   "excess_cagr_vs_spy_mean40": 0.024150636316806567,
+   "sd40": 0.005100537400492515,
+   "min40": 0.015324797325211874,
+   "loyo_min": 0.0135294266483654,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00038069366262470216
+  },
+  {
+   "seed": 4,
+   "excess_cagr_vs_spy_mean40": 0.025247811980369423,
+   "sd40": 0.005624040686110903,
+   "min40": 0.012112082677587916,
+   "loyo_min": 0.014561114428000349,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0009041969482430903
+  },
+  {
+   "seed": 5,
+   "excess_cagr_vs_spy_mean40": 0.02454924347017844,
+   "sd40": 0.005127986217669592,
+   "min40": 0.014111993727500494,
+   "loyo_min": 0.01383699011046482,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00040814247980177926
+  },
+  {
+   "seed": 6,
+   "excess_cagr_vs_spy_mean40": 0.02513515273799134,
+   "sd40": 0.004715102615126162,
+   "min40": 0.01444362688682045,
+   "loyo_min": 0.014453210438717095,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 4.741122741650124e-06
+  },
+  {
+   "seed": 7,
+   "excess_cagr_vs_spy_mean40": 0.02528883730434362,
+   "sd40": 0.004833775811464602,
+   "min40": 0.015465728872950038,
+   "loyo_min": 0.014533259499811223,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00011393207359678987
+  },
+  {
+   "seed": 8,
+   "excess_cagr_vs_spy_mean40": 0.024595761054903454,
+   "sd40": 0.00526206262429123,
+   "min40": 0.01260181413298761,
+   "loyo_min": 0.013862356724109227,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0005422188864234179
+  },
+  {
+   "seed": 9,
+   "excess_cagr_vs_spy_mean40": 0.025030312810118048,
+   "sd40": 0.004645682617405243,
+   "min40": 0.014486207425736246,
+   "loyo_min": 0.014382443891949809,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 7.416112046256928e-05
+  },
+  {
+   "seed": 10,
+   "excess_cagr_vs_spy_mean40": 0.024772218923233273,
+   "sd40": 0.005408528908286905,
+   "min40": 0.012103647705454433,
+   "loyo_min": 0.014097186203425949,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0006886851704190925
+  },
+  {
+   "seed": 11,
+   "excess_cagr_vs_spy_mean40": 0.024621121189311545,
+   "sd40": 0.005097127171406564,
+   "min40": 0.015180692531346315,
+   "loyo_min": 0.013858424829845072,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00037728343353875173
+  },
+  {
+   "seed": 12,
+   "excess_cagr_vs_spy_mean40": 0.0252573738852032,
+   "sd40": 0.005579349375226339,
+   "min40": 0.015379263521112638,
+   "loyo_min": 0.014629808615395219,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0008595056373585262
+  },
+  {
+   "seed": 13,
+   "excess_cagr_vs_spy_mean40": 0.025313339339811974,
+   "sd40": 0.005070729792445464,
+   "min40": 0.014566902255682194,
+   "loyo_min": 0.014830133528845097,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00035088605457765133
+  },
+  {
+   "seed": 14,
+   "excess_cagr_vs_spy_mean40": 0.02500357271847322,
+   "sd40": 0.004331009511759948,
+   "min40": 0.016699127646639222,
+   "loyo_min": 0.014231870489518728,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 0.00038883422610786443
+  },
+  {
+   "seed": 15,
+   "excess_cagr_vs_spy_mean40": 0.02484643901049564,
+   "sd40": 0.00437927340512078,
+   "min40": 0.014710898580470701,
+   "loyo_min": 0.0143663617388041,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 0.0003405703327470323
+  },
+  {
+   "seed": 16,
+   "excess_cagr_vs_spy_mean40": 0.024563875473055184,
+   "sd40": 0.004583311133316161,
+   "min40": 0.015619025583632925,
+   "loyo_min": 0.014039583881497491,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 0.00013653260455165177
+  },
+  {
+   "seed": 17,
+   "excess_cagr_vs_spy_mean40": 0.024785380253248453,
+   "sd40": 0.005216373999763766,
+   "min40": 0.011548083287275033,
+   "loyo_min": 0.014151445237801579,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0004965302618959539
+  },
+  {
+   "seed": 18,
+   "excess_cagr_vs_spy_mean40": 0.025008452677495917,
+   "sd40": 0.005549528360927442,
+   "min40": 0.014818905284299405,
+   "loyo_min": 0.014354744138277054,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0008296846230596297
+  },
+  {
+   "seed": 19,
+   "excess_cagr_vs_spy_mean40": 0.02458990630573781,
+   "sd40": 0.004603548916281987,
+   "min40": 0.013170762690242943,
+   "loyo_min": 0.0137238621028418,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 0.00011629482158582571
+  },
+  {
+   "seed": 20,
+   "excess_cagr_vs_spy_mean40": 0.024627413526827728,
+   "sd40": 0.005000823462116778,
+   "min40": 0.012361181997876426,
+   "loyo_min": 0.014040891376808539,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00028097972424896527
+  },
+  {
+   "seed": 21,
+   "excess_cagr_vs_spy_mean40": 0.02537908769879373,
+   "sd40": 0.0054343113065641515,
+   "min40": 0.012485377925932689,
+   "loyo_min": 0.014475494176641962,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.000714467568696339
+  },
+  {
+   "seed": 22,
+   "excess_cagr_vs_spy_mean40": 0.024990872763462412,
+   "sd40": 0.005393803636311561,
+   "min40": 0.014048409708099525,
+   "loyo_min": 0.01433712728918799,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0006739598984437482
+  },
+  {
+   "seed": 23,
+   "excess_cagr_vs_spy_mean40": 0.02459166306280012,
+   "sd40": 0.004525535470995842,
+   "min40": 0.01606990262718193,
+   "loyo_min": 0.013896451896166045,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 0.0001943082668719705
+  },
+  {
+   "seed": 24,
+   "excess_cagr_vs_spy_mean40": 0.024333244713616538,
+   "sd40": 0.004689668630538563,
+   "min40": 0.014850510590295813,
+   "loyo_min": 0.01372059547515751,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 3.0175107329249128e-05
+  },
+  {
+   "seed": 25,
+   "excess_cagr_vs_spy_mean40": 0.024811655803835594,
+   "sd40": 0.005084114956509781,
+   "min40": 0.014201105980592392,
+   "loyo_min": 0.014198389856992944,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00036427121864196846
+  },
+  {
+   "seed": 26,
+   "excess_cagr_vs_spy_mean40": 0.024739012450410585,
+   "sd40": 0.004727524554108086,
+   "min40": 0.016050785742361164,
+   "loyo_min": 0.014103906083813867,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -7.680816240273648e-06
+  },
+  {
+   "seed": 27,
+   "excess_cagr_vs_spy_mean40": 0.024645212781751993,
+   "sd40": 0.004755367559442348,
+   "min40": 0.010848309828520655,
+   "loyo_min": 0.0140532178003904,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -3.552382157453581e-05
+  },
+  {
+   "seed": 28,
+   "excess_cagr_vs_spy_mean40": 0.02417839770774067,
+   "sd40": 0.005448715272039823,
+   "min40": 0.013053623100984346,
+   "loyo_min": 0.013610324190635278,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0007288715341720103
+  },
+  {
+   "seed": 29,
+   "excess_cagr_vs_spy_mean40": 0.02510523695561251,
+   "sd40": 0.004850641797042,
+   "min40": 0.01482523258383554,
+   "loyo_min": 0.014508471419629927,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0001307980591741878
+  },
+  {
+   "seed": 30,
+   "excess_cagr_vs_spy_mean40": 0.024328026120990998,
+   "sd40": 0.004706528354577004,
+   "min40": 0.013129443272138861,
+   "loyo_min": 0.013512157969770358,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 1.3315383290808669e-05
+  },
+  {
+   "seed": 31,
+   "excess_cagr_vs_spy_mean40": 0.024345749232105418,
+   "sd40": 0.0043197491474920805,
+   "min40": 0.014244610876119586,
+   "loyo_min": 0.01366044011351566,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 0.00040009459037573195
+  },
+  {
+   "seed": 32,
+   "excess_cagr_vs_spy_mean40": 0.024798904869735967,
+   "sd40": 0.005037012590753775,
+   "min40": 0.014019693038650125,
+   "loyo_min": 0.014059156427146734,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00031716885288596286
+  },
+  {
+   "seed": 33,
+   "excess_cagr_vs_spy_mean40": 0.024362156388778877,
+   "sd40": 0.004565496631876417,
+   "min40": 0.014633041834204689,
+   "loyo_min": 0.013863520769662508,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 0.00015434710599139534
+  },
+  {
+   "seed": 34,
+   "excess_cagr_vs_spy_mean40": 0.02500378995396038,
+   "sd40": 0.0051675491142142245,
+   "min40": 0.011093645780307746,
+   "loyo_min": 0.014211449518308,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.000447705376346412
+  },
+  {
+   "seed": 35,
+   "excess_cagr_vs_spy_mean40": 0.024847284826645895,
+   "sd40": 0.005067229468493128,
+   "min40": 0.01449751242356012,
+   "loyo_min": 0.014424654955647634,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00034738573062531586
+  },
+  {
+   "seed": 36,
+   "excess_cagr_vs_spy_mean40": 0.024745655756438105,
+   "sd40": 0.004798572495829908,
+   "min40": 0.01386802406869018,
+   "loyo_min": 0.01393669337146341,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -7.872875796209513e-05
+  },
+  {
+   "seed": 37,
+   "excess_cagr_vs_spy_mean40": 0.024256947181220512,
+   "sd40": 0.004784512298816068,
+   "min40": 0.01484438397562672,
+   "loyo_min": 0.01357754466044559,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -6.466856094825522e-05
+  },
+  {
+   "seed": 38,
+   "excess_cagr_vs_spy_mean40": 0.024571854464046104,
+   "sd40": 0.004626785473022701,
+   "min40": 0.01406498292085692,
+   "loyo_min": 0.013923924894042932,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 9.305826484511115e-05
+  },
+  {
+   "seed": 39,
+   "excess_cagr_vs_spy_mean40": 0.02453762567415536,
+   "sd40": 0.005141293532351197,
+   "min40": 0.012111376274674584,
+   "loyo_min": 0.013755390130596252,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0004214497944833844
+  },
+  {
+   "seed": 40,
+   "excess_cagr_vs_spy_mean40": 0.024649080649083444,
+   "sd40": 0.004838508604829796,
+   "min40": 0.016173658491891275,
+   "loyo_min": 0.014027587232554544,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0001186648669619832
+  },
+  {
+   "seed": 41,
+   "excess_cagr_vs_spy_mean40": 0.025135677754500752,
+   "sd40": 0.004667560303821682,
+   "min40": 0.014857184367739437,
+   "loyo_min": 0.014494489125610415,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 5.2283434046130825e-05
+  },
+  {
+   "seed": 42,
+   "excess_cagr_vs_spy_mean40": 0.025260836225064087,
+   "sd40": 0.00538235891063648,
+   "min40": 0.011874733694153396,
+   "loyo_min": 0.014515233426951674,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0006625151727686672
+  },
+  {
+   "seed": 43,
+   "excess_cagr_vs_spy_mean40": 0.025079233086237412,
+   "sd40": 0.004701875255726864,
+   "min40": 0.014920168026070777,
+   "loyo_min": 0.014335939151920319,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 1.7968482140948844e-05
+  },
+  {
+   "seed": 44,
+   "excess_cagr_vs_spy_mean40": 0.024839666175787235,
+   "sd40": 0.004723140853815255,
+   "min40": 0.010782513196115706,
+   "loyo_min": 0.014289783455799798,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -3.297115947442815e-06
+  },
+  {
+   "seed": 45,
+   "excess_cagr_vs_spy_mean40": 0.024805356763784883,
+   "sd40": 0.004741926790969604,
+   "min40": 0.014725080889329627,
+   "loyo_min": 0.014062858851735388,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -2.2083053101791192e-05
+  },
+  {
+   "seed": 46,
+   "excess_cagr_vs_spy_mean40": 0.024633326052925033,
+   "sd40": 0.004877645631332543,
+   "min40": 0.015315921009774167,
+   "loyo_min": 0.013876380312944017,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00015780189346473097
+  },
+  {
+   "seed": 47,
+   "excess_cagr_vs_spy_mean40": 0.024768940203294666,
+   "sd40": 0.005032094008665147,
+   "min40": 0.012969239754376935,
+   "loyo_min": 0.01416268546513912,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00031225027079733424
+  },
+  {
+   "seed": 48,
+   "excess_cagr_vs_spy_mean40": 0.02508657544698135,
+   "sd40": 0.004327665498633586,
+   "min40": 0.016179390194465876,
+   "loyo_min": 0.014307043706773836,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 0.00039217823923422615
+  },
+  {
+   "seed": 49,
+   "excess_cagr_vs_spy_mean40": 0.02453704219579849,
+   "sd40": 0.005313514196499734,
+   "min40": 0.013161076012578812,
+   "loyo_min": 0.013903601141578254,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0005936704586319216
+  },
+  {
+   "seed": 50,
+   "excess_cagr_vs_spy_mean40": 0.02498798298819168,
+   "sd40": 0.005403579844912874,
+   "min40": 0.014818748517893242,
+   "loyo_min": 0.014342683647299192,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0006837361070450619
+  },
+  {
+   "seed": 51,
+   "excess_cagr_vs_spy_mean40": 0.024646134540053127,
+   "sd40": 0.0047903435576570055,
+   "min40": 0.015162686442428467,
+   "loyo_min": 0.014155687218612845,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -7.049981978919304e-05
+  },
+  {
+   "seed": 52,
+   "excess_cagr_vs_spy_mean40": 0.025192726548932443,
+   "sd40": 0.004857205723176122,
+   "min40": 0.014512792480056358,
+   "loyo_min": 0.014317422701455801,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00013736198530830968
+  },
+  {
+   "seed": 53,
+   "excess_cagr_vs_spy_mean40": 0.024861082630373822,
+   "sd40": 0.0051335197336895245,
+   "min40": 0.013078683575030005,
+   "loyo_min": 0.014184394696388339,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00041367599582171205
+  },
+  {
+   "seed": 54,
+   "excess_cagr_vs_spy_mean40": 0.024705870925327264,
+   "sd40": 0.005021372051312878,
+   "min40": 0.012601613077114104,
+   "loyo_min": 0.014111052238334722,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0003015283134450656
+  },
+  {
+   "seed": 55,
+   "excess_cagr_vs_spy_mean40": 0.024456714178939652,
+   "sd40": 0.004572053856343375,
+   "min40": 0.013526113693543836,
+   "loyo_min": 0.013654431489917074,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 0.00014778988152443738
+  },
+  {
+   "seed": 56,
+   "excess_cagr_vs_spy_mean40": 0.02427966856576912,
+   "sd40": 0.00538749964559367,
+   "min40": 0.014753606182054494,
+   "loyo_min": 0.01347829469654398,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0006676559077258577
+  },
+  {
+   "seed": 57,
+   "excess_cagr_vs_spy_mean40": 0.02484866907429246,
+   "sd40": 0.004851110653815651,
+   "min40": 0.012862269316285079,
+   "loyo_min": 0.014226872476383556,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00013126691594783895
+  },
+  {
+   "seed": 58,
+   "excess_cagr_vs_spy_mean40": 0.024562602503207735,
+   "sd40": 0.005580649405003851,
+   "min40": 0.012740790476512723,
+   "loyo_min": 0.01383910906235799,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0008608056671360383
+  },
+  {
+   "seed": 59,
+   "excess_cagr_vs_spy_mean40": 0.025011674749328295,
+   "sd40": 0.004846226919291515,
+   "min40": 0.0151271489169196,
+   "loyo_min": 0.014327381713236881,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00012638318142370233
+  },
+  {
+   "seed": 60,
+   "excess_cagr_vs_spy_mean40": 0.024336137287307637,
+   "sd40": 0.005057613210971578,
+   "min40": 0.015152836578821187,
+   "loyo_min": 0.013655083448725968,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0003377694731037653
+  },
+  {
+   "seed": 61,
+   "excess_cagr_vs_spy_mean40": 0.024384657009831712,
+   "sd40": 0.004940368646767594,
+   "min40": 0.013897742840251182,
+   "loyo_min": 0.013759931995961833,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00022052490889978155
+  },
+  {
+   "seed": 62,
+   "excess_cagr_vs_spy_mean40": 0.025122006289690784,
+   "sd40": 0.005088267029687897,
+   "min40": 0.014244138822066855,
+   "loyo_min": 0.014260369850532303,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00036842329182008426
+  },
+  {
+   "seed": 63,
+   "excess_cagr_vs_spy_mean40": 0.02502971750342947,
+   "sd40": 0.005087726359446347,
+   "min40": 0.01426039968771578,
+   "loyo_min": 0.014254390528503713,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00036788262157853423
+  },
+  {
+   "seed": 64,
+   "excess_cagr_vs_spy_mean40": 0.024828906320263616,
+   "sd40": 0.004841721669907278,
+   "min40": 0.01568262850168815,
+   "loyo_min": 0.01413938721025198,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00012187793203946584
+  },
+  {
+   "seed": 65,
+   "excess_cagr_vs_spy_mean40": 0.024600138784169966,
+   "sd40": 0.0052464841314989324,
+   "min40": 0.013318425015751397,
+   "loyo_min": 0.014029984830748826,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00052664039363112
+  },
+  {
+   "seed": 66,
+   "excess_cagr_vs_spy_mean40": 0.02560273779015577,
+   "sd40": 0.005030678438683177,
+   "min40": 0.012539324093430216,
+   "loyo_min": 0.015096064845147614,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00031083470081536436
+  },
+  {
+   "seed": 67,
+   "excess_cagr_vs_spy_mean40": 0.02525703790107467,
+   "sd40": 0.004958479423939386,
+   "min40": 0.013543711477295401,
+   "loyo_min": 0.01470798334350262,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00023863568607157375
+  },
+  {
+   "seed": 68,
+   "excess_cagr_vs_spy_mean40": 0.02493685804675666,
+   "sd40": 0.005148771535287507,
+   "min40": 0.010664614617208783,
+   "loyo_min": 0.014219619747470916,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00042892779741969447
+  },
+  {
+   "seed": 69,
+   "excess_cagr_vs_spy_mean40": 0.02487461602886934,
+   "sd40": 0.0046677542266368565,
+   "min40": 0.014477676414374658,
+   "loyo_min": 0.01428169845236904,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 5.208951123095596e-05
+  },
+  {
+   "seed": 70,
+   "excess_cagr_vs_spy_mean40": 0.02518938660840365,
+   "sd40": 0.005126204278823384,
+   "min40": 0.013848090424397476,
+   "loyo_min": 0.014442464606785116,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0004063605409555717
+  },
+  {
+   "seed": 71,
+   "excess_cagr_vs_spy_mean40": 0.024370663255073366,
+   "sd40": 0.005287063851428949,
+   "min40": 0.015164274003821816,
+   "loyo_min": 0.013697137451918246,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0005672201135611364
+  },
+  {
+   "seed": 72,
+   "excess_cagr_vs_spy_mean40": 0.025086435037005722,
+   "sd40": 0.005544491984426142,
+   "min40": 0.014706470796001719,
+   "loyo_min": 0.014451339979274109,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0008246482465583292
+  },
+  {
+   "seed": 73,
+   "excess_cagr_vs_spy_mean40": 0.025113276929764144,
+   "sd40": 0.004823796836518064,
+   "min40": 0.012492617579288018,
+   "loyo_min": 0.014311892765924344,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00010395309865025154
+  },
+  {
+   "seed": 74,
+   "excess_cagr_vs_spy_mean40": 0.025553883048187953,
+   "sd40": 0.004992509173186457,
+   "min40": 0.015192144814077378,
+   "loyo_min": 0.014812959064509957,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0002726654353186449
+  },
+  {
+   "seed": 75,
+   "excess_cagr_vs_spy_mean40": 0.025001609834778706,
+   "sd40": 0.005020487924862538,
+   "min40": 0.014410305566750164,
+   "loyo_min": 0.014109565816864017,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00030064418699472534
+  },
+  {
+   "seed": 76,
+   "excess_cagr_vs_spy_mean40": 0.024864557582850905,
+   "sd40": 0.004343290007425107,
+   "min40": 0.01495100917994683,
+   "loyo_min": 0.014174070203054126,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 0.0003765537304427054
+  },
+  {
+   "seed": 77,
+   "excess_cagr_vs_spy_mean40": 0.0249733983308116,
+   "sd40": 0.00471116605281595,
+   "min40": 0.014729322562010004,
+   "loyo_min": 0.014154157315124127,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 8.677685051862796e-06
+  },
+  {
+   "seed": 78,
+   "excess_cagr_vs_spy_mean40": 0.025060647674888203,
+   "sd40": 0.0049748868807146926,
+   "min40": 0.014040421958292032,
+   "loyo_min": 0.01431555957521698,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0002550431428468801
+  },
+  {
+   "seed": 79,
+   "excess_cagr_vs_spy_mean40": 0.0250865969788406,
+   "sd40": 0.0048894128535951435,
+   "min40": 0.014179345789133772,
+   "loyo_min": 0.014333291449343083,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.000169569115727331
+  },
+  {
+   "seed": 80,
+   "excess_cagr_vs_spy_mean40": 0.024642106295313316,
+   "sd40": 0.004830616950935606,
+   "min40": 0.016840745248215556,
+   "loyo_min": 0.013633390143971464,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00011077321306779322
+  },
+  {
+   "seed": 81,
+   "excess_cagr_vs_spy_mean40": 0.025300824919000302,
+   "sd40": 0.00555457339725811,
+   "min40": 0.013068816577881075,
+   "loyo_min": 0.014697682662951645,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0008347296593902978
+  },
+  {
+   "seed": 82,
+   "excess_cagr_vs_spy_mean40": 0.025018373623410715,
+   "sd40": 0.005014949303163351,
+   "min40": 0.014270117585859608,
+   "loyo_min": 0.014452249928533856,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0002951055652955382
+  },
+  {
+   "seed": 83,
+   "excess_cagr_vs_spy_mean40": 0.02509264594057034,
+   "sd40": 0.004900831870503629,
+   "min40": 0.013597699750522517,
+   "loyo_min": 0.014517391138788999,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00018098813263581637
+  },
+  {
+   "seed": 84,
+   "excess_cagr_vs_spy_mean40": 0.024549892939991186,
+   "sd40": 0.0053128981978769136,
+   "min40": 0.012255134482138653,
+   "loyo_min": 0.013864278341728663,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0005930544600091011
+  },
+  {
+   "seed": 85,
+   "excess_cagr_vs_spy_mean40": 0.024722459583847244,
+   "sd40": 0.0054677215971124064,
+   "min40": 0.010707942830749956,
+   "loyo_min": 0.013953112579980467,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.000747877859244594
+  },
+  {
+   "seed": 86,
+   "excess_cagr_vs_spy_mean40": 0.02494077353677716,
+   "sd40": 0.005238912162515192,
+   "min40": 0.013442399126528557,
+   "loyo_min": 0.01440983740326201,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0005190684246473799
+  },
+  {
+   "seed": 87,
+   "excess_cagr_vs_spy_mean40": 0.02469283008180838,
+   "sd40": 0.004854805869654412,
+   "min40": 0.01324107713773367,
+   "loyo_min": 0.013906885660337476,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00013496213178659962
+  },
+  {
+   "seed": 88,
+   "excess_cagr_vs_spy_mean40": 0.024625221366512733,
+   "sd40": 0.005169006643211392,
+   "min40": 0.015525141306746008,
+   "loyo_min": 0.01395872513858229,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00044916290534357996
+  },
+  {
+   "seed": 89,
+   "excess_cagr_vs_spy_mean40": 0.02531278918096951,
+   "sd40": 0.0051191378169538485,
+   "min40": 0.013324374046683529,
+   "loyo_min": 0.014702526965288565,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.000399294079086036
+  },
+  {
+   "seed": 90,
+   "excess_cagr_vs_spy_mean40": 0.02505282567946492,
+   "sd40": 0.005493436706440713,
+   "min40": 0.011808687161637141,
+   "loyo_min": 0.014319094370374746,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0007735929685729007
+  },
+  {
+   "seed": 91,
+   "excess_cagr_vs_spy_mean40": 0.0249070979602572,
+   "sd40": 0.0056170279997272525,
+   "min40": 0.012446509847635616,
+   "loyo_min": 0.01414591348740522,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00089718426185944
+  },
+  {
+   "seed": 92,
+   "excess_cagr_vs_spy_mean40": 0.024837686108063188,
+   "sd40": 0.005094105267569853,
+   "min40": 0.013482314800280736,
+   "loyo_min": 0.014093545155354542,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0003742615297020408
+  },
+  {
+   "seed": 93,
+   "excess_cagr_vs_spy_mean40": 0.02487779496178217,
+   "sd40": 0.0046276568595331954,
+   "min40": 0.016439350229431663,
+   "loyo_min": 0.014350371325019515,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 9.218687833461702e-05
+  },
+  {
+   "seed": 94,
+   "excess_cagr_vs_spy_mean40": 0.025378937329758888,
+   "sd40": 0.005437447442073773,
+   "min40": 0.012077178798129357,
+   "loyo_min": 0.014824705457469212,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.0007176037042059607
+  },
+  {
+   "seed": 95,
+   "excess_cagr_vs_spy_mean40": 0.0246367157986735,
+   "sd40": 0.00419980022993259,
+   "min40": 0.01537926578315722,
+   "loyo_min": 0.013991097982735092,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 0.0005200435079352221
+  },
+  {
+   "seed": 96,
+   "excess_cagr_vs_spy_mean40": 0.02535798028664472,
+   "sd40": 0.005156644266643526,
+   "min40": 0.014070300016440884,
+   "loyo_min": 0.014545359867253572,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00043680052877571353
+  },
+  {
+   "seed": 97,
+   "excess_cagr_vs_spy_mean40": 0.025043699781038826,
+   "sd40": 0.004982144534186021,
+   "min40": 0.013858290344572777,
+   "loyo_min": 0.014247116249128606,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.00026230079631820846
+  },
+  {
+   "seed": 98,
+   "excess_cagr_vs_spy_mean40": 0.025261843087174652,
+   "sd40": 0.005737299127566264,
+   "min40": 0.014220176940737848,
+   "loyo_min": 0.014615468065781794,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": -0.001017455389698452
+  },
+  {
+   "seed": 99,
+   "excess_cagr_vs_spy_mean40": 0.02508378822703373,
+   "sd40": 0.004603594372311471,
+   "min40": 0.016293229926666517,
+   "loyo_min": 0.014403364549306966,
+   "offsets_positive": 40,
+   "loyo_min_dropped_year": 2009,
+   "sd_reduction": 0.00011624936555634183
+  }
+ ],
+ "runtime_s": 1852.8030667304993,
+ "complete": true
+}
