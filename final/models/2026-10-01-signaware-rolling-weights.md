@@ -9,7 +9,10 @@ session had already used both labels (options Phase 2), so the COO renumbered it
 pre-registration commit: this is **WO-39**, and its 2020+ walk-forward is **hold-out read #17**
 (Gabe-approved, fits on 2020+ data). The spec did not change.
 
-Status: **PRE-REGISTERED, no SA252-vs-control statistic computed yet.** Results go in §3.
+Status: **DONE. Step 1 KILL.** SA252 minus EXP on 2010–2019 is −0.44%/yr (t −0.78, 7/40 offsets, LOYO
+minimum −0.79). Step 2 on 2020–26 is +1.76%/yr (t +1.04, 33/40) and cannot rescue the kill. SA252 is not a
+promote candidate and nothing changes in the live weights. Pre-registration committed in df9d2eb before any
+SA252-vs-control statistic; results checkpoint d652d16. Results are in §3.
 
 ---
 
@@ -139,4 +142,112 @@ sign; "changed" = opposed and |t| > 1.1, so the raw weight differs from R252's):
 
 ## 3. Results
 
-Pending.
+Files: `signaware_eval.json` (Step 1), `signaware_eval_step2.json` (Step 2), `signaware_swap.json`, all in
+`final/out/rollweights/signaware/`. All differences are annualized, net of 15 bp, mean over 40 offsets.
+Both stages re-ran the R252 − EXP reconcile and it passed (−1.1094, 0/40; +2.6025, 38/40). Each scoring
+stage was run once. The only rerun was the build stage, for a wrong Python interpreter, before any number
+existed.
+
+### 3.1 Step 1 (2010-01-04..2019-12-31): KILL
+
+| comparison | diff %/yr | NW(39) t | offsets > 0 | LOYO min |
+|---|---|---|---|---|
+| **SA252 − EXP (primary)** | **−0.44** | **−0.78** | **7/40** | **−0.79 (drop 2012)** |
+| SA252 − R252 (reference) | +0.67 | +1.66 | 40/40 | +0.15 |
+| SA252 − live icw9_seas (reference) | −1.18 | −1.92 | 0/40 | −1.54 |
+| R252 − EXP (WO-33, reconcile) | −1.11 | −1.76 | 0/40 | −1.53 |
+
+- **Verdict: KILL.** The mean difference is negative and the LOYO minimum is negative, so both kill
+  conditions hold. The difference is negative with every single year dropped (−0.02 to −0.79).
+- Against R252 the sign rule helped in this era: it recovered +0.67 of R252's −1.11 shortfall, on all 40
+  offsets. That is 60% of the gap; the rest remains.
+
+### 3.2 Step 2 (2020-01-02..2026-07-30, hold-out read #17, fitting on 2020+)
+
+| comparison | diff %/yr | NW(39) t | offsets > 0 | LOYO min | 2020 dropped |
+|---|---|---|---|---|---|
+| **SA252 − EXP (primary)** | **+1.76** | **+1.04** | **33/40** | **+1.04 (drop 2025)** | **+2.09** |
+| SA252 − R252 (reference) | −0.84 | −0.81 | 5/40 | −1.31 | |
+| SA252 − live icw9_seas (reference) | +2.19 | +1.16 | 39/40 | +0.94 | |
+| R252 − EXP (WO-33, reconcile) | +2.60 | +1.70 | 38/40 | +2.09 | |
+
+- The Step 2 conditions on their own are met (mean > 0, 33/40 ≥ 30, positive with 2020 dropped).
+  **Promote-candidate: NO**, because Step 1 is a KILL and Step 2 cannot rescue it.
+- The t is +1.04 on about 6.5 years, well under the 2.39 bar.
+- In this era the sign rule made R252 worse: SA252 is 0.84 below R252, and below it on 35 of 40 offsets.
+  Flooring the wrong-signed factors (about 3 per refit) cost 0.84 against R252 in 2020–26.
+
+**Book vs SPY, 2020–26 (net, mean of 40 offsets):**
+
+| book | vs SPY %/yr | offsets beating SPY |
+|---|---|---|
+| SA252 | +0.17 | 20/40 |
+| R252 | +1.02 | 35/40 |
+| EXP | −1.59 | 4/40 |
+| live icw9_seas (frozen) | −2.02 | 0/40 |
+
+For 2010–2019 the same four books are +1.22 (SA252), +0.55 (R252), +1.66 (EXP) and +2.40 (live).
+
+### 3.3 SA252 lands between R252 and EXP in both eras
+
+In 2010–2019 EXP beats R252, and SA252 is in between (−0.44 vs EXP). In 2020–26 R252 beats EXP, and SA252
+is again in between (+1.76 vs EXP). Flooring the wrong-signed factors moves the rolling rule part of the way
+toward the slow rule. It is never the best of the three.
+
+### 3.4 Turnover and cost (descriptive)
+
+| era | book | new-name share per rebalance | cost drag %/yr |
+|---|---|---|---|
+| 2010–19 | SA252 | 0.573 | 0.55 |
+| 2010–19 | R252 | 0.615 | 0.59 |
+| 2010–19 | EXP | 0.490 | 0.47 |
+| 2010–19 | live | 0.431 | 0.42 |
+| 2020–26 | SA252 | 0.536 | 0.51 |
+| 2020–26 | R252 | 0.565 | 0.54 |
+| 2020–26 | EXP | 0.397 | 0.38 |
+| 2020–26 | live | 0.446 | 0.43 |
+
+- SA252 costs 0.08 (2010–19) and 0.13 (2020–26) more per year than EXP, and 0.04 and 0.03 less than R252.
+- Cost is a small part of the Step 1 result: gross of cost, SA252 − EXP is −0.37, against −0.44 net.
+- Mean L1 weight change per refit: SA252 0.278, R252 0.346, EXP 0.039 (2010–19); 0.268, 0.348, 0.054
+  (2020–26).
+
+Sign-rule binding shares are in §2.
+
+### 3.5 Swap-one table, momentum_12_1 and net_issuance_pct only (descriptive, post hoc, no verdict)
+
+Swap-in gain = (EXP with the factor's SA252 weight path) − EXP. Swap-out loss = (SA252 − EXP) − (SA252 with
+the factor on EXP's path − EXP). The last column is WO-34's swap-in with R252's path (`r252_attrib.json`).
+
+| era | factor | swap-in gain | offsets > 0 | t | swap-out loss | WO-34 swap-in (R252) |
+|---|---|---|---|---|---|---|
+| 2010–19 | momentum_12_1 | +0.07 | 26/40 | +0.28 | +0.40 | +0.41 (38/40) |
+| 2010–19 | net_issuance_pct | +0.34 | 39/40 | +1.40 | +0.06 | +0.32 (37/40) |
+| 2020–26 | momentum_12_1 | +0.05 | 23/40 | +0.11 | +0.68 | +0.39 (34/40) |
+| 2020–26 | net_issuance_pct | +0.29 | 34/40 | +0.89 | +0.40 | +0.40 (34/40) |
+
+- All four swap-ins are still positive.
+- Momentum's swap-in gain mostly disappears under SA252 (+0.41 to +0.07; +0.39 to +0.05). Net issuance's is
+  about the same as under R252.
+- None is close to significant, and the two factors were picked after seeing WO-34's table. This is not
+  evidence for a two-factor rolling rule.
+
+### 3.6 Verdict
+
+- **SA252: KILL at Step 1.** No change to the live weights, no forward ledger, no deploy.
+- Family "time-varying weights" now stands at three trials and three kills (R252, R756, SA252). Per the
+  pre-registration there are no further variants.
+- On 2010–2019, weights fitted on more history beat weights fitted on the last year, with or without the
+  sign rule. The frozen live weights beat EXP there too (+0.73, t +2.61, 40/40), but they were fitted on
+  2007–2019, so that comparison is in-sample for them.
+- On 2020–26 the rolling rules beat EXP on most offsets (33 to 38 of 40) with small t's (1.0 to 1.7), and
+  the sign-aware version has less of the gain than plain R252.
+
+**Caveats.**
+
+- Step 2 fits on 2020+ data (hold-out read #17). Three rules from this family have now been read on 2020–26,
+  so the window is not a clean out-of-sample test for any follow-up.
+- The fitting frame (v1 cap150 for 8 factors) differs from the evaluation frame (v2 col c cap150), as in
+  WO-33 and in the live rule.
+- Short interest has no t before 2020, so it sits at the floor through Step 1 under every rule. Step 1 says
+  nothing about sign-aware handling of short interest.
