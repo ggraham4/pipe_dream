@@ -1,0 +1,768 @@
+{
+ "store": "/Users/ggraham/pipe_dream/final/data/alphavantage_full",
+ "window": [
+  "2008-01-01",
+  "2018-12-31"
+ ],
+ "window_dates_on_disk": 133,
+ "window_dates_expected": 133,
+ "log_pass_labels": [
+  "monthly"
+ ],
+ "thin_complete_dates": [
+  "2008-01-02",
+  "2008-01-16",
+  "2008-02-20",
+  "2008-03-19",
+  "2008-04-16",
+  "2008-05-21",
+  "2008-06-18",
+  "2008-07-16",
+  "2008-08-20"
+ ],
+ "n_thin_complete": 9,
+ "rule": "thin slice >= 99% terminal (ok/no_data) on >= 120 of 133 dates",
+ "gate_pass": false,
+ "named_dead": {
+  "ATPAQ": {
+   "name": "ATP Oil & Gas (bankrupt 2012)",
+   "thin_dates_in_window": 54,
+   "first_thin": "2008-01-02",
+   "last_thin": "2012-07-18",
+   "must_date": "2012-06-20",
+   "must_date_is_thin": true,
+   "must_date_state": "pending (date not thin-complete)",
+   "thin_dates_complete": 9,
+   "with_kept_chain": 9,
+   "share": 1.0,
+   "early9_present": 9,
+   "early9_thin": 9,
+   "pass": true
+  },
+  "SIGM": {
+   "name": "Sigma Designs (liquidated 2018)",
+   "thin_dates_in_window": 123,
+   "first_thin": "2008-01-02",
+   "last_thin": "2018-07-18",
+   "must_date": "2018-06-20",
+   "must_date_is_thin": true,
+   "must_date_state": "pending (date not thin-complete)",
+   "thin_dates_complete": 9,
+   "with_kept_chain": 9,
+   "share": 1.0,
+   "early9_present": 9,
+   "early9_thin": 9,
+   "pass": true
+  }
+ },
+ "txg": {
+  "cap2000_dates": 66,
+  "cap2000_with_chain": 66,
+  "thin_dates": [
+   "2024-10-16",
+   "2024-11-20",
+   "2024-12-18",
+   "2025-01-22",
+   "2025-02-19",
+   "2025-03-19",
+   "2025-04-16",
+   "2025-05-21",
+   "2025-06-18",
+   "2025-07-16",
+   "2025-08-20",
+   "2025-09-17",
+   "2025-10-22",
+   "2025-11-19",
+   "2025-12-17"
+  ],
+  "thin_attempted": 0,
+  "thin_with_chain": 0,
+  "dates_failing_identity_filter": [
+   "2026-03-18"
+  ],
+  "state": "pending: thin dates not pulled yet",
+  "pass": true
+ },
+ "pool_integrity": {
+  "thin_name_dates_with_chain": 11713,
+  "share_in_panel": 1.0,
+  "share_in_outcome_cache": 1.0,
+  "pass": true
+ },
+ "dead_vs_listed_chain_share": {
+  "chain_share_later_delisted": 0.64126698313963,
+  "chain_share_still_listed": 0.621316231485723,
+  "n_later_delisted": 12218,
+  "n_still_listed": 6549,
+  "rule": "delisted share >= listed share - 0.05",
+  "pass": true
+ },
+ "per_date": {
+  "2008-01-02": {
+   "thin_names": 2173,
+   "terminal_share": 1.0,
+   "ok_share": 0.6051541647491947
+  },
+  "2008-01-16": {
+   "thin_names": 2183,
+   "terminal_share": 1.0,
+   "ok_share": 0.6147503435639029
+  },
+  "2008-02-20": {
+   "thin_names": 2132,
+   "terminal_share": 1.0,
+   "ok_share": 0.6238273921200751
+  },
+  "2008-03-19": {
+   "thin_names": 2074,
+   "terminal_share": 1.0,
+   "ok_share": 0.636933461909354
+  },
+  "2008-04-16": {
+   "thin_names": 2061,
+   "terminal_share": 1.0,
+   "ok_share": 0.638524987869966
+  },
+  "2008-05-21": {
+   "thin_names": 2050,
+   "terminal_share": 1.0,
+   "ok_share": 0.64
+  },
+  "2008-06-18": {
+   "thin_names": 2025,
+   "terminal_share": 1.0,
+   "ok_share": 0.6449382716049382
+  },
+  "2008-07-16": {
+   "thin_names": 2037,
+   "terminal_share": 1.0,
+   "ok_share": 0.6563573883161512
+  },
+  "2008-08-20": {
+   "thin_names": 2032,
+   "terminal_share": 1.0,
+   "ok_share": 0.6520669291338582
+  },
+  "2008-09-17": {
+   "thin_names": 1977,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2008-10-22": {
+   "thin_names": 1976,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2008-11-19": {
+   "thin_names": 1833,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2008-12-17": {
+   "thin_names": 1859,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2009-01-21": {
+   "thin_names": 1801,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2009-02-18": {
+   "thin_names": 1766,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2009-03-18": {
+   "thin_names": 1739,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2009-04-15": {
+   "thin_names": 1766,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2009-05-20": {
+   "thin_names": 1850,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2009-06-17": {
+   "thin_names": 1894,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2009-07-22": {
+   "thin_names": 1905,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2009-08-19": {
+   "thin_names": 1942,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2009-09-16": {
+   "thin_names": 1901,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2009-10-21": {
+   "thin_names": 1911,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2009-11-18": {
+   "thin_names": 1876,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2009-12-16": {
+   "thin_names": 1869,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2010-01-20": {
+   "thin_names": 1894,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2010-02-17": {
+   "thin_names": 1884,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2010-03-17": {
+   "thin_names": 1908,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2010-04-21": {
+   "thin_names": 1942,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2010-05-19": {
+   "thin_names": 2000,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2010-06-16": {
+   "thin_names": 1969,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2010-07-21": {
+   "thin_names": 1921,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2010-08-18": {
+   "thin_names": 1924,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2010-09-15": {
+   "thin_names": 1888,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2010-10-20": {
+   "thin_names": 1916,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2010-11-17": {
+   "thin_names": 1896,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2010-12-22": {
+   "thin_names": 1880,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2011-01-19": {
+   "thin_names": 1866,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2011-02-16": {
+   "thin_names": 1854,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2011-03-16": {
+   "thin_names": 1873,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2011-04-20": {
+   "thin_names": 1837,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2011-05-18": {
+   "thin_names": 1815,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2011-06-15": {
+   "thin_names": 1865,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2011-07-20": {
+   "thin_names": 1843,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2011-08-17": {
+   "thin_names": 1858,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2011-09-21": {
+   "thin_names": 1818,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2011-10-19": {
+   "thin_names": 1819,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2011-11-16": {
+   "thin_names": 1796,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2011-12-21": {
+   "thin_names": 1795,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2012-01-18": {
+   "thin_names": 1766,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2012-02-15": {
+   "thin_names": 1760,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2012-03-21": {
+   "thin_names": 1783,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2012-04-18": {
+   "thin_names": 1789,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2012-05-16": {
+   "thin_names": 1793,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2012-06-20": {
+   "thin_names": 1845,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2012-07-18": {
+   "thin_names": 1838,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2012-08-22": {
+   "thin_names": 1793,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2012-09-19": {
+   "thin_names": 1794,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2012-10-17": {
+   "thin_names": 1777,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2012-11-21": {
+   "thin_names": 1764,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2012-12-19": {
+   "thin_names": 1759,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2013-01-16": {
+   "thin_names": 1767,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2013-02-13": {
+   "thin_names": 1747,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2013-03-20": {
+   "thin_names": 1704,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2013-04-17": {
+   "thin_names": 1733,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2013-05-22": {
+   "thin_names": 1732,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2013-06-19": {
+   "thin_names": 1760,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2013-07-17": {
+   "thin_names": 1798,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2013-08-21": {
+   "thin_names": 1786,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2013-09-18": {
+   "thin_names": 1740,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2013-10-16": {
+   "thin_names": 1801,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2013-11-20": {
+   "thin_names": 1796,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2013-12-18": {
+   "thin_names": 1791,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2014-01-22": {
+   "thin_names": 1804,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2014-02-19": {
+   "thin_names": 1846,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2014-03-19": {
+   "thin_names": 1837,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2014-04-16": {
+   "thin_names": 1870,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2014-05-21": {
+   "thin_names": 1859,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2014-06-18": {
+   "thin_names": 1822,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2014-07-16": {
+   "thin_names": 1863,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2014-08-20": {
+   "thin_names": 1846,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2014-09-17": {
+   "thin_names": 1817,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2014-10-22": {
+   "thin_names": 1865,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2014-11-19": {
+   "thin_names": 1832,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2014-12-17": {
+   "thin_names": 1813,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2015-01-21": {
+   "thin_names": 1813,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2015-02-18": {
+   "thin_names": 1789,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2015-03-18": {
+   "thin_names": 1752,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2015-04-15": {
+   "thin_names": 1769,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2015-05-20": {
+   "thin_names": 1770,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2015-06-17": {
+   "thin_names": 1770,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2015-07-22": {
+   "thin_names": 1806,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2015-08-19": {
+   "thin_names": 1807,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2015-09-16": {
+   "thin_names": 1815,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2015-10-21": {
+   "thin_names": 1819,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2015-11-18": {
+   "thin_names": 1780,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2015-12-16": {
+   "thin_names": 1784,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2016-01-20": {
+   "thin_names": 1845,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2016-02-17": {
+   "thin_names": 1804,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2016-03-16": {
+   "thin_names": 1780,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2016-04-20": {
+   "thin_names": 1765,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2016-05-18": {
+   "thin_names": 1752,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2016-06-15": {
+   "thin_names": 1747,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2016-07-20": {
+   "thin_names": 1732,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2016-08-17": {
+   "thin_names": 1668,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2016-09-21": {
+   "thin_names": 1695,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2016-10-19": {
+   "thin_names": 1659,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2016-11-16": {
+   "thin_names": 1670,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2016-12-21": {
+   "thin_names": 1697,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2017-01-18": {
+   "thin_names": 1672,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2017-02-15": {
+   "thin_names": 1635,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2017-03-22": {
+   "thin_names": 1685,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2017-04-19": {
+   "thin_names": 1674,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2017-05-17": {
+   "thin_names": 1702,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2017-06-21": {
+   "thin_names": 1728,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2017-07-19": {
+   "thin_names": 1688,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2017-08-16": {
+   "thin_names": 1651,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2017-09-20": {
+   "thin_names": 1689,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2017-10-18": {
+   "thin_names": 1655,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2017-11-15": {
+   "thin_names": 1654,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2017-12-20": {
+   "thin_names": 1654,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2018-01-17": {
+   "thin_names": 1627,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2018-02-14": {
+   "thin_names": 1656,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2018-03-21": {
+   "thin_names": 1653,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2018-04-18": {
+   "thin_names": 1630,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2018-05-16": {
+   "thin_names": 1624,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2018-06-20": {
+   "thin_names": 1630,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2018-07-18": {
+   "thin_names": 1635,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2018-08-22": {
+   "thin_names": 1594,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2018-09-19": {
+   "thin_names": 1609,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2018-10-17": {
+   "thin_names": 1688,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2018-11-21": {
+   "thin_names": 1651,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  },
+  "2018-12-19": {
+   "thin_names": 1699,
+   "terminal_share": 0.0,
+   "ok_share": 0.0
+  }
+ },
+ "phase2_allowed": false
+}

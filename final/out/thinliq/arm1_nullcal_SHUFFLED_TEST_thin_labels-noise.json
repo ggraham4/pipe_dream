@@ -1,0 +1,106 @@
+{
+ "label_mode": "noise",
+ "NOT_A_RESULT": "labels are pure noise; this file calibrates the decision rule under the null and proves the plumbing",
+ "universe": "thin",
+ "dates": [
+  "2008-01-02",
+  "2008-01-16",
+  "2008-02-20",
+  "2008-03-19",
+  "2008-04-16",
+  "2008-05-21",
+  "2008-06-18",
+  "2008-07-16",
+  "2008-08-20"
+ ],
+ "coverage": {
+  "dates_in_frame": 9,
+  "dates_used": 9,
+  "dates_dropped_lt_min_names": [],
+  "share_of_universe_with_signal_median": 0.6176613294517225
+ },
+ "seeds": 100,
+ "verdict_rates": {
+  "KILL": 1.0
+ },
+ "pass_rate": 0.0,
+ "criterion_pass_rates": {
+  "S1_M_gt_null_p80": 0.3,
+  "S2_nw39_t_ge_3.75": 0.0,
+  "S3_M_ge_1.0pct": 0.01,
+  "S4_sector_neutral": 0.0,
+  "S5_halves_all_positive": 0.0,
+  "S6_loyo_and_year_share": 0.0,
+  "S7_both_offsets_positive": 0.32,
+  "S8_size_vol_residual": 0.0
+ },
+ "kill_trigger_rates": {
+  "K1_M_le_null_p80": 0.7,
+  "K2_offset_sign_flip": 0.4,
+  "K3_odd_even_sign_flip": 0.0,
+  "K4_year_share_gt_45pct": 0.54,
+  "K5_sector_neutral_le_0": 0.44,
+  "K6_size_vol_residual_le_0": 0.4
+ },
+ "null_label_M_pct": {
+  "mean": 0.035614000000000014,
+  "sd": 0.46988210245124257,
+  "p5": -0.72703,
+  "p95": 0.72071
+ },
+ "null_label_nw39_t": "n < 10 dates: NW t undefined",
+ "example_run_seed0": {
+  "n_dates": 9,
+  "median_names_per_date": 1281.0,
+  "M_pct_per_40d": -0.06,
+  "nw39_t": NaN,
+  "nw2_t_DESCRIPTIVE": NaN,
+  "null_p80_pct": 0.4838,
+  "null_median_pct": 0.0981,
+  "sector_neutral": {
+   "M_pct": -0.825,
+   "nw39_t": NaN
+  },
+  "size_vol_residual": {
+   "M_pct": 0.0787,
+   "nw39_t": NaN
+  },
+  "odd_years_pct": null,
+  "even_years_pct": -0.06,
+  "chrono_first_half_pct": -0.5303,
+  "chrono_second_half_pct": 0.3162,
+  "offsets_pct": [
+   0.0005,
+   -0.1356
+  ],
+  "loyo_pct": {},
+  "loyo_min_pct": null,
+  "year_share": {},
+  "max_year_share": null,
+  "oi_terciles_DESCRIPTIVE_pct": {
+   "t0_thinnest": -1.313,
+   "t1_middle": 2.1957,
+   "t2_thickest": -1.1437
+  },
+  "criteria": {
+   "S1_M_gt_null_p80": false,
+   "S2_nw39_t_ge_3.75": false,
+   "S3_M_ge_1.0pct": false,
+   "S4_sector_neutral": false,
+   "S5_halves_all_positive": false,
+   "S6_loyo_and_year_share": false,
+   "S7_both_offsets_positive": false,
+   "S8_size_vol_residual": false
+  },
+  "kill": {
+   "K1_M_le_null_p80": true,
+   "K2_offset_sign_flip": true,
+   "K3_odd_even_sign_flip": false,
+   "K4_year_share_gt_45pct": false,
+   "K5_sector_neutral_le_0": true,
+   "K6_size_vol_residual_le_0": false
+  },
+  "verdict": "KILL"
+ },
+ "runtime_s": 5.736889123916626
+}

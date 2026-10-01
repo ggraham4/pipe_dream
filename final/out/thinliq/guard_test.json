@@ -1,0 +1,7 @@
+{
+ "doc_tracked_now": false,
+ "1_doc_untracked": "--phase2 refused: final/models/2026-10-01-thin-liquidity-prereg.md is not tracked in git",
+ "2_arrival_gate": "--phase2 refused: arrival gate FAIL: thin slice is >= 99% terminal on 9 of 133 window dates (need >= 120 of 133)",
+ "3_result_exists": "--phase2 refused: arm1_results.json exists; a re-run is an iteration (cap 3) and must be written into the doc and committed first, then the old file moved aside by hand",
+ "all_refused": true
+}
