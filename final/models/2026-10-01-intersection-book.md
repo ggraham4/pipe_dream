@@ -109,4 +109,103 @@ Iteration cap 2, bug fixes only.
 
 ## 2. Results
 
-(Filled in after the pre-registration commit.)
+Pre-registration commit: `89120fd` (pushed before the score stage ran).
+Run: 2026-10-01, `intersect.py --stage score`, one pass, no iteration used.
+Numbers: `final/out/intersect/intersect_eval.json`. Hold-out read #20 is spent.
+
+### Verdict: MIDDLE (report, no action)
+
+INT − L is positive in both eras, but it fails two of the pre-registered
+checks: B has 29/40 offsets (needs 30), and A's leave-one-year-out minimum is
+negative (−0.10%/yr with 2017 dropped). No forward column is earned.
+
+### Primary: INT − L, net %/yr, 40-offset mean
+
+| era | INT − L | offsets > 0 | drop-year check | NW(39) t | pass? |
+|---|---|---|---|---|---|
+| A 2010-19 | +0.31 | 32/40 | LOYO min −0.10 (drop 2017) | 0.60 | fails LOYO |
+| B 2020-26 | +0.74 | 29/40 | ex-2020 +0.25 | 0.51 | fails offsets |
+
+Gross of costs the gap is +0.49 (A) and +0.91 (B). INT turns over more than L
+(63% new names per rebalance vs 43-45%), which costs about 0.18%/yr extra.
+
+The edge is small and not steady by year. INT − L by rebalance year, %/yr:
+A: 2010 −1.3, 2011 −0.5, 2012 +0.7, 2013 +1.0, 2014 +1.3, 2015 +1.6,
+2016 −2.9, 2017 +4.0, 2018 −1.2, 2019 +0.2.
+B: 2020 +3.4, 2021 −2.7, 2022 +2.8, 2023 +2.2, 2024 +2.2, 2025 −4.0,
+2026 +1.8. In A, 2017 alone carries the result.
+
+### Size-matched null (key control)
+
+| era | INT − L | null mean (net) | null sd | null max | share of null below INT (net) | (gross) |
+|---|---|---|---|---|---|---|
+| A | +0.31 | −0.26 | 0.09 | −0.04 | 100/100 | 100/100 |
+| B | +0.74 | −0.20 | 0.30 | +0.48 | 100/100 | 100/100 |
+
+INT beats every one of 100 random same-size thinnings of L in both eras, net
+and gross (gross null mean +0.02 A, +0.13 B; max +0.25 A, +0.81 B vs INT
++0.49, +0.91). So agreeing with R252 does pick a better half of the live book
+than chance. Two limits on that reading. The null only varies which names are
+kept; it holds the realised return history fixed, so it does not say the gap
+would repeat in new years, and the time-series t (0.5 to 0.6) says it is not
+distinguishable from zero. And in B the gross margin over the best null draw
+is thin (+0.91 vs +0.81).
+
+One more limit. R252 uses L's own factors with the same signs, so the shared
+names are probably the ones L itself scores highest within each vol quintile.
+A random-thinning null cannot tell "agreeing with R252" apart from
+"concentrating L on its own best-scored half". A top-half-of-L control was not
+pre-registered and was not run; running it now would be the top-k variant
+this work order rules out.
+
+### Overlap and name count
+
+| era | mean L | mean INT | min INT | INT / L | fallback dates |
+|---|---|---|---|---|---|
+| A | 296.5 | 142.9 | 37 | 48% | 0 of 2516 |
+| B | 312.8 | 124.4 | 38 | 40% | 0 of 1652 |
+
+The fewer-than-10 fallback never fired.
+
+### Books vs SPY and vs L (net %/yr)
+
+| book | A vs SPY | A − L | B vs SPY | B − L |
+|---|---|---|---|---|
+| L | +2.40 | 0 | −2.02 | 0 |
+| R (R252) | +0.55 | −1.84 (0/40) | +1.02 | +3.03 (40/40) |
+| INT | +2.70 | +0.31 (32/40) | −1.28 | +0.74 (29/40) |
+| L_only | +1.62 | −0.78 (0/40) | −3.24 | −1.22 (10/40) |
+| R_only | −1.41 | −3.81 (0/40) | +1.96 | +3.97 (39/40) |
+| UNION | +1.17 | −1.22 (0/40) | −0.27 | +1.75 (40/40) |
+
+The two eras tell different stories. In A the shared names are the best part
+of either book and R's own names are the worst. In B the names only R picks
+are the best (+1.96 vs SPY) and the shared names still lose to SPY (−1.28).
+The intersection does not capture what made R252 work after 2020; that sat in
+the names the live book did not hold. INT still loses to SPY in B, at 12/40
+offsets.
+
+### Concentration cost (INT vs L)
+
+| | A INT | A L | B INT | B L |
+|---|---|---|---|---|
+| sd across offsets, %/yr | 0.34 | 0.24 | 2.01 | 1.03 |
+| max drawdown, mean over offsets | −15.0% | −15.3% | −26.2% | −28.1% |
+| max drawdown, worst offset | −19.9% | −19.3% | −34.0% | −33.9% |
+| worst 40d window, net | −15.6% | −15.2% | −33.8% | −33.9% |
+| worst 40d window, vs SPY | −7.0% | −7.5% | −15.1% | −10.5% |
+| sd of 40d net return | 5.0% | 5.1% | 8.3% | 8.5% |
+| new names per rebalance | 63% | 43% | 63% | 45% |
+| cost drag, %/yr | 0.61 | 0.42 | 0.60 | 0.43 |
+
+Halving the book did not deepen drawdowns. It did double the spread across
+offsets in B (start-date luck matters more) and worsened the worst
+SPY-relative window in B.
+
+### Trial count and what follows
+
+Trial 4 of the time-varying-weights family (R252, R756, SA252 KILL; INT
+MIDDLE). No variants were run and none should be: no top-k, no other
+weighting, no other minimum count. Per the rule a MIDDLE means report and no
+action. The app tab already records both pick sets, so the overlap can be
+re-read on new data later without a new build.

@@ -1,0 +1,3 @@
+[14:07:31] [A] INT-L +0.305%/yr offsets+ 32/40 LOYO min -0.095 (2017); null pct net 100% gross 100%; |INT| 142.9 fallback 0/2516
+[14:07:42] [B] INT-L +0.737%/yr offsets+ 29/40 LOYO min +0.250 (2020); null pct net 100% gross 100%; |INT| 124.4 fallback 0/1652
+[14:07:42] VERDICT MIDDLE; wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a60ec257a76eeec7a/final/out/intersect/intersect_eval.json (29s)
