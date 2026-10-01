@@ -61,6 +61,44 @@ Good Friday.**
 - Whether this counts as an iteration is the COO's ruling. No WO-O1 number
   existed when it was found.
 
+## Update 2, 2026-09-30: holiday-expiry bug fixed; presence scan triggered its stop rule
+
+**State now: WO-O1 still has no number, and hold-out read #15 is still not
+used.** The real-label run was not started after the fix.
+
+- **COO ruling:** accept the holiday-adjusted expiry, as a bug fix, not an
+  iteration (0 of 3 used). Written into the pre-reg doc, section 4, "Bug
+  fix 1". `run_wo_o1.py` now accepts contracts listed on the 3rd Friday, the
+  Saturday after it, or, when that Friday is a market holiday, the trading
+  day before it. That is the only code change.
+- **Four entry dates were affected, not three.** The scan found a fourth:
+  2026-05-20, whose 3rd Friday (2026-06-19) is Juneteenth, with the expiry
+  listed on 2026-06-18. All four now match: 1,370 names (2019-03-20), 1,592
+  (2022-03-16), 1,473 (2025-03-19), 1,579 (2026-05-20).
+- **Presence scan** (`presence_scan.py`, `wo_o1_presence_scan.json`, no
+  outcomes): names with at least one put at the selected expiry, per entry
+  date. Median 1,335. **Minimum 548, on 2008-11-19.**
+- **The COO's stop rule (any date below half the median) triggered on seven
+  dates:**
+
+| entry date | names with a put | cap2000-eligible names | share |
+|---|---|---|---|
+| 2008-10-22 | 655 | 687 | 95.3% |
+| 2008-11-19 | 548 | 569 | 96.3% |
+| 2008-12-17 | 633 | 661 | 95.8% |
+| 2009-01-21 | 601 | 630 | 95.4% |
+| 2009-02-18 | 567 | 592 | 95.8% |
+| 2009-03-18 | 578 | 599 | 96.5% |
+| 2009-04-15 | 643 | 665 | 96.7% |
+
+- **Reading:** these are low because the eligible universe shrank in the
+  2008-09 crash ($2B and $10 floors), not because puts are missing. As a
+  share of eligible names, no date in the 225 is below 92.9% (median
+  97.2%). The largest date-to-date fall is 2020-03-18 (961 names, 67% of
+  the previous date, 94.5% of eligible), again a universe effect.
+- **Stopped as instructed.** The rule was not reinterpreted. The COO decides
+  whether the run proceeds.
+
 ## Summary (first pass)
 
 | experiment | verdict | deciding number |
