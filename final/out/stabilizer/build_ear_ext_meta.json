@@ -1,0 +1,209 @@
+{
+  "prereg": "final/models/2026-10-01-stabilizer-rule-ear.md @ 3c6a321",
+  "composite_panel_v2_sha256": "fe0ce1a516442932af35691f48788c5461d67c48409b858a78b9036832f3eb77",
+  "pool_sha256": {
+    "8k_item202.parquet": "f808b047723523e08f090e7757cd90e5601fc9a94171b3b6753ee7230a8cf619",
+    "8k_item202_v2topup.parquet": "ca31cd1b3a685555d14b50f28627121d947b152c29bf89e750f54d154d982b17",
+    "8k_item202_2020topup.parquet": "f9958c6d5a635fd3e714402d471182bb26cdd73807eac55f8e9f3ca80a940e90"
+  },
+  "frozen_factor_sha256": "9cc6418f5c0a8525094dce4b1c349a2277fb229a1e9af20480c1a3561f40d687",
+  "bounds": {
+    "sep": [
+      "2005-01",
+      "2026-07"
+    ],
+    "panel": [
+      "2007-01-02",
+      "2026-07-30"
+    ]
+  },
+  "pool": {
+    "rows_all_forms": 351846,
+    "rows_dedup": 351846,
+    "rows_8k_original": 348420,
+    "rows_8ka_excluded": 3426,
+    "ciks": 8003,
+    "by_source": {
+      "8k_item202.parquet": 204362,
+      "8k_item202_v2topup.parquet": 136005,
+      "8k_item202_2020topup.parquet": 8053
+    },
+    "original_by_year_2019plus": {
+      "2019": 15275,
+      "2020": 15855,
+      "2021": 16594,
+      "2022": 16946,
+      "2023": 16404,
+      "2024": 15837,
+      "2025": 15241,
+      "2026": 8828
+    }
+  },
+  "calendar": {
+    "n": 5428,
+    "first": "2005-01-03",
+    "last": "2026-07-31"
+  },
+  "spy_missing_calendar_days": 252,
+  "spy_missing_last": "2005-12-30",
+  "rows": 15035808,
+  "rows_unmapped_cik": 0,
+  "events": {
+    "total_cik_day0_matched_to_panel_tickers": 348209,
+    "ear_finite": 318204
+  },
+  "pit_assert": {
+    "rows_checked": 12959675,
+    "pass": true,
+    "max_price_date_minus_t_days": 0
+  },
+  "identity_pre2020": {
+    "rows": 9758582,
+    "ear_raw_finite": 8399842,
+    "ear_raw_max_abs_diff": 0.0,
+    "ear_age_exact": true,
+    "cov100_exact": true,
+    "ev_filing_date_exact": true,
+    "ev_day0_exact": true,
+    "ev_avail_exact": true,
+    "pass": true
+  },
+  "colc_by_year": {
+    "2007": {
+      "rows": 832185,
+      "cov100": 0.9163707589057721,
+      "live_share": 0.8420447376484796,
+      "unmapped_cik_share": 0.0
+    },
+    "2008": {
+      "rows": 738018,
+      "cov100": 0.9238948101536819,
+      "live_share": 0.8502163903861424,
+      "unmapped_cik_share": 0.0
+    },
+    "2009": {
+      "rows": 651040,
+      "cov100": 0.92810733595478,
+      "live_share": 0.8593312238879331,
+      "unmapped_cik_share": 0.0
+    },
+    "2010": {
+      "rows": 717036,
+      "cov100": 0.9261961742506652,
+      "live_share": 0.8528051590157258,
+      "unmapped_cik_share": 0.0
+    },
+    "2011": {
+      "rows": 720705,
+      "cov100": 0.9301656017371879,
+      "live_share": 0.8548934723638659,
+      "unmapped_cik_share": 0.0
+    },
+    "2012": {
+      "rows": 703597,
+      "cov100": 0.93749262717152,
+      "live_share": 0.8662771444449024,
+      "unmapped_cik_share": 0.0
+    },
+    "2013": {
+      "rows": 745274,
+      "cov100": 0.9349688839272536,
+      "live_share": 0.8640768361703213,
+      "unmapped_cik_share": 0.0
+    },
+    "2014": {
+      "rows": 800585,
+      "cov100": 0.9328853276041894,
+      "live_share": 0.8605132496861669,
+      "unmapped_cik_share": 0.0
+    },
+    "2015": {
+      "rows": 793218,
+      "cov100": 0.9380586421387311,
+      "live_share": 0.8648921229724994,
+      "unmapped_cik_share": 0.0
+    },
+    "2016": {
+      "rows": 757670,
+      "cov100": 0.9463948684783613,
+      "live_share": 0.8723415207148231,
+      "unmapped_cik_share": 0.0
+    },
+    "2017": {
+      "rows": 766942,
+      "cov100": 0.9448224246422806,
+      "live_share": 0.8696068281564968,
+      "unmapped_cik_share": 0.0
+    },
+    "2018": {
+      "rows": 775819,
+      "cov100": 0.9393647229572877,
+      "live_share": 0.8646720433503176,
+      "unmapped_cik_share": 0.0
+    },
+    "2019": {
+      "rows": 754052,
+      "cov100": 0.9431670494873032,
+      "live_share": 0.8704240556354204,
+      "unmapped_cik_share": 0.0
+    },
+    "2020": {
+      "rows": 761609,
+      "cov100": 0.9318429797967198,
+      "live_share": 0.8609864116626773,
+      "unmapped_cik_share": 0.0
+    },
+    "2021": {
+      "rows": 897188,
+      "cov100": 0.9079200791807291,
+      "live_share": 0.8375803064686554,
+      "unmapped_cik_share": 0.0
+    },
+    "2022": {
+      "rows": 831218,
+      "cov100": 0.9486680991027625,
+      "live_share": 0.8729105962575402,
+      "unmapped_cik_share": 0.0
+    },
+    "2023": {
+      "rows": 772510,
+      "cov100": 0.9585908273032064,
+      "live_share": 0.8861386907612846,
+      "unmapped_cik_share": 0.0
+    },
+    "2024": {
+      "rows": 764789,
+      "cov100": 0.9646595335445463,
+      "live_share": 0.8903606092660852,
+      "unmapped_cik_share": 0.0
+    },
+    "2025": {
+      "rows": 753267,
+      "cov100": 0.961851508163772,
+      "live_share": 0.8935835500559562,
+      "unmapped_cik_share": 0.0
+    },
+    "2026": {
+      "rows": 440029,
+      "cov100": 0.9600980844444343,
+      "live_share": 0.8810260232848289,
+      "unmapped_cik_share": 0.0
+    }
+  },
+  "coverage_2020plus": {
+    "all_cov100": 0.9458873579907329,
+    "all_live": 0.8732799423822121,
+    "names_first_seen_2020plus_cov100": 0.8578375544389347,
+    "names_first_seen_2020plus_live": 0.7837312120965131,
+    "names_first_seen_2020plus_row_share": 0.17390649751657372,
+    "names_seen_pre2020_cov100": 0.9644233141466437,
+    "names_seen_pre2020_live": 0.8921314476830356
+  },
+  "coverage_2007_2019": {
+    "all_cov100": 0.9339947013885921,
+    "all_live": 0.8608725519649624
+  },
+  "ext_sha256": "f9db498d0d86ab956a81351d261a2063ad96dfd6a70c72acca7091e5d78504c3",
+  "rows_2020plus": 5277226,
+  "runtime_s": 38.1551833152771
+}

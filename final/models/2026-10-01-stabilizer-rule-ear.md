@@ -184,8 +184,109 @@ Iteration cap 2, bug fixes only, each logged in section 3. Outputs in
 
 ## 2. Results
 
-(appended after the runs; section 1 is not edited after its commit)
+(appended after the runs; section 1 is unchanged since 3c6a321)
+
+**Verdict: EAR is ADMITTED as a stabilizer under the rule (S1, S2 and S3 all
+pass); str_lowturn is NOT ADMITTED (fails S2 on LOYO min).** EAR earns a
+forward-column proposal only.
+
+**Read this before acting on it.** The rule's gate S3 only asks whether
+EAR's IC keeps its sign out of era, and it does (t +2.15). But the thing the
+rule is named for, narrower dispersion, did NOT show up in the 2020+ book:
+at frozen weights the sd across the 40 offsets went UP with EAR (1.03 →
+1.35pp) and the worst offset got worse (-3.93 → -4.19 %/yr), while the mean
+rose 0.24pp. The pre-registered rule made those numbers descriptive, so they
+do not change the verdict, but the "stabilizer" label is supported in-era
+only.
+
+### Reconcile (all hard asserts passed)
+| book (2007-2019, split-half OOS) | mean40 | sd40 | min40 | LOYO min |
+|---|---|---|---|---|
+| base icw9_seas | 2.5496% | 0.4720pp | 1.4201% | 1.4739% |
+| + EAR | 2.5641% | 0.4225pp | 1.5454% | 1.5619% |
+| + str_lowturn | 2.5641% | 0.4309pp | 1.5435% | 1.3675% |
+
+All match the two screen reports within 1e-4 and round to the headline 2.55 /
+0.47, 2.56 / 0.42, 2.56 / 0.43. The 40 per-offset increments match the
+reports to 1e-9, the fitted candidate weights to 1e-12, and null draws 0..19
+reproduce each report's weight-matched null to 1e-9.
+
+### S1 dispersion (100-draw weight-matched null, in-era)
+| candidate | real sd40 reduction | null p50 | null p80 | percentile of real | S1 |
+|---|---|---|---|---|---|
+| EAR | +0.0495pp | -0.0298pp | +0.0010pp | 99th | **pass** |
+| str_lowturn | +0.0410pp | -0.0021pp | +0.0176pp | 97th | **pass** |
+
+A shuffled EAR column at EAR's weight usually widens the dispersion (78 of
+100 draws); the real column narrows it by more than 99 of the 100 draws.
+Descriptive, same null: EAR's worst offset sits at the 87th percentile, its
+book mean and LOYO min at the 100th. str_lowturn's worst offset is at the
+84th, its mean at the 86th and its LOYO min at the 0th percentile (below
+every null draw).
+
+### S2 no harm (in-era)
+| candidate | mean increment | worst offset (base → book) | LOYO min (base → book) | S2 |
+|---|---|---|---|---|
+| EAR | +0.014pp | 1.42% → 1.55% | 1.47% → 1.56% | **pass** |
+| str_lowturn | +0.014pp | 1.42% → 1.54% | 1.47% → 1.37% | **FAIL** (LOYO) |
+
+### S3 out-of-era sign (EAR only; hold-out read #19, unfitted)
+- EDGAR was reachable. The top-up requested 1,328 CIKs first seen in 2020+
+  and found 8,476 Item 2.02 rows for 603 of them (725 have none, 0 returned
+  404; 2 tickers, ASBH and RCBC, have no CIK). The merged pool to 2026-07-30
+  holds 348,420 original filings across 8,003 CIKs.
+- Identity: the extended build equals WO-29's frozen factor on all 9,758,582
+  rows dated <= 2019-12-31 (max |diff| 0.0; ages, event dates and coverage
+  exact). PIT assert passes on 12,959,675 live rows.
+- Coverage 2020+ (share of column-c cap150 name-dates with a filing in the
+  prior 100 trading days): 94.6% overall vs 93.4% in 2007-2019. By year:
+  93.2, 90.8, 94.9, 95.9, 96.5, 96.2, 96.0% (2020..2026). Names first seen
+  in 2020+ are 17% of rows with 85.8% coverage; older names 96.4%. EAR is
+  live on 87.3% of 2020+ rows (86.1% in-era). 2021 is the low year (cause not checked).
+- Reconciles: the same code on 2007-2019 gives EAR IC t +3.257231 (= the
+  screen) and frozen icw9_seas +3.4865% (= WO-23); the 2020+ base gives
+  -2.0164% (= WO-31 / WO-40).
+
+**S3 gate: pooled NW(39) rank-IC on 2020-01-02..2026-07-30 (1,652 dates) =
++0.01216, t = +2.15. Bar t >= +1.0 with sign +: pass.** In-era it was
++0.01235, t +3.26, so the IC is the same size out of era. Descriptive:
+both-sides sector-demeaned t +2.38; live rows only t +2.26; IC by year
++0.016, +0.027, -0.020, +0.026, +0.028, +0.005, -0.004 (2020..2026).
+
+2020+ book with vs without EAR, frozen weights (descriptive):
+
+| 2020-01..2026-07 | mean40 | sd40 | worst offset | offsets > 0 | LOYO min | turnover | cost at 15bp |
+|---|---|---|---|---|---|---|---|
+| without (icw9_seas live) | -2.02% | 1.03pp | -3.93% | 0/40 | -8.39% | 44.6% | 0.43%/yr |
+| with (icw10_ear) | -1.78% | 1.35pp | -4.19% | 6/40 | -6.80% | 52.6% | 0.51%/yr |
+| increment (paired) | +0.24pp | 1.02pp | -2.06pp | 24/40 | | +8.0pp | +0.08%/yr |
+
+Increment by year: -7.2, +8.2, -0.8, +1.8, +1.0, +0.5, -3.2pp (2020..2026);
+it is two large offsetting years plus small ones. Turnover is the share of
+new names per 40-day rebalance; EAR adds about 8 points of it.
+
+In-sample reference, same two frozen-weight books on 2007-2019: without
++3.49% (sd40 0.22pp, worst +2.95%), with +4.02% (sd40 0.31pp, worst +3.40%),
+increment +0.54pp, 40/40 offsets positive, turnover 43.3% → 51.5%. These
+weights were fit on the same years, so this row is not evidence.
+
+### What to take from it
+- By the rule as written: EAR ADMITTED, str_lowturn NOT ADMITTED.
+- The in-era narrowing (S1) is real against the null but belongs to the
+  split-half book where EAR's weight is 0.135 / 0.040. At the frozen
+  full-era weight (0.1916) EAR raised sd40 both in-era and out of era. So
+  the forward column would test a book that has not shown narrower
+  dispersion at the weights it would actually run.
+- What does hold out of era is the IC (same size, t +2.15) and a positive
+  but noisy mean increment (+0.24pp, 24/40 offsets).
+- Proposal for Gabe: a forward tracking column `icw10_ear` at the weights
+  in section 1 (like icw10_io), judged on forward mean and dispersion
+  against icw9_seas. Live weights stay his decision. A smaller EAR weight
+  would be a new, separately registered choice; none was tried here.
+- Hold-out log: read #19, unfitted, 2020-01-02..2026-07-30, EAR only. No
+  2020+ str_lowturn value was computed. No weight was fit on 2020+.
 
 ## 3. Iteration log
-
-(none yet)
+0 of 2 used. Every script ran once and no bug fix was needed. Both
+S1/S2 runs were started, stopped within seconds before any draw (to
+relaunch them detached), and rerun from scratch; they are deterministic.

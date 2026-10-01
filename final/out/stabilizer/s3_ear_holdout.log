@@ -1,0 +1,12 @@
+[14:01:32] frozen weight rule reproduces the pre-registered icw10_ear dict to 4dp
+[14:01:44] [A] cap150: 9,756,141 rows, 6,508 tickers, 3272 dates 2007-01-03..2019-12-31
+[14:02:23] [A] base icw9_seas frozen reconcile OK +0.0348652 == +0.0348652
+[14:03:17] [A] in-era EAR IC t reproduces the screen (+3.257231)
+[14:03:17] [A] EAR IC +0.01235 NW t +3.257 n 3272 | sector both +2.79 | live-only t +3.23
+[14:03:23] [A] without +0.03487 sd40 0.00223 min +0.02953 | with +0.04023 sd40 0.00312 min +0.03399 | inc +0.00536 offsets>0 40/40
+[14:03:29] [B] cap150: 5,220,610 rows, 5,066 tickers, 1652 dates 2020-01-02..2026-07-30
+[14:03:54] [B] base icw9_seas frozen reconcile OK -0.0201636 == -0.0201636
+[14:04:17] [B] EAR IC +0.01216 NW t +2.149 n 1652 | sector both +2.38 | live-only t +2.26
+[14:04:21] [B] without -0.02016 sd40 0.01026 min -0.03929 | with -0.01779 sd40 0.01346 min -0.04191 | inc +0.00237 offsets>0 24/40
+[14:04:21] S3 {'period': '2020-01-02..2026-07-30', 'ic_mean': 0.012164865194940797, 'nw39_t': 2.1491435133426617, 'n_dates': 1652, 'bar': 'mean IC > 0 and t >= +1.0', 'pass': True}
+[14:04:21] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-afcd45cd69ed78d09/final/out/stabilizer/s3_ear_holdout.json (169s)
