@@ -1,0 +1,108 @@
+{
+ "label_mode": "shuffled",
+ "NOT_A_RESULT": "labels are permuted within date; this file calibrates the decision rule under the null and proves the plumbing",
+ "universe": "thin",
+ "dates": [
+  "2008-01-02",
+  "2008-01-16",
+  "2008-02-20",
+  "2008-03-19",
+  "2008-04-16",
+  "2008-05-21",
+  "2008-06-18",
+  "2008-07-16",
+  "2008-08-20"
+ ],
+ "coverage": {
+  "dates_in_frame": 9,
+  "dates_used": 9,
+  "dates_dropped_lt_min_names": [],
+  "share_of_universe_with_signal_median": 0.6176613294517225
+ },
+ "seeds": 100,
+ "verdict_rates": {
+  "KILL": 1.0
+ },
+ "pass_rate": 0.0,
+ "criterion_pass_rates": {
+  "S1_M_gt_null_p80": 0.25,
+  "S2_nw39_t_ge_3.75": 0.0,
+  "S3_M_ge_1.0pct": 0.07,
+  "S4_sector_neutral": 0.0,
+  "S5_halves_all_positive": 0.0,
+  "S6_loyo_and_year_share": 0.0,
+  "S7_both_offsets_positive": 0.26,
+  "S8_size_vol_residual": 0.0
+ },
+ "kill_trigger_rates": {
+  "K1_M_le_null_p80": 0.75,
+  "K2_offset_sign_flip": 0.47,
+  "K3_odd_even_sign_flip": 0.0,
+  "K4_year_share_gt_45pct": 0.53,
+  "K5_sector_neutral_le_0": 0.45,
+  "K6_size_vol_residual_le_0": 0.52
+ },
+ "null_label_M_pct": {
+  "mean": 0.029844000000000002,
+  "sd": 0.7175130442465837,
+  "p5": -0.98872,
+  "p95": 1.1593349999999996
+ },
+ "null_label_nw39_t": "n < 10 dates: NW t undefined",
+ "example_run_seed0": {
+  "n_dates": 9,
+  "median_names_per_date": 1281.0,
+  "M_pct_per_40d": 0.7979,
+  "nw39_t": NaN,
+  "nw2_t_DESCRIPTIVE": NaN,
+  "null_p80_pct": 0.5602,
+  "null_median_pct": -0.0815,
+  "sector_neutral": {
+   "M_pct": -0.4854,
+   "nw39_t": NaN
+  },
+  "size_vol_residual": {
+   "M_pct": 0.438,
+   "nw39_t": NaN
+  },
+  "odd_years_pct": null,
+  "even_years_pct": 0.7979,
+  "chrono_first_half_pct": 1.281,
+  "chrono_second_half_pct": 0.4114,
+  "offsets_pct": [
+   -0.1695,
+   2.0071
+  ],
+  "loyo_pct": {},
+  "loyo_min_pct": null,
+  "year_share": {
+   "2008": 1.0
+  },
+  "max_year_share": 1.0,
+  "oi_terciles_DESCRIPTIVE_pct": {
+   "t0_thinnest": 0.1292,
+   "t1_middle": -0.2717,
+   "t2_thickest": 1.5787
+  },
+  "criteria": {
+   "S1_M_gt_null_p80": true,
+   "S2_nw39_t_ge_3.75": false,
+   "S3_M_ge_1.0pct": false,
+   "S4_sector_neutral": false,
+   "S5_halves_all_positive": false,
+   "S6_loyo_and_year_share": false,
+   "S7_both_offsets_positive": false,
+   "S8_size_vol_residual": false
+  },
+  "kill": {
+   "K1_M_le_null_p80": false,
+   "K2_offset_sign_flip": true,
+   "K3_odd_even_sign_flip": false,
+   "K4_year_share_gt_45pct": true,
+   "K5_sector_neutral_le_0": true,
+   "K6_size_vol_residual_le_0": false
+  },
+  "verdict": "KILL"
+ },
+ "runtime_s": 6.028409004211426
+}

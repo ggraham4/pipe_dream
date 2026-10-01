@@ -1,0 +1,156 @@
+{
+ "label_mode": "noise",
+ "entry_dates": [
+  "2008-01-02",
+  "2008-01-16",
+  "2008-02-20",
+  "2008-03-19",
+  "2008-04-16",
+  "2008-05-21",
+  "2008-06-18",
+  "2008-07-16",
+  "2008-08-20"
+ ],
+ "delta_bucket": -0.3,
+ "fillable_rule": "quoted (WO-O1 F0-F6) AND open_interest >= 50 AND bid_size >= 5 where sizes are populated for the name-date (>= 90% rule); size unknown is not held against the entry",
+ "hand_check": {
+  "cases": [
+   {
+    "case": "assigned",
+    "code": -148.9710615162884,
+    "by_hand": -148.97106,
+    "ok": true
+   },
+   {
+    "case": "split_2for1",
+    "code": -49.046061516288404,
+    "by_hand": -49.04606,
+    "ok": true
+   },
+   {
+    "case": "otm",
+    "code": 51.62893848371159,
+    "by_hand": 51.62894,
+    "ok": true
+   }
+  ],
+  "settle_split": {
+   "r": 2.0,
+   "S_T": 4.5,
+   "status": "normal",
+   "ok": true
+  },
+  "settle_delisted": {
+   "S_T": 4.5,
+   "status": "delisted_floor",
+   "ok": true
+  },
+  "all_ok": true
+ },
+ "named_check": {
+  "WAMUQ@2008-08-20": {
+   "status": "thin with a kept chain but not in the quoted pool",
+   "reason": "no put inside the delta tolerance on the target expiry"
+  },
+  "WAMUQ@2008-09-17": {
+   "status": "not in pool: date not pulled for the thin slice yet"
+  },
+  "ATPAQ@2012-07-18": {
+   "status": "not in pool: date not pulled for the thin slice yet"
+  }
+ },
+ "named_check_pass": true,
+ "sets": {
+  "quoted": {
+   "n_cycles": 9,
+   "excess_ann": -0.07616647395133268,
+   "odd_years": NaN,
+   "even_years": -0.07616647395133268,
+   "loyo": {},
+   "loyo_min": NaN,
+   "chrono_first_half_DESCRIPTIVE": -0.1077316158167273,
+   "chrono_second_half_DESCRIPTIVE": -0.054070874645556426,
+   "positions": 4164,
+   "assigned_share": 0.35782901056676275,
+   "settle_status": {
+    "noise": 4164
+   },
+   "mean_half_spread_over_K": 0.007865757467699729
+  },
+  "fillable": {
+   "n_cycles": 9,
+   "excess_ann": -0.047923342477684545,
+   "odd_years": NaN,
+   "even_years": -0.047923342477684545,
+   "loyo": {},
+   "loyo_min": NaN,
+   "chrono_first_half_DESCRIPTIVE": -0.09102863153192857,
+   "chrono_second_half_DESCRIPTIVE": -0.01774964013971371,
+   "positions": 2497,
+   "assigned_share": 0.35843011613936726,
+   "settle_status": {
+    "noise": 2497
+   },
+   "mean_half_spread_over_K": 0.006158970516953853
+  },
+  "fillable_strict_DESCRIPTIVE": {
+   "n_cycles": 9,
+   "excess_ann": -0.009869910773045585,
+   "odd_years": NaN,
+   "even_years": -0.009869910773045585,
+   "loyo": {},
+   "loyo_min": NaN,
+   "chrono_first_half_DESCRIPTIVE": 0.035566258650162656,
+   "chrono_second_half_DESCRIPTIVE": -0.04167522936929135,
+   "positions": 521,
+   "assigned_share": 0.3378119001919386,
+   "settle_status": {
+    "noise": 521
+   },
+   "mean_half_spread_over_K": 0.006583821801553557
+  },
+  "fillable_oi_only_DESCRIPTIVE": {
+   "n_cycles": 9,
+   "excess_ann": -0.05205466114049802,
+   "odd_years": NaN,
+   "even_years": -0.05205466114049802,
+   "loyo": {},
+   "loyo_min": NaN,
+   "chrono_first_half_DESCRIPTIVE": -0.09015509758587482,
+   "chrono_second_half_DESCRIPTIVE": -0.025384355628734246,
+   "positions": 2503,
+   "assigned_share": 0.3595685177786656,
+   "settle_status": {
+    "noise": 2503
+   },
+   "mean_half_spread_over_K": 0.006153939143008955
+  }
+ },
+ "capacity": {
+  "fillable_entries_per_month_median": 286.0,
+  "VERDICT_volume_capped": {
+   "entries_with_capacity_per_month_median": 159.0,
+   "collateral_usd_per_month_median": 19243250.0,
+   "collateral_usd_per_month_min": 14630850.0,
+   "premium_usd_per_month_median": 984260.0,
+   "share_of_fillable_entries_with_zero_volume": 0.41409691629955947,
+   "rule": "min(bid_size where populated, floor(10% x OI), the contract's own volume that day) x 100 x strike"
+  },
+  "open_interest_only_UPPER_BOUND_DESCRIPTIVE": {
+   "collateral_usd_per_month_median": 49740800.0,
+   "collateral_usd_per_month_min": 32739350.0,
+   "premium_usd_per_month_median": 2158340.0,
+   "median_cap_contracts_per_entry": 29.0,
+   "rule": "min(bid_size where populated, floor(10% x OI)) x 100 x strike"
+  }
+ },
+ "holdout_read": "none (no date from 2019 on is read)",
+ "noise_unit_test": {
+  "mean_cycle_excess": -0.005908419152054098,
+  "predicted_analytic": -0.005008954346142755,
+  "z_realized_minus_predicted": -0.7553135984185146,
+  "note": "S_T is lognormal at each contract's own IV; excess is vs T-bill carry; expected about minus the half-spread"
+ },
+ "verdict": null,
+ "runtime_s": 46.01472306251526
+}
