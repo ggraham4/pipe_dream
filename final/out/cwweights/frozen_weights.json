@@ -1,0 +1,91 @@
+{
+  "base_weights": {
+    "momentum_12_1": 0.010741086255370362,
+    "pct_from_high_252": 0.010741086255370362,
+    "volatility_60": -0.010741086255370362,
+    "gross_profitability": 0.41222330948655345,
+    "accruals": -0.0793206938384512,
+    "net_issuance_pct": -0.4301782987841274,
+    "days_to_next_filing_seasonal": -0.035313352869386624,
+    "short_interest_days_to_cover": -0.010741086255370362
+  },
+  "base_t": {
+    "momentum_12_1": {
+      "mean": -0.003697943287831776,
+      "t": -0.22626217306632374,
+      "n": 133,
+      "n_dates": 133
+    },
+    "pct_from_high_252": {
+      "mean": -0.0041091109028624255,
+      "t": -0.17356989351720123,
+      "n": 133,
+      "n_dates": 133
+    },
+    "volatility_60": {
+      "mean": -0.003888762457237609,
+      "t": -0.1953409728573305,
+      "n": 133,
+      "n_dates": 133
+    },
+    "gross_profitability": {
+      "mean": 0.04225895239509173,
+      "t": 4.837817700052904,
+      "n": 133,
+      "n_dates": 133
+    },
+    "accruals": {
+      "mean": -0.01657180761786873,
+      "t": -1.7384792557530406,
+      "n": 133,
+      "n_dates": 133
+    },
+    "net_issuance_pct": {
+      "mean": -0.03087988543981693,
+      "t": -5.004979464428428,
+      "n": 133,
+      "n_dates": 133
+    },
+    "days_to_next_filing_seasonal": {
+      "mean": -0.005172067790913103,
+      "t": -1.3287689161953293,
+      "n": 133,
+      "n_dates": 133
+    },
+    "short_interest_days_to_cover": {
+      "mean": NaN,
+      "t": NaN,
+      "n": 0,
+      "n_dates": 0
+    }
+  },
+  "t_raw_cw": 6.089209753409615,
+  "t_neutral_cw": 3.5408377976179084,
+  "x": {
+    "V0": 0.35343562716662774,
+    "V1": 0.05,
+    "V2": 0.1,
+    "V3": 0.2,
+    "V4": 0.2144007133373948
+  },
+  "fit_window": [
+    "2008-01-01",
+    "2018-12-31"
+  ],
+  "refit_on_current_file_not_used": {
+    "base_weights": {
+      "momentum_12_1": 0.010735597348112587,
+      "pct_from_high_252": 0.010735597348112587,
+      "volatility_60": -0.010735597348112587,
+      "gross_profitability": 0.4123413963506447,
+      "accruals": -0.07905130858316262,
+      "net_issuance_pct": -0.43008611585287926,
+      "days_to_next_filing_seasonal": -0.03557878982086313,
+      "short_interest_days_to_cover": -0.010735597348112587
+    },
+    "t_raw_cw": 6.088825496059554,
+    "t_neutral_cw": 3.537296579084579,
+    "n_name_dates": 147606
+  },
+  "note": "frozen at Experiment B's published values (expB_screen.json); V4 x follows from its neutral t"
+}
