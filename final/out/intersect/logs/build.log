@@ -1,0 +1,4 @@
+[14:05:10] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[14:06:06] [A] R252-EXP -1.1094%/yr (ref -1.109); |L| mean 296.5 min 266 (62s)
+[14:06:35] [B] L vs SPY -2.0164 (ref -2.016); R252-EXP +2.6025 (ref 2.603); |L| mean 312.8 min 269 (90s)
+[14:06:35] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a60ec257a76eeec7a/final/out/intersect/intersect_build.json; cache /tmp/wo44_intersect_picks.pkl
