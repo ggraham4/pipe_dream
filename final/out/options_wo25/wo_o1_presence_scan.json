@@ -1,0 +1,3121 @@
+{
+  "n_dates": 225,
+  "median": 1335.0,
+  "min": {
+    "date": "2008-11-19",
+    "names_with_put": 548
+  },
+  "below_half_median": [
+    {
+      "date": "2008-10-22",
+      "target_expiry": "2008-11-21",
+      "accepted": [
+        "2008-11-21",
+        "2008-11-22"
+      ],
+      "matched_listed_expiries": [
+        "2008-11-22"
+      ],
+      "names_with_put": 655,
+      "eligible_cap2000": 687
+    },
+    {
+      "date": "2008-11-19",
+      "target_expiry": "2008-12-19",
+      "accepted": [
+        "2008-12-19",
+        "2008-12-20"
+      ],
+      "matched_listed_expiries": [
+        "2008-12-20"
+      ],
+      "names_with_put": 548,
+      "eligible_cap2000": 569
+    },
+    {
+      "date": "2008-12-17",
+      "target_expiry": "2009-01-16",
+      "accepted": [
+        "2009-01-16",
+        "2009-01-17"
+      ],
+      "matched_listed_expiries": [
+        "2009-01-17"
+      ],
+      "names_with_put": 633,
+      "eligible_cap2000": 661
+    },
+    {
+      "date": "2009-01-21",
+      "target_expiry": "2009-02-20",
+      "accepted": [
+        "2009-02-20",
+        "2009-02-21"
+      ],
+      "matched_listed_expiries": [
+        "2009-02-21"
+      ],
+      "names_with_put": 601,
+      "eligible_cap2000": 630
+    },
+    {
+      "date": "2009-02-18",
+      "target_expiry": "2009-03-20",
+      "accepted": [
+        "2009-03-20",
+        "2009-03-21"
+      ],
+      "matched_listed_expiries": [
+        "2009-03-21"
+      ],
+      "names_with_put": 567,
+      "eligible_cap2000": 592
+    },
+    {
+      "date": "2009-03-18",
+      "target_expiry": "2009-04-17",
+      "accepted": [
+        "2009-04-17",
+        "2009-04-18"
+      ],
+      "matched_listed_expiries": [
+        "2009-04-18"
+      ],
+      "names_with_put": 578,
+      "eligible_cap2000": 599
+    },
+    {
+      "date": "2009-04-15",
+      "target_expiry": "2009-05-15",
+      "accepted": [
+        "2009-05-15",
+        "2009-05-16"
+      ],
+      "matched_listed_expiries": [
+        "2009-05-16"
+      ],
+      "names_with_put": 643,
+      "eligible_cap2000": 665
+    }
+  ],
+  "holiday_rule_dates": [
+    {
+      "date": "2008-02-20",
+      "target_expiry": "2008-03-21",
+      "accepted": [
+        "2008-03-21",
+        "2008-03-22",
+        "2008-03-20"
+      ],
+      "matched_listed_expiries": [
+        "2008-03-22"
+      ],
+      "names_with_put": 929,
+      "eligible_cap2000": 993
+    },
+    {
+      "date": "2014-03-19",
+      "target_expiry": "2014-04-18",
+      "accepted": [
+        "2014-04-18",
+        "2014-04-19",
+        "2014-04-17"
+      ],
+      "matched_listed_expiries": [
+        "2014-04-19"
+      ],
+      "names_with_put": 1305,
+      "eligible_cap2000": 1342
+    },
+    {
+      "date": "2019-03-20",
+      "target_expiry": "2019-04-19",
+      "accepted": [
+        "2019-04-19",
+        "2019-04-20",
+        "2019-04-18"
+      ],
+      "matched_listed_expiries": [
+        "2019-04-18"
+      ],
+      "names_with_put": 1370,
+      "eligible_cap2000": 1404
+    },
+    {
+      "date": "2022-03-16",
+      "target_expiry": "2022-04-15",
+      "accepted": [
+        "2022-04-15",
+        "2022-04-16",
+        "2022-04-14"
+      ],
+      "matched_listed_expiries": [
+        "2022-04-14"
+      ],
+      "names_with_put": 1592,
+      "eligible_cap2000": 1640
+    },
+    {
+      "date": "2025-03-19",
+      "target_expiry": "2025-04-18",
+      "accepted": [
+        "2025-04-18",
+        "2025-04-19",
+        "2025-04-17"
+      ],
+      "matched_listed_expiries": [
+        "2025-04-17"
+      ],
+      "names_with_put": 1473,
+      "eligible_cap2000": 1494
+    },
+    {
+      "date": "2026-05-20",
+      "target_expiry": "2026-06-19",
+      "accepted": [
+        "2026-06-19",
+        "2026-06-20",
+        "2026-06-18"
+      ],
+      "matched_listed_expiries": [
+        "2026-06-18"
+      ],
+      "names_with_put": 1579,
+      "eligible_cap2000": 1608
+    }
+  ],
+  "pass": false,
+  "by_date": [
+    {
+      "date": "2008-01-02",
+      "target_expiry": "2008-01-18",
+      "accepted": [
+        "2008-01-18",
+        "2008-01-19"
+      ],
+      "matched_listed_expiries": [
+        "2008-01-19"
+      ],
+      "names_with_put": 956,
+      "eligible_cap2000": 1028
+    },
+    {
+      "date": "2008-01-16",
+      "target_expiry": "2008-02-15",
+      "accepted": [
+        "2008-02-15",
+        "2008-02-16"
+      ],
+      "matched_listed_expiries": [
+        "2008-02-16"
+      ],
+      "names_with_put": 909,
+      "eligible_cap2000": 978
+    },
+    {
+      "date": "2008-02-20",
+      "target_expiry": "2008-03-21",
+      "accepted": [
+        "2008-03-21",
+        "2008-03-22",
+        "2008-03-20"
+      ],
+      "matched_listed_expiries": [
+        "2008-03-22"
+      ],
+      "names_with_put": 929,
+      "eligible_cap2000": 993
+    },
+    {
+      "date": "2008-03-19",
+      "target_expiry": "2008-04-18",
+      "accepted": [
+        "2008-04-18",
+        "2008-04-19"
+      ],
+      "matched_listed_expiries": [
+        "2008-04-19"
+      ],
+      "names_with_put": 888,
+      "eligible_cap2000": 947
+    },
+    {
+      "date": "2008-04-16",
+      "target_expiry": "2008-05-16",
+      "accepted": [
+        "2008-05-16",
+        "2008-05-17"
+      ],
+      "matched_listed_expiries": [
+        "2008-05-17"
+      ],
+      "names_with_put": 928,
+      "eligible_cap2000": 986
+    },
+    {
+      "date": "2008-05-21",
+      "target_expiry": "2008-06-20",
+      "accepted": [
+        "2008-06-20",
+        "2008-06-21"
+      ],
+      "matched_listed_expiries": [
+        "2008-06-21"
+      ],
+      "names_with_put": 937,
+      "eligible_cap2000": 1001
+    },
+    {
+      "date": "2008-06-18",
+      "target_expiry": "2008-07-18",
+      "accepted": [
+        "2008-07-18",
+        "2008-07-19"
+      ],
+      "matched_listed_expiries": [
+        "2008-07-19"
+      ],
+      "names_with_put": 932,
+      "eligible_cap2000": 989
+    },
+    {
+      "date": "2008-07-16",
+      "target_expiry": "2008-08-15",
+      "accepted": [
+        "2008-08-15",
+        "2008-08-16"
+      ],
+      "matched_listed_expiries": [
+        "2008-08-16"
+      ],
+      "names_with_put": 867,
+      "eligible_cap2000": 921
+    },
+    {
+      "date": "2008-08-20",
+      "target_expiry": "2008-09-19",
+      "accepted": [
+        "2008-09-19",
+        "2008-09-20"
+      ],
+      "matched_listed_expiries": [
+        "2008-09-20"
+      ],
+      "names_with_put": 896,
+      "eligible_cap2000": 950
+    },
+    {
+      "date": "2008-09-17",
+      "target_expiry": "2008-10-17",
+      "accepted": [
+        "2008-10-17",
+        "2008-10-18"
+      ],
+      "matched_listed_expiries": [
+        "2008-10-18"
+      ],
+      "names_with_put": 852,
+      "eligible_cap2000": 902
+    },
+    {
+      "date": "2008-10-22",
+      "target_expiry": "2008-11-21",
+      "accepted": [
+        "2008-11-21",
+        "2008-11-22"
+      ],
+      "matched_listed_expiries": [
+        "2008-11-22"
+      ],
+      "names_with_put": 655,
+      "eligible_cap2000": 687
+    },
+    {
+      "date": "2008-11-19",
+      "target_expiry": "2008-12-19",
+      "accepted": [
+        "2008-12-19",
+        "2008-12-20"
+      ],
+      "matched_listed_expiries": [
+        "2008-12-20"
+      ],
+      "names_with_put": 548,
+      "eligible_cap2000": 569
+    },
+    {
+      "date": "2008-12-17",
+      "target_expiry": "2009-01-16",
+      "accepted": [
+        "2009-01-16",
+        "2009-01-17"
+      ],
+      "matched_listed_expiries": [
+        "2009-01-17"
+      ],
+      "names_with_put": 633,
+      "eligible_cap2000": 661
+    },
+    {
+      "date": "2009-01-21",
+      "target_expiry": "2009-02-20",
+      "accepted": [
+        "2009-02-20",
+        "2009-02-21"
+      ],
+      "matched_listed_expiries": [
+        "2009-02-21"
+      ],
+      "names_with_put": 601,
+      "eligible_cap2000": 630
+    },
+    {
+      "date": "2009-02-18",
+      "target_expiry": "2009-03-20",
+      "accepted": [
+        "2009-03-20",
+        "2009-03-21"
+      ],
+      "matched_listed_expiries": [
+        "2009-03-21"
+      ],
+      "names_with_put": 567,
+      "eligible_cap2000": 592
+    },
+    {
+      "date": "2009-03-18",
+      "target_expiry": "2009-04-17",
+      "accepted": [
+        "2009-04-17",
+        "2009-04-18"
+      ],
+      "matched_listed_expiries": [
+        "2009-04-18"
+      ],
+      "names_with_put": 578,
+      "eligible_cap2000": 599
+    },
+    {
+      "date": "2009-04-15",
+      "target_expiry": "2009-05-15",
+      "accepted": [
+        "2009-05-15",
+        "2009-05-16"
+      ],
+      "matched_listed_expiries": [
+        "2009-05-16"
+      ],
+      "names_with_put": 643,
+      "eligible_cap2000": 665
+    },
+    {
+      "date": "2009-05-20",
+      "target_expiry": "2009-06-19",
+      "accepted": [
+        "2009-06-19",
+        "2009-06-20"
+      ],
+      "matched_listed_expiries": [
+        "2009-06-20"
+      ],
+      "names_with_put": 671,
+      "eligible_cap2000": 692
+    },
+    {
+      "date": "2009-06-17",
+      "target_expiry": "2009-07-17",
+      "accepted": [
+        "2009-07-17",
+        "2009-07-18"
+      ],
+      "matched_listed_expiries": [
+        "2009-07-18"
+      ],
+      "names_with_put": 675,
+      "eligible_cap2000": 696
+    },
+    {
+      "date": "2009-07-22",
+      "target_expiry": "2009-08-21",
+      "accepted": [
+        "2009-08-21",
+        "2009-08-22"
+      ],
+      "matched_listed_expiries": [
+        "2009-08-22"
+      ],
+      "names_with_put": 712,
+      "eligible_cap2000": 735
+    },
+    {
+      "date": "2009-08-19",
+      "target_expiry": "2009-09-18",
+      "accepted": [
+        "2009-09-18",
+        "2009-09-19"
+      ],
+      "matched_listed_expiries": [
+        "2009-09-19"
+      ],
+      "names_with_put": 753,
+      "eligible_cap2000": 777
+    },
+    {
+      "date": "2009-09-16",
+      "target_expiry": "2009-10-16",
+      "accepted": [
+        "2009-10-16",
+        "2009-10-17"
+      ],
+      "matched_listed_expiries": [
+        "2009-10-17"
+      ],
+      "names_with_put": 832,
+      "eligible_cap2000": 858
+    },
+    {
+      "date": "2009-10-21",
+      "target_expiry": "2009-11-20",
+      "accepted": [
+        "2009-11-20",
+        "2009-11-21"
+      ],
+      "matched_listed_expiries": [
+        "2009-11-21"
+      ],
+      "names_with_put": 826,
+      "eligible_cap2000": 849
+    },
+    {
+      "date": "2009-11-18",
+      "target_expiry": "2009-12-18",
+      "accepted": [
+        "2009-12-18",
+        "2009-12-19"
+      ],
+      "matched_listed_expiries": [
+        "2009-12-19"
+      ],
+      "names_with_put": 831,
+      "eligible_cap2000": 860
+    },
+    {
+      "date": "2009-12-16",
+      "target_expiry": "2010-01-15",
+      "accepted": [
+        "2010-01-15",
+        "2010-01-16"
+      ],
+      "matched_listed_expiries": [
+        "2010-01-16"
+      ],
+      "names_with_put": 843,
+      "eligible_cap2000": 872
+    },
+    {
+      "date": "2010-01-20",
+      "target_expiry": "2010-02-19",
+      "accepted": [
+        "2010-02-19",
+        "2010-02-20"
+      ],
+      "matched_listed_expiries": [
+        "2010-02-20"
+      ],
+      "names_with_put": 870,
+      "eligible_cap2000": 897
+    },
+    {
+      "date": "2010-02-17",
+      "target_expiry": "2010-03-19",
+      "accepted": [
+        "2010-03-19",
+        "2010-03-20"
+      ],
+      "matched_listed_expiries": [
+        "2010-03-20"
+      ],
+      "names_with_put": 859,
+      "eligible_cap2000": 893
+    },
+    {
+      "date": "2010-03-17",
+      "target_expiry": "2010-04-16",
+      "accepted": [
+        "2010-04-16",
+        "2010-04-17"
+      ],
+      "matched_listed_expiries": [
+        "2010-04-17"
+      ],
+      "names_with_put": 896,
+      "eligible_cap2000": 931
+    },
+    {
+      "date": "2010-04-21",
+      "target_expiry": "2010-05-21",
+      "accepted": [
+        "2010-05-21",
+        "2010-05-22"
+      ],
+      "matched_listed_expiries": [
+        "2010-05-22"
+      ],
+      "names_with_put": 933,
+      "eligible_cap2000": 969
+    },
+    {
+      "date": "2010-05-19",
+      "target_expiry": "2010-06-18",
+      "accepted": [
+        "2010-06-18",
+        "2010-06-19"
+      ],
+      "matched_listed_expiries": [
+        "2010-06-19"
+      ],
+      "names_with_put": 880,
+      "eligible_cap2000": 914
+    },
+    {
+      "date": "2010-06-16",
+      "target_expiry": "2010-07-16",
+      "accepted": [
+        "2010-07-16",
+        "2010-07-17"
+      ],
+      "matched_listed_expiries": [
+        "2010-07-17"
+      ],
+      "names_with_put": 888,
+      "eligible_cap2000": 923
+    },
+    {
+      "date": "2010-07-21",
+      "target_expiry": "2010-08-20",
+      "accepted": [
+        "2010-08-20",
+        "2010-08-21"
+      ],
+      "matched_listed_expiries": [
+        "2010-08-21"
+      ],
+      "names_with_put": 850,
+      "eligible_cap2000": 886
+    },
+    {
+      "date": "2010-08-18",
+      "target_expiry": "2010-09-17",
+      "accepted": [
+        "2010-09-17",
+        "2010-09-18"
+      ],
+      "matched_listed_expiries": [
+        "2010-09-18"
+      ],
+      "names_with_put": 859,
+      "eligible_cap2000": 891
+    },
+    {
+      "date": "2010-09-15",
+      "target_expiry": "2010-10-15",
+      "accepted": [
+        "2010-10-15",
+        "2010-10-16"
+      ],
+      "matched_listed_expiries": [
+        "2010-10-16"
+      ],
+      "names_with_put": 888,
+      "eligible_cap2000": 923
+    },
+    {
+      "date": "2010-10-20",
+      "target_expiry": "2010-11-19",
+      "accepted": [
+        "2010-11-19",
+        "2010-11-20"
+      ],
+      "matched_listed_expiries": [
+        "2010-11-20"
+      ],
+      "names_with_put": 919,
+      "eligible_cap2000": 952
+    },
+    {
+      "date": "2010-11-17",
+      "target_expiry": "2010-12-17",
+      "accepted": [
+        "2010-12-17",
+        "2010-12-18"
+      ],
+      "matched_listed_expiries": [
+        "2010-12-18"
+      ],
+      "names_with_put": 927,
+      "eligible_cap2000": 965
+    },
+    {
+      "date": "2010-12-22",
+      "target_expiry": "2011-01-21",
+      "accepted": [
+        "2011-01-21",
+        "2011-01-22"
+      ],
+      "matched_listed_expiries": [
+        "2011-01-22"
+      ],
+      "names_with_put": 1000,
+      "eligible_cap2000": 1039
+    },
+    {
+      "date": "2011-01-19",
+      "target_expiry": "2011-02-18",
+      "accepted": [
+        "2011-02-18",
+        "2011-02-19"
+      ],
+      "matched_listed_expiries": [
+        "2011-02-19"
+      ],
+      "names_with_put": 1002,
+      "eligible_cap2000": 1040
+    },
+    {
+      "date": "2011-02-16",
+      "target_expiry": "2011-03-18",
+      "accepted": [
+        "2011-03-18",
+        "2011-03-19"
+      ],
+      "matched_listed_expiries": [
+        "2011-03-19"
+      ],
+      "names_with_put": 1033,
+      "eligible_cap2000": 1077
+    },
+    {
+      "date": "2011-03-16",
+      "target_expiry": "2011-04-15",
+      "accepted": [
+        "2011-04-15",
+        "2011-04-16"
+      ],
+      "matched_listed_expiries": [
+        "2011-04-16"
+      ],
+      "names_with_put": 1003,
+      "eligible_cap2000": 1044
+    },
+    {
+      "date": "2011-04-20",
+      "target_expiry": "2011-05-20",
+      "accepted": [
+        "2011-05-20",
+        "2011-05-21"
+      ],
+      "matched_listed_expiries": [
+        "2011-05-21"
+      ],
+      "names_with_put": 1044,
+      "eligible_cap2000": 1089
+    },
+    {
+      "date": "2011-05-18",
+      "target_expiry": "2011-06-17",
+      "accepted": [
+        "2011-06-17",
+        "2011-06-18"
+      ],
+      "matched_listed_expiries": [
+        "2011-06-18"
+      ],
+      "names_with_put": 1061,
+      "eligible_cap2000": 1101
+    },
+    {
+      "date": "2011-06-15",
+      "target_expiry": "2011-07-15",
+      "accepted": [
+        "2011-07-15",
+        "2011-07-16"
+      ],
+      "matched_listed_expiries": [
+        "2011-07-16"
+      ],
+      "names_with_put": 996,
+      "eligible_cap2000": 1036
+    },
+    {
+      "date": "2011-07-20",
+      "target_expiry": "2011-08-19",
+      "accepted": [
+        "2011-08-19",
+        "2011-08-20"
+      ],
+      "matched_listed_expiries": [
+        "2011-08-20"
+      ],
+      "names_with_put": 1024,
+      "eligible_cap2000": 1065
+    },
+    {
+      "date": "2011-08-17",
+      "target_expiry": "2011-09-16",
+      "accepted": [
+        "2011-09-16",
+        "2011-09-17"
+      ],
+      "matched_listed_expiries": [
+        "2011-09-17"
+      ],
+      "names_with_put": 942,
+      "eligible_cap2000": 972
+    },
+    {
+      "date": "2011-09-21",
+      "target_expiry": "2011-10-21",
+      "accepted": [
+        "2011-10-21",
+        "2011-10-22"
+      ],
+      "matched_listed_expiries": [
+        "2011-10-22"
+      ],
+      "names_with_put": 898,
+      "eligible_cap2000": 927
+    },
+    {
+      "date": "2011-10-19",
+      "target_expiry": "2011-11-18",
+      "accepted": [
+        "2011-11-18",
+        "2011-11-19"
+      ],
+      "matched_listed_expiries": [
+        "2011-11-19"
+      ],
+      "names_with_put": 918,
+      "eligible_cap2000": 948
+    },
+    {
+      "date": "2011-11-16",
+      "target_expiry": "2011-12-16",
+      "accepted": [
+        "2011-12-16",
+        "2011-12-17"
+      ],
+      "matched_listed_expiries": [
+        "2011-12-17"
+      ],
+      "names_with_put": 947,
+      "eligible_cap2000": 976
+    },
+    {
+      "date": "2011-12-21",
+      "target_expiry": "2012-01-20",
+      "accepted": [
+        "2012-01-20",
+        "2012-01-21"
+      ],
+      "matched_listed_expiries": [
+        "2012-01-21"
+      ],
+      "names_with_put": 946,
+      "eligible_cap2000": 979
+    },
+    {
+      "date": "2012-01-18",
+      "target_expiry": "2012-02-17",
+      "accepted": [
+        "2012-02-17",
+        "2012-02-18"
+      ],
+      "matched_listed_expiries": [
+        "2012-02-18"
+      ],
+      "names_with_put": 977,
+      "eligible_cap2000": 1016
+    },
+    {
+      "date": "2012-02-15",
+      "target_expiry": "2012-03-16",
+      "accepted": [
+        "2012-03-16",
+        "2012-03-17"
+      ],
+      "matched_listed_expiries": [
+        "2012-03-17"
+      ],
+      "names_with_put": 1008,
+      "eligible_cap2000": 1045
+    },
+    {
+      "date": "2012-03-21",
+      "target_expiry": "2012-04-20",
+      "accepted": [
+        "2012-04-20",
+        "2012-04-21"
+      ],
+      "matched_listed_expiries": [
+        "2012-04-21"
+      ],
+      "names_with_put": 1021,
+      "eligible_cap2000": 1059
+    },
+    {
+      "date": "2012-04-18",
+      "target_expiry": "2012-05-18",
+      "accepted": [
+        "2012-05-18",
+        "2012-05-19"
+      ],
+      "matched_listed_expiries": [
+        "2012-05-19"
+      ],
+      "names_with_put": 999,
+      "eligible_cap2000": 1032
+    },
+    {
+      "date": "2012-05-16",
+      "target_expiry": "2012-06-15",
+      "accepted": [
+        "2012-06-15",
+        "2012-06-16"
+      ],
+      "matched_listed_expiries": [
+        "2012-06-16"
+      ],
+      "names_with_put": 979,
+      "eligible_cap2000": 1013
+    },
+    {
+      "date": "2012-06-20",
+      "target_expiry": "2012-07-20",
+      "accepted": [
+        "2012-07-20",
+        "2012-07-21"
+      ],
+      "matched_listed_expiries": [
+        "2012-07-21"
+      ],
+      "names_with_put": 964,
+      "eligible_cap2000": 1000
+    },
+    {
+      "date": "2012-07-18",
+      "target_expiry": "2012-08-17",
+      "accepted": [
+        "2012-08-17",
+        "2012-08-18"
+      ],
+      "matched_listed_expiries": [
+        "2012-08-18"
+      ],
+      "names_with_put": 969,
+      "eligible_cap2000": 1000
+    },
+    {
+      "date": "2012-08-22",
+      "target_expiry": "2012-09-21",
+      "accepted": [
+        "2012-09-21",
+        "2012-09-22"
+      ],
+      "matched_listed_expiries": [
+        "2012-09-22"
+      ],
+      "names_with_put": 984,
+      "eligible_cap2000": 1018
+    },
+    {
+      "date": "2012-09-19",
+      "target_expiry": "2012-10-19",
+      "accepted": [
+        "2012-10-19",
+        "2012-10-20"
+      ],
+      "matched_listed_expiries": [
+        "2012-10-20"
+      ],
+      "names_with_put": 1012,
+      "eligible_cap2000": 1049
+    },
+    {
+      "date": "2012-10-17",
+      "target_expiry": "2012-11-16",
+      "accepted": [
+        "2012-11-16",
+        "2012-11-17"
+      ],
+      "matched_listed_expiries": [
+        "2012-11-17"
+      ],
+      "names_with_put": 1006,
+      "eligible_cap2000": 1047
+    },
+    {
+      "date": "2012-11-21",
+      "target_expiry": "2012-12-21",
+      "accepted": [
+        "2012-12-21",
+        "2012-12-22"
+      ],
+      "matched_listed_expiries": [
+        "2012-12-22"
+      ],
+      "names_with_put": 990,
+      "eligible_cap2000": 1024
+    },
+    {
+      "date": "2012-12-19",
+      "target_expiry": "2013-01-18",
+      "accepted": [
+        "2013-01-18",
+        "2013-01-19"
+      ],
+      "matched_listed_expiries": [
+        "2013-01-19"
+      ],
+      "names_with_put": 1020,
+      "eligible_cap2000": 1059
+    },
+    {
+      "date": "2013-01-16",
+      "target_expiry": "2013-02-15",
+      "accepted": [
+        "2013-02-15",
+        "2013-02-16"
+      ],
+      "matched_listed_expiries": [
+        "2013-02-16"
+      ],
+      "names_with_put": 1053,
+      "eligible_cap2000": 1089
+    },
+    {
+      "date": "2013-02-13",
+      "target_expiry": "2013-03-15",
+      "accepted": [
+        "2013-03-15",
+        "2013-03-16"
+      ],
+      "matched_listed_expiries": [
+        "2013-03-16"
+      ],
+      "names_with_put": 1084,
+      "eligible_cap2000": 1124
+    },
+    {
+      "date": "2013-03-20",
+      "target_expiry": "2013-04-19",
+      "accepted": [
+        "2013-04-19",
+        "2013-04-20"
+      ],
+      "matched_listed_expiries": [
+        "2013-04-20"
+      ],
+      "names_with_put": 1120,
+      "eligible_cap2000": 1161
+    },
+    {
+      "date": "2013-04-17",
+      "target_expiry": "2013-05-17",
+      "accepted": [
+        "2013-05-17",
+        "2013-05-18"
+      ],
+      "matched_listed_expiries": [
+        "2013-05-18"
+      ],
+      "names_with_put": 1096,
+      "eligible_cap2000": 1129
+    },
+    {
+      "date": "2013-05-22",
+      "target_expiry": "2013-06-21",
+      "accepted": [
+        "2013-06-21",
+        "2013-06-22"
+      ],
+      "matched_listed_expiries": [
+        "2013-06-22"
+      ],
+      "names_with_put": 1152,
+      "eligible_cap2000": 1192
+    },
+    {
+      "date": "2013-06-19",
+      "target_expiry": "2013-07-19",
+      "accepted": [
+        "2013-07-19",
+        "2013-07-20"
+      ],
+      "matched_listed_expiries": [
+        "2013-07-20"
+      ],
+      "names_with_put": 1145,
+      "eligible_cap2000": 1183
+    },
+    {
+      "date": "2013-07-17",
+      "target_expiry": "2013-08-16",
+      "accepted": [
+        "2013-08-16",
+        "2013-08-17"
+      ],
+      "matched_listed_expiries": [
+        "2013-08-17"
+      ],
+      "names_with_put": 1179,
+      "eligible_cap2000": 1217
+    },
+    {
+      "date": "2013-08-21",
+      "target_expiry": "2013-09-20",
+      "accepted": [
+        "2013-09-20",
+        "2013-09-21"
+      ],
+      "matched_listed_expiries": [
+        "2013-09-21"
+      ],
+      "names_with_put": 1170,
+      "eligible_cap2000": 1203
+    },
+    {
+      "date": "2013-09-18",
+      "target_expiry": "2013-10-18",
+      "accepted": [
+        "2013-10-18",
+        "2013-10-19"
+      ],
+      "matched_listed_expiries": [
+        "2013-10-19"
+      ],
+      "names_with_put": 1198,
+      "eligible_cap2000": 1237
+    },
+    {
+      "date": "2013-10-16",
+      "target_expiry": "2013-11-15",
+      "accepted": [
+        "2013-11-15",
+        "2013-11-16"
+      ],
+      "matched_listed_expiries": [
+        "2013-11-16"
+      ],
+      "names_with_put": 1210,
+      "eligible_cap2000": 1248
+    },
+    {
+      "date": "2013-11-20",
+      "target_expiry": "2013-12-20",
+      "accepted": [
+        "2013-12-20",
+        "2013-12-21"
+      ],
+      "matched_listed_expiries": [
+        "2013-12-21"
+      ],
+      "names_with_put": 1224,
+      "eligible_cap2000": 1265
+    },
+    {
+      "date": "2013-12-18",
+      "target_expiry": "2014-01-17",
+      "accepted": [
+        "2014-01-17",
+        "2014-01-18"
+      ],
+      "matched_listed_expiries": [
+        "2014-01-18"
+      ],
+      "names_with_put": 1241,
+      "eligible_cap2000": 1289
+    },
+    {
+      "date": "2014-01-22",
+      "target_expiry": "2014-02-21",
+      "accepted": [
+        "2014-02-21",
+        "2014-02-22"
+      ],
+      "matched_listed_expiries": [
+        "2014-02-22"
+      ],
+      "names_with_put": 1276,
+      "eligible_cap2000": 1319
+    },
+    {
+      "date": "2014-02-19",
+      "target_expiry": "2014-03-21",
+      "accepted": [
+        "2014-03-21",
+        "2014-03-22"
+      ],
+      "matched_listed_expiries": [
+        "2014-03-22"
+      ],
+      "names_with_put": 1265,
+      "eligible_cap2000": 1303
+    },
+    {
+      "date": "2014-03-19",
+      "target_expiry": "2014-04-18",
+      "accepted": [
+        "2014-04-18",
+        "2014-04-19",
+        "2014-04-17"
+      ],
+      "matched_listed_expiries": [
+        "2014-04-19"
+      ],
+      "names_with_put": 1305,
+      "eligible_cap2000": 1342
+    },
+    {
+      "date": "2014-04-16",
+      "target_expiry": "2014-05-16",
+      "accepted": [
+        "2014-05-16",
+        "2014-05-17"
+      ],
+      "matched_listed_expiries": [
+        "2014-05-17"
+      ],
+      "names_with_put": 1276,
+      "eligible_cap2000": 1321
+    },
+    {
+      "date": "2014-05-21",
+      "target_expiry": "2014-06-20",
+      "accepted": [
+        "2014-06-20",
+        "2014-06-21"
+      ],
+      "matched_listed_expiries": [
+        "2014-06-21"
+      ],
+      "names_with_put": 1269,
+      "eligible_cap2000": 1312
+    },
+    {
+      "date": "2014-06-18",
+      "target_expiry": "2014-07-18",
+      "accepted": [
+        "2014-07-18",
+        "2014-07-19"
+      ],
+      "matched_listed_expiries": [
+        "2014-07-19"
+      ],
+      "names_with_put": 1325,
+      "eligible_cap2000": 1367
+    },
+    {
+      "date": "2014-07-16",
+      "target_expiry": "2014-08-15",
+      "accepted": [
+        "2014-08-15",
+        "2014-08-16"
+      ],
+      "matched_listed_expiries": [
+        "2014-08-16"
+      ],
+      "names_with_put": 1321,
+      "eligible_cap2000": 1358
+    },
+    {
+      "date": "2014-08-20",
+      "target_expiry": "2014-09-19",
+      "accepted": [
+        "2014-09-19",
+        "2014-09-20"
+      ],
+      "matched_listed_expiries": [
+        "2014-09-20"
+      ],
+      "names_with_put": 1315,
+      "eligible_cap2000": 1351
+    },
+    {
+      "date": "2014-09-17",
+      "target_expiry": "2014-10-17",
+      "accepted": [
+        "2014-10-17",
+        "2014-10-18"
+      ],
+      "matched_listed_expiries": [
+        "2014-10-18"
+      ],
+      "names_with_put": 1318,
+      "eligible_cap2000": 1358
+    },
+    {
+      "date": "2014-10-22",
+      "target_expiry": "2014-11-21",
+      "accepted": [
+        "2014-11-21",
+        "2014-11-22"
+      ],
+      "matched_listed_expiries": [
+        "2014-11-22"
+      ],
+      "names_with_put": 1277,
+      "eligible_cap2000": 1316
+    },
+    {
+      "date": "2014-11-19",
+      "target_expiry": "2014-12-19",
+      "accepted": [
+        "2014-12-19",
+        "2014-12-20"
+      ],
+      "matched_listed_expiries": [
+        "2014-12-20"
+      ],
+      "names_with_put": 1332,
+      "eligible_cap2000": 1370
+    },
+    {
+      "date": "2014-12-17",
+      "target_expiry": "2015-01-16",
+      "accepted": [
+        "2015-01-16",
+        "2015-01-17"
+      ],
+      "matched_listed_expiries": [
+        "2015-01-17"
+      ],
+      "names_with_put": 1299,
+      "eligible_cap2000": 1350
+    },
+    {
+      "date": "2015-01-21",
+      "target_expiry": "2015-02-20",
+      "accepted": [
+        "2015-02-20",
+        "2015-02-21"
+      ],
+      "matched_listed_expiries": [
+        "2015-02-20"
+      ],
+      "names_with_put": 1295,
+      "eligible_cap2000": 1330
+    },
+    {
+      "date": "2015-02-18",
+      "target_expiry": "2015-03-20",
+      "accepted": [
+        "2015-03-20",
+        "2015-03-21"
+      ],
+      "matched_listed_expiries": [
+        "2015-03-20"
+      ],
+      "names_with_put": 1341,
+      "eligible_cap2000": 1375
+    },
+    {
+      "date": "2015-03-18",
+      "target_expiry": "2015-04-17",
+      "accepted": [
+        "2015-04-17",
+        "2015-04-18"
+      ],
+      "matched_listed_expiries": [
+        "2015-04-17"
+      ],
+      "names_with_put": 1358,
+      "eligible_cap2000": 1388
+    },
+    {
+      "date": "2015-04-15",
+      "target_expiry": "2015-05-15",
+      "accepted": [
+        "2015-05-15",
+        "2015-05-16"
+      ],
+      "matched_listed_expiries": [
+        "2015-05-15"
+      ],
+      "names_with_put": 1373,
+      "eligible_cap2000": 1413
+    },
+    {
+      "date": "2015-05-20",
+      "target_expiry": "2015-06-19",
+      "accepted": [
+        "2015-06-19",
+        "2015-06-20"
+      ],
+      "matched_listed_expiries": [
+        "2015-06-19"
+      ],
+      "names_with_put": 1380,
+      "eligible_cap2000": 1415
+    },
+    {
+      "date": "2015-06-17",
+      "target_expiry": "2015-07-17",
+      "accepted": [
+        "2015-07-17",
+        "2015-07-18"
+      ],
+      "matched_listed_expiries": [
+        "2015-07-17"
+      ],
+      "names_with_put": 1371,
+      "eligible_cap2000": 1415
+    },
+    {
+      "date": "2015-07-22",
+      "target_expiry": "2015-08-21",
+      "accepted": [
+        "2015-08-21",
+        "2015-08-22"
+      ],
+      "matched_listed_expiries": [
+        "2015-08-21"
+      ],
+      "names_with_put": 1352,
+      "eligible_cap2000": 1389
+    },
+    {
+      "date": "2015-08-19",
+      "target_expiry": "2015-09-18",
+      "accepted": [
+        "2015-09-18",
+        "2015-09-19"
+      ],
+      "matched_listed_expiries": [
+        "2015-09-18"
+      ],
+      "names_with_put": 1319,
+      "eligible_cap2000": 1350
+    },
+    {
+      "date": "2015-09-16",
+      "target_expiry": "2015-10-16",
+      "accepted": [
+        "2015-10-16",
+        "2015-10-17"
+      ],
+      "matched_listed_expiries": [
+        "2015-10-16"
+      ],
+      "names_with_put": 1300,
+      "eligible_cap2000": 1327
+    },
+    {
+      "date": "2015-10-21",
+      "target_expiry": "2015-11-20",
+      "accepted": [
+        "2015-11-20",
+        "2015-11-21"
+      ],
+      "matched_listed_expiries": [
+        "2015-11-20"
+      ],
+      "names_with_put": 1272,
+      "eligible_cap2000": 1298
+    },
+    {
+      "date": "2015-11-18",
+      "target_expiry": "2015-12-18",
+      "accepted": [
+        "2015-12-18",
+        "2015-12-19"
+      ],
+      "matched_listed_expiries": [
+        "2015-12-18"
+      ],
+      "names_with_put": 1290,
+      "eligible_cap2000": 1315
+    },
+    {
+      "date": "2015-12-16",
+      "target_expiry": "2016-01-15",
+      "accepted": [
+        "2016-01-15",
+        "2016-01-16"
+      ],
+      "matched_listed_expiries": [
+        "2016-01-15"
+      ],
+      "names_with_put": 1265,
+      "eligible_cap2000": 1293
+    },
+    {
+      "date": "2016-01-20",
+      "target_expiry": "2016-02-19",
+      "accepted": [
+        "2016-02-19",
+        "2016-02-20"
+      ],
+      "matched_listed_expiries": [
+        "2016-02-19"
+      ],
+      "names_with_put": 1135,
+      "eligible_cap2000": 1156
+    },
+    {
+      "date": "2016-02-17",
+      "target_expiry": "2016-03-18",
+      "accepted": [
+        "2016-03-18",
+        "2016-03-19"
+      ],
+      "matched_listed_expiries": [
+        "2016-03-18"
+      ],
+      "names_with_put": 1149,
+      "eligible_cap2000": 1173
+    },
+    {
+      "date": "2016-03-16",
+      "target_expiry": "2016-04-15",
+      "accepted": [
+        "2016-04-15",
+        "2016-04-16"
+      ],
+      "matched_listed_expiries": [
+        "2016-04-15"
+      ],
+      "names_with_put": 1196,
+      "eligible_cap2000": 1224
+    },
+    {
+      "date": "2016-04-20",
+      "target_expiry": "2016-05-20",
+      "accepted": [
+        "2016-05-20",
+        "2016-05-21"
+      ],
+      "matched_listed_expiries": [
+        "2016-05-20"
+      ],
+      "names_with_put": 1251,
+      "eligible_cap2000": 1274
+    },
+    {
+      "date": "2016-05-18",
+      "target_expiry": "2016-06-17",
+      "accepted": [
+        "2016-06-17",
+        "2016-06-18"
+      ],
+      "matched_listed_expiries": [
+        "2016-06-17"
+      ],
+      "names_with_put": 1218,
+      "eligible_cap2000": 1234
+    },
+    {
+      "date": "2016-06-15",
+      "target_expiry": "2016-07-15",
+      "accepted": [
+        "2016-07-15",
+        "2016-07-16"
+      ],
+      "matched_listed_expiries": [
+        "2016-07-15"
+      ],
+      "names_with_put": 1238,
+      "eligible_cap2000": 1260
+    },
+    {
+      "date": "2016-07-20",
+      "target_expiry": "2016-08-19",
+      "accepted": [
+        "2016-08-19",
+        "2016-08-20"
+      ],
+      "matched_listed_expiries": [
+        "2016-08-19"
+      ],
+      "names_with_put": 1277,
+      "eligible_cap2000": 1298
+    },
+    {
+      "date": "2016-08-17",
+      "target_expiry": "2016-09-16",
+      "accepted": [
+        "2016-09-16",
+        "2016-09-17"
+      ],
+      "matched_listed_expiries": [
+        "2016-09-16"
+      ],
+      "names_with_put": 1297,
+      "eligible_cap2000": 1326
+    },
+    {
+      "date": "2016-09-21",
+      "target_expiry": "2016-10-21",
+      "accepted": [
+        "2016-10-21",
+        "2016-10-22"
+      ],
+      "matched_listed_expiries": [
+        "2016-10-21"
+      ],
+      "names_with_put": 1280,
+      "eligible_cap2000": 1308
+    },
+    {
+      "date": "2016-10-19",
+      "target_expiry": "2016-11-18",
+      "accepted": [
+        "2016-11-18",
+        "2016-11-19"
+      ],
+      "matched_listed_expiries": [
+        "2016-11-18"
+      ],
+      "names_with_put": 1276,
+      "eligible_cap2000": 1303
+    },
+    {
+      "date": "2016-11-16",
+      "target_expiry": "2016-12-16",
+      "accepted": [
+        "2016-12-16",
+        "2016-12-17"
+      ],
+      "matched_listed_expiries": [
+        "2016-12-16"
+      ],
+      "names_with_put": 1327,
+      "eligible_cap2000": 1353
+    },
+    {
+      "date": "2016-12-21",
+      "target_expiry": "2017-01-20",
+      "accepted": [
+        "2017-01-20",
+        "2017-01-21"
+      ],
+      "matched_listed_expiries": [
+        "2017-01-20"
+      ],
+      "names_with_put": 1345,
+      "eligible_cap2000": 1372
+    },
+    {
+      "date": "2017-01-18",
+      "target_expiry": "2017-02-17",
+      "accepted": [
+        "2017-02-17",
+        "2017-02-18"
+      ],
+      "matched_listed_expiries": [
+        "2017-02-17"
+      ],
+      "names_with_put": 1338,
+      "eligible_cap2000": 1371
+    },
+    {
+      "date": "2017-02-15",
+      "target_expiry": "2017-03-17",
+      "accepted": [
+        "2017-03-17",
+        "2017-03-18"
+      ],
+      "matched_listed_expiries": [
+        "2017-03-17"
+      ],
+      "names_with_put": 1367,
+      "eligible_cap2000": 1391
+    },
+    {
+      "date": "2017-03-22",
+      "target_expiry": "2017-04-21",
+      "accepted": [
+        "2017-04-21",
+        "2017-04-22"
+      ],
+      "matched_listed_expiries": [
+        "2017-04-21"
+      ],
+      "names_with_put": 1335,
+      "eligible_cap2000": 1361
+    },
+    {
+      "date": "2017-04-19",
+      "target_expiry": "2017-05-19",
+      "accepted": [
+        "2017-05-19",
+        "2017-05-20"
+      ],
+      "matched_listed_expiries": [
+        "2017-05-19"
+      ],
+      "names_with_put": 1339,
+      "eligible_cap2000": 1368
+    },
+    {
+      "date": "2017-05-17",
+      "target_expiry": "2017-06-16",
+      "accepted": [
+        "2017-06-16",
+        "2017-06-17"
+      ],
+      "matched_listed_expiries": [
+        "2017-06-16"
+      ],
+      "names_with_put": 1321,
+      "eligible_cap2000": 1351
+    },
+    {
+      "date": "2017-06-21",
+      "target_expiry": "2017-07-21",
+      "accepted": [
+        "2017-07-21",
+        "2017-07-22"
+      ],
+      "matched_listed_expiries": [
+        "2017-07-21"
+      ],
+      "names_with_put": 1332,
+      "eligible_cap2000": 1361
+    },
+    {
+      "date": "2017-07-19",
+      "target_expiry": "2017-08-18",
+      "accepted": [
+        "2017-08-18",
+        "2017-08-19"
+      ],
+      "matched_listed_expiries": [
+        "2017-08-18"
+      ],
+      "names_with_put": 1357,
+      "eligible_cap2000": 1390
+    },
+    {
+      "date": "2017-08-16",
+      "target_expiry": "2017-09-15",
+      "accepted": [
+        "2017-09-15",
+        "2017-09-16"
+      ],
+      "matched_listed_expiries": [
+        "2017-09-15"
+      ],
+      "names_with_put": 1344,
+      "eligible_cap2000": 1374
+    },
+    {
+      "date": "2017-09-20",
+      "target_expiry": "2017-10-20",
+      "accepted": [
+        "2017-10-20",
+        "2017-10-21"
+      ],
+      "matched_listed_expiries": [
+        "2017-10-20"
+      ],
+      "names_with_put": 1359,
+      "eligible_cap2000": 1392
+    },
+    {
+      "date": "2017-10-18",
+      "target_expiry": "2017-11-17",
+      "accepted": [
+        "2017-11-17",
+        "2017-11-18"
+      ],
+      "matched_listed_expiries": [
+        "2017-11-17"
+      ],
+      "names_with_put": 1390,
+      "eligible_cap2000": 1419
+    },
+    {
+      "date": "2017-11-15",
+      "target_expiry": "2017-12-15",
+      "accepted": [
+        "2017-12-15",
+        "2017-12-16"
+      ],
+      "matched_listed_expiries": [
+        "2017-12-15"
+      ],
+      "names_with_put": 1375,
+      "eligible_cap2000": 1406
+    },
+    {
+      "date": "2017-12-20",
+      "target_expiry": "2018-01-19",
+      "accepted": [
+        "2018-01-19",
+        "2018-01-20"
+      ],
+      "matched_listed_expiries": [
+        "2018-01-19"
+      ],
+      "names_with_put": 1399,
+      "eligible_cap2000": 1436
+    },
+    {
+      "date": "2018-01-17",
+      "target_expiry": "2018-02-16",
+      "accepted": [
+        "2018-02-16",
+        "2018-02-17"
+      ],
+      "matched_listed_expiries": [
+        "2018-02-16"
+      ],
+      "names_with_put": 1421,
+      "eligible_cap2000": 1463
+    },
+    {
+      "date": "2018-02-14",
+      "target_expiry": "2018-03-16",
+      "accepted": [
+        "2018-03-16",
+        "2018-03-17"
+      ],
+      "matched_listed_expiries": [
+        "2018-03-16"
+      ],
+      "names_with_put": 1380,
+      "eligible_cap2000": 1414
+    },
+    {
+      "date": "2018-03-21",
+      "target_expiry": "2018-04-20",
+      "accepted": [
+        "2018-04-20",
+        "2018-04-21"
+      ],
+      "matched_listed_expiries": [
+        "2018-04-20"
+      ],
+      "names_with_put": 1395,
+      "eligible_cap2000": 1431
+    },
+    {
+      "date": "2018-04-18",
+      "target_expiry": "2018-05-18",
+      "accepted": [
+        "2018-05-18",
+        "2018-05-19"
+      ],
+      "matched_listed_expiries": [
+        "2018-05-18"
+      ],
+      "names_with_put": 1405,
+      "eligible_cap2000": 1451
+    },
+    {
+      "date": "2018-05-16",
+      "target_expiry": "2018-06-15",
+      "accepted": [
+        "2018-06-15",
+        "2018-06-16"
+      ],
+      "matched_listed_expiries": [
+        "2018-06-15"
+      ],
+      "names_with_put": 1426,
+      "eligible_cap2000": 1463
+    },
+    {
+      "date": "2018-06-20",
+      "target_expiry": "2018-07-20",
+      "accepted": [
+        "2018-07-20",
+        "2018-07-21"
+      ],
+      "matched_listed_expiries": [
+        "2018-07-20"
+      ],
+      "names_with_put": 1459,
+      "eligible_cap2000": 1510
+    },
+    {
+      "date": "2018-07-18",
+      "target_expiry": "2018-08-17",
+      "accepted": [
+        "2018-08-17",
+        "2018-08-18"
+      ],
+      "matched_listed_expiries": [
+        "2018-08-17"
+      ],
+      "names_with_put": 1466,
+      "eligible_cap2000": 1506
+    },
+    {
+      "date": "2018-08-22",
+      "target_expiry": "2018-09-21",
+      "accepted": [
+        "2018-09-21",
+        "2018-09-22"
+      ],
+      "matched_listed_expiries": [
+        "2018-09-21"
+      ],
+      "names_with_put": 1479,
+      "eligible_cap2000": 1518
+    },
+    {
+      "date": "2018-09-19",
+      "target_expiry": "2018-10-19",
+      "accepted": [
+        "2018-10-19",
+        "2018-10-20"
+      ],
+      "matched_listed_expiries": [
+        "2018-10-19"
+      ],
+      "names_with_put": 1466,
+      "eligible_cap2000": 1508
+    },
+    {
+      "date": "2018-10-17",
+      "target_expiry": "2018-11-16",
+      "accepted": [
+        "2018-11-16",
+        "2018-11-17"
+      ],
+      "matched_listed_expiries": [
+        "2018-11-16"
+      ],
+      "names_with_put": 1397,
+      "eligible_cap2000": 1448
+    },
+    {
+      "date": "2018-11-21",
+      "target_expiry": "2018-12-21",
+      "accepted": [
+        "2018-12-21",
+        "2018-12-22"
+      ],
+      "matched_listed_expiries": [
+        "2018-12-21"
+      ],
+      "names_with_put": 1346,
+      "eligible_cap2000": 1388
+    },
+    {
+      "date": "2018-12-19",
+      "target_expiry": "2019-01-18",
+      "accepted": [
+        "2019-01-18",
+        "2019-01-19"
+      ],
+      "matched_listed_expiries": [
+        "2019-01-18"
+      ],
+      "names_with_put": 1270,
+      "eligible_cap2000": 1309
+    },
+    {
+      "date": "2019-01-16",
+      "target_expiry": "2019-02-15",
+      "accepted": [
+        "2019-02-15",
+        "2019-02-16"
+      ],
+      "matched_listed_expiries": [
+        "2019-02-15"
+      ],
+      "names_with_put": 1339,
+      "eligible_cap2000": 1371
+    },
+    {
+      "date": "2019-02-13",
+      "target_expiry": "2019-03-15",
+      "accepted": [
+        "2019-03-15",
+        "2019-03-16"
+      ],
+      "matched_listed_expiries": [
+        "2019-03-15"
+      ],
+      "names_with_put": 1368,
+      "eligible_cap2000": 1406
+    },
+    {
+      "date": "2019-03-20",
+      "target_expiry": "2019-04-19",
+      "accepted": [
+        "2019-04-19",
+        "2019-04-20",
+        "2019-04-18"
+      ],
+      "matched_listed_expiries": [
+        "2019-04-18"
+      ],
+      "names_with_put": 1370,
+      "eligible_cap2000": 1404
+    },
+    {
+      "date": "2019-04-17",
+      "target_expiry": "2019-05-17",
+      "accepted": [
+        "2019-05-17",
+        "2019-05-18"
+      ],
+      "matched_listed_expiries": [
+        "2019-05-17"
+      ],
+      "names_with_put": 1391,
+      "eligible_cap2000": 1426
+    },
+    {
+      "date": "2019-05-22",
+      "target_expiry": "2019-06-21",
+      "accepted": [
+        "2019-06-21",
+        "2019-06-22"
+      ],
+      "matched_listed_expiries": [
+        "2019-06-21"
+      ],
+      "names_with_put": 1348,
+      "eligible_cap2000": 1393
+    },
+    {
+      "date": "2019-06-19",
+      "target_expiry": "2019-07-19",
+      "accepted": [
+        "2019-07-19",
+        "2019-07-20"
+      ],
+      "matched_listed_expiries": [
+        "2019-07-19"
+      ],
+      "names_with_put": 1381,
+      "eligible_cap2000": 1412
+    },
+    {
+      "date": "2019-07-17",
+      "target_expiry": "2019-08-16",
+      "accepted": [
+        "2019-08-16",
+        "2019-08-17"
+      ],
+      "matched_listed_expiries": [
+        "2019-08-16"
+      ],
+      "names_with_put": 1394,
+      "eligible_cap2000": 1421
+    },
+    {
+      "date": "2019-08-21",
+      "target_expiry": "2019-09-20",
+      "accepted": [
+        "2019-09-20",
+        "2019-09-21"
+      ],
+      "matched_listed_expiries": [
+        "2019-09-20"
+      ],
+      "names_with_put": 1348,
+      "eligible_cap2000": 1379
+    },
+    {
+      "date": "2019-09-18",
+      "target_expiry": "2019-10-18",
+      "accepted": [
+        "2019-10-18",
+        "2019-10-19"
+      ],
+      "matched_listed_expiries": [
+        "2019-10-18"
+      ],
+      "names_with_put": 1375,
+      "eligible_cap2000": 1412
+    },
+    {
+      "date": "2019-10-16",
+      "target_expiry": "2019-11-15",
+      "accepted": [
+        "2019-11-15",
+        "2019-11-16"
+      ],
+      "matched_listed_expiries": [
+        "2019-11-15"
+      ],
+      "names_with_put": 1362,
+      "eligible_cap2000": 1392
+    },
+    {
+      "date": "2019-11-20",
+      "target_expiry": "2019-12-20",
+      "accepted": [
+        "2019-12-20",
+        "2019-12-21"
+      ],
+      "matched_listed_expiries": [
+        "2019-12-20"
+      ],
+      "names_with_put": 1390,
+      "eligible_cap2000": 1419
+    },
+    {
+      "date": "2019-12-18",
+      "target_expiry": "2020-01-17",
+      "accepted": [
+        "2020-01-17",
+        "2020-01-18"
+      ],
+      "matched_listed_expiries": [
+        "2020-01-17"
+      ],
+      "names_with_put": 1414,
+      "eligible_cap2000": 1445
+    },
+    {
+      "date": "2020-01-22",
+      "target_expiry": "2020-02-21",
+      "accepted": [
+        "2020-02-21",
+        "2020-02-22"
+      ],
+      "matched_listed_expiries": [
+        "2020-02-21"
+      ],
+      "names_with_put": 1434,
+      "eligible_cap2000": 1464
+    },
+    {
+      "date": "2020-02-19",
+      "target_expiry": "2020-03-20",
+      "accepted": [
+        "2020-03-20",
+        "2020-03-21"
+      ],
+      "matched_listed_expiries": [
+        "2020-03-20"
+      ],
+      "names_with_put": 1433,
+      "eligible_cap2000": 1466
+    },
+    {
+      "date": "2020-03-18",
+      "target_expiry": "2020-04-17",
+      "accepted": [
+        "2020-04-17",
+        "2020-04-18"
+      ],
+      "matched_listed_expiries": [
+        "2020-04-17"
+      ],
+      "names_with_put": 961,
+      "eligible_cap2000": 1017
+    },
+    {
+      "date": "2020-04-15",
+      "target_expiry": "2020-05-15",
+      "accepted": [
+        "2020-05-15",
+        "2020-05-16"
+      ],
+      "matched_listed_expiries": [
+        "2020-05-15"
+      ],
+      "names_with_put": 1116,
+      "eligible_cap2000": 1141
+    },
+    {
+      "date": "2020-05-20",
+      "target_expiry": "2020-06-19",
+      "accepted": [
+        "2020-06-19",
+        "2020-06-20"
+      ],
+      "matched_listed_expiries": [
+        "2020-06-19"
+      ],
+      "names_with_put": 1215,
+      "eligible_cap2000": 1242
+    },
+    {
+      "date": "2020-06-17",
+      "target_expiry": "2020-07-17",
+      "accepted": [
+        "2020-07-17",
+        "2020-07-18"
+      ],
+      "matched_listed_expiries": [
+        "2020-07-17"
+      ],
+      "names_with_put": 1272,
+      "eligible_cap2000": 1316
+    },
+    {
+      "date": "2020-07-22",
+      "target_expiry": "2020-08-21",
+      "accepted": [
+        "2020-08-21",
+        "2020-08-22"
+      ],
+      "matched_listed_expiries": [
+        "2020-08-21"
+      ],
+      "names_with_put": 1280,
+      "eligible_cap2000": 1328
+    },
+    {
+      "date": "2020-08-19",
+      "target_expiry": "2020-09-18",
+      "accepted": [
+        "2020-09-18",
+        "2020-09-19"
+      ],
+      "matched_listed_expiries": [
+        "2020-09-18"
+      ],
+      "names_with_put": 1323,
+      "eligible_cap2000": 1367
+    },
+    {
+      "date": "2020-09-16",
+      "target_expiry": "2020-10-16",
+      "accepted": [
+        "2020-10-16",
+        "2020-10-17"
+      ],
+      "matched_listed_expiries": [
+        "2020-10-16"
+      ],
+      "names_with_put": 1321,
+      "eligible_cap2000": 1367
+    },
+    {
+      "date": "2020-10-21",
+      "target_expiry": "2020-11-20",
+      "accepted": [
+        "2020-11-20",
+        "2020-11-21"
+      ],
+      "matched_listed_expiries": [
+        "2020-11-20"
+      ],
+      "names_with_put": 1347,
+      "eligible_cap2000": 1392
+    },
+    {
+      "date": "2020-11-18",
+      "target_expiry": "2020-12-18",
+      "accepted": [
+        "2020-12-18",
+        "2020-12-19"
+      ],
+      "matched_listed_expiries": [
+        "2020-12-18"
+      ],
+      "names_with_put": 1443,
+      "eligible_cap2000": 1485
+    },
+    {
+      "date": "2020-12-16",
+      "target_expiry": "2021-01-15",
+      "accepted": [
+        "2021-01-15",
+        "2021-01-16"
+      ],
+      "matched_listed_expiries": [
+        "2021-01-15"
+      ],
+      "names_with_put": 1518,
+      "eligible_cap2000": 1572
+    },
+    {
+      "date": "2021-01-20",
+      "target_expiry": "2021-02-19",
+      "accepted": [
+        "2021-02-19",
+        "2021-02-20"
+      ],
+      "matched_listed_expiries": [
+        "2021-02-19"
+      ],
+      "names_with_put": 1584,
+      "eligible_cap2000": 1642
+    },
+    {
+      "date": "2021-02-17",
+      "target_expiry": "2021-03-19",
+      "accepted": [
+        "2021-03-19",
+        "2021-03-20"
+      ],
+      "matched_listed_expiries": [
+        "2021-03-19"
+      ],
+      "names_with_put": 1639,
+      "eligible_cap2000": 1690
+    },
+    {
+      "date": "2021-03-17",
+      "target_expiry": "2021-04-16",
+      "accepted": [
+        "2021-04-16",
+        "2021-04-17"
+      ],
+      "matched_listed_expiries": [
+        "2021-04-16"
+      ],
+      "names_with_put": 1685,
+      "eligible_cap2000": 1745
+    },
+    {
+      "date": "2021-04-21",
+      "target_expiry": "2021-05-21",
+      "accepted": [
+        "2021-05-21",
+        "2021-05-22"
+      ],
+      "matched_listed_expiries": [
+        "2021-05-21"
+      ],
+      "names_with_put": 1664,
+      "eligible_cap2000": 1714
+    },
+    {
+      "date": "2021-05-19",
+      "target_expiry": "2021-06-18",
+      "accepted": [
+        "2021-06-18",
+        "2021-06-19"
+      ],
+      "matched_listed_expiries": [
+        "2021-06-18"
+      ],
+      "names_with_put": 1683,
+      "eligible_cap2000": 1732
+    },
+    {
+      "date": "2021-06-16",
+      "target_expiry": "2021-07-16",
+      "accepted": [
+        "2021-07-16",
+        "2021-07-17"
+      ],
+      "matched_listed_expiries": [
+        "2021-07-16"
+      ],
+      "names_with_put": 1744,
+      "eligible_cap2000": 1800
+    },
+    {
+      "date": "2021-07-21",
+      "target_expiry": "2021-08-20",
+      "accepted": [
+        "2021-08-20",
+        "2021-08-21"
+      ],
+      "matched_listed_expiries": [
+        "2021-08-20"
+      ],
+      "names_with_put": 1712,
+      "eligible_cap2000": 1769
+    },
+    {
+      "date": "2021-08-18",
+      "target_expiry": "2021-09-17",
+      "accepted": [
+        "2021-09-17",
+        "2021-09-18"
+      ],
+      "matched_listed_expiries": [
+        "2021-09-17"
+      ],
+      "names_with_put": 1679,
+      "eligible_cap2000": 1736
+    },
+    {
+      "date": "2021-09-15",
+      "target_expiry": "2021-10-15",
+      "accepted": [
+        "2021-10-15",
+        "2021-10-16"
+      ],
+      "matched_listed_expiries": [
+        "2021-10-15"
+      ],
+      "names_with_put": 1705,
+      "eligible_cap2000": 1762
+    },
+    {
+      "date": "2021-10-20",
+      "target_expiry": "2021-11-19",
+      "accepted": [
+        "2021-11-19",
+        "2021-11-20"
+      ],
+      "matched_listed_expiries": [
+        "2021-11-19"
+      ],
+      "names_with_put": 1725,
+      "eligible_cap2000": 1783
+    },
+    {
+      "date": "2021-11-17",
+      "target_expiry": "2021-12-17",
+      "accepted": [
+        "2021-12-17",
+        "2021-12-18"
+      ],
+      "matched_listed_expiries": [
+        "2021-12-17"
+      ],
+      "names_with_put": 1758,
+      "eligible_cap2000": 1817
+    },
+    {
+      "date": "2021-12-22",
+      "target_expiry": "2022-01-21",
+      "accepted": [
+        "2022-01-21",
+        "2022-01-22"
+      ],
+      "matched_listed_expiries": [
+        "2022-01-21"
+      ],
+      "names_with_put": 1679,
+      "eligible_cap2000": 1737
+    },
+    {
+      "date": "2022-01-19",
+      "target_expiry": "2022-02-18",
+      "accepted": [
+        "2022-02-18",
+        "2022-02-19"
+      ],
+      "matched_listed_expiries": [
+        "2022-02-18"
+      ],
+      "names_with_put": 1640,
+      "eligible_cap2000": 1683
+    },
+    {
+      "date": "2022-02-16",
+      "target_expiry": "2022-03-18",
+      "accepted": [
+        "2022-03-18",
+        "2022-03-19"
+      ],
+      "matched_listed_expiries": [
+        "2022-03-18"
+      ],
+      "names_with_put": 1656,
+      "eligible_cap2000": 1698
+    },
+    {
+      "date": "2022-03-16",
+      "target_expiry": "2022-04-15",
+      "accepted": [
+        "2022-04-15",
+        "2022-04-16",
+        "2022-04-14"
+      ],
+      "matched_listed_expiries": [
+        "2022-04-14"
+      ],
+      "names_with_put": 1592,
+      "eligible_cap2000": 1640
+    },
+    {
+      "date": "2022-04-20",
+      "target_expiry": "2022-05-20",
+      "accepted": [
+        "2022-05-20",
+        "2022-05-21"
+      ],
+      "matched_listed_expiries": [
+        "2022-05-20"
+      ],
+      "names_with_put": 1610,
+      "eligible_cap2000": 1646
+    },
+    {
+      "date": "2022-05-18",
+      "target_expiry": "2022-06-17",
+      "accepted": [
+        "2022-06-17",
+        "2022-06-18"
+      ],
+      "matched_listed_expiries": [
+        "2022-06-17"
+      ],
+      "names_with_put": 1505,
+      "eligible_cap2000": 1543
+    },
+    {
+      "date": "2022-06-15",
+      "target_expiry": "2022-07-15",
+      "accepted": [
+        "2022-07-15",
+        "2022-07-16"
+      ],
+      "matched_listed_expiries": [
+        "2022-07-15"
+      ],
+      "names_with_put": 1468,
+      "eligible_cap2000": 1503
+    },
+    {
+      "date": "2022-07-20",
+      "target_expiry": "2022-08-19",
+      "accepted": [
+        "2022-08-19",
+        "2022-08-20"
+      ],
+      "matched_listed_expiries": [
+        "2022-08-19"
+      ],
+      "names_with_put": 1513,
+      "eligible_cap2000": 1544
+    },
+    {
+      "date": "2022-08-17",
+      "target_expiry": "2022-09-16",
+      "accepted": [
+        "2022-09-16",
+        "2022-09-17"
+      ],
+      "matched_listed_expiries": [
+        "2022-09-16"
+      ],
+      "names_with_put": 1554,
+      "eligible_cap2000": 1594
+    },
+    {
+      "date": "2022-09-21",
+      "target_expiry": "2022-10-21",
+      "accepted": [
+        "2022-10-21",
+        "2022-10-22"
+      ],
+      "matched_listed_expiries": [
+        "2022-10-21"
+      ],
+      "names_with_put": 1439,
+      "eligible_cap2000": 1480
+    },
+    {
+      "date": "2022-10-19",
+      "target_expiry": "2022-11-18",
+      "accepted": [
+        "2022-11-18",
+        "2022-11-19"
+      ],
+      "matched_listed_expiries": [
+        "2022-11-18"
+      ],
+      "names_with_put": 1427,
+      "eligible_cap2000": 1453
+    },
+    {
+      "date": "2022-11-16",
+      "target_expiry": "2022-12-16",
+      "accepted": [
+        "2022-12-16",
+        "2022-12-17"
+      ],
+      "matched_listed_expiries": [
+        "2022-12-16"
+      ],
+      "names_with_put": 1484,
+      "eligible_cap2000": 1510
+    },
+    {
+      "date": "2022-12-21",
+      "target_expiry": "2023-01-20",
+      "accepted": [
+        "2023-01-20",
+        "2023-01-21"
+      ],
+      "matched_listed_expiries": [
+        "2023-01-20"
+      ],
+      "names_with_put": 1457,
+      "eligible_cap2000": 1476
+    },
+    {
+      "date": "2023-01-18",
+      "target_expiry": "2023-02-17",
+      "accepted": [
+        "2023-02-17",
+        "2023-02-18"
+      ],
+      "matched_listed_expiries": [
+        "2023-02-17"
+      ],
+      "names_with_put": 1490,
+      "eligible_cap2000": 1509
+    },
+    {
+      "date": "2023-02-15",
+      "target_expiry": "2023-03-17",
+      "accepted": [
+        "2023-03-17",
+        "2023-03-18"
+      ],
+      "matched_listed_expiries": [
+        "2023-03-17"
+      ],
+      "names_with_put": 1540,
+      "eligible_cap2000": 1569
+    },
+    {
+      "date": "2023-03-22",
+      "target_expiry": "2023-04-21",
+      "accepted": [
+        "2023-04-21",
+        "2023-04-22"
+      ],
+      "matched_listed_expiries": [
+        "2023-04-21"
+      ],
+      "names_with_put": 1427,
+      "eligible_cap2000": 1455
+    },
+    {
+      "date": "2023-04-19",
+      "target_expiry": "2023-05-19",
+      "accepted": [
+        "2023-05-19",
+        "2023-05-20"
+      ],
+      "matched_listed_expiries": [
+        "2023-05-19"
+      ],
+      "names_with_put": 1462,
+      "eligible_cap2000": 1479
+    },
+    {
+      "date": "2023-05-17",
+      "target_expiry": "2023-06-16",
+      "accepted": [
+        "2023-06-16",
+        "2023-06-17"
+      ],
+      "matched_listed_expiries": [
+        "2023-06-16"
+      ],
+      "names_with_put": 1435,
+      "eligible_cap2000": 1459
+    },
+    {
+      "date": "2023-06-21",
+      "target_expiry": "2023-07-21",
+      "accepted": [
+        "2023-07-21",
+        "2023-07-22"
+      ],
+      "matched_listed_expiries": [
+        "2023-07-21"
+      ],
+      "names_with_put": 1464,
+      "eligible_cap2000": 1492
+    },
+    {
+      "date": "2023-07-19",
+      "target_expiry": "2023-08-18",
+      "accepted": [
+        "2023-08-18",
+        "2023-08-19"
+      ],
+      "matched_listed_expiries": [
+        "2023-08-18"
+      ],
+      "names_with_put": 1509,
+      "eligible_cap2000": 1539
+    },
+    {
+      "date": "2023-08-16",
+      "target_expiry": "2023-09-15",
+      "accepted": [
+        "2023-09-15",
+        "2023-09-16"
+      ],
+      "matched_listed_expiries": [
+        "2023-09-15"
+      ],
+      "names_with_put": 1468,
+      "eligible_cap2000": 1492
+    },
+    {
+      "date": "2023-09-20",
+      "target_expiry": "2023-10-20",
+      "accepted": [
+        "2023-10-20",
+        "2023-10-21"
+      ],
+      "matched_listed_expiries": [
+        "2023-10-20"
+      ],
+      "names_with_put": 1440,
+      "eligible_cap2000": 1464
+    },
+    {
+      "date": "2023-10-18",
+      "target_expiry": "2023-11-17",
+      "accepted": [
+        "2023-11-17",
+        "2023-11-18"
+      ],
+      "matched_listed_expiries": [
+        "2023-11-17"
+      ],
+      "names_with_put": 1405,
+      "eligible_cap2000": 1432
+    },
+    {
+      "date": "2023-11-15",
+      "target_expiry": "2023-12-15",
+      "accepted": [
+        "2023-12-15",
+        "2023-12-16"
+      ],
+      "matched_listed_expiries": [
+        "2023-12-15"
+      ],
+      "names_with_put": 1452,
+      "eligible_cap2000": 1472
+    },
+    {
+      "date": "2023-12-20",
+      "target_expiry": "2024-01-19",
+      "accepted": [
+        "2024-01-19",
+        "2024-01-20"
+      ],
+      "matched_listed_expiries": [
+        "2024-01-19"
+      ],
+      "names_with_put": 1503,
+      "eligible_cap2000": 1522
+    },
+    {
+      "date": "2024-01-17",
+      "target_expiry": "2024-02-16",
+      "accepted": [
+        "2024-02-16",
+        "2024-02-17"
+      ],
+      "matched_listed_expiries": [
+        "2024-02-16"
+      ],
+      "names_with_put": 1469,
+      "eligible_cap2000": 1487
+    },
+    {
+      "date": "2024-02-14",
+      "target_expiry": "2024-03-15",
+      "accepted": [
+        "2024-03-15",
+        "2024-03-16"
+      ],
+      "matched_listed_expiries": [
+        "2024-03-15"
+      ],
+      "names_with_put": 1489,
+      "eligible_cap2000": 1510
+    },
+    {
+      "date": "2024-03-20",
+      "target_expiry": "2024-04-19",
+      "accepted": [
+        "2024-04-19",
+        "2024-04-20"
+      ],
+      "matched_listed_expiries": [
+        "2024-04-19"
+      ],
+      "names_with_put": 1504,
+      "eligible_cap2000": 1526
+    },
+    {
+      "date": "2024-04-17",
+      "target_expiry": "2024-05-17",
+      "accepted": [
+        "2024-05-17",
+        "2024-05-18"
+      ],
+      "matched_listed_expiries": [
+        "2024-05-17"
+      ],
+      "names_with_put": 1462,
+      "eligible_cap2000": 1485
+    },
+    {
+      "date": "2024-05-22",
+      "target_expiry": "2024-06-21",
+      "accepted": [
+        "2024-06-21",
+        "2024-06-22"
+      ],
+      "matched_listed_expiries": [
+        "2024-06-21"
+      ],
+      "names_with_put": 1508,
+      "eligible_cap2000": 1525
+    },
+    {
+      "date": "2024-06-20",
+      "target_expiry": "2024-07-19",
+      "accepted": [
+        "2024-07-19",
+        "2024-07-20"
+      ],
+      "matched_listed_expiries": [
+        "2024-07-19"
+      ],
+      "names_with_put": 1466,
+      "eligible_cap2000": 1496
+    },
+    {
+      "date": "2024-07-17",
+      "target_expiry": "2024-08-16",
+      "accepted": [
+        "2024-08-16",
+        "2024-08-17"
+      ],
+      "matched_listed_expiries": [
+        "2024-08-16"
+      ],
+      "names_with_put": 1545,
+      "eligible_cap2000": 1572
+    },
+    {
+      "date": "2024-08-21",
+      "target_expiry": "2024-09-20",
+      "accepted": [
+        "2024-09-20",
+        "2024-09-21"
+      ],
+      "matched_listed_expiries": [
+        "2024-09-20"
+      ],
+      "names_with_put": 1514,
+      "eligible_cap2000": 1539
+    },
+    {
+      "date": "2024-09-18",
+      "target_expiry": "2024-10-18",
+      "accepted": [
+        "2024-10-18",
+        "2024-10-19"
+      ],
+      "matched_listed_expiries": [
+        "2024-10-18"
+      ],
+      "names_with_put": 1518,
+      "eligible_cap2000": 1547
+    },
+    {
+      "date": "2024-10-16",
+      "target_expiry": "2024-11-15",
+      "accepted": [
+        "2024-11-15",
+        "2024-11-16"
+      ],
+      "matched_listed_expiries": [
+        "2024-11-15"
+      ],
+      "names_with_put": 1532,
+      "eligible_cap2000": 1557
+    },
+    {
+      "date": "2024-11-20",
+      "target_expiry": "2024-12-20",
+      "accepted": [
+        "2024-12-20",
+        "2024-12-21"
+      ],
+      "matched_listed_expiries": [
+        "2024-12-20"
+      ],
+      "names_with_put": 1547,
+      "eligible_cap2000": 1569
+    },
+    {
+      "date": "2024-12-18",
+      "target_expiry": "2025-01-17",
+      "accepted": [
+        "2025-01-17",
+        "2025-01-18"
+      ],
+      "matched_listed_expiries": [
+        "2025-01-17"
+      ],
+      "names_with_put": 1508,
+      "eligible_cap2000": 1544
+    },
+    {
+      "date": "2025-01-22",
+      "target_expiry": "2025-02-21",
+      "accepted": [
+        "2025-02-21",
+        "2025-02-22"
+      ],
+      "matched_listed_expiries": [
+        "2025-02-21"
+      ],
+      "names_with_put": 1537,
+      "eligible_cap2000": 1558
+    },
+    {
+      "date": "2025-02-19",
+      "target_expiry": "2025-03-21",
+      "accepted": [
+        "2025-03-21",
+        "2025-03-22"
+      ],
+      "matched_listed_expiries": [
+        "2025-03-21"
+      ],
+      "names_with_put": 1528,
+      "eligible_cap2000": 1550
+    },
+    {
+      "date": "2025-03-19",
+      "target_expiry": "2025-04-18",
+      "accepted": [
+        "2025-04-18",
+        "2025-04-19",
+        "2025-04-17"
+      ],
+      "matched_listed_expiries": [
+        "2025-04-17"
+      ],
+      "names_with_put": 1473,
+      "eligible_cap2000": 1494
+    },
+    {
+      "date": "2025-04-16",
+      "target_expiry": "2025-05-16",
+      "accepted": [
+        "2025-05-16",
+        "2025-05-17"
+      ],
+      "matched_listed_expiries": [
+        "2025-05-16"
+      ],
+      "names_with_put": 1378,
+      "eligible_cap2000": 1397
+    },
+    {
+      "date": "2025-05-21",
+      "target_expiry": "2025-06-20",
+      "accepted": [
+        "2025-06-20",
+        "2025-06-21"
+      ],
+      "matched_listed_expiries": [
+        "2025-06-20"
+      ],
+      "names_with_put": 1439,
+      "eligible_cap2000": 1455
+    },
+    {
+      "date": "2025-06-18",
+      "target_expiry": "2025-07-18",
+      "accepted": [
+        "2025-07-18",
+        "2025-07-19"
+      ],
+      "matched_listed_expiries": [
+        "2025-07-18"
+      ],
+      "names_with_put": 1464,
+      "eligible_cap2000": 1484
+    },
+    {
+      "date": "2025-07-16",
+      "target_expiry": "2025-08-15",
+      "accepted": [
+        "2025-08-15",
+        "2025-08-16"
+      ],
+      "matched_listed_expiries": [
+        "2025-08-15"
+      ],
+      "names_with_put": 1487,
+      "eligible_cap2000": 1502
+    },
+    {
+      "date": "2025-08-20",
+      "target_expiry": "2025-09-19",
+      "accepted": [
+        "2025-09-19",
+        "2025-09-20"
+      ],
+      "matched_listed_expiries": [
+        "2025-09-19"
+      ],
+      "names_with_put": 1493,
+      "eligible_cap2000": 1515
+    },
+    {
+      "date": "2025-09-17",
+      "target_expiry": "2025-10-17",
+      "accepted": [
+        "2025-10-17",
+        "2025-10-18"
+      ],
+      "matched_listed_expiries": [
+        "2025-10-17"
+      ],
+      "names_with_put": 1528,
+      "eligible_cap2000": 1554
+    },
+    {
+      "date": "2025-10-22",
+      "target_expiry": "2025-11-21",
+      "accepted": [
+        "2025-11-21",
+        "2025-11-22"
+      ],
+      "matched_listed_expiries": [
+        "2025-11-21"
+      ],
+      "names_with_put": 1538,
+      "eligible_cap2000": 1567
+    },
+    {
+      "date": "2025-11-19",
+      "target_expiry": "2025-12-19",
+      "accepted": [
+        "2025-12-19",
+        "2025-12-20"
+      ],
+      "matched_listed_expiries": [
+        "2025-12-19"
+      ],
+      "names_with_put": 1492,
+      "eligible_cap2000": 1523
+    },
+    {
+      "date": "2025-12-17",
+      "target_expiry": "2026-01-16",
+      "accepted": [
+        "2026-01-16",
+        "2026-01-17"
+      ],
+      "matched_listed_expiries": [
+        "2026-01-16"
+      ],
+      "names_with_put": 1541,
+      "eligible_cap2000": 1564
+    },
+    {
+      "date": "2026-01-21",
+      "target_expiry": "2026-02-20",
+      "accepted": [
+        "2026-02-20",
+        "2026-02-21"
+      ],
+      "matched_listed_expiries": [
+        "2026-02-20"
+      ],
+      "names_with_put": 1576,
+      "eligible_cap2000": 1602
+    },
+    {
+      "date": "2026-02-18",
+      "target_expiry": "2026-03-20",
+      "accepted": [
+        "2026-03-20",
+        "2026-03-21"
+      ],
+      "matched_listed_expiries": [
+        "2026-03-20"
+      ],
+      "names_with_put": 1552,
+      "eligible_cap2000": 1580
+    },
+    {
+      "date": "2026-03-18",
+      "target_expiry": "2026-04-17",
+      "accepted": [
+        "2026-04-17",
+        "2026-04-18"
+      ],
+      "matched_listed_expiries": [
+        "2026-04-17"
+      ],
+      "names_with_put": 1517,
+      "eligible_cap2000": 1545
+    },
+    {
+      "date": "2026-04-15",
+      "target_expiry": "2026-05-15",
+      "accepted": [
+        "2026-05-15",
+        "2026-05-16"
+      ],
+      "matched_listed_expiries": [
+        "2026-05-15"
+      ],
+      "names_with_put": 1557,
+      "eligible_cap2000": 1584
+    },
+    {
+      "date": "2026-05-20",
+      "target_expiry": "2026-06-19",
+      "accepted": [
+        "2026-06-19",
+        "2026-06-20",
+        "2026-06-18"
+      ],
+      "matched_listed_expiries": [
+        "2026-06-18"
+      ],
+      "names_with_put": 1579,
+      "eligible_cap2000": 1608
+    },
+    {
+      "date": "2026-06-17",
+      "target_expiry": "2026-07-17",
+      "accepted": [
+        "2026-07-17",
+        "2026-07-18"
+      ],
+      "matched_listed_expiries": [
+        "2026-07-17"
+      ],
+      "names_with_put": 1580,
+      "eligible_cap2000": 1614
+    },
+    {
+      "date": "2026-07-22",
+      "target_expiry": "2026-08-21",
+      "accepted": [
+        "2026-08-21",
+        "2026-08-22"
+      ],
+      "matched_listed_expiries": [
+        "2026-08-21"
+      ],
+      "names_with_put": 1604,
+      "eligible_cap2000": 1635
+    },
+    {
+      "date": "2026-08-19",
+      "target_expiry": "2026-09-18",
+      "accepted": [
+        "2026-09-18",
+        "2026-09-19"
+      ],
+      "matched_listed_expiries": [
+        "2026-09-18"
+      ],
+      "names_with_put": 1645,
+      "eligible_cap2000": 1679
+    }
+  ]
+}

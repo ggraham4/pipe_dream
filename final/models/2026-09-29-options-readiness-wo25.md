@@ -354,6 +354,45 @@ This was found by the Phase 1 plumbing run on noise labels. It surfaced as a
     Windows pull to cover sub-$10 $2B+ names, which it did not do after
     2008-09-17. This is not added as a trial here.
 
+### Bug fix 1 (2026-09-30, Phase 2, before any WO-O1 number exists): holiday expiry
+
+COO ruling: this is a bug fix, not an iteration. The count stays at 0 of 3.
+
+- **What broke.** `run_wo_o1.py --phase2` passed its guards and crashed at
+  entry date 2019-03-20 (135 of 225 entry dates processed, nothing
+  aggregated, no result or positions file written). The runner kept only
+  contracts listed as expiring on the 3rd Friday or the Saturday after it.
+  When the 3rd Friday is Good Friday, the standard monthly contracts are
+  listed as expiring on the Thursday before. No put matched, and the empty
+  name list crashed the price loader.
+- **Affected entry dates (four, not the three first reported):** 2019-03-20
+  (listed expiry 2019-04-18), 2022-03-16 (2022-04-14) and 2025-03-19
+  (2025-04-17) for Good Friday, and 2026-05-20 (2026-06-18) because the 3rd
+  Friday, 2026-06-19, is Juneteenth. The fourth was found by the presence
+  scan. The Good Friday expiries of March 2008 and April 2014 are listed as
+  the Saturday and already worked.
+- **Rule now used.** The standard monthly expiry is the 3rd Friday. A
+  contract counts as that expiry if it is listed as expiring on that Friday,
+  on the Saturday after it, or, when that Friday is a market holiday, on the
+  trading day before it. Market days are the dates in `SPY.csv`. Nothing
+  else about expiry selection changes. Settlement was already the last
+  trading day on or before the expiry, which is that Thursday.
+- **No WO-O1 number existed** when this was found or fixed. Hold-out read
+  #15 was not used by the crashed run.
+- **Check before the real-label run.** `presence_scan.py` (no outcomes)
+  counts, for each of the 225 entry dates, the names with at least one put
+  at the selected expiry. A date below half the median stops the run.
+- **Scan result (2026-09-30): the stop rule triggered, for a benign-looking
+  reason, and the real-label run was not started.** Median 1,335 names.
+  Seven consecutive dates, 2008-10-22 to 2009-04-15, are below half the
+  median (minimum 548 on 2008-11-19). On those dates the cap2000-eligible
+  universe itself shrank to 569-687 names in the crash, and 95.3% to 96.7%
+  of eligible names have a matching put. Across all 225 dates the share of
+  eligible names with a matching put is never below 92.9%. All four
+  holiday dates have normal counts (1,370, 1,592, 1,473, 1,579). The COO
+  rules on whether to proceed.
+- This fix and the code change are committed before the real-label run.
+
 ### 4.1 Blend arm: BLOCKED
 
 The live blend's historical q75 leg is the sweep cache

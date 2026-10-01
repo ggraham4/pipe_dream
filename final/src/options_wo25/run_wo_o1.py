@@ -98,6 +98,19 @@ def target_expiry(t):
     raise ValueError(t)
 
 
+def accepted_expiries(exp, trading_days):
+    """Listed expiration dates that count as the standard monthly expiry `exp` (a 3rd Friday):
+    that Friday, the Saturday after it (pre-2015 listing), or, when that Friday is a market
+    holiday (Good Friday: 2019-04-19, 2022-04-15, 2025-04-18), the trading day before it.
+    Bug fix of 2026-09-30 (pre-reg doc section 4, "Bug fix 1"); nothing else about expiry
+    selection changes. `trading_days`: sorted DatetimeIndex of market days (SPY)."""
+    exp = pd.Timestamp(exp).normalize()
+    acc = [exp, exp + pd.Timedelta(days=1)]
+    if exp <= trading_days.max() and exp not in trading_days:
+        acc.append(trading_days[trading_days < exp].max())
+    return acc
+
+
 # ------------------------------------------------------------------ quote filter
 def filter_puts(p, spot, sizes_populated=True):
     """p: puts of ONE name, ONE expiry. Returns p with a 'why' column ('' = passes)."""
@@ -292,7 +305,7 @@ def main():
         ch = ch[(ch.call_put == "Put") & ch.sharadar_ticker.isin(elig.get(t, set()))]
         exp = target_expiry(t)
         ch["expiration"] = pd.to_datetime(ch.expiration)
-        ch = ch[(ch.expiration == exp) | (ch.expiration == exp + pd.Timedelta(days=1))]
+        ch = ch[ch.expiration.isin(accepted_expiries(exp, spy.index))]
         settle_day = spy.index[spy.index <= exp.normalize() + pd.Timedelta(days=1)].max()
         days = (settle_day - t).days
         y3m = float(rates[rates.index <= t].iloc[-1])
