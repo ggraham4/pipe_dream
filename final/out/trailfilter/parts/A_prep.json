@@ -1,0 +1,109 @@
+{
+  "work_order": "WO-40 trailing-return filter (issued as WO-36)",
+  "period": "A",
+  "holdout_read": null,
+  "n_dates": 3272,
+  "first_date": "2007-01-03",
+  "last_date": "2019-12-31",
+  "r40": {
+    "rows": 9756141,
+    "undefined_rows_kept": 52490,
+    "undefined_share": 0.005380201044654849,
+    "quantiles": {
+      "0.01": -0.4136690647482014,
+      "0.25": -0.0649731314118222,
+      "0.5": 0.017413688673531214,
+      "0.75": 0.10100186579224901,
+      "0.99": 0.6096514239428582
+    }
+  },
+  "gate_a": {
+    "pit": {
+      "n_sampled": 300,
+      "max_abs_diff_truncate_or_rescale": 2.220446049250313e-16,
+      "tol": 1e-09
+    },
+    "aapl_2014_06_09": {
+      "r40_closeadj": 0.25997544505831804,
+      "r40_closeunadj_raw": -0.821005578054558,
+      "r40_in_table": 0.25997544505831804
+    },
+    "dead_names": {
+      "n_dead_tickers_with_finite_r40": 3973,
+      "rows": 4489295,
+      "example": [
+        "NS",
+        "2012-09-10",
+        -0.04761062989806142
+      ]
+    }
+  },
+  "reconcile": [
+    {
+      "name": "A full icw9_seas",
+      "got": 0.03486520057904396,
+      "wo31_exact": 0.03486520057904396,
+      "diff_exact": 0.0,
+      "spec": 0.0349,
+      "diff_spec": -3.479942095604288e-05
+    },
+    {
+      "name": "A full icw8",
+      "got": 0.028541632641009042,
+      "wo31_exact": 0.028541632641009042,
+      "diff_exact": 0.0,
+      "spec": 0.0285,
+      "diff_spec": 4.1632641009040766e-05
+    },
+    {
+      "name": "A post icw9_seas",
+      "got": 0.005091125577234209,
+      "wo31_exact": 0.005091125577234209,
+      "diff_exact": 0.0,
+      "spec": 0.0051,
+      "diff_spec": -8.874422765790986e-06
+    },
+    {
+      "name": "A post icw8",
+      "got": 0.00012178267308571079,
+      "wo31_exact": 0.00012178267308571079,
+      "diff_exact": 0.0,
+      "spec": 0.0001,
+      "diff_spec": 2.1782673085710786e-05
+    }
+  ],
+  "share_excluded": {
+    "F0": {
+      "full": {
+        "eligible_names": 0.4370951991489948,
+        "would_be_picks_count": 0.4065931086575427,
+        "would_be_picks_weight": 0.3869468769669497,
+        "eligible_share_max_date": 0.9846022241231822,
+        "n_dates": 3272
+      },
+      "post": {
+        "eligible_names": 0.4192175771770249,
+        "would_be_picks_count": 0.3896812269608999,
+        "would_be_picks_weight": 0.363705481268942,
+        "eligible_share_max_date": 0.891158740790355,
+        "n_dates": 2075
+      }
+    },
+    "F10": {
+      "full": {
+        "eligible_names": 0.18229169438095466,
+        "would_be_picks_count": 0.1672763477219406,
+        "would_be_picks_weight": 0.1315091942569309,
+        "eligible_share_max_date": 0.9533789563729683,
+        "n_dates": 3272
+      },
+      "post": {
+        "eligible_names": 0.15442273356358416,
+        "would_be_picks_count": 0.14188988847332148,
+        "would_be_picks_weight": 0.10173161423735956,
+        "eligible_share_max_date": 0.646014735432016,
+        "n_dates": 2075
+      }
+    }
+  }
+}

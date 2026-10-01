@@ -1,0 +1,74 @@
+{
+  "work_order": "WO-40 trailing-return filter (issued as WO-36)",
+  "period": "B",
+  "holdout_read": 18,
+  "n_dates": 1652,
+  "first_date": "2020-01-02",
+  "last_date": "2026-07-30",
+  "r40": {
+    "rows": 5220610,
+    "undefined_rows_kept": 32674,
+    "undefined_share": 0.006258655597717508,
+    "quantiles": {
+      "0.01": -0.4820949429453146,
+      "0.25": -0.08761695028039648,
+      "0.5": 0.013019935924051818,
+      "0.75": 0.12104806799346463,
+      "0.99": 0.937350639672091
+    }
+  },
+  "gate_a": {
+    "pit": {
+      "n_sampled": 300,
+      "max_abs_diff_truncate_or_rescale": 2.220446049250313e-16,
+      "tol": 1e-09
+    },
+    "dead_names": {
+      "n_dead_tickers_with_finite_r40": 1431,
+      "rows": 844584,
+      "example": [
+        "HMPT",
+        "2022-01-06",
+        -0.07895791583166334
+      ]
+    }
+  },
+  "reconcile": [
+    {
+      "name": "B full icw9_seas",
+      "got": -0.020163649457176646,
+      "wo31_exact": -0.020163649457176646,
+      "diff_exact": 0.0,
+      "spec": -0.0202,
+      "diff_spec": 3.6350542823353205e-05
+    },
+    {
+      "name": "B full icw8",
+      "got": -0.01991796273485032,
+      "wo31_exact": -0.01991796273485032,
+      "diff_exact": 0.0,
+      "spec": -0.0199,
+      "diff_spec": -1.7962734850319323e-05
+    }
+  ],
+  "share_excluded": {
+    "F0": {
+      "full": {
+        "eligible_names": 0.4598186768427141,
+        "would_be_picks_count": 0.43866343978457656,
+        "would_be_picks_weight": 0.41333086292781435,
+        "eligible_share_max_date": 0.9776254059906171,
+        "n_dates": 1652
+      }
+    },
+    "F10": {
+      "full": {
+        "eligible_names": 0.22787491811009397,
+        "would_be_picks_count": 0.21248953323652878,
+        "would_be_picks_weight": 0.158884932471821,
+        "eligible_share_max_date": 0.9415373511367737,
+        "n_dates": 1652
+      }
+    }
+  }
+}
