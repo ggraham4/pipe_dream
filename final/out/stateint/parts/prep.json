@@ -1,0 +1,153 @@
+{
+  "work_order": "WO-46",
+  "era": [
+    "2007-01-02",
+    "2019-12-31"
+  ],
+  "rows": 9756141,
+  "tickers": 6508,
+  "n_dates": 3272,
+  "first_date": "2007-01-03",
+  "last_date": "2019-12-31",
+  "weights_icw9_seas": {
+    "momentum_12_1": 0.0402,
+    "pct_from_high_252": 0.0105,
+    "volatility_60": -0.0105,
+    "gross_profitability": 0.4808,
+    "accruals": -0.1314,
+    "net_issuance_pct": -0.1129,
+    "days_to_next_filing_seasonal": -0.0105,
+    "short_interest_days_to_cover": -0.0105,
+    "seas": 0.1928
+  },
+  "sep": {
+    "rows": 14679190,
+    "first": "2005-01-03",
+    "last": "2019-12-31"
+  },
+  "pit": {
+    "n_sampled": 400,
+    "max_abs_diff_hi52": 0.0,
+    "max_abs_diff_vol60": 1.4710455076283324e-15,
+    "tol": 1e-09,
+    "future_bars_x7_after_2013-06-28_changes_any_state_on_or_before": false,
+    "rows_checked_future_rescale": 8406207
+  },
+  "named_company": {
+    "AAPL_2013-04-19_hi52": 0.5562113659022931,
+    "expected_390.53/702.10": 0.5562313060817546,
+    "window_max_close_date": "2012-09-19",
+    "window_max_close_x28": 702.1,
+    "close_2013-04-19_x28": 390.51599999999996,
+    "AAPL_2014-06-09_hi52": 1.0
+  },
+  "dead_names": {
+    "dead_tickers_in_universe": 4001,
+    "share_of_tickers": 0.6147818070067609,
+    "dead_rows_finite_hi52": 4267217,
+    "dead_rows_finite_vol60": 4469195,
+    "dead_rows_with_label": 4517105
+  },
+  "overlap_with_panel_columns": {
+    "hi52": {
+      "panel_column": "pct_from_high_252",
+      "coverage_mine": 0.9563167444996952,
+      "coverage_panel": 0.9563167444996952,
+      "finite_mine_only": 0,
+      "finite_panel_only": 0,
+      "max_abs_diff": 1.5265566588595902e-16,
+      "p999_abs_diff": 1.1102230246251565e-16,
+      "share_abs_diff_gt_1e-6": 0.0,
+      "within_date_spearman_min": 0.9999999958153627,
+      "within_date_spearman_median": 0.9999999995943119
+    },
+    "vol60": {
+      "panel_column": "volatility_60",
+      "coverage_mine": 0.9910461523670065,
+      "coverage_panel": 0.9910461523670065,
+      "finite_mine_only": 0,
+      "finite_panel_only": 0,
+      "max_abs_diff": 0.0,
+      "p999_abs_diff": 0.0,
+      "share_abs_diff_gt_1e-6": 0.0,
+      "within_date_spearman_min": 1.0,
+      "within_date_spearman_median": 1.0
+    }
+  },
+  "state_quintiles": {
+    "a_hi52": {
+      "share_no_state": 0.043683255500304885,
+      "names_per_date_per_quintile_mean": 570.6894865525672,
+      "min_names_any_date_quintile": 429,
+      "share_ties_at_high": 0.04509867169816426,
+      "cross_tab_with_other_state": null
+    },
+    "b_vol60": {
+      "share_no_state": 0.008953847632993414,
+      "names_per_date_per_quintile_mean": 591.3988386308068,
+      "min_names_any_date_quintile": 435,
+      "share_ties_at_high": null,
+      "cross_tab_with_other_state": null
+    },
+    "cross_tab_hi52_rows_vol60_cols": [
+      [
+        0.0034,
+        0.0111,
+        0.0269,
+        0.0564,
+        0.1022
+      ],
+      [
+        0.0182,
+        0.038,
+        0.0531,
+        0.0546,
+        0.036
+      ],
+      [
+        0.041,
+        0.0534,
+        0.0488,
+        0.0364,
+        0.0204
+      ],
+      [
+        0.0628,
+        0.0544,
+        0.04,
+        0.0273,
+        0.0156
+      ],
+      [
+        0.0782,
+        0.0461,
+        0.0327,
+        0.0247,
+        0.0182
+      ]
+    ]
+  },
+  "reconcile": {
+    "icw9_seas": {
+      "got": 0.03486520057904396,
+      "wo31_exact": 0.03486520057904396,
+      "diff_exact": 0.0,
+      "spec": 0.0348652,
+      "diff_spec": 5.790439586150775e-10
+    },
+    "icw8": {
+      "got": 0.028541632641009042,
+      "wo31_exact": 0.028541632641009042,
+      "diff_exact": 0.0,
+      "spec": 0.0285416,
+      "diff_spec": 3.26410090414897e-08
+    }
+  },
+  "picker_oracle": {
+    "pooled_dates": 9816,
+    "subset_dates": 26176,
+    "equal_to_V.Book.picks": true,
+    "tol_gross": 1e-12
+  },
+  "runtime_s": 91.24128794670105
+}
