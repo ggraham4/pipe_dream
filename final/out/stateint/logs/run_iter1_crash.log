@@ -1,0 +1,41 @@
+[11:51:35] [A] cap150: 9,756,141 rows, 6,508 tickers, 3272 dates 2007-01-03..2019-12-31
+[11:52:10] reconcile OK {'icw9_seas': {'got': 0.03486520057904396, 'wo31_exact': 0.03486520057904396, 'diff_exact': 0.0, 'spec': 0.0348652, 'diff_spec': 5.790439586150775e-10}, 'icw8': {'got': 0.028541632641009042, 'wo31_exact': 0.028541632641009042, 'diff_exact': 0.0, 'spec': 0.0285416, 'diff_spec': 3.26410090414897e-08}}
+[11:52:39] pooled momentum_12_1: LS +0.0108 (39/40) IC t +1.39
+[11:52:46] pooled pct_from_high_252: LS -0.0135 (6/40) IC t +2.09
+[11:52:54] pooled volatility_60: LS -0.0280 (0/40) IC t -2.90
+[11:53:00] pooled gross_profitability: LS +0.0910 (40/40) IC t +6.03
+[11:53:07] pooled accruals: LS +0.0222 (40/40) IC t -0.39
+[11:53:13] pooled net_issuance_pct: LS +0.0630 (40/40) IC t -5.25
+[11:53:19] pooled days_to_next_filing_seasonal: LS -0.0168 (0/40) IC t -4.28
+/Users/ggraham/pipe_dream/.claude/worktrees/agent-a3807eaf705e39dec/final/src/stateint/stateint.py:228: RuntimeWarning: Mean of empty slice
+  return np.array([c[key].mean() * ANN for c in ch])
+/opt/anaconda3/envs/pipe_dream/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+/Users/ggraham/pipe_dream/.claude/worktrees/agent-a3807eaf705e39dec/final/src/stateint/stateint.py:228: RuntimeWarning: Mean of empty slice
+  return np.array([c[key].mean() * ANN for c in ch])
+/opt/anaconda3/envs/pipe_dream/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+[11:53:19] pooled short_interest_days_to_cover: LS +nan (0/40) IC t +nan
+[11:53:24] pooled seas: LS +0.0137 (40/40) IC t +2.84
+[11:54:06] a_hi52: quintile books done (161s)
+[11:54:07] cell momentum_12_1|a_hi52: S -0.0087 same-sign 25/40 max-year 1.72 (2015) LS by Q [-0.0193, 0.0462, 0.0299, 0.0141, -0.028] pooled +0.0108
+[11:54:07] cell volatility_60|a_hi52: S -0.0429 same-sign 36/40 max-year 0.21 (2018) LS by Q [-0.0072, -0.0174, -0.0138, -0.0254, -0.05] pooled -0.0280
+[11:54:07] cell gross_profitability|a_hi52: S -0.0342 same-sign 39/40 max-year 1.01 (2008) LS by Q [0.0869, 0.1034, 0.0723, 0.084, 0.0527] pooled +0.0910
+[11:54:08] cell accruals|a_hi52: S +0.0286 same-sign 38/40 max-year 0.50 (2017) LS by Q [-0.0048, 0.0001, 0.0148, 0.001, 0.0238] pooled +0.0222
+[11:54:08] cell net_issuance_pct|a_hi52: S -0.0745 same-sign 40/40 max-year 0.27 (2009) LS by Q [0.082, 0.1067, 0.0373, 0.0254, 0.0075] pooled +0.0630
+[11:54:08] cell days_to_next_filing_seasonal|a_hi52: S -0.0104 same-sign 25/40 max-year 1.36 (2009) LS by Q [-0.0163, -0.0141, -0.0132, -0.0095, -0.0267] pooled -0.0168
+/Users/ggraham/pipe_dream/.claude/worktrees/agent-a3807eaf705e39dec/final/src/stateint/stateint.py:237: RuntimeWarning: Mean of empty slice
+  po = np.array([v.mean() * ANN for v in d])
+/opt/anaconda3/envs/pipe_dream/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+/Users/ggraham/pipe_dream/.claude/worktrees/agent-a3807eaf705e39dec/final/src/stateint/stateint.py:228: RuntimeWarning: Mean of empty slice
+  return np.array([c[key].mean() * ANN for c in ch])
+Traceback (most recent call last):
+  File "/Users/ggraham/pipe_dream/.claude/worktrees/agent-a3807eaf705e39dec/final/src/stateint/stateint.py", line 609, in <module>
+    main()
+  File "/Users/ggraham/pipe_dream/.claude/worktrees/agent-a3807eaf705e39dec/final/src/stateint/stateint.py", line 599, in main
+    run_real()
+  File "/Users/ggraham/pipe_dream/.claude/worktrees/agent-a3807eaf705e39dec/final/src/stateint/stateint.py", line 448, in run_real
+    log(f"cell {f}|{sk}: S {r['S']:+.4f} same-sign {r['offsets_same_sign']}/40 max-year {r['max_year_share']:.2f} "
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: unsupported format string passed to NoneType.__format__

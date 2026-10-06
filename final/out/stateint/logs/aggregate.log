@@ -1,0 +1,18 @@
+[12:26:53] decision {"cells_beyond_p80_band_only": 14, "cells_beyond_p95_band_only": 13, "cells_pass_p80_with_offsets_and_year_share_DESCRIPTIVE": 5, "cells_pass_p95_with_offsets_and_year_share": 5, "cells_condition": true, "book_diff": -0.0006328521126840457, "book_diff_offsets_pos": 18, "book_condition": false, "best_cell_by_null_percentile": "net_issuance_pct|a_hi52", "verdict": "KILL"}
+[12:26:53] no-effect check {'max_abs_z_of_null_mean_over_16_cells': 1.687707924103172, 'pass_lt_3': True}
+[12:26:53] momentum_12_1|a_hi52: S -0.0087 |null| p80 0.0052 p95 0.0082 offs 25 yr 1.72 pass80 False pass95 False
+[12:26:53] volatility_60|a_hi52: S -0.0429 |null| p80 0.0054 p95 0.0084 offs 36 yr 0.21 pass80 True pass95 True
+[12:26:53] gross_profitability|a_hi52: S -0.0342 |null| p80 0.0056 p95 0.0079 offs 39 yr 1.01 pass80 False pass95 False
+[12:26:53] accruals|a_hi52: S +0.0286 |null| p80 0.0054 p95 0.0074 offs 38 yr 0.50 pass80 False pass95 False
+[12:26:53] net_issuance_pct|a_hi52: S -0.0745 |null| p80 0.0045 p95 0.0075 offs 40 yr 0.27 pass80 True pass95 True
+[12:26:53] days_to_next_filing_seasonal|a_hi52: S -0.0104 |null| p80 0.0044 p95 0.0068 offs 25 yr 1.36 pass80 False pass95 False
+[12:26:53] short_interest_days_to_cover|a_hi52: UNDEFINED
+[12:26:53] seas|a_hi52: S -0.0404 |null| p80 0.0056 p95 0.0086 offs 32 yr 0.25 pass80 True pass95 True
+[12:26:53] momentum_12_1|b_vol60: S +0.0148 |null| p80 0.0048 p95 0.0082 offs 26 yr 1.75 pass80 False pass95 False
+[12:26:53] pct_from_high_252|b_vol60: S +0.0672 |null| p80 0.0050 p95 0.0072 offs 39 yr 0.41 pass80 True pass95 True
+[12:26:53] gross_profitability|b_vol60: S +0.0074 |null| p80 0.0052 p95 0.0076 offs 27 yr 3.04 pass80 False pass95 False
+[12:26:53] accruals|b_vol60: S -0.0356 |null| p80 0.0045 p95 0.0069 offs 39 yr 0.75 pass80 False pass95 False
+[12:26:53] net_issuance_pct|b_vol60: S +0.0478 |null| p80 0.0046 p95 0.0070 offs 39 yr 0.27 pass80 True pass95 True
+[12:26:53] days_to_next_filing_seasonal|b_vol60: S -0.0219 |null| p80 0.0052 p95 0.0074 offs 33 yr 0.75 pass80 False pass95 False
+[12:26:53] short_interest_days_to_cover|b_vol60: UNDEFINED
+[12:26:53] seas|b_vol60: S +0.0178 |null| p80 0.0054 p95 0.0089 offs 24 yr 0.96 pass80 False pass95 False
