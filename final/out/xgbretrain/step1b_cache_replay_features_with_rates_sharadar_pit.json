@@ -1,0 +1,58 @@
+{
+ "cell": "price_fund_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+ "panel": "/Users/ggraham/pipe_dream/final/out/features_with_rates_sharadar_pit.parquet",
+ "dates": {
+  "2007-01-03": {
+   "n_violating_rows": 0,
+   "variants": {
+    "masked": {
+     "violating_rows_in_train": 0,
+     "n_common": 1057,
+     "n_cache": 1057,
+     "n_now": 1057,
+     "max_abs_diff": 0.0,
+     "n_bit_equal": 1057
+    }
+   }
+  },
+  "2007-10-18": {
+   "n_violating_rows": 0,
+   "variants": {
+    "masked": {
+     "violating_rows_in_train": 0,
+     "n_common": 1079,
+     "n_cache": 1079,
+     "n_now": 1079,
+     "max_abs_diff": 0.0,
+     "n_bit_equal": 1079
+    }
+   }
+  },
+  "2007-12-14": {
+   "n_violating_rows": 0,
+   "variants": {
+    "masked": {
+     "violating_rows_in_train": 0,
+     "n_common": 1012,
+     "n_cache": 1012,
+     "n_now": 1012,
+     "max_abs_diff": 0.0,
+     "n_bit_equal": 1012
+    }
+   }
+  },
+  "2015-02-10": {
+   "n_violating_rows": 0,
+   "variants": {
+    "masked": {
+     "violating_rows_in_train": 0,
+     "n_common": 1319,
+     "n_cache": 1319,
+     "n_now": 1319,
+     "max_abs_diff": 0.0,
+     "n_bit_equal": 1319
+    }
+   }
+  }
+ }
+}
