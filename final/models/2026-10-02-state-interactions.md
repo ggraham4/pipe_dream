@@ -172,3 +172,29 @@ To be done in the run:
 ordered as new family k=1; in fact a re-screen (see above).
 **Iteration cap.** 3 fix-and-rerun cycles, bugs only. States, rule and
 thresholds do not change after a real number is seen.
+
+## 1a. Amendment (2026-10-06, COO decision, made before any label was read)
+
+The COO amended the work order on the prep findings above. The prep stage
+(commit a5a4d05) computed no state-conditional return, no cell statistic and
+no book difference, so this amendment is label-free. It supersedes section 1
+where they differ. Gabe allowed the pre-registration push on 2026-10-06.
+
+- **Correction.** The order called the 52-week-high effect "not previously
+  tested here". That was the COO's error: hi52 = `pct_from_high_252` + 1, one
+  of the original 8 factors and a live icw9_seas factor.
+- **Test 3 dropped.** hi52 standalone through the 7-gate stack is not run. It
+  is not a new family.
+- **Self-cells dropped.** `pct_from_high_252` × hi52 and `volatility_60` ×
+  vol60 are not computed. **16 cells**, interaction family NEW, trial 1.
+- **Cell pass (all three):** |S| > the 95th percentile of |S_null| over the
+  100 within-date state shuffles (two-sided); per-offset S with the sign of
+  the mean on ≥ 32 of 40 offsets; max year share ≤ 0.45.
+- **Success (all required):** at least 2 of the 16 cells pass, AND rule R
+  (exclude hi52 Q1, refill via `trailfilter.picks_fullsize`) minus icw9_seas
+  > 0 on the 40-offset mean and on ≥ 32 of 40 offsets. **Kill:** anything
+  else.
+- Counts at p80 are reported, descriptive only. The "weakness of the cells
+  condition" paragraph above no longer applies to the decision: under p95,
+  about 0.8 of 16 cells clear the band by chance.
+- Unchanged: states, quintile rule, cell statistic, null, book rule, checks.
