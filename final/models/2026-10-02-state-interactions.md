@@ -198,3 +198,115 @@ where they differ. Gabe allowed the pre-registration push on 2026-10-06.
   condition" paragraph above no longer applies to the decision: under p95,
   about 0.8 of 16 cells clear the band by chance.
 - Unchanged: states, quintile rule, cell statistic, null, book rule, checks.
+
+## 2. Results (2026-10-06, run after the amendment commit 9525b7d was pushed)
+
+**Verdict: KILL.** The cells condition is met, but the book condition fails.
+Nothing changes in the live book.
+
+All figures are %/yr, net 15 bp, 40-offset means, era 2007-2019. Machine-readable:
+`final/out/stateint/state_interactions_report.json`. Logs: `final/out/stateint/logs/`.
+
+### 2.1 Test 2: state-conditional book (decides the verdict)
+
+Rule R excludes hi52 Q1 and refills the book to full size.
+
+| | value |
+|---|---|
+| icw9_seas | +3.487 (reconciled exactly to WO-31) |
+| rule R | +3.423 |
+| **R − icw9_seas** | **−0.063, 18/40 offsets > 0** (bar: > 0 on ≥ 32/40) |
+| per-offset range | −0.61 .. +0.34 |
+| LOYO (difference with one year dropped) | min −0.21 (2007 dropped), max +0.31 (2009 dropped); +0.09 with 2008 dropped |
+| per year | 2009 −4.5, 2008 −1.8, 2016 −1.6; most other years +0.1 .. +1.7 |
+| share of eligible names excluded | 19.1%; no vol bucket ran short of survivors; no cash dates |
+| turnover (mean f_new) | 0.433 → 0.448 |
+| random exclusion of a fifth (100 shuffled-state draws) | mean −0.23, sd 0.04; R beats all 100 |
+
+Rule R loses less than a random fifth-of-names exclusion. Even so, it does
+not beat the unrestricted book, and the 2009 rebound (far-from-high names
+rallying) is where the rule costs most.
+
+### 2.2 Test 1: interaction cells (16; 2 are undefined)
+
+`short_interest_days_to_cover` has no value anywhere in 2007-2019 on this panel.
+That matches the stored full-era t, which is NaN. Its two cells are therefore
+undefined and count as not passing. This was found in the run, and nothing
+else changed: the bar stays at ≥ 2 of 16.
+Iteration 1 crashed on this, a formatting error on the empty cell, so the
+fix was a bug fix. That is 1 of the 3 allowed fix cycles.
+
+| cell | S = Q5 − Q1 | null abs p95 | same-sign offsets | max year share | passes p95 |
+|---|---|---|---|---|---|
+| net_issuance_pct × hi52 | **−7.45** | 0.75 | 40 | 0.27 (2009) | **yes** |
+| pct_from_high_252 × vol60 | +6.72 | 0.72 | 39 | 0.41 (2015) | yes |
+| net_issuance_pct × vol60 | +4.78 | 0.70 | 39 | 0.27 (2015) | yes |
+| volatility_60 × hi52 | −4.29 | 0.84 | 36 | 0.21 (2018) | yes |
+| seas × hi52 | −4.04 | 0.86 | 32 | 0.25 (2007) | yes |
+| accruals × vol60 | −3.56 | 0.69 | 39 | 0.75 | no (year share) |
+| gross_profitability × hi52 | −3.42 | 0.79 | 39 | 1.01 | no (year share) |
+| accruals × hi52 | +2.86 | 0.74 | 38 | 0.50 | no (year share) |
+| days_to_next_filing × vol60 | −2.19 | 0.74 | 33 | 0.75 | no (year share) |
+| seas × vol60 | +1.78 | 0.89 | 24 | 0.96 | no |
+| momentum_12_1 × vol60 | +1.48 | 0.82 | 26 | 1.75 | no |
+| days_to_next_filing × hi52 | −1.04 | 0.68 | 25 | 1.36 | no |
+| momentum_12_1 × hi52 | −0.87 | 0.82 | 25 | 1.72 | no |
+| gross_profitability × vol60 | +0.74 | 0.76 | 27 | 3.04 | no |
+| short_interest × hi52 / × vol60 | undefined | | | | no |
+
+- Cells passing at p95, with the offsets and year-share conditions: **5**
+  (at p80, descriptive: 5).
+- Cells beyond the band alone: 13 at p95, 14 at p80.
+- Every passing cell keeps its sign in all 13 leave-one-year-out drops.
+- Best cell: net_issuance_pct × hi52, S = −7.45 (Q1 +8.2, Q2 +10.7, Q5 +0.75;
+  pooled +6.3), 40/40 offsets, max year share 0.27, LOYO −9.1 .. −5.9. The
+  issuance factor pays among names far below their high and almost nothing
+  among names at their high.
+
+**How to read the cells.** The shuffled-state null asks only whether the
+state is random. Real state quintiles differ systematically in what they hold:
+hi52 Q1 is mostly high-vol names (10.2% of all names sit in hi52 Q1 and vol60
+Q5 at once). So almost any factor's payoff differs between them, and 13 of 14
+cells clear a null band of about 0.7-0.9%/yr. The cells show that factor
+payoffs are strongly state-dependent. They do not show that a zero-fit
+state-conditional book can harvest that, and the one pre-registered rule
+could not.
+
+### 2.3 Checks
+
+- **Run, passed:**
+  - PIT on both states.
+  - AAPL named-company check.
+  - Delisted names present.
+  - Book reconcile, exact.
+  - Picker oracle (all in prep, section 1).
+- **Shuffled-state no-effect check, passed.** Across the 16 cells (14
+  defined), the largest |mean of null S| is 1.69 standard errors; the bar is
+  < 3.
+- **Pooled sign check: 5 of 7 defined factors match, 3 do not.**
+  - Pooled payoffs match the sign of the factor's signed IC for momentum,
+    gross_profitability, accruals, net_issuance and seas.
+  - They do not match for pct_from_high_252 (LS −1.35, IC t +2.09),
+    volatility_60 (LS −2.80, signed IC t +2.90) and
+    days_to_next_filing_seasonal (LS −1.68, signed IC t +4.28).
+  - The two legs behave correctly where the factor is strong:
+    gross_profitability top +9.9 vs bottom +0.4.
+  - The three mismatches are the price/volatility-linked factors plus the
+    filing-date factor. For these, the decile-within-vol-bucket,
+    inverse-vol-weighted extremes differ from a whole-cross-section Spearman
+    IC.
+  - No bug was found. It is recorded as a failed check, not explained away.
+  - IC t's on this panel reconcile with the stored old-grid t for momentum
+    (1.39 vs 1.38) and gross_profitability (6.03 vs 5.58). Others differ
+    because the v2 grid differs.
+- **Not run:**
+  - Test 3 (dropped by the amendment).
+  - The two self-cells (dropped).
+  - Any 2020+ read.
+
+**Trial count.** Interaction family NEW, trial 1, 16 cells, KILL. hi52
+standalone: not run.
+**Bearing on WO-43.** This is mixed rather than clean evidence against. Factor payoffs clearly
+vary with price state and volatility state, so a tree model would find
+interactions. But the one zero-fit way of using a state in the book lost
+0.06%/yr on 18/40 offsets.

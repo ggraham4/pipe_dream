@@ -1,0 +1,39 @@
+[11:54:40] [A] cap150: 9,756,141 rows, 6,508 tickers, 3272 dates 2007-01-03..2019-12-31
+[11:55:15] reconcile OK {'icw9_seas': {'got': 0.03486520057904396, 'wo31_exact': 0.03486520057904396, 'diff_exact': 0.0, 'spec': 0.0348652, 'diff_spec': 5.790439586150775e-10}, 'icw8': {'got': 0.028541632641009042, 'wo31_exact': 0.028541632641009042, 'diff_exact': 0.0, 'spec': 0.0285416, 'diff_spec': 3.26410090414897e-08}}
+[11:55:43] pooled momentum_12_1: LS +0.0108 (39/40) IC t +1.39
+[11:55:50] pooled pct_from_high_252: LS -0.0135 (6/40) IC t +2.09
+[11:55:57] pooled volatility_60: LS -0.0280 (0/40) IC t -2.90
+[11:56:04] pooled gross_profitability: LS +0.0910 (40/40) IC t +6.03
+[11:56:10] pooled accruals: LS +0.0222 (40/40) IC t -0.39
+[11:56:16] pooled net_issuance_pct: LS +0.0630 (40/40) IC t -5.25
+[11:56:21] pooled days_to_next_filing_seasonal: LS -0.0168 (0/40) IC t -4.28
+/Users/ggraham/pipe_dream/.claude/worktrees/agent-a3807eaf705e39dec/final/src/stateint/stateint.py:228: RuntimeWarning: Mean of empty slice
+  return np.array([c[key].mean() * ANN for c in ch])
+/opt/anaconda3/envs/pipe_dream/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+/Users/ggraham/pipe_dream/.claude/worktrees/agent-a3807eaf705e39dec/final/src/stateint/stateint.py:228: RuntimeWarning: Mean of empty slice
+  return np.array([c[key].mean() * ANN for c in ch])
+/opt/anaconda3/envs/pipe_dream/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+[11:56:21] pooled short_interest_days_to_cover: LS +nan (0/40) IC t +nan
+[11:56:26] pooled seas: LS +0.0137 (40/40) IC t +2.84
+[11:57:08] a_hi52: quintile books done (157s)
+[11:57:08] cell momentum_12_1|a_hi52: S -0.0087 same-sign 25/40 max-year 1.72 (2015) LS by Q [-0.0193, 0.0462, 0.0299, 0.0141, -0.028] pooled +0.0108
+[11:57:09] cell volatility_60|a_hi52: S -0.0429 same-sign 36/40 max-year 0.21 (2018) LS by Q [-0.0072, -0.0174, -0.0138, -0.0254, -0.05] pooled -0.0280
+[11:57:09] cell gross_profitability|a_hi52: S -0.0342 same-sign 39/40 max-year 1.01 (2008) LS by Q [0.0869, 0.1034, 0.0723, 0.084, 0.0527] pooled +0.0910
+[11:57:09] cell accruals|a_hi52: S +0.0286 same-sign 38/40 max-year 0.50 (2017) LS by Q [-0.0048, 0.0001, 0.0148, 0.001, 0.0238] pooled +0.0222
+[11:57:10] cell net_issuance_pct|a_hi52: S -0.0745 same-sign 40/40 max-year 0.27 (2009) LS by Q [0.082, 0.1067, 0.0373, 0.0254, 0.0075] pooled +0.0630
+[11:57:10] cell days_to_next_filing_seasonal|a_hi52: S -0.0104 same-sign 25/40 max-year 1.36 (2009) LS by Q [-0.0163, -0.0141, -0.0132, -0.0095, -0.0267] pooled -0.0168
+[11:57:10] cell short_interest_days_to_cover|a_hi52: UNDEFINED (no factor data in era)
+[11:57:10] cell seas|a_hi52: S -0.0404 same-sign 32/40 max-year 0.25 (2007) LS by Q [0.0398, 0.0037, 0.0134, 0.008, -0.0006] pooled +0.0137
+[11:57:53] b_vol60: quintile books done (202s)
+[11:57:54] cell momentum_12_1|b_vol60: S +0.0148 same-sign 26/40 max-year 1.75 (2007) LS by Q [0.0117, 0.0007, -0.0151, 0.029, 0.0265] pooled +0.0108
+[11:57:54] cell pct_from_high_252|b_vol60: S +0.0672 same-sign 39/40 max-year 0.41 (2015) LS by Q [-0.011, -0.0207, -0.0435, 0.0029, 0.0562] pooled -0.0135
+[11:57:54] cell gross_profitability|b_vol60: S +0.0074 same-sign 27/40 max-year 3.04 (2009) LS by Q [0.067, 0.0817, 0.0899, 0.1055, 0.0744] pooled +0.0910
+[11:57:55] cell accruals|b_vol60: S -0.0356 same-sign 39/40 max-year 0.75 (2017) LS by Q [0.0197, -0.008, 0.0228, 0.0092, -0.0159] pooled +0.0222
+[11:57:55] cell net_issuance_pct|b_vol60: S +0.0478 same-sign 39/40 max-year 0.27 (2015) LS by Q [0.0314, 0.0693, 0.0607, 0.0369, 0.0792] pooled +0.0630
+[11:57:55] cell days_to_next_filing_seasonal|b_vol60: S -0.0219 same-sign 33/40 max-year 0.75 (2017) LS by Q [-0.0188, -0.01, -0.0152, -0.0157, -0.0406] pooled -0.0168
+[11:57:55] cell short_interest_days_to_cover|b_vol60: UNDEFINED (no factor data in era)
+[11:57:55] cell seas|b_vol60: S +0.0178 same-sign 24/40 max-year 0.96 (2009) LS by Q [-0.0094, 0.0348, 0.0188, 0.0194, 0.0084] pooled +0.0137
+[11:57:59] book rule: icw9_seas +0.0349 rule +0.0342 diff -0.0006 (18/40) drop2008 0.0009323130764191546
+[11:57:59] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a3807eaf705e39dec/final/out/stateint/parts/real.json (207s)

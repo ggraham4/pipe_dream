@@ -438,6 +438,11 @@ def run_real():
         for f in FT:
             if (f, sk) in SELF_CELLS:          # dropped by the 2026-10-06 amendment (16 cells)
                 continue
+            if not (bq[4][f][0] and bq[0][f][0]):
+                # factor has no finite value in this era (short interest data start after 2019): cell undefined, cannot pass
+                out["cells"][f"{f}|{sk}"] = {"undefined_no_data": True, "S": None, "offsets_same_sign": 0, "max_year_share": None}
+                log(f"cell {f}|{sk}: UNDEFINED (no factor data in era)")
+                continue
             r = spread_stats(bq[4][f], bq[0][f])
             lsq = [float(off_mean(ls_chain(*bq[q][f])).mean()) for q in range(5)]
             r["ls_net_by_state_quintile_Q1_to_Q5"] = lsq
@@ -474,6 +479,9 @@ def null_draw(seed):
         b5, b1 = cell_books(q == 4, G["FT"]), cell_books(q == 0, G["FT"])
         for f in G["FT"]:
             if (f, sk) in SELF_CELLS:
+                continue
+            if not (b5[f][0] and b1[f][0]):
+                res["cells"][f"{f}|{sk}"] = None
                 continue
             res["cells"][f"{f}|{sk}"] = spread_stats(b5[f], b1[f], full=False)["S"]
     res["runtime_s"] = time.time() - t0
@@ -544,6 +552,9 @@ def aggregate():
     zmax = 0.0
     assert len(real["cells"]) == 16
     for k, r in real["cells"].items():
+        if r.get("undefined_no_data"):
+            rep["cells"][k] = {**r, "pass_p80": False, "pass_p95": False, "beyond_p80": False, "beyond_p95": False}
+            continue
         nd = np.array([d["cells"][k] for d in draws])
         a = np.abs(nd)
         p80, p95 = float(np.percentile(a, 80)), float(np.percentile(a, 95))
@@ -567,7 +578,7 @@ def aggregate():
     book_ok = bool(br["diff"] > 0 and br["diff_offsets_pos"] >= N_OFF_MIN)
     cells_ok = bool(n95 >= 2)                # amendment 2026-10-06: >=2 of 16 cells pass at p95; p80 descriptive
     rep["shuffled_state_no_effect_check"] = {"max_abs_z_of_null_mean_over_16_cells": zmax, "pass_lt_3": bool(zmax < 3.0)}
-    best = max(rep["cells"], key=lambda k: rep["cells"][k]["null"]["pctile_of_abs_real"] + 1e-9 * abs(rep["cells"][k]["S"]))
+    best = max([k for k in rep["cells"] if rep["cells"][k]["S"] is not None], key=lambda k: rep["cells"][k]["null"]["pctile_of_abs_real"] + 1e-9 * abs(rep["cells"][k]["S"]))
     rep["decision"] = {"cells_beyond_p80_band_only": int(sum(c["beyond_p80"] for c in rep["cells"].values())),
                        "cells_beyond_p95_band_only": int(sum(c["beyond_p95"] for c in rep["cells"].values())),
                        "cells_pass_p80_with_offsets_and_year_share_DESCRIPTIVE": int(n80), "cells_pass_p95_with_offsets_and_year_share": int(n95),
@@ -580,6 +591,8 @@ def aggregate():
     log(f"decision {json.dumps(rep['decision'])}")
     log(f"no-effect check {rep['shuffled_state_no_effect_check']}")
     for k, c in rep["cells"].items():
+        if c["S"] is None:
+            log(f"{k}: UNDEFINED"); continue
         log(f"{k}: S {c['S']:+.4f} |null| p80 {c['null']['abs_p80']:.4f} p95 {c['null']['abs_p95']:.4f} offs {c['offsets_same_sign']} "
             f"yr {c['max_year_share']:.2f} pass80 {c['pass_p80']} pass95 {c['pass_p95']}")
 
