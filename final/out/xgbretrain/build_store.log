@@ -1,0 +1,14 @@
+[12:55:05] hashing base panel ...
+[12:55:07]   input io_gap sha 16408d046c95
+[12:55:07]   input seas sha 8054af212270
+[12:55:07]   input sue sha 198cef0b5a38
+[12:55:07]   input ear sha 9cc6418f5c0a
+[12:55:08]   input volshock_inputs sha 7c595da6bd69
+[12:55:17] base rows < 2020: 7,353,383
+[12:55:20]   io_gap: matched 6,894,468, finite 6,868,334
+[12:55:23]   seas: matched 6,894,468, finite 5,847,835
+[12:55:25]   sue: matched 6,894,468, finite 6,014,154
+[12:55:27]   ear: matched 6,544,589, finite 5,743,082
+[12:55:35]   str_lowturn: matched 6,544,589, finite 6,538,322
+  PIT universe: 6,921,746 rows, 5,472 trading days, 4,015 distinct tickers, 2005-01-03 .. 2026-10-02
+[12:55:42] done -> /Users/ggraham/pipe_dream/.claude/worktrees/wo43-xgb-retrain/final/out/xgbretrain/store_meta.json
