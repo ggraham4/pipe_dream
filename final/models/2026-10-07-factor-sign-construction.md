@@ -146,17 +146,19 @@ and each Holm p = 1.0. This matches the stated expectation: at about 1% of total
 
 Flipping `days_to_next_filing_seasonal` is the largest effect in the
 order: +0.17 pp/yr, 34/40 offsets, every LOYO positive, above all 100
-null draws. It is still below base sd40, and its year-block t is 1.53 (Holm
-0.38). This is descriptive only. No gate was pre-registered for it, so it
-is not a finding, and nothing changes.
+null draws. It is descriptive only: no gate was pre-registered for it, and the LOO gate
+applied to it would fail anyway, on condition 1 (0.167 < 0.223) and on
+condition 4 (max year share 0.457 > 0.45). Its year-block t is 1.53 (Holm
+0.38). It is not a finding, and nothing changes.
 
 **Null shape.** For `volatility_60` and `days_to_next_filing_seasonal`,
 the shuffled-column null is centred above zero (means +0.035 and +0.066).
 Replacing either factor with noise at the same weight slightly beats the
 base, and dropping it is worse than noise (D_LOO sits at null percentile 0 and 1).
-The effect is tiny either way. A floor-weight factor mostly acts as a small
-tie-breaker, and noise of the same size adds a little diversification
-inside the top decile.
+The effect is tiny either way. One untested reading: a floor-weight factor
+mostly acts as a small tie-breaker, and noise of the same size may add a
+little diversification inside the top decile. This is not a weight question;
+under the pre-registration only a FLAG raises one.
 
 ### Why the signs disagree (Test 1, descriptive)
 
@@ -185,7 +187,7 @@ tails, and the long-short takes the tail that reverses. The signed IC uses the w
 ### Deviations from the pre-registration (none touch the outcome rule)
 
 - Deciles use `floor((rank−1)·10/n)+1` on the ordinal rank, not `pd.qcut`. It is the same equal-count split; Test 1 is descriptive.
-- The first `--real` run crashed on `volatility_60` because selecting the column list duplicated the factor column (`logs/real_crash1.log`). I fixed the column selection and re-ran everything from scratch. `pct_from_high_252` numbers were identical in both runs.
+- The first `--real` run crashed on `volatility_60` because selecting the column list duplicated the factor column (`logs/real_crash1.log`). I fixed the column selection and re-ran everything from scratch. the `pct_from_high_252` LOO and flip log lines were identical in both runs (the first run's Test 1 output was overwritten, not compared).
 - The pre-registered "null draw 0 re-run identical" check was missing from the pushed code. I added it as `--recheck`, writing `parts/null_recheck.json`, and ran it after the nulls.
 - Max-year-share is > 1 when the per-window D total is small and mixed in sign. That condition fails either way.
 
