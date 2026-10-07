@@ -45,6 +45,13 @@ BACKTEST_SUMMARY are the icw8 model's. Doc: final/models/2026-09-27-wo20-seas-li
 A missing SEP month file or seas coverage < SEAS_MIN_COVERAGE FAILS the run;
 it never falls back to icw8 (that would publish icw8 picks labelled icw9).
 
+2026-10-07 (Gabe, after WO-48b): the live model is now icw5_seas -- icw9_seas
+minus its four floor-weight factors (pct_from_high_252, volatility_60,
+days_to_next_filing_seasonal, short_interest_days_to_cover), the other five
+weights scaled to the same total |w| (ICW.PRODUCTION_WEIGHTS_V5_SEAS). The
+picks_overlap_vs_icw8 keys named *icw9_seas* now describe this live model.
+Doc: final/models/2026-10-07-floor-weight-drop-test.md.
+
 CONSTRUCTION (matches the full-specification doc's section 2 exactly):
     Universe: cap150 tier (market cap >= $150M, trailing 20-day median
         dollar volume >= $250k, domestic common stock, point-in-time).
@@ -110,15 +117,30 @@ OUT_META = MAIN_ROOT / "out" / "current_signal_composite_meta.json"
 
 TIER = "cap150"
 
-WEIGHTS = ICW.PRODUCTION_WEIGHTS_V9_SEAS
-SIGNS = ICW.SIGNS_V9_SEAS
-MODEL_VERSION = ICW.MODEL_VERSION_V9_SEAS
+# 2026-10-07 (Gabe, after WO-48b): live is icw5_seas = icw9_seas minus its four
+# floor-weight factors. icw9_seas stays defined in ICW for harnesses/side ledgers.
+WEIGHTS = ICW.PRODUCTION_WEIGHTS_V5_SEAS
+SIGNS = ICW.SIGNS_V5_SEAS
+MODEL_VERSION = ICW.MODEL_VERSION_V5_SEAS
 SEAS_MIN_COVERAGE = 0.60   # of the eligible cap150 cross-section; in-era 0.76-0.85
 
 BACKTEST_SUMMARY = {
     "model_version": MODEL_VERSION,
-    "factors": "9: the 8 icw8 factors + seas (Heston-Sadka return seasonality, WO-18), "
-               "added 2026-09-27 by Gabe's decision",
+    "factors": "5: momentum_12_1, gross_profitability, accruals, net_issuance_pct + seas. "
+               "icw9_seas (8 icw8 factors + seas, 2026-09-27) minus its four floor-weight factors "
+               "(pct_from_high_252, volatility_60, days_to_next_filing_seasonal, "
+               "short_interest_days_to_cover), dropped 2026-10-07 by Gabe's decision after WO-48b",
+    "icw5_seas": {
+        "in_era_2007_2019": {"excess_cagr_vs_spy_pct": 3.64, "worst_offset_pct": 3.25, "loyo_min_pct": 2.56,
+                             "post_2011_10_pct": 0.50, "offsets_positive": "40/40"},
+        "era_2020_2026": {"excess_cagr_vs_spy_pct": -1.97, "worst_offset_pct": -4.71, "loyo_min_pct": -7.26,
+                          "offsets_positive": "2/40",
+                          "note": "IN-SAMPLE for this model: the four factors were dropped after hold-out read "
+                                  "#21 (WO-48b). icw9_seas on the same harness: -2.02."},
+        "vs_icw9_seas": "2007-19 +0.16 pp/yr, 2020-26 +0.05 pp/yr; picks ~96% the same",
+        "doc": "final/models/2026-10-07-floor-weight-drop-test.md",
+        "harness": "WO-48b dropcheck.py (v2 col c, cap150, decile_volq, 40 offsets, net 15bp)",
+    },
     "in_era_backtest_2007_2019": {
         "harness": "WO-18 (v2 col c, cap150, decile_volq, 40 offsets, net 15bp, 2007-01-02..2019-12-31)",
         "icw9_seas": {"excess_cagr_vs_spy_pct": 3.49, "worst_offset_pct": 2.95, "loyo_min_pct": 2.46,
@@ -129,8 +151,9 @@ BACKTEST_SUMMARY = {
                           "the backtest is read on (seas t +2.8356). Not an out-of-sample result.",
         "source": "final/src/seasonality/wo20_frozen_backtest.py -> final/out/seasonality/wo20_frozen_backtest.json",
     },
-    "holdout_2020_2026": "icw9_seas: NONE -- the hold-out is spent; no look without Gabe. "
-                         "The icw8_* lines below are the PREVIOUS 8-factor model's hold-out result.",
+    "holdout_2020_2026": "icw5_seas: -1.97%/yr vs SPY, 2/40 offsets, IN-SAMPLE (factor selection "
+                         "made after hold-out read #21). The icw8_* lines below are the earlier "
+                         "8-factor model's hold-out result.",
     "icw8_model_version": "ic_weighted_2026-09-22",
     "nominate_pooled_ic": "+0.03 to +0.05 (t=2.8-5.6, odd/even split-half OOS)",
     "icw8_holdout_excess_cagr_pct": 2.44,
@@ -217,6 +240,7 @@ def main(argv=None):
         "n_picks": int(len(out)),
         "model_version": MODEL_VERSION,
         "n_factors": len(WEIGHTS),
+        "previous_model_version": ICW.MODEL_VERSION_V9_SEAS,
         "construction": "decile_volq: top decile by IC-weighted composite score "
                         "within each of 5 trailing-volatility quintiles, "
                         "inverse-vol weighted, 40-trading-day hold, no stop-loss",
@@ -235,13 +259,12 @@ def main(argv=None):
         "universe_rule": "v2 eligible_cap150, SPACs excluded unless in the old 4,011-ticker grid "
                          f"({uinfo.get('spac_rows_dropped_eligible_' + TIER, 0)} eligible SPAC rows dropped)",
         "role": "candidate",
-        "note": "TRACKED, NOT ACTED ON AS A VALIDATED EDGE -- a theoretical, "
-                "zero-fitted-parameter rank model (only the 9 factor SIGNS and "
-                "the IC-weights' shrinkage formula are decisions; no return "
-                "target was ever fit). seas was added 2026-09-27 (Gabe); its "
-                "in-era backtest uses in-sample weights and it has no hold-out "
-                "result. The previous 8-factor version fails leave-one-year-out "
-                "on the 2020-2026 hold-out. See the write-ups.",
+        "note": "TRACKED, NOT ACTED ON AS A VALIDATED EDGE -- a theoretical "
+                "rank model (decisions: the factor SIGNS, the IC-weights' shrinkage "
+                "formula, adding seas 2026-09-27, and dropping four floor-weight "
+                "factors 2026-10-07; no return target was ever fit). Its in-era "
+                "backtest uses in-sample weights, and 2020-2026 is in-sample for the "
+                "2026-10-07 factor selection: -1.97%/yr vs SPY there. See the write-ups.",
     }
     out_meta.write_text(json.dumps(meta, indent=2))
     print(f"as of {as_of.date()}: {len(out)} picks from {len(elig)} eligible names "
