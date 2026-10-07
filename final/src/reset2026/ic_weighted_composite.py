@@ -142,6 +142,28 @@ PRODUCTION_WEIGHTS_V9_SEAS = {
 }
 
 
+# icw5_seas (Gabe 2026-10-07, after WO-48b): icw9_seas without its four floor-weight
+# factors (pct_from_high_252, volatility_60, days_to_next_filing_seasonal,
+# short_interest_days_to_cover). The other five weights are icw9_seas's, scaled to the
+# same total |w| (0.9901), exactly as tested (arm D4 in
+# final/out/signcheck/drop/dropcheck_report.json); ranks do not depend on the scale.
+# Chosen after hold-out read #21, so 2020-2026 is IN-SAMPLE for this model.
+# PRODUCTION_WEIGHTS_V9_SEAS above is unchanged (harnesses and side ledgers use it).
+MODEL_VERSION_V5_SEAS = "ic_weighted_seas_slim_2026-10-07"
+_V5_DROPPED = ("pct_from_high_252", "volatility_60", "days_to_next_filing_seasonal",
+               "short_interest_days_to_cover")
+SIGNS_V5_SEAS = {k: v for k, v in SIGNS_V9_SEAS.items() if k not in _V5_DROPPED}
+PRODUCTION_WEIGHTS_V5_SEAS = {
+    "momentum_12_1": 0.041962237762237765,
+    "gross_profitability": 0.5018767143304457,
+    "accruals": -0.13716015029746373,
+    "net_issuance_pct": -0.11784917023275233,
+    "seas": 0.2012517273771005,
+}
+assert set(PRODUCTION_WEIGHTS_V5_SEAS) == set(PRODUCTION_WEIGHTS_V9_SEAS) - set(_V5_DROPPED)
+assert all(np.sign(PRODUCTION_WEIGHTS_V5_SEAS[k]) == np.sign(PRODUCTION_WEIGHTS_V9_SEAS[k])
+           for k in PRODUCTION_WEIGHTS_V5_SEAS)
+
 def compute_composite_ic_weighted(df_date, weights=None):
     """Drop-in analog to composite.compute_composite(), using
     PRODUCTION_WEIGHTS (or a supplied override) instead of equal weights.
