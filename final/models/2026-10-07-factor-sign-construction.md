@@ -104,3 +104,91 @@ and confirm it is immaterial, or to show it is not.
 built through the same `picks_w` path as base; hold-out assert on universe,
 dates and SPY (< 2020-01-01); null draw 0 of each factor re-run gives the
 identical number; D for the identity book (w unchanged) = 0 exactly.
+
+## 2. Results (computed 2026-10-07, after the pre-registration above was pushed as 5d3f5e3)
+
+Report: `final/out/signcheck/signcheck_report.json`; logs in
+`final/out/signcheck/logs/`. Units: %/yr net excess vs SPY unless noted.
+
+**Verdict: all three CLOSED.** The sign disagreement is a construction
+curiosity. It does not touch the live book in any material way, so there is no weight question for Gabe.
+
+**Checks.** All of these passed:
+- Base reconcile: +0.0348652 equals the WO-31 exact value (diff 0.0, and 5.8e-10 vs the spec).
+- icw8 reconcile: exact.
+- Numpy score equals `composite_score` (< 1e-15).
+- The fast picker matches `picks_w` on every date.
+- The identity book gives D = 0 exactly.
+- The hold-out assert passed.
+- WO-46 pooled LS payoffs reproduced to < 1e-10.
+- Null draw 0 of each factor, re-run, gives the identical number.
+
+### Gate (Test 2: leave-one-out book, pre-registered rule)
+
+| factor | w | D_LOO | offsets > 0 | LOYO min | max yr share | null p80 | bar | verdict |
+|---|---|---|---|---|---|---|---|---|
+| pct_from_high_252 | +0.0105 | +0.014 | 25/40 | −0.044 | 4.0 (2009) | +0.011 | 0.223 | CLOSED |
+| volatility_60 | −0.0105 | −0.035 | 13/40 | −0.076 | n/a (total ≤ 0) | +0.051 | 0.223 | CLOSED |
+| days_to_next_filing_seasonal | −0.0105 | +0.033 | 24/40 | −0.006 | 1.18 (2018) | +0.078 | 0.223 | CLOSED |
+
+The bar is base sd40 = 0.223 pp/yr. That is 7 to 16 times every |D_LOO|, so all four
+conditions fail for every factor. Jackknife t's are 0.18, −0.43 and 0.57,
+and each Holm p = 1.0. This matches the stated expectation: at about 1% of total
+|w|, each factor changes only a handful of picks.
+
+### Sign-flip control (Test 3, no gate)
+
+| factor | D_FLIP | offsets > 0 | LOYO min | jk t (Holm p) | null pct | 2011-10+ D_FLIP |
+|---|---|---|---|---|---|---|
+| pct_from_high_252 | +0.012 | 21/40 | −0.115 | 0.08 (1.0) | 84 | −0.055 |
+| volatility_60 | +0.067 | 29/40 | +0.006 | 0.62 (1.0) | 97 | −0.013 |
+| days_to_next_filing_seasonal | +0.167 | 34/40 | +0.098 | 1.53 (0.38) | 100 | +0.103 |
+
+Flipping `days_to_next_filing_seasonal` is the largest effect in the
+order: +0.17 pp/yr, 34/40 offsets, every LOYO positive, above all 100
+null draws. It is still below base sd40, and its year-block t is 1.53 (Holm
+0.38). This is descriptive only. No gate was pre-registered for it, so it
+is not a finding, and nothing changes.
+
+**Null shape.** For `volatility_60` and `days_to_next_filing_seasonal`,
+the shuffled-column null is centred above zero (means +0.035 and +0.066).
+Replacing either factor with noise at the same weight slightly beats the
+base, and dropping it is worse than noise (D_LOO sits at null percentile 0 and 1).
+The effect is tiny either way. A floor-weight factor mostly acts as a small
+tie-breaker, and noise of the same size adds a little diversification
+inside the top decile.
+
+### Why the signs disagree (Test 1, descriptive)
+
+Decile tables are 40-day date-demeaned returns (%), D1 (low) to D10 (high),
+raw factor direction.
+
+- **pct_from_high_252** (book long high):
+  - Deciles: −0.34, −0.03, −0.08, +0.04, +0.07, +0.05, +0.05, +0.04, +0.17, +0.03.
+  - Where the IC comes from: almost all of it is the D1 tail, names far below their high doing badly. D10 is flat, and D9 is best.
+  - Effect of weighting: book-direction top-minus-bottom is +0.36 equal-weight but only +0.04 inverse-vol-weight. The inverse-vol weights remove most of the spread.
+  - Where the negative LS comes from: one year. 2009 is −70 %/yr (the junk rally); 9 of 13 years are positive.
+- **volatility_60** (book long low vol):
+  - Deciles: −0.05, +0.09, −0.01, +0.11, +0.10, +0.09, +0.15, +0.06, −0.06, −0.48.
+  - Shape: hump-shaped. The IC is the D10 (highest-vol) crash tail. The lowest-vol decile is not the best.
+  - Within volatility quintiles, D10−D1 runs from +0.46 in the lowest quintile to −0.46 in the highest. Bucketing by vol and then ranking by vol again leaves mostly the reversed part.
+  - LS is negative on 0/40 offsets, but it is concentrated in 2009, 2010, 2013 and 2016.
+- **days_to_next_filing_seasonal** (book long few days to filing):
+  - Deciles: −0.11, +0.30, +0.18, +0.08, +0.05, −0.02, −0.02, −0.13, −0.24, −0.09.
+  - Where the IC comes from: the middle. The D2..D9 Spearman is −0.98, but both tails fold back. D1, the names filing soonest, is negative, while D2 is the best decile.
+  - The book's top decile is exactly that folded tail, so book-direction top-minus-bottom is −0.05 (equal) / −0.01 (inverse-vol).
+  - The LS is small and steady: −1.7 %/yr, negative in 10 of 13 years.
+
+So the reversal comes from the construction: decile_volq trades only the extreme decile, inside vol buckets, with inverse-vol weights. The factors' rankings are real but non-monotone at the
+tails, and the long-short takes the tail that reverses. The signed IC uses the whole ranking, and it is not wrong.
+
+### Deviations from the pre-registration (none touch the outcome rule)
+
+- Deciles use `floor((rank−1)·10/n)+1` on the ordinal rank, not `pd.qcut`. It is the same equal-count split; Test 1 is descriptive.
+- The first `--real` run crashed on `volatility_60` because selecting the column list duplicated the factor column (`logs/real_crash1.log`). I fixed the column selection and re-ran everything from scratch. `pct_from_high_252` numbers were identical in both runs.
+- The pre-registered "null draw 0 re-run identical" check was missing from the pushed code. I added it as `--recheck`, writing `parts/null_recheck.json`, and ran it after the nulls.
+- Max-year-share is > 1 when the per-window D total is small and mixed in sign. That condition fails either way.
+
+### Docs for README
+
+This doc. WO-48 CLOSED all three factors; no action.

@@ -117,7 +117,7 @@ def decile_tables(U, f):
     SI, V, MA = G["SI"], G["V"], G["MA"]
     lab = MA.LABEL
     sgn = int(np.sign(G["W9"][f]))
-    d = U[["date", f, lab, "volatility_60"]].replace([np.inf, -np.inf], np.nan).dropna(subset=[f, lab]).copy()
+    d = U[list(dict.fromkeys(["date", f, lab, "volatility_60"]))].replace([np.inf, -np.inf], np.nan).dropna(subset=[f, lab]).copy()
     d["y"] = d[lab] - d.groupby("date")[lab].transform("mean")
     r = d.groupby("date")[f].rank(method="first")
     n = d.groupby("date")[f].transform("count")
@@ -256,9 +256,9 @@ def run_real(reconcile_only=False):
 
 
 # ------------------------------------------------------------------ null
-def null_draw(job):
+def null_draw(job, path=None):
     f, s = job
-    p = NULLD / f"{f}_{s:03d}.json"
+    p = path or NULLD / f"{f}_{s:03d}.json"
     if p.exists():
         return job
     seed = SEED_BASE[f] + s
@@ -285,6 +285,24 @@ def run_null(n, procs):
         for i, j in enumerate(pool.imap_unordered(null_draw, todo)):
             if i % 10 == 0:
                 log(f"null {j} done ({i+1}/{len(todo)})")
+
+
+def run_recheck():
+    """Pre-registered check: null draw 0 of each factor re-run gives the identical number."""
+    setup()
+    G["ch_b"] = chains(picks_fast(G["score9"]))
+    out = {}
+    for f in FACTORS:
+        q = PARTS / f"recheck_{f}_000.json"
+        q.unlink(missing_ok=True)
+        null_draw((f, 0), q)
+        a = json.loads((NULLD / f"{f}_000.json").read_text())["diff"]
+        b = json.loads(q.read_text())["diff"]
+        out[f] = {"draw0": a, "rerun": b, "identical": a == b}
+        q.unlink()
+        log(f"recheck {f}: {a!r} vs {b!r} identical={a == b}")
+    (PARTS / "null_recheck.json").write_text(json.dumps(out, indent=1))
+    assert all(v["identical"] for v in out.values()), "NULL RERUN MISMATCH"
 
 
 # ------------------------------------------------------------------ aggregate
@@ -327,6 +345,8 @@ def aggregate(n):
         for f, p, a in zip(FACTORS, ps, holm(ps)):
             rep["factors"][f][lab]["jackknife_p"] = p
             rep["factors"][f][lab]["jackknife_p_holm3"] = a
+    rq = PARTS / "null_recheck.json"
+    rep["null_draw0_rerun"] = json.loads(rq.read_text()) if rq.exists() else "NOT RUN"
     rep["verdicts"] = {f: rep["factors"][f]["verdict"] for f in FACTORS}
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "signcheck_report.json").write_text(json.dumps(rep, indent=1, default=float))
@@ -345,6 +365,7 @@ def main():
     ap.add_argument("--procs", type=int, default=4)
     ap.add_argument("--aggregate", type=int, default=0)
     ap.add_argument("--reconcile", action="store_true")
+    ap.add_argument("--recheck", action="store_true")
     a = ap.parse_args()
     if a.reconcile:
         run_real(reconcile_only=True)
@@ -352,6 +373,8 @@ def main():
         run_real()
     if a.null:
         run_null(a.null, a.procs)
+    if a.recheck:
+        run_recheck()
     if a.aggregate:
         aggregate(a.aggregate)
 

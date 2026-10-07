@@ -1,0 +1,6 @@
+[17:51:27] [A] cap150: 9,756,141 rows, 6,508 tickers, 3272 dates 2007-01-03..2019-12-31
+[17:52:02] reconcile OK {'icw9_seas': {'got': 0.03486520057904396, 'wo31_exact': 0.03486520057904396, 'diff_exact': 0.0, 'spec': 0.0348652, 'diff_spec': 5.790439586150775e-10}, 'icw8': {'got': 0.028541632641009042, 'wo31_exact': 0.028541632641009042, 'diff_exact': 0.0, 'spec': 0.0285416, 'diff_spec': 3.26410090414897e-08}}
+[17:52:40] base reconcile OK +0.0348652 (ref 0.0348652) sd40 0.00223
+[17:53:04] pct_from_high_252: LOO-base +0.0137%/yr (25/40) flip-base +0.0118% (21/40) (108s)
+[17:53:30] volatility_60: LOO-base -0.0347%/yr (13/40) flip-base +0.0672% (29/40) (133s)
+[17:53:49] days_to_next_filing_seasonal: LOO-base +0.0328%/yr (24/40) flip-base +0.1672% (34/40) (152s)
