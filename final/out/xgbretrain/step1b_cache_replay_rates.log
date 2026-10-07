@@ -1,0 +1,8 @@
+[12:46:27] raw pass (exit dates) ...
+[12:46:30] load_panel_prepared ...
+  PIT universe: 6,921,746 rows, 5,472 trading days, 4,015 distinct tickers, 2005-01-03 .. 2026-10-02
+[12:46:40]   2007-01-03 masked: viol used 0, max|diff| 0, bit-equal 1057/1057
+[12:46:42]   2007-10-18 masked: viol used 0, max|diff| 0, bit-equal 1079/1079
+[12:46:44]   2007-12-14 masked: viol used 0, max|diff| 0, bit-equal 1012/1012
+[12:46:47]   2015-02-10 masked: viol used 0, max|diff| 0, bit-equal 1319/1319
+[12:46:47] -> /Users/ggraham/pipe_dream/.claude/worktrees/wo43-xgb-retrain/final/out/xgbretrain/step1b_cache_replay_features_with_rates_sharadar_pit.json

@@ -1,0 +1,1597 @@
+{
+ "panel": "/Users/ggraham/pipe_dream/final/out/features_with_fundamentals_sharadar_pit.parquet",
+ "panel_mtime": "2026-10-05 10:17",
+ "cache": "/Users/ggraham/pipe_dream/final/out/sweep/scores/price_fund_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40.parquet",
+ "cache_mtime": "2026-09-10 19:10",
+ "rule": "label exit date <= score date passes (COO); exit > score date = violation",
+ "xgboost_version": "3.2.0",
+ "raw_rows": 12321653,
+ "blocks": 4015,
+ "rows_with_nonincreasing_date_in_block": 0,
+ "filtered_rows": 11282635,
+ "crosscheck_load_panel_prepared": "identical row order, tickers, dates, label finiteness",
+ "n_cache_timepoints": 124,
+ "cache_timepoints_equal_step_grid_on_current_panel": true,
+ "step_grid_len_current_panel": 125,
+ "label_span_market_days": {
+  "finite_label_rows": 11127524,
+  "span_gt_40": 6,
+  "span_lt_40": 0,
+  "share_gt_40": 5.392035101429572e-07,
+  "max_span": 5041,
+  "finite_label_but_no_exit_row": 0
+ },
+ "per_score_date": [
+  {
+   "score_date": "2007-01-03",
+   "cutoff": "2006-11-02",
+   "train_rows": 377670,
+   "train_first_date": "2006-02-01",
+   "train_last_date": "2006-11-02",
+   "max_label_exit": "2026-10-02",
+   "violations": 6,
+   "violations_precap": 6,
+   "violation_examples": [
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-11",
+     "exit": "2026-09-25"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-12",
+     "exit": "2026-09-28"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-13",
+     "exit": "2026-09-29"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-14",
+     "exit": "2026-09-30"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-15",
+     "exit": "2026-10-01"
+    }
+   ],
+   "violation_max_exit": "2026-10-02",
+   "violation_tickers": 1
+  },
+  {
+   "score_date": "2007-03-02",
+   "cutoff": "2007-01-03",
+   "train_rows": 456914,
+   "train_first_date": "2006-02-01",
+   "train_last_date": "2007-01-03",
+   "max_label_exit": "2026-10-02",
+   "violations": 6,
+   "violations_precap": 6,
+   "violation_examples": [
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-11",
+     "exit": "2026-09-25"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-12",
+     "exit": "2026-09-28"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-13",
+     "exit": "2026-09-29"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-14",
+     "exit": "2026-09-30"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-15",
+     "exit": "2026-10-01"
+    }
+   ],
+   "violation_max_exit": "2026-10-02",
+   "violation_tickers": 1
+  },
+  {
+   "score_date": "2007-04-30",
+   "cutoff": "2007-03-02",
+   "train_rows": 500000,
+   "train_first_date": "2006-02-28",
+   "train_last_date": "2007-03-02",
+   "max_label_exit": "2026-10-02",
+   "violations": 6,
+   "violations_precap": 6,
+   "violation_examples": [
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-11",
+     "exit": "2026-09-25"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-12",
+     "exit": "2026-09-28"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-13",
+     "exit": "2026-09-29"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-14",
+     "exit": "2026-09-30"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-15",
+     "exit": "2026-10-01"
+    }
+   ],
+   "violation_max_exit": "2026-10-02",
+   "violation_tickers": 1
+  },
+  {
+   "score_date": "2007-06-26",
+   "cutoff": "2007-04-30",
+   "train_rows": 500000,
+   "train_first_date": "2006-04-27",
+   "train_last_date": "2007-04-30",
+   "max_label_exit": "2026-10-02",
+   "violations": 6,
+   "violations_precap": 6,
+   "violation_examples": [
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-11",
+     "exit": "2026-09-25"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-12",
+     "exit": "2026-09-28"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-13",
+     "exit": "2026-09-29"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-14",
+     "exit": "2026-09-30"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-15",
+     "exit": "2026-10-01"
+    }
+   ],
+   "violation_max_exit": "2026-10-02",
+   "violation_tickers": 1
+  },
+  {
+   "score_date": "2007-08-22",
+   "cutoff": "2007-06-26",
+   "train_rows": 500000,
+   "train_first_date": "2006-06-23",
+   "train_last_date": "2007-06-26",
+   "max_label_exit": "2026-10-02",
+   "violations": 6,
+   "violations_precap": 6,
+   "violation_examples": [
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-11",
+     "exit": "2026-09-25"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-12",
+     "exit": "2026-09-28"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-13",
+     "exit": "2026-09-29"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-14",
+     "exit": "2026-09-30"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-15",
+     "exit": "2026-10-01"
+    }
+   ],
+   "violation_max_exit": "2026-10-02",
+   "violation_tickers": 1
+  },
+  {
+   "score_date": "2007-10-18",
+   "cutoff": "2007-08-22",
+   "train_rows": 500000,
+   "train_first_date": "2006-08-22",
+   "train_last_date": "2007-08-22",
+   "max_label_exit": "2026-10-02",
+   "violations": 6,
+   "violations_precap": 6,
+   "violation_examples": [
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-11",
+     "exit": "2026-09-25"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-12",
+     "exit": "2026-09-28"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-13",
+     "exit": "2026-09-29"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-14",
+     "exit": "2026-09-30"
+    },
+    {
+     "ticker": "ADRX",
+     "row_date": "2006-09-15",
+     "exit": "2026-10-01"
+    }
+   ],
+   "violation_max_exit": "2026-10-02",
+   "violation_tickers": 1
+  },
+  {
+   "score_date": "2007-12-14",
+   "cutoff": "2007-10-18",
+   "train_rows": 500000,
+   "train_first_date": "2006-10-18",
+   "train_last_date": "2007-10-18",
+   "max_label_exit": "2007-12-14",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2008-02-13",
+   "cutoff": "2007-12-14",
+   "train_rows": 500000,
+   "train_first_date": "2006-12-14",
+   "train_last_date": "2007-12-14",
+   "max_label_exit": "2008-02-13",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2008-04-11",
+   "cutoff": "2008-02-13",
+   "train_rows": 500000,
+   "train_first_date": "2007-02-14",
+   "train_last_date": "2008-02-13",
+   "max_label_exit": "2008-04-11",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2008-06-09",
+   "cutoff": "2008-04-11",
+   "train_rows": 500000,
+   "train_first_date": "2007-04-13",
+   "train_last_date": "2008-04-11",
+   "max_label_exit": "2008-06-09",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2008-08-05",
+   "cutoff": "2008-06-09",
+   "train_rows": 500000,
+   "train_first_date": "2007-06-11",
+   "train_last_date": "2008-06-09",
+   "max_label_exit": "2008-08-05",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2008-10-01",
+   "cutoff": "2008-08-05",
+   "train_rows": 500000,
+   "train_first_date": "2007-08-08",
+   "train_last_date": "2008-08-05",
+   "max_label_exit": "2008-10-01",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2008-11-26",
+   "cutoff": "2008-10-01",
+   "train_rows": 500000,
+   "train_first_date": "2007-10-05",
+   "train_last_date": "2008-10-01",
+   "max_label_exit": "2008-11-26",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2009-01-27",
+   "cutoff": "2008-11-26",
+   "train_rows": 500000,
+   "train_first_date": "2007-12-03",
+   "train_last_date": "2008-11-26",
+   "max_label_exit": "2009-01-27",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2009-03-25",
+   "cutoff": "2009-01-27",
+   "train_rows": 500000,
+   "train_first_date": "2008-02-01",
+   "train_last_date": "2009-01-27",
+   "max_label_exit": "2009-03-25",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2009-05-21",
+   "cutoff": "2009-03-25",
+   "train_rows": 500000,
+   "train_first_date": "2008-04-02",
+   "train_last_date": "2009-03-25",
+   "max_label_exit": "2009-05-21",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2009-07-20",
+   "cutoff": "2009-05-21",
+   "train_rows": 500000,
+   "train_first_date": "2008-05-29",
+   "train_last_date": "2009-05-21",
+   "max_label_exit": "2009-07-20",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2009-09-15",
+   "cutoff": "2009-07-20",
+   "train_rows": 500000,
+   "train_first_date": "2008-07-28",
+   "train_last_date": "2009-07-20",
+   "max_label_exit": "2009-09-15",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2009-11-10",
+   "cutoff": "2009-09-15",
+   "train_rows": 500000,
+   "train_first_date": "2008-09-23",
+   "train_last_date": "2009-09-15",
+   "max_label_exit": "2009-11-10",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2010-01-08",
+   "cutoff": "2009-11-10",
+   "train_rows": 500000,
+   "train_first_date": "2008-11-19",
+   "train_last_date": "2009-11-10",
+   "max_label_exit": "2010-01-08",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2010-03-09",
+   "cutoff": "2010-01-08",
+   "train_rows": 500000,
+   "train_first_date": "2009-01-20",
+   "train_last_date": "2010-01-08",
+   "max_label_exit": "2010-03-09",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2010-05-05",
+   "cutoff": "2010-03-09",
+   "train_rows": 500000,
+   "train_first_date": "2009-03-17",
+   "train_last_date": "2010-03-09",
+   "max_label_exit": "2010-05-05",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2010-07-01",
+   "cutoff": "2010-05-05",
+   "train_rows": 500000,
+   "train_first_date": "2009-05-13",
+   "train_last_date": "2010-05-05",
+   "max_label_exit": "2010-07-01",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2010-08-27",
+   "cutoff": "2010-07-01",
+   "train_rows": 500000,
+   "train_first_date": "2009-07-09",
+   "train_last_date": "2010-07-01",
+   "max_label_exit": "2010-08-27",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2010-10-25",
+   "cutoff": "2010-08-27",
+   "train_rows": 500000,
+   "train_first_date": "2009-09-03",
+   "train_last_date": "2010-08-27",
+   "max_label_exit": "2010-10-25",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2010-12-21",
+   "cutoff": "2010-10-25",
+   "train_rows": 500000,
+   "train_first_date": "2009-10-29",
+   "train_last_date": "2010-10-25",
+   "max_label_exit": "2010-12-21",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2011-02-17",
+   "cutoff": "2010-12-21",
+   "train_rows": 500000,
+   "train_first_date": "2009-12-28",
+   "train_last_date": "2010-12-21",
+   "max_label_exit": "2011-02-17",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2011-04-15",
+   "cutoff": "2011-02-17",
+   "train_rows": 500000,
+   "train_first_date": "2010-02-25",
+   "train_last_date": "2011-02-17",
+   "max_label_exit": "2011-04-15",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2011-06-14",
+   "cutoff": "2011-04-15",
+   "train_rows": 500000,
+   "train_first_date": "2010-04-23",
+   "train_last_date": "2011-04-15",
+   "max_label_exit": "2011-06-14",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2011-08-10",
+   "cutoff": "2011-06-14",
+   "train_rows": 500000,
+   "train_first_date": "2010-06-21",
+   "train_last_date": "2011-06-14",
+   "max_label_exit": "2011-08-10",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2011-10-06",
+   "cutoff": "2011-08-10",
+   "train_rows": 500000,
+   "train_first_date": "2010-08-16",
+   "train_last_date": "2011-08-10",
+   "max_label_exit": "2011-10-06",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2011-12-02",
+   "cutoff": "2011-10-06",
+   "train_rows": 500000,
+   "train_first_date": "2010-10-12",
+   "train_last_date": "2011-10-06",
+   "max_label_exit": "2011-12-02",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2012-02-01",
+   "cutoff": "2011-12-02",
+   "train_rows": 500000,
+   "train_first_date": "2010-12-08",
+   "train_last_date": "2011-12-02",
+   "max_label_exit": "2012-02-01",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2012-03-29",
+   "cutoff": "2012-02-01",
+   "train_rows": 500000,
+   "train_first_date": "2011-02-07",
+   "train_last_date": "2012-02-01",
+   "max_label_exit": "2012-03-29",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2012-05-25",
+   "cutoff": "2012-03-29",
+   "train_rows": 500000,
+   "train_first_date": "2011-04-05",
+   "train_last_date": "2012-03-29",
+   "max_label_exit": "2012-05-25",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2012-07-24",
+   "cutoff": "2012-05-25",
+   "train_rows": 500000,
+   "train_first_date": "2011-06-02",
+   "train_last_date": "2012-05-25",
+   "max_label_exit": "2012-07-24",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2012-09-19",
+   "cutoff": "2012-07-24",
+   "train_rows": 500000,
+   "train_first_date": "2011-07-29",
+   "train_last_date": "2012-07-24",
+   "max_label_exit": "2012-09-19",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2012-11-16",
+   "cutoff": "2012-09-19",
+   "train_rows": 500000,
+   "train_first_date": "2011-09-26",
+   "train_last_date": "2012-09-19",
+   "max_label_exit": "2012-11-16",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2013-01-16",
+   "cutoff": "2012-11-16",
+   "train_rows": 500000,
+   "train_first_date": "2011-11-22",
+   "train_last_date": "2012-11-16",
+   "max_label_exit": "2013-01-16",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2013-03-15",
+   "cutoff": "2013-01-16",
+   "train_rows": 500000,
+   "train_first_date": "2012-01-23",
+   "train_last_date": "2013-01-16",
+   "max_label_exit": "2013-03-15",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2013-05-13",
+   "cutoff": "2013-03-15",
+   "train_rows": 500000,
+   "train_first_date": "2012-03-20",
+   "train_last_date": "2013-03-15",
+   "max_label_exit": "2013-05-13",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2013-07-10",
+   "cutoff": "2013-05-13",
+   "train_rows": 500000,
+   "train_first_date": "2012-05-17",
+   "train_last_date": "2013-05-13",
+   "max_label_exit": "2013-07-10",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2013-09-05",
+   "cutoff": "2013-07-10",
+   "train_rows": 500000,
+   "train_first_date": "2012-07-17",
+   "train_last_date": "2013-07-10",
+   "max_label_exit": "2013-09-05",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2013-10-31",
+   "cutoff": "2013-09-05",
+   "train_rows": 500000,
+   "train_first_date": "2012-09-12",
+   "train_last_date": "2013-09-05",
+   "max_label_exit": "2013-10-31",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2013-12-30",
+   "cutoff": "2013-10-31",
+   "train_rows": 500000,
+   "train_first_date": "2012-11-12",
+   "train_last_date": "2013-10-31",
+   "max_label_exit": "2013-12-30",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2014-02-27",
+   "cutoff": "2013-12-30",
+   "train_rows": 500000,
+   "train_first_date": "2013-01-10",
+   "train_last_date": "2013-12-30",
+   "max_label_exit": "2014-02-27",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2014-04-25",
+   "cutoff": "2014-02-27",
+   "train_rows": 500000,
+   "train_first_date": "2013-03-12",
+   "train_last_date": "2014-02-27",
+   "max_label_exit": "2014-04-25",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2014-06-23",
+   "cutoff": "2014-04-25",
+   "train_rows": 500000,
+   "train_first_date": "2013-05-09",
+   "train_last_date": "2014-04-25",
+   "max_label_exit": "2014-06-23",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2014-08-19",
+   "cutoff": "2014-06-23",
+   "train_rows": 500000,
+   "train_first_date": "2013-07-08",
+   "train_last_date": "2014-06-23",
+   "max_label_exit": "2014-08-19",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2014-10-15",
+   "cutoff": "2014-08-19",
+   "train_rows": 500000,
+   "train_first_date": "2013-09-04",
+   "train_last_date": "2014-08-19",
+   "max_label_exit": "2014-10-15",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2014-12-11",
+   "cutoff": "2014-10-15",
+   "train_rows": 500000,
+   "train_first_date": "2013-10-31",
+   "train_last_date": "2014-10-15",
+   "max_label_exit": "2014-12-11",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2015-02-10",
+   "cutoff": "2014-12-11",
+   "train_rows": 500000,
+   "train_first_date": "2013-12-31",
+   "train_last_date": "2014-12-11",
+   "max_label_exit": "2015-02-10",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2015-04-09",
+   "cutoff": "2015-02-10",
+   "train_rows": 500000,
+   "train_first_date": "2014-03-04",
+   "train_last_date": "2015-02-10",
+   "max_label_exit": "2015-04-09",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2015-06-05",
+   "cutoff": "2015-04-09",
+   "train_rows": 500000,
+   "train_first_date": "2014-05-01",
+   "train_last_date": "2015-04-09",
+   "max_label_exit": "2015-06-05",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2015-08-03",
+   "cutoff": "2015-06-05",
+   "train_rows": 500000,
+   "train_first_date": "2014-06-30",
+   "train_last_date": "2015-06-05",
+   "max_label_exit": "2015-08-03",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2015-09-29",
+   "cutoff": "2015-08-03",
+   "train_rows": 500000,
+   "train_first_date": "2014-08-27",
+   "train_last_date": "2015-08-03",
+   "max_label_exit": "2015-09-29",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2015-11-24",
+   "cutoff": "2015-09-29",
+   "train_rows": 500000,
+   "train_first_date": "2014-10-24",
+   "train_last_date": "2015-09-29",
+   "max_label_exit": "2015-11-24",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2016-01-25",
+   "cutoff": "2015-11-24",
+   "train_rows": 500000,
+   "train_first_date": "2014-12-23",
+   "train_last_date": "2015-11-24",
+   "max_label_exit": "2016-01-25",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2016-03-22",
+   "cutoff": "2016-01-25",
+   "train_rows": 500000,
+   "train_first_date": "2015-02-24",
+   "train_last_date": "2016-01-25",
+   "max_label_exit": "2016-03-22",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2016-05-18",
+   "cutoff": "2016-03-22",
+   "train_rows": 500000,
+   "train_first_date": "2015-04-22",
+   "train_last_date": "2016-03-22",
+   "max_label_exit": "2016-05-18",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2016-07-15",
+   "cutoff": "2016-05-18",
+   "train_rows": 500000,
+   "train_first_date": "2015-06-19",
+   "train_last_date": "2016-05-18",
+   "max_label_exit": "2016-07-15",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2016-09-12",
+   "cutoff": "2016-07-15",
+   "train_rows": 500000,
+   "train_first_date": "2015-08-18",
+   "train_last_date": "2016-07-15",
+   "max_label_exit": "2016-09-12",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2016-11-07",
+   "cutoff": "2016-09-12",
+   "train_rows": 500000,
+   "train_first_date": "2015-10-14",
+   "train_last_date": "2016-09-12",
+   "max_label_exit": "2016-11-07",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2017-01-05",
+   "cutoff": "2016-11-07",
+   "train_rows": 500000,
+   "train_first_date": "2015-12-11",
+   "train_last_date": "2016-11-07",
+   "max_label_exit": "2017-01-05",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2017-03-06",
+   "cutoff": "2017-01-05",
+   "train_rows": 500000,
+   "train_first_date": "2016-02-10",
+   "train_last_date": "2017-01-05",
+   "max_label_exit": "2017-03-06",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2017-05-02",
+   "cutoff": "2017-03-06",
+   "train_rows": 500000,
+   "train_first_date": "2016-04-08",
+   "train_last_date": "2017-03-06",
+   "max_label_exit": "2017-05-02",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2017-06-28",
+   "cutoff": "2017-05-02",
+   "train_rows": 500000,
+   "train_first_date": "2016-06-06",
+   "train_last_date": "2017-05-02",
+   "max_label_exit": "2017-06-28",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2017-08-24",
+   "cutoff": "2017-06-28",
+   "train_rows": 500000,
+   "train_first_date": "2016-08-02",
+   "train_last_date": "2017-06-28",
+   "max_label_exit": "2017-08-24",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2017-10-20",
+   "cutoff": "2017-08-24",
+   "train_rows": 500000,
+   "train_first_date": "2016-09-27",
+   "train_last_date": "2017-08-24",
+   "max_label_exit": "2017-10-20",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2017-12-18",
+   "cutoff": "2017-10-20",
+   "train_rows": 500000,
+   "train_first_date": "2016-11-22",
+   "train_last_date": "2017-10-20",
+   "max_label_exit": "2017-12-18",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2018-02-15",
+   "cutoff": "2017-12-18",
+   "train_rows": 500000,
+   "train_first_date": "2017-01-23",
+   "train_last_date": "2017-12-18",
+   "max_label_exit": "2018-02-15",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2018-04-16",
+   "cutoff": "2018-02-15",
+   "train_rows": 500000,
+   "train_first_date": "2017-03-21",
+   "train_last_date": "2018-02-15",
+   "max_label_exit": "2018-04-16",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2018-06-12",
+   "cutoff": "2018-04-16",
+   "train_rows": 500000,
+   "train_first_date": "2017-05-17",
+   "train_last_date": "2018-04-16",
+   "max_label_exit": "2018-06-12",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2018-08-08",
+   "cutoff": "2018-06-12",
+   "train_rows": 500000,
+   "train_first_date": "2017-07-17",
+   "train_last_date": "2018-06-12",
+   "max_label_exit": "2018-08-08",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2018-10-04",
+   "cutoff": "2018-08-08",
+   "train_rows": 500000,
+   "train_first_date": "2017-09-12",
+   "train_last_date": "2018-08-08",
+   "max_label_exit": "2018-10-04",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2018-11-30",
+   "cutoff": "2018-10-04",
+   "train_rows": 500000,
+   "train_first_date": "2017-11-07",
+   "train_last_date": "2018-10-04",
+   "max_label_exit": "2018-11-30",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2019-01-31",
+   "cutoff": "2018-11-30",
+   "train_rows": 500000,
+   "train_first_date": "2018-01-05",
+   "train_last_date": "2018-11-30",
+   "max_label_exit": "2019-01-31",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2019-03-29",
+   "cutoff": "2019-01-31",
+   "train_rows": 500000,
+   "train_first_date": "2018-03-06",
+   "train_last_date": "2019-01-31",
+   "max_label_exit": "2019-03-29",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2019-05-28",
+   "cutoff": "2019-03-29",
+   "train_rows": 500000,
+   "train_first_date": "2018-05-02",
+   "train_last_date": "2019-03-29",
+   "max_label_exit": "2019-05-28",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2019-07-24",
+   "cutoff": "2019-05-28",
+   "train_rows": 500000,
+   "train_first_date": "2018-06-28",
+   "train_last_date": "2019-05-28",
+   "max_label_exit": "2019-07-24",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2019-09-19",
+   "cutoff": "2019-07-24",
+   "train_rows": 500000,
+   "train_first_date": "2018-08-24",
+   "train_last_date": "2019-07-24",
+   "max_label_exit": "2019-09-19",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2019-11-14",
+   "cutoff": "2019-09-19",
+   "train_rows": 500000,
+   "train_first_date": "2018-10-23",
+   "train_last_date": "2019-09-19",
+   "max_label_exit": "2019-11-14",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2020-01-14",
+   "cutoff": "2019-11-14",
+   "train_rows": 500000,
+   "train_first_date": "2018-12-21",
+   "train_last_date": "2019-11-14",
+   "max_label_exit": "2020-01-14",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2020-03-12",
+   "cutoff": "2020-01-14",
+   "train_rows": 500000,
+   "train_first_date": "2019-02-21",
+   "train_last_date": "2020-01-14",
+   "max_label_exit": "2020-03-12",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2020-05-08",
+   "cutoff": "2020-03-12",
+   "train_rows": 500000,
+   "train_first_date": "2019-04-22",
+   "train_last_date": "2020-03-12",
+   "max_label_exit": "2020-05-08",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2020-07-07",
+   "cutoff": "2020-05-08",
+   "train_rows": 500000,
+   "train_first_date": "2019-06-18",
+   "train_last_date": "2020-05-08",
+   "max_label_exit": "2020-07-07",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2020-09-01",
+   "cutoff": "2020-07-07",
+   "train_rows": 500000,
+   "train_first_date": "2019-08-15",
+   "train_last_date": "2020-07-07",
+   "max_label_exit": "2020-09-01",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2020-10-28",
+   "cutoff": "2020-09-01",
+   "train_rows": 500000,
+   "train_first_date": "2019-10-11",
+   "train_last_date": "2020-09-01",
+   "max_label_exit": "2020-10-28",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2020-12-24",
+   "cutoff": "2020-10-28",
+   "train_rows": 500000,
+   "train_first_date": "2019-12-09",
+   "train_last_date": "2020-10-28",
+   "max_label_exit": "2020-12-24",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2021-02-24",
+   "cutoff": "2020-12-24",
+   "train_rows": 500000,
+   "train_first_date": "2020-02-07",
+   "train_last_date": "2020-12-24",
+   "max_label_exit": "2021-02-24",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2021-04-22",
+   "cutoff": "2021-02-24",
+   "train_rows": 500000,
+   "train_first_date": "2020-04-06",
+   "train_last_date": "2021-02-24",
+   "max_label_exit": "2021-04-22",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2021-06-18",
+   "cutoff": "2021-04-22",
+   "train_rows": 500000,
+   "train_first_date": "2020-06-03",
+   "train_last_date": "2021-04-22",
+   "max_label_exit": "2021-06-18",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2021-08-16",
+   "cutoff": "2021-06-18",
+   "train_rows": 500000,
+   "train_first_date": "2020-07-30",
+   "train_last_date": "2021-06-18",
+   "max_label_exit": "2021-08-16",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2021-10-12",
+   "cutoff": "2021-08-16",
+   "train_rows": 500000,
+   "train_first_date": "2020-09-25",
+   "train_last_date": "2021-08-16",
+   "max_label_exit": "2021-10-12",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2021-12-08",
+   "cutoff": "2021-10-12",
+   "train_rows": 500000,
+   "train_first_date": "2020-11-20",
+   "train_last_date": "2021-10-12",
+   "max_label_exit": "2021-12-08",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2022-02-04",
+   "cutoff": "2021-12-08",
+   "train_rows": 500000,
+   "train_first_date": "2021-01-25",
+   "train_last_date": "2021-12-08",
+   "max_label_exit": "2022-02-04",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2022-04-04",
+   "cutoff": "2022-02-04",
+   "train_rows": 500000,
+   "train_first_date": "2021-03-25",
+   "train_last_date": "2022-02-04",
+   "max_label_exit": "2022-04-04",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2022-06-01",
+   "cutoff": "2022-04-04",
+   "train_rows": 500000,
+   "train_first_date": "2021-05-26",
+   "train_last_date": "2022-04-04",
+   "max_label_exit": "2022-06-01",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2022-07-29",
+   "cutoff": "2022-06-01",
+   "train_rows": 500000,
+   "train_first_date": "2021-07-28",
+   "train_last_date": "2022-06-01",
+   "max_label_exit": "2022-07-29",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2022-09-26",
+   "cutoff": "2022-07-29",
+   "train_rows": 500000,
+   "train_first_date": "2021-09-28",
+   "train_last_date": "2022-07-29",
+   "max_label_exit": "2022-09-26",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2022-11-21",
+   "cutoff": "2022-09-26",
+   "train_rows": 500000,
+   "train_first_date": "2021-11-26",
+   "train_last_date": "2022-09-26",
+   "max_label_exit": "2022-11-21",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2023-01-20",
+   "cutoff": "2022-11-21",
+   "train_rows": 500000,
+   "train_first_date": "2022-01-27",
+   "train_last_date": "2022-11-21",
+   "max_label_exit": "2023-01-20",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2023-03-20",
+   "cutoff": "2023-01-20",
+   "train_rows": 500000,
+   "train_first_date": "2022-03-29",
+   "train_last_date": "2023-01-20",
+   "max_label_exit": "2023-03-20",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2023-05-16",
+   "cutoff": "2023-03-20",
+   "train_rows": 500000,
+   "train_first_date": "2022-05-25",
+   "train_last_date": "2023-03-20",
+   "max_label_exit": "2023-05-16",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2023-07-14",
+   "cutoff": "2023-05-16",
+   "train_rows": 500000,
+   "train_first_date": "2022-07-26",
+   "train_last_date": "2023-05-16",
+   "max_label_exit": "2023-07-14",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2023-09-11",
+   "cutoff": "2023-07-14",
+   "train_rows": 500000,
+   "train_first_date": "2022-09-20",
+   "train_last_date": "2023-07-14",
+   "max_label_exit": "2023-09-11",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2023-11-06",
+   "cutoff": "2023-09-11",
+   "train_rows": 500000,
+   "train_first_date": "2022-11-15",
+   "train_last_date": "2023-09-11",
+   "max_label_exit": "2023-11-06",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2024-01-04",
+   "cutoff": "2023-11-06",
+   "train_rows": 500000,
+   "train_first_date": "2023-01-11",
+   "train_last_date": "2023-11-06",
+   "max_label_exit": "2024-01-04",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2024-03-04",
+   "cutoff": "2024-01-04",
+   "train_rows": 500000,
+   "train_first_date": "2023-03-09",
+   "train_last_date": "2024-01-04",
+   "max_label_exit": "2024-03-04",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2024-04-30",
+   "cutoff": "2024-03-04",
+   "train_rows": 500000,
+   "train_first_date": "2023-05-04",
+   "train_last_date": "2024-03-04",
+   "max_label_exit": "2024-04-30",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2024-06-27",
+   "cutoff": "2024-04-30",
+   "train_rows": 500000,
+   "train_first_date": "2023-06-30",
+   "train_last_date": "2024-04-30",
+   "max_label_exit": "2024-06-27",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2024-08-23",
+   "cutoff": "2024-06-27",
+   "train_rows": 500000,
+   "train_first_date": "2023-08-25",
+   "train_last_date": "2024-06-27",
+   "max_label_exit": "2024-08-23",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2024-10-21",
+   "cutoff": "2024-08-23",
+   "train_rows": 500000,
+   "train_first_date": "2023-10-20",
+   "train_last_date": "2024-08-23",
+   "max_label_exit": "2024-10-21",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2024-12-17",
+   "cutoff": "2024-10-21",
+   "train_rows": 500000,
+   "train_first_date": "2023-12-18",
+   "train_last_date": "2024-10-21",
+   "max_label_exit": "2024-12-17",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2025-02-18",
+   "cutoff": "2024-12-17",
+   "train_rows": 500000,
+   "train_first_date": "2024-02-14",
+   "train_last_date": "2024-12-17",
+   "max_label_exit": "2025-02-18",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2025-04-15",
+   "cutoff": "2025-02-18",
+   "train_rows": 500000,
+   "train_first_date": "2024-04-11",
+   "train_last_date": "2025-02-18",
+   "max_label_exit": "2025-04-15",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2025-06-12",
+   "cutoff": "2025-04-15",
+   "train_rows": 500000,
+   "train_first_date": "2024-06-06",
+   "train_last_date": "2025-04-15",
+   "max_label_exit": "2025-06-12",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2025-08-11",
+   "cutoff": "2025-06-12",
+   "train_rows": 500000,
+   "train_first_date": "2024-08-02",
+   "train_last_date": "2025-06-12",
+   "max_label_exit": "2025-08-11",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2025-10-07",
+   "cutoff": "2025-08-11",
+   "train_rows": 500000,
+   "train_first_date": "2024-09-27",
+   "train_last_date": "2025-08-11",
+   "max_label_exit": "2025-10-07",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2025-12-03",
+   "cutoff": "2025-10-07",
+   "train_rows": 500000,
+   "train_first_date": "2024-11-21",
+   "train_last_date": "2025-10-07",
+   "max_label_exit": "2025-12-03",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2026-02-02",
+   "cutoff": "2025-12-03",
+   "train_rows": 500000,
+   "train_first_date": "2025-01-22",
+   "train_last_date": "2025-12-03",
+   "max_label_exit": "2026-02-02",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2026-03-31",
+   "cutoff": "2026-02-02",
+   "train_rows": 500000,
+   "train_first_date": "2025-03-19",
+   "train_last_date": "2026-02-02",
+   "max_label_exit": "2026-03-31",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2026-05-28",
+   "cutoff": "2026-03-31",
+   "train_rows": 500000,
+   "train_first_date": "2025-05-14",
+   "train_last_date": "2026-03-31",
+   "max_label_exit": "2026-05-28",
+   "violations": 0,
+   "violations_precap": 6
+  },
+  {
+   "score_date": "2026-07-27",
+   "cutoff": "2026-05-28",
+   "train_rows": 500000,
+   "train_first_date": "2025-07-11",
+   "train_last_date": "2026-05-28",
+   "max_label_exit": "2026-07-27",
+   "violations": 0,
+   "violations_precap": 6
+  }
+ ],
+ "total_violations": 36,
+ "total_violations_precap": 744,
+ "total_training_row_uses": 61834584,
+ "violation_share": 5.821984667997443e-07,
+ "score_dates_with_violation": [
+  "2007-01-03",
+  "2007-03-02",
+  "2007-04-30",
+  "2007-06-26",
+  "2007-08-22",
+  "2007-10-18"
+ ],
+ "cutoff_rule_all_dates": false,
+ "fingerprint_pre2020": {
+  "cache_rows_pre2020": 92615,
+  "found_in_current_panel": 92615,
+  "close_bit_equal_share": 1.0,
+  "close_max_rel_diff": 0.0,
+  "market_cap_bit_equal_share": 1.0,
+  "market_cap_max_rel_diff": 0.0,
+  "volatility_20_bit_equal_share": 1.0,
+  "volatility_20_max_rel_diff": 0.0,
+  "volatility_60_bit_equal_share": 1.0,
+  "volatility_60_max_rel_diff": 0.0,
+  "dates_scored_set_equal": 8,
+  "dates_scored_set_differs": [
+   {
+    "date": "2007-01-03",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2007-03-02",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2007-04-30",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2007-06-26",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2007-08-22",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2007-10-18",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2007-12-14",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2008-02-13",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2008-04-11",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2008-06-09",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2008-08-05",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2008-10-01",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2008-11-26",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2009-01-27",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2009-03-25",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2009-05-21",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2009-07-20",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2009-09-15",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2009-11-10",
+    "only_cache": 0,
+    "only_now": 1
+   },
+   {
+    "date": "2010-01-08",
+    "only_cache": 0,
+    "only_now": 1
+   }
+  ],
+  "n_dates_pre2020": 82
+ },
+ "spot_check": {
+  "n": 200,
+  "momentum_20_match": 200,
+  "volatility_20_match": 200,
+  "sep_close_match": 200,
+  "sep_close_checked": 200,
+  "gross_margin_checked": 200,
+  "gross_margin_match": 200,
+  "gross_margin_next_filing_would_differ": 180,
+  "mismatches": []
+ },
+ "named_example": {
+  "ticker": "AAPL",
+  "date": "2015-02-10",
+  "in_cache": true,
+  "in_pit_universe": true,
+  "cache_close": 30.5049991607666,
+  "panel_close": 30.5049991607666,
+  "sep_close": 30.505,
+  "cache_mcap": 710735757312.0,
+  "panel_mcap": 710735757312.0,
+  "cache_vol60": 0.017705097794532776,
+  "panel_vol60": 0.017705097794532776,
+  "cache_score": 0.20431023836135864,
+  "cache_score_rank_pct": 0.3555724033358605
+ },
+ "verdict": "FAIL",
+ "elapsed_sec": 17.0
+}

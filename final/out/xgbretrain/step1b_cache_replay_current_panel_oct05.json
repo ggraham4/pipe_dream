@@ -1,0 +1,121 @@
+{
+ "cell": "price_fund_h40_q75_trd_xgb_d3e01r100_expanding_cap500k_pit_s40",
+ "dates": {
+  "2007-01-03": {
+   "n_violating_rows": 6,
+   "variants": {
+    "masked": {
+     "violating_rows_in_train": 0,
+     "n_common": 1057,
+     "n_cache": 1057,
+     "n_now": 1058,
+     "max_abs_diff": 0.10860660672187805,
+     "n_bit_equal": 0
+    },
+    "ph0": {
+     "violating_rows_in_train": 6,
+     "n_common": 1057,
+     "n_cache": 1057,
+     "n_now": 1058,
+     "max_abs_diff": 0.06590820103883743,
+     "n_bit_equal": 0
+    },
+    "ph1": {
+     "violating_rows_in_train": 6,
+     "n_common": 1057,
+     "n_cache": 1057,
+     "n_now": 1058,
+     "max_abs_diff": 0.10939779877662659,
+     "n_bit_equal": 0
+    }
+   }
+  },
+  "2007-10-18": {
+   "n_violating_rows": 6,
+   "variants": {
+    "masked": {
+     "violating_rows_in_train": 0,
+     "n_common": 1079,
+     "n_cache": 1079,
+     "n_now": 1080,
+     "max_abs_diff": 0.13861441612243652,
+     "n_bit_equal": 0
+    },
+    "ph0": {
+     "violating_rows_in_train": 6,
+     "n_common": 1079,
+     "n_cache": 1079,
+     "n_now": 1080,
+     "max_abs_diff": 0.08864367008209229,
+     "n_bit_equal": 0
+    },
+    "ph1": {
+     "violating_rows_in_train": 6,
+     "n_common": 1079,
+     "n_cache": 1079,
+     "n_now": 1080,
+     "max_abs_diff": 0.08433014154434204,
+     "n_bit_equal": 0
+    }
+   }
+  },
+  "2007-12-14": {
+   "n_violating_rows": 6,
+   "variants": {
+    "masked": {
+     "violating_rows_in_train": 0,
+     "n_common": 1012,
+     "n_cache": 1012,
+     "n_now": 1013,
+     "max_abs_diff": 0.059861332178115845,
+     "n_bit_equal": 0
+    },
+    "ph0": {
+     "violating_rows_in_train": 0,
+     "n_common": 1012,
+     "n_cache": 1012,
+     "n_now": 1013,
+     "max_abs_diff": 0.059861332178115845,
+     "n_bit_equal": 0
+    },
+    "ph1": {
+     "violating_rows_in_train": 0,
+     "n_common": 1012,
+     "n_cache": 1012,
+     "n_now": 1013,
+     "max_abs_diff": 0.059861332178115845,
+     "n_bit_equal": 0
+    }
+   }
+  },
+  "2015-02-10": {
+   "n_violating_rows": 6,
+   "variants": {
+    "masked": {
+     "violating_rows_in_train": 0,
+     "n_common": 1319,
+     "n_cache": 1319,
+     "n_now": 1320,
+     "max_abs_diff": 0.053251177072525024,
+     "n_bit_equal": 0
+    },
+    "ph0": {
+     "violating_rows_in_train": 0,
+     "n_common": 1319,
+     "n_cache": 1319,
+     "n_now": 1320,
+     "max_abs_diff": 0.053251177072525024,
+     "n_bit_equal": 0
+    },
+    "ph1": {
+     "violating_rows_in_train": 0,
+     "n_common": 1319,
+     "n_cache": 1319,
+     "n_now": 1320,
+     "max_abs_diff": 0.053251177072525024,
+     "n_bit_equal": 0
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,23 @@
+[01:11:20] cap2000 U 3,802,861 rows, 3272 dates
+[01:11:31] R1 0.023516409867 vs 0.023516409867; R2 0.025164593970 vs 0.025164593970
+[01:12:05] R3 0.034865200579 vs 0.034865200579
+[01:12:14] icw9_seas cap2000 +0.02859
+[01:12:17] arm0: excess +0.02224 net +0.09733 offs+ 40
+[01:12:21] arm1: excess +0.02176 net +0.09685 offs+ 40
+[01:12:25] arm2: excess +0.02387 net +0.09896 offs+ 40
+[01:12:28] arm1_null1: excess +0.02454 net +0.09963 offs+ 40
+[01:12:32] arm1_null2: excess +0.02413 net +0.09922 offs+ 40
+[01:12:36] arm1_null3: excess +0.02448 net +0.09957 offs+ 40
+[01:12:39] arm1_null4: excess +0.02500 net +0.10010 offs+ 40
+[01:12:43] arm1_null5: excess +0.02405 net +0.09915 offs+ 40
+[01:12:47] arm2_null1: excess +0.02616 net +0.10125 offs+ 40
+[01:12:50] arm2_null2: excess +0.02535 net +0.10044 offs+ 40
+[01:12:54] arm2_null3: excess +0.02496 net +0.10005 offs+ 40
+[01:12:57] arm2_null4: excess +0.02602 net +0.10111 offs+ 40
+[01:13:01] arm2_null5: excess +0.02561 net +0.10070 offs+ 40
+[01:13:01] arm1: diff -0.00048 offs+ 18/40 loyo_min -0.00269 maxshare 4.709225161588982 t -6.48 q 0.999 -> False
+[01:13:01] arm2: diff +0.00163 offs+ 25/40 loyo_min -0.00086 maxshare 1.484859592054866 t -3.26 q 0.999 -> False
+[01:13:08] arm0: IC +0.0087 top5 +0.0253 blend +0.0232
+[01:13:14] arm1: IC +0.0134 top5 +0.0379 blend +0.0219
+[01:13:20] arm2: IC +0.0129 top5 +0.0367 blend +0.0224
+[01:13:27] VERDICT KILL

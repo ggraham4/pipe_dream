@@ -1,0 +1,122 @@
+{
+ "base_panel": "/Users/ggraham/pipe_dream/final/out/features_with_rates_sharadar_pit.parquet",
+ "inputs": {
+  "io_gap": {
+   "source": "/Users/ggraham/pipe_dream/.claude/worktrees/overnight-intraday/final/out/overnight/io_gap_factor_v2.parquet",
+   "sha256": "16408d046c950f5b8f6b0d123e5ed378b011f9c08c9598e019f94a378ef0ab3f",
+   "copy": "/Users/ggraham/pipe_dream/.claude/worktrees/wo43-xgb-retrain/final/out/xgbretrain/inputs/io_gap.parquet"
+  },
+  "seas": {
+   "source": "/Users/ggraham/pipe_dream/.claude/worktrees/agent-a790eb27c4530aa0a/final/out/seasonality/seas_factor_v2.parquet",
+   "sha256": "8054af212270efbf0bffd8fc98a586083529c5dfb5879b669984172b60a38e45",
+   "copy": "/Users/ggraham/pipe_dream/.claude/worktrees/wo43-xgb-retrain/final/out/xgbretrain/inputs/seas.parquet",
+   "duplicate_copy_identical": "/Users/ggraham/pipe_dream/.claude/worktrees/agent-ad57ef9f38454d99d/final/out/seasonality/seas_factor_v2.parquet"
+  },
+  "sue": {
+   "source": "/Users/ggraham/pipe_dream/.claude/worktrees/agent-a505179eca9ed9bf2/final/out/sue/sue_factor_v2.parquet",
+   "sha256": "198cef0b5a387cab0104a982b1e80250f371938e97bbf7931ce7ae399d4ea6de",
+   "copy": "/Users/ggraham/pipe_dream/.claude/worktrees/wo43-xgb-retrain/final/out/xgbretrain/inputs/sue.parquet",
+   "duplicate_copy_identical": "/Users/ggraham/pipe_dream/.claude/worktrees/agent-a82cc71ecb09661f5/final/out/sue/sue_factor_v2.parquet"
+  },
+  "ear": {
+   "source": "/Users/ggraham/pipe_dream/.claude/worktrees/agent-ad838240373d22717/final/out/ear/ear_factor_v2.parquet",
+   "sha256": "9cc6418f5c0a8525094dce4b1c349a2277fb229a1e9af20480c1a3561f40d687",
+   "copy": "/Users/ggraham/pipe_dream/.claude/worktrees/wo43-xgb-retrain/final/out/xgbretrain/inputs/ear.parquet"
+  },
+  "volshock_inputs": {
+   "source": "/Users/ggraham/pipe_dream/.claude/worktrees/agent-a79a9999a5df053aa/final/out/volshock/volshock_inputs_v2.parquet",
+   "sha256": "7c595da6bd697913d75d602852a69040e57a9b2c286ee014a0eb7784c224e2d8",
+   "copy": "/Users/ggraham/pipe_dream/.claude/worktrees/wo43-xgb-retrain/final/out/xgbretrain/inputs/volshock_inputs.parquet"
+  }
+ },
+ "base_panel_sha256": "18fa37b9a876fab050b1823421e77650e2f4cff3df45c66d86896f5934eb56c6",
+ "labels_nulled_exit_2020plus_or_missing": 89274,
+ "rows": 7353383,
+ "post_segment_rows": 0,
+ "date_range": [
+  "2006-02-01",
+  "2019-12-31"
+ ],
+ "key_match_rows": {
+  "io_gap": 6894468,
+  "seas": 6894468,
+  "sue": 6894468,
+  "ear": 6544589,
+  "str_lowturn": 6544589
+ },
+ "str_lowturn_universe_rows": 9756141,
+ "coverage": {
+  "io_gap": {
+   "all_rows": 0.9340372995667436,
+   "rows_2007_2019": 0.9962094247155836,
+   "pit_rows_2007_2019": 0.9998803030413566
+  },
+  "seas": {
+   "all_rows": 0.7952577745508428,
+   "rows_2007_2019": 0.8481923478359752,
+   "pit_rows_2007_2019": 0.8880763185646741
+  },
+  "sue": {
+   "all_rows": 0.8178757994789609,
+   "rows_2007_2019": 0.8723158915234649,
+   "pit_rows_2007_2019": 0.903977370519909
+  },
+  "ear": {
+   "all_rows": 0.7810122225375722,
+   "rows_2007_2019": 0.8329985721886011,
+   "pit_rows_2007_2019": 0.8886285997914625
+  },
+  "str_lowturn": {
+   "all_rows": 0.8891583642522088,
+   "rows_2007_2019": 0.9483432224212224,
+   "pit_rows_2007_2019": 0.9989748752571256
+  }
+ },
+ "any_new_finite_rows_2007_2019": 0.9987742346472563,
+ "in_pit_rows": 3934925,
+ "feature_cols_24": [
+  "daily_return",
+  "momentum_5",
+  "momentum_20",
+  "momentum_60",
+  "momentum_120",
+  "volatility_20",
+  "volatility_60",
+  "volume_ratio_20",
+  "relative_strength_20",
+  "pct_from_high_252",
+  "pct_from_low_252",
+  "market_cap",
+  "pe_ratio",
+  "pb_ratio",
+  "ps_ratio",
+  "debt_to_equity",
+  "roe",
+  "roa",
+  "gross_margin",
+  "operating_margin",
+  "fcf_margin",
+  "revenue_growth_yoy",
+  "earnings_growth_yoy",
+  "rnd_intensity"
+ ],
+ "new_cols": [
+  "io_gap",
+  "seas",
+  "sue",
+  "ear",
+  "str_lowturn"
+ ],
+ "store": "/Users/ggraham/.cache/wo43_xgbretrain",
+ "store_sha256": {
+  "X24.npy": "b818b55ef9913fed08e763ad9b7b6dd6566534482fef1ec9b11eb38dbed5ab21",
+  "X29.npy": "31702bdcebbda123d2fcbdba508ab48430638bcba99a2e8a1a4d837237c5fd8c",
+  "codes.npy": "170daf4702c3a7e1b1ab23ef55ffdbf968c3c4eed45eee7e8ecc45a94d529c5a",
+  "dates.npy": "058663bf5cc7ef3b02f739c6638b2181754db34db43c6d40aa3803e3db4b450d",
+  "exit.npy": "d5c7a08242fad088ca78168a690dc87af3960cd23c3b3ee107657736ca090aff",
+  "in_pit.npy": "3ba52ca633475406af2d7985be059accc170cf17ed1de9dfcec717da75700181",
+  "newfinite.npy": "4f8a4027549558b302f315f6c3eb532a147c803db83f752da7c1173ae9b389fe",
+  "y.npy": "6603a1d6d6bfb8fc60d16ad3eeb82a84a476100ed14116b59072423bfef57626"
+ },
+ "elapsed_sec": 36.9
+}
