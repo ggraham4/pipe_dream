@@ -254,6 +254,10 @@ def step_prices(work, tickers, full_tickers, buf_start, through):
     from features import FEATURE_COLS, LABEL_COL, TRADABLE_LABEL_COL
     px = read_sep(set(tickers), end=through)
     px = px.sort_values(["ticker", "date"]).reset_index(drop=True)
+    # WO-47: split recycled symbols (later entity -> "S__postYYYYMMDD") before any per-ticker
+    # computation, so features, closes_full (quality/beta) and outcomes (step_outcome gets this px)
+    # never span two companies. The __post segment gets no universe flag, so it is not scored.
+    px = BF.segment_reused_symbols(px)
     for c in BF.PRICE_COLS:
         px[c] = pd.to_numeric(px[c], errors="coerce")
     spy = BF.load_spy()

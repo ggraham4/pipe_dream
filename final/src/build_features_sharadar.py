@@ -100,6 +100,119 @@ def load_prices(tickers):
     return df.sort_values(["ticker", "date"]).reset_index(drop=True)
 
 
+MASTER_CSV = PROJECT_ROOT / "data" / "sharadar" / "tickers_master.csv"
+REUSE_TOL_DAYS = 5
+
+
+def load_reuse_entities(paths=None):
+    """WO-47. {symbol: [(permaticker, firstpricedate, lastpricedate), ...]} from Sharadar TICKERS
+    snapshot(s), table=stocks. A permaticker is a candidate for symbol S when any snapshot lists it
+    as S or as S followed by digits (Sharadar renames the OLD entity of a reused symbol "S1", "S2").
+    The span comes from the first path that has the permaticker (pass the freshest first)."""
+    import re
+    if paths is None:
+        paths = (MASTER_CSV,)
+    frames = []
+    for rank, p in enumerate(paths):
+        # keep_default_na=False: the symbol "NA" is a real ticker, not a missing value
+        m = pd.read_csv(p, dtype=str, keep_default_na=False, na_values=[""],
+                        usecols=["table", "permaticker", "ticker", "firstpricedate", "lastpricedate"])
+        m = m[m["table"] == "stocks"].copy()
+        m["rank"] = rank
+        frames.append(m)
+    m = pd.concat(frames, ignore_index=True)
+    m["firstpricedate"] = pd.to_datetime(m["firstpricedate"], errors="coerce")
+    m["lastpricedate"] = pd.to_datetime(m["lastpricedate"], errors="coerce")
+    span = m.sort_values("rank", kind="stable").drop_duplicates("permaticker").set_index("permaticker")
+    ents = {}
+    for pt, tk in m[["permaticker", "ticker"]].drop_duplicates().itertuples(index=False):
+        if not isinstance(tk, str):
+            continue
+        keys = {tk}
+        mm = re.fullmatch(r"(.*\D)\d+", tk)
+        if mm:
+            keys.add(mm.group(1))
+        r = span.loc[pt]
+        if pd.isna(r["firstpricedate"]) or pd.isna(r["lastpricedate"]):
+            continue
+        for k in keys:
+            ents.setdefault(k, {})[pt] = (r["firstpricedate"].to_datetime64(),
+                                          r["lastpricedate"].to_datetime64())
+    return {k: [(pt, f, l) for pt, (f, l) in v.items()] for k, v in ents.items()}
+
+
+def reuse_boundaries(dates, cands, tol_days=REUSE_TOL_DAYS):
+    """WO-47 rule D1 (pre-registered). `dates`: sorted datetime64 array of ONE symbol's rows.
+    Returns sorted row positions b where a new entity starts (split between rows b-1 and b).
+    A pair (a, b) of consecutive rows is a boundary when some candidate entity's lastpricedate is in
+    [a - tol, a] with b > last + tol, or its firstpricedate is in [b, b + tol] with a < first - tol,
+    AND no candidate entity's span (+/- tol) covers both a and b."""
+    d = np.asarray(dates, dtype="datetime64[ns]")
+    n = len(d)
+    if n < 2 or not cands:
+        return []
+    tol = np.timedelta64(tol_days, "D")
+    pairs = set()
+    for _, f, l in cands:
+        i = int(np.searchsorted(d, l, side="right")) - 1          # last row <= lastpricedate
+        if 0 <= i < n - 1 and d[i] >= l - tol and d[i + 1] > l + tol:
+            pairs.add(i + 1)
+        j = int(np.searchsorted(d, f, side="left"))               # first row >= firstpricedate
+        if 0 < j < n and d[j] <= f + tol and d[j - 1] < f - tol:
+            pairs.add(j)
+    out = []
+    for b in sorted(pairs):
+        a_dt, b_dt = d[b - 1], d[b]
+        shared = any((f - tol) <= a_dt <= (l + tol) and (f - tol) <= b_dt <= (l + tol)
+                     for _, f, l in cands)
+        if not shared:
+            out.append(b)
+    return out
+
+
+def segment_reused_symbols(px, entities=None, return_report=False):
+    """WO-47 fix for recycled ticker symbols. `px`: ticker/date rows sorted by (ticker, date).
+    Splits each symbol whose rows span two Sharadar entities (rule D1, reuse_boundaries) and renames
+    every LATER segment "S__postYYYYMMDD" (its first date) -- the naming price_discontinuity.py
+    already uses and downstream code strips with split("__post")[0]. The earliest segment keeps the
+    plain symbol, so no row of the original entity changes name. Rows of symbols without a boundary
+    are returned untouched (same objects, same order)."""
+    if entities is None:
+        entities = load_reuse_entities()
+    tick = px["ticker"].to_numpy()
+    if len(tick) == 0:
+        return (px, []) if return_report else px
+    starts = np.r_[0, np.flatnonzero(tick[1:] != tick[:-1]) + 1]
+    ends = np.r_[starts[1:], len(tick)]
+    dates = px["date"].to_numpy().astype("datetime64[ns]")
+    new = None
+    report = []
+    for s, e in zip(starts, ends):
+        sym = tick[s]
+        cands = entities.get(sym)
+        if not cands:
+            continue
+        bnd = reuse_boundaries(dates[s:e], cands)
+        if not bnd:
+            continue
+        if new is None:
+            new = tick.astype(object).copy()
+        for k, b in enumerate(bnd):
+            stop = bnd[k + 1] if k + 1 < len(bnd) else e - s
+            name = f"{sym}__post{pd.Timestamp(dates[s + b]):%Y%m%d}"
+            new[s + b:s + stop] = name
+            report.append({"ticker": sym, "segment": name,
+                           "prev_last_date": pd.Timestamp(dates[s + b - 1]).date().isoformat(),
+                           "first_date": pd.Timestamp(dates[s + b]).date().isoformat(),
+                           "rows": int(stop - b)})
+    if new is not None:
+        px = px.copy()
+        px["ticker"] = new
+        # keep blocks contiguous and date-ordered under the new names
+        px = px.sort_values(["ticker", "date"], kind="stable").reset_index(drop=True)
+    return (px, report) if return_report else px
+
+
 def features_for(g, spy):
     """Exactly features.build_features()'s per-ticker block."""
     g = g.sort_values("date").reset_index(drop=True).copy()
@@ -129,6 +242,12 @@ def build():
 
     print("prices:")
     px = load_prices(tickers)
+    # WO-47: a recycled symbol (e.g. ADRX = Andrx 2005-06 + Adarx 2026) must not be one block,
+    # or rolling features and forward labels run across two companies.
+    px, seg = segment_reused_symbols(px, return_report=True)
+    for r in seg:
+        print(f"  reused symbol split: {r['ticker']} -> {r['segment']} "
+              f"({r['rows']} rows; previous entity last traded {r['prev_last_date']})")
     print(f"  {len(px):,} rows, {px['ticker'].nunique():,} tickers, "
           f"{px['date'].min().date()} .. {px['date'].max().date()}")
 

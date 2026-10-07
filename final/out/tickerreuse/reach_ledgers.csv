@@ -1,0 +1,13 @@
+ledger,ticker,panel_date,after_boundary,rank_pct,ic_weighted_rank_pct,icw9_leverage_rank_pct,icw9_sue_rank_pct,icw9_seas_rank_pct,icw10_io_rank_pct,icw9_r252_rank_pct
+v3,ADRX,2026-10-02,True,0.2048588312541037,0.1822061720288903,,,,,
+v3,HYAC.U,2026-10-02,True,0.1516743269862114,0.4156270518713066,,,,,
+ext,ADRX,2026-10-02,True,,,0.3059750492449113,,,,
+ext,HYAC.U,2026-10-02,True,,,0.4139855548260013,,,,
+sue,ADRX,2026-10-02,True,,,,0.154629021667761,,,
+sue,HYAC.U,2026-10-02,True,,,,0.412672357189757,,,
+seas,ADRX,2026-10-02,True,,,,,0.1227839789888378,,
+seas,HYAC.U,2026-10-02,True,,,,,0.4107025607353907,,
+io,ADRX,2026-10-02,True,,,,,,0.1004596191726854,
+io,HYAC.U,2026-10-02,True,,,,,,0.3854235062376888,
+r252,ADRX,2026-10-02,True,,,,,,,0.1057124097176625
+r252,HYAC.U,2026-10-02,True,,,,,,,0.077478660538411

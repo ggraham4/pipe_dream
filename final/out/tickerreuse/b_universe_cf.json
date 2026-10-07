@@ -1,0 +1,64 @@
+{
+  "sep11_panel_tickers": 4030,
+  "current_universe_tickers": 4015,
+  "all_sep_reproduces_sep11": false,
+  "all_sep_diff": {
+    "missing": [
+      "ABTC",
+      "ADAM",
+      "CPHI",
+      "CTEV",
+      "DOMA",
+      "EMBK",
+      "FLNT",
+      "GRCE",
+      "GTE",
+      "HGLI",
+      "HIPO",
+      "HKRSQ",
+      "MFA",
+      "NVTP",
+      "RADCQ",
+      "RBBN",
+      "UIS",
+      "VIEWQ",
+      "VTNRQ"
+    ],
+    "extra": []
+  },
+  "all_cur_reproduces_current": true,
+  "all_cur_diff": {
+    "missing": [],
+    "extra": []
+  },
+  "sizes": {
+    "master=sep,shares=sep,through=sep": 4011,
+    "master=sep,shares=sep,through=cur": 4014,
+    "master=sep,shares=cur,through=sep": 4011,
+    "master=sep,shares=cur,through=cur": 4014,
+    "master=cur,shares=sep,through=sep": 4012,
+    "master=cur,shares=sep,through=cur": 4015,
+    "master=cur,shares=cur,through=sep": 4012,
+    "master=cur,shares=cur,through=cur": 4015
+  },
+  "single_swaps_from_sep": {
+    "master=cur,shares=sep,through=sep": {
+      "removed": [],
+      "added": [
+        "CLGX"
+      ]
+    },
+    "master=sep,shares=cur,through=sep": {
+      "removed": [],
+      "added": []
+    },
+    "master=sep,shares=sep,through=cur": {
+      "removed": [],
+      "added": [
+        "ADRX",
+        "ALNT",
+        "SECZ"
+      ]
+    }
+  }
+}

@@ -1,0 +1,5 @@
+ticker,prev_date,next_date,gap_trading_days,rows_before,rows_after,found_fresh_union,found_live_master,entities_prev,entities_next
+ADRX,2006-11-03,2026-09-25,5001,465,7,True,True,170871,6401389
+AXPWQ,2016-02-05,2016-02-12,4,732,2,True,True,196940,
+HYAC.U,2026-04-08,2026-09-18,112,642,12,True,False,640462,6401345
+RML,2006-08-01,2026-09-09,5056,398,19,True,False,170615,6401339
