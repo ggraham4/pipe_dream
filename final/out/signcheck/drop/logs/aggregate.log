@@ -1,0 +1,20 @@
+[A] D3: K -0.1577 pp/yr K>0 5/40 LOYO min K -0.2141 | null p50 -0.0832 p80 -0.0663 pct<K 0.00 | sub11 K +0.0172
+[A] D4: K -0.1577 pp/yr K>0 5/40 LOYO min K -0.2141 | null p50 -0.0832 p80 -0.0663 pct<K 0.00 | sub11 K +0.0172
+[A] SI: K +0.0000 pp/yr K>0 0/40 LOYO min K +0.0000 | null p50 +0.0000 p80 +0.0000 pct<K 0.00 | sub11 K +0.0000
+[B] D3: K -0.0649 pp/yr K>0 18/40 LOYO min K -1.1591 | null p50 -0.0277 p80 +0.0345 pct<K 0.31 | sub11 K -0.0649
+[B] D4: K -0.0455 pp/yr K>0 19/40 LOYO min K -1.1303 | null p50 -0.1754 p80 -0.1027 pct<K 0.93 | sub11 K -0.0455
+{
+ "D3": {
+  "K_B": -0.0006492978983473375,
+  "p80_B": 0.00034524314670896156,
+  "KEEP": false,
+  "verdict": "DROP"
+ },
+ "D4": {
+  "K_B": -0.00045482423095304265,
+  "p80_B": -0.0010266365442363127,
+  "KEEP": false,
+  "verdict": "DROP"
+ }
+} 
+ drop all four at the next batch retune
