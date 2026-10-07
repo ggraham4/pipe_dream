@@ -1,0 +1,5 @@
+[19:01:01] [B] cap150: 5,220,610 rows, 5,066 tickers, 1652 dates 2020-01-02..2026-07-30
+[19:01:13] [B] loaded 5,220,610 rows, 1652 dates 2020-01-02..2026-07-30
+[19:01:16] [B] base reconcile OK -0.0201636 (ref -0.02016365566661011); fast picker == picks_w on 1652 dates
+[19:01:19] [B] D3: K = base - arm -0.0649 pp/yr, K>0 on 18/40 (23s)
+[19:01:22] [B] D4: K = base - arm -0.0455 pp/yr, K>0 on 19/40 (25s)

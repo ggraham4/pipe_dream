@@ -1,0 +1,5 @@
+[18:59:43] [A] cap150: 9,756,141 rows, 6,508 tickers, 3272 dates 2007-01-03..2019-12-31
+[19:00:06] [A] loaded 9,756,141 rows, 3272 dates 2007-01-03..2019-12-31
+[19:00:34] [A] recheck D3: identical=True
+[19:00:54] [A] recheck D4: identical=True
+[19:00:56] [A] recheck SI: identical=True

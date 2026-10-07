@@ -1,0 +1,6 @@
+[18:30:19] [A] cap150: 9,756,141 rows, 6,508 tickers, 3272 dates 2007-01-03..2019-12-31
+[18:30:41] [A] loaded 9,756,141 rows, 3272 dates 2007-01-03..2019-12-31
+[18:30:47] [A] base reconcile OK +0.0348652 (ref 0.0348652); fast picker == picks_w on 3272 dates
+[18:30:54] [A] D3: K = base - arm -0.1577 pp/yr, K>0 on 5/40 (43s)
+[18:30:59] [A] D4: K = base - arm -0.1577 pp/yr, K>0 on 5/40 (48s)
+[18:31:01] [A] si alone: K +0.0000 (0/40)

@@ -1,0 +1,4 @@
+[19:15:18] [B] cap150: 5,220,610 rows, 5,066 tickers, 1652 dates 2020-01-02..2026-07-30
+[19:15:29] [B] loaded 5,220,610 rows, 1652 dates 2020-01-02..2026-07-30
+[19:15:40] [B] recheck D3: identical=True
+[19:15:51] [B] recheck D4: identical=True

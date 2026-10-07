@@ -94,3 +94,57 @@ for both eras. They are **not** in the gate, which is deliberately lower than WO
 
 **Logging.** Hold-out read #21 is logged in COO.md Hold-out status before any era B
 number is computed. Era B numbers are always shown next to era A.
+
+## 2. Results (computed 2026-10-07, after the pre-registration was pushed as 9d3b891)
+
+Report: `final/out/signcheck/drop/dropcheck_report.json`; logs:
+`final/out/signcheck/drop/logs/`. K = base − arm, the value of keeping the factors, in pp/yr.
+K < 0 means the book without them did better.
+
+**Verdict (pre-registered rule, era B): D3 DROP, D4 DROP → recommend
+dropping all four floor-weight factors at the next batch retune.** No live
+change; Gabe decides.
+
+| | era | K | K > 0 offsets | null p50 | null p80 | real vs null (pct of null below K) | jackknife t | verdict |
+|---|---|---|---|---|---|---|---|---|
+| D3 | B 2020-26 | −0.065 | 18/40 | −0.028 | +0.035 | 0.31 | −0.04 | **DROP** (K < 0) |
+| D4 | B 2020-26 | −0.045 | 19/40 | −0.175 | −0.103 | 0.93 | −0.03 | **DROP** (K < 0) |
+| D3 | A 2007-19 | −0.158 | 5/40 | −0.083 | −0.066 | 0.00 | −1.10 | descriptive |
+| D4 | A 2007-19 | −0.158 | 5/40 | (same as D3, see below) | | | | descriptive |
+
+**Checks:**
+- Era A base +0.0348652 and era B base −0.0201636 both reconcile, to < 1e-6 against the stated refs.
+- The fast picker equals `picks_w` on all 3,272 and 1,652 dates.
+- The identity book gives K = 0.
+- The hold-out assert passed.
+- Null draw 0, re-run, is identical for every arm in both eras.
+
+**What it says.**
+- **2007-2019:** the three factors cost 0.16 pp/yr. That is worse than
+  replacing them with noise of the same weight: all 100 noise books did
+  better than the real factors. Most of the cost is in 2008-2010 (K −0.45,
+  −0.84, −1.44). From 2011-10 on, K is +0.02, which is flat.
+- **2020-2026:** K is close to zero for both arms and very noisy. sd40 is 0.70-0.82 pp,
+  against 0.13 in era A, and the jackknife t is about 0. Two years swing hard
+  and cancel: 2020 K +5.9 pp, 2021 K −7.1 pp, with picks still 96% the same as
+  base. 2022-2026 is small (D3: +0.11, +0.07, −0.05, +0.64, −0.30). Era B
+  neither shows nor rules out a small benefit. Under the parsimony default
+  that means DROP, which is the rule Gabe asked for.
+- **Short interest:**
+  - **No data before 2020:** `short_interest_days_to_cover` has 0% coverage in cap150
+    for 2005-2019, so before 2020 it never entered the score. In era A, D4 = D3 exactly, the
+    SI-alone LOO is 0 and its null is all zeros. The pre-registered era A
+    SI-alone test is therefore empty. Coverage in 2020-26 is 61%, 86%, 91%, 95%, 96%, 98% and 99% by year.
+  - **2020-2026 increment over D3:** SI adds +0.02 pp/yr of K (D4 −0.045 vs D3 −0.065).
+    The real columns beat 93% of same-weight noise books in D4, against 31% in D3.
+    That is a weak hint that SI carries some information. It is not enough to pass the gate,
+    because the book without it still did slightly better.
+
+**Caveat for the decision.** This is a parsimony verdict. It is not evidence that the
+factors hurt in 2020-2026. The deciding era is dominated by 2020-2021
+noise. The verdict says there is no detectable benefit from keeping them. Dropping is a
+weight change (live |w| total unchanged, remaining six scaled up by about 4%), for the next batch retune.
+
+### Docs for README
+This doc (WO-48b). Recommendation: drop the four floor-weight factors at the
+next batch retune (Gabe's call); SI has no pre-2020 data.
