@@ -1,0 +1,4 @@
+[08:55:44] [A] cap150: 9,756,141 rows, 6,508 tickers, 3272 dates 2007-01-03..2019-12-31
+[08:56:17] reconcile OK {'icw9_seas': {'got': 0.03486520057904396, 'wo31_exact': 0.03486520057904396, 'diff_exact': 0.0, 'spec': 0.0348652, 'diff_spec': 5.790439586150775e-10}, 'icw8': {'got': 0.028541632641009042, 'wo31_exact': 0.028541632641009042, 'diff_exact': 0.0, 'spec': 0.0285416, 'diff_spec': 3.26410090414897e-08}}
+[08:56:54] base reconcile OK +0.0348652 (ref 0.0348652) sd40 0.00223
+[08:56:54] reconcile-only: wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a1333feb2fdaa5a86/final/out/signcheck/parts/reconcile.json (78s)

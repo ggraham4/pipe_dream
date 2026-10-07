@@ -1,0 +1,17 @@
+{
+ "pct_from_high_252": {
+  "draw0": 0.00011294438127754805,
+  "rerun": 0.00011294438127754805,
+  "identical": true
+ },
+ "volatility_60": {
+  "draw0": 0.0006782365316872726,
+  "rerun": 0.0006782365316872726,
+  "identical": true
+ },
+ "days_to_next_filing_seasonal": {
+  "draw0": 0.0007405702423942292,
+  "rerun": 0.0007405702423942292,
+  "identical": true
+ }
+}

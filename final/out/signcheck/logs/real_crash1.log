@@ -1,0 +1,36 @@
+[17:49:02] [A] cap150: 9,756,141 rows, 6,508 tickers, 3272 dates 2007-01-03..2019-12-31
+[17:49:48] reconcile OK {'icw9_seas': {'got': 0.03486520057904396, 'wo31_exact': 0.03486520057904396, 'diff_exact': 0.0, 'spec': 0.0348652, 'diff_spec': 5.790439586150775e-10}, 'icw8': {'got': 0.028541632641009042, 'wo31_exact': 0.028541632641009042, 'diff_exact': 0.0, 'spec': 0.0285416, 'diff_spec': 3.26410090414897e-08}}
+[17:50:30] base reconcile OK +0.0348652 (ref 0.0348652) sd40 0.00223
+[17:50:54] pct_from_high_252: LOO-base +0.0137%/yr (25/40) flip-base +0.0118% (21/40) (124s)
+Traceback (most recent call last):
+  File "/Users/ggraham/pipe_dream/.claude/worktrees/agent-a1333feb2fdaa5a86/final/src/signcheck/signcheck.py", line 383, in <module>
+    main()
+  File "/Users/ggraham/pipe_dream/.claude/worktrees/agent-a1333feb2fdaa5a86/final/src/signcheck/signcheck.py", line 373, in main
+    run_real()
+  File "/Users/ggraham/pipe_dream/.claude/worktrees/agent-a1333feb2fdaa5a86/final/src/signcheck/signcheck.py", line 241, in run_real
+    r["test1_deciles"] = decile_tables(U, f)
+                         ^^^^^^^^^^^^^^^^^^^
+  File "/Users/ggraham/pipe_dream/.claude/worktrees/agent-a1333feb2fdaa5a86/final/src/signcheck/signcheck.py", line 124, in decile_tables
+    d = d[n >= 10]
+        ~^^^^^^^^^
+  File "/opt/anaconda3/envs/pipe_dream/lib/python3.11/site-packages/pandas/core/frame.py", line 4365, in __getitem__
+    return self.where(key)
+           ^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/pipe_dream/lib/python3.11/site-packages/pandas/core/generic.py", line 10309, in where
+    return self._where(cond, other, inplace=inplace, axis=axis, level=level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/pipe_dream/lib/python3.11/site-packages/pandas/core/generic.py", line 10033, in _where
+    cond = cond.reindex(self._info_axis, axis=self._info_axis_number)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/pipe_dream/lib/python3.11/site-packages/pandas/core/frame.py", line 6092, in reindex
+    return super().reindex(
+           ^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/pipe_dream/lib/python3.11/site-packages/pandas/core/generic.py", line 5464, in reindex
+    return self._reindex_axes(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/envs/pipe_dream/lib/python3.11/site-packages/pandas/core/generic.py", line 5486, in _reindex_axes
+    new_index, indexer = ax.reindex(
+                         ^^^^^^^^^^^
+  File "/opt/anaconda3/envs/pipe_dream/lib/python3.11/site-packages/pandas/core/indexes/base.py", line 4253, in reindex
+    raise ValueError("cannot reindex on an axis with duplicate labels")
+ValueError: cannot reindex on an axis with duplicate labels

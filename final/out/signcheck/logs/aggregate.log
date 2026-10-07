@@ -1,0 +1,3 @@
+pct_from_high_252: LOO-base +0.0137%/yr 25/40 sd40 0.0970 LOYO min -0.0440 maxshare 3.999284502741074 | null p80 +0.0106 | flip +0.0118 21/40 | sub11 LOO -0.0571 flip -0.0553 | CLOSED
+volatility_60: LOO-base -0.0347%/yr 13/40 sd40 0.1022 LOYO min -0.0762 maxshare None | null p80 +0.0505 | flip +0.0672 29/40 | sub11 LOO -0.0410 flip -0.0133 | CLOSED
+days_to_next_filing_seasonal: LOO-base +0.0328%/yr 24/40 sd40 0.1168 LOYO min -0.0063 maxshare 1.1789374150744112 | null p80 +0.0778 | flip +0.1672 34/40 | sub11 LOO +0.0593 flip +0.1029 | CLOSED
