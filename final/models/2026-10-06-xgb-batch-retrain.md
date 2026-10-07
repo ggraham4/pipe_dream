@@ -196,3 +196,106 @@ The gap is also reported against the 5.03 %/yr noise scale. That comparison is n
 - icw9_seas on cap2000, and the cap150 value from R3.
 
 **Iteration cap:** 3 fix-and-rerun cycles, for bugs only. No change to features, arms, parameters, nulls or thresholds after any Arm 1 or Arm 2 real-label number is seen. A pass is a recommendation to Gabe; live q75 is unchanged.
+
+## Step 2 results (run 2026-10-06/07, 2007–2019 only, no hold-out read)
+
+**Verdict: KILL.** Neither arm meets any of the four success criteria. Live q75 is unchanged, and nothing is recommended for promotion.
+
+All runs completed with 0 bug-fix cycles: 13 runs × 3,272 score dates, about 42.5k fits, with the per-fit leakage assert never tripping. The evaluation is `step2_results.json`, with reconciliations R1–R5 asserted first:
+
+| check | value |
+|---|---|
+| R1: cached q75, own grid | 0.023516409867 (exact) |
+| R2: cached q75 blend with live 9-factor | 0.025164593970 (exact) |
+| R3: icw9_seas cap150 | 0.034865200579 (exact) |
+| R4: Arm 0 on the cached grid | equals R1 |
+| R5: calendars | equal (3,272 dates) |
+
+**Primary metric.** decile_volq on cap2000 ∩ PIT-scored names, 40-offset mean, net of 15 bp:
+
+| run | excess vs SPY %/yr | net %/yr | offsets > 0 |
+|---|---|---|---|
+| Arm 0 (24 cols, q75) | +2.224 | +9.733 | 40/40 |
+| Arm 1 (+5, q75 params) | +2.176 | +9.685 | 40/40 |
+| Arm 2 (+5, retune) | +2.387 | +9.896 | 40/40 |
+| Arm 1 nulls (5) | +2.444 mean, sd 0.038 | | |
+| Arm 2 nulls (5) | +2.562 mean, sd 0.049 | | |
+
+**Gate and criteria:**
+
+| | Arm 1 | Arm 2 |
+|---|---|---|
+| arm − Arm 0, %/yr | −0.048 | +0.163 |
+| offsets positive (need ≥ 32) | 18/40 | 25/40 |
+| LOYO min (need ≥ 0) | −0.269 (2007 dropped) | −0.086 (2007 dropped) |
+| max year share (need ≤ 0.45) | n/a: total ≤ 0, so the criterion fails | 1.48 (2007) |
+| null t (one-sided, df 4) | −6.48 | −3.26 |
+| p | 0.998 | 0.984 |
+| BH q (need ≤ 0.20) | 0.998 | 0.998 |
+| gap / 5.03 %/yr noise scale | −0.01 | +0.03 |
+
+**The real columns did worse than their own shuffles.**
+- Every one of the 10 null draws beat Arm 0, by +0.18 to +0.39 %/yr.
+- Both real arms land below their own null distributions.
+- The nulls are **not pure noise columns.** The shuffle keeps each column's NaN pattern, as pre-registered, and that pattern carries information:
+  - EAR is NaN unless an earnings event fell in the last 60 days.
+  - EAR and str_lowturn are NaN outside cap150.
+  - All five columns are NaN off the v2 grid.
+- A plausible reading, **untested and not a finding**: missingness alone (earnings recency, cap150 membership, grid coverage) helps the book a little, and on this book the columns' values add nothing on top of it.
+- This is the same pattern RUNBOOK §9 warns about ("the best cell was a scrambled one").
+
+The year contributions to arm − Arm 0 are small and alternate in sign. 2007 is the largest positive year for both arms. In 2007 the new columns are mostly NaN in training (the v2 grid starts 2007-01-02), so those splits mostly encode "row has v2 data", effectively a date or coverage marker.
+
+**Context only, not gated, no nulls:**
+
+| run | daily rank-IC (cap2000 ∩ PIT) | top-5 volq excess | 50/50 blend with live 9-factor |
+|---|---|---|---|
+| Arm 0 | +0.0087 | +2.53 %/yr (33/40) | +2.32 %/yr |
+| Arm 1 | +0.0134 | +3.79 %/yr (33/40) | +2.19 %/yr |
+| Arm 2 | +0.0129 | +3.67 %/yr (34/40) | +2.24 %/yr |
+
+(No t-statistic is given for rank-IC: daily dates with overlapping 40-day labels would inflate it about √40×.)
+
+**Post-hoc descriptive null comparison for the context metrics** (`context_nulls.py` / `context_nulls.json`, not pre-registered, gates nothing):
+- **Rank-IC:**
+  - Arm 1 nulls: +0.01169 ± 0.00005 against the real +0.01339.
+  - Arm 2 nulls: +0.01133 ± 0.00011 against the real +0.01292.
+  - So the real columns' values do add about +0.0016 to +0.0017 of IC over their shuffles; most of the rise from Arm 0's +0.0087 comes with the shuffled columns too.
+  - That IC gain does not reach the decile_volq book.
+- **Top-5:**
+  - Arm 1 nulls: +3.26 ± 0.31 %/yr against the real +3.79.
+  - Arm 2 nulls: +4.06 ± 0.41 %/yr against the real +3.67.
+  - The top-5 gain is therefore mostly something any 29-column tree gets, not the information in the columns.
+
+- icw9_seas on the same cap2000 pool: +2.86 %/yr, rank-IC +0.0487.
+- The arms raise rank-IC by about +0.005 and top-5 by about +1.2 %/yr. The descriptive nulls above show most of each comes from adding the columns' shape and missingness, not their values.
+- The blend gets slightly worse with either arm.
+- icw9_seas still beats every XGBoost arm on IC by about 3.6×.
+
+**Are the new columns and their interactions used?** Yes, heavily. They are used and do not help. Source: `importance.json`, all 3,272 fits per arm.
+- **Gain:** the new columns take 9.6% of total gain (Arm 1) and 9.5% (Arm 2). Shares by year range from 7% to 13%.
+- **Splits:** 16% of all splits, about 7 of 10 trees per fit.
+- **Mean splits per fit:** sue 31, seas 28, ear 27, io_gap 22, str_lowturn 7.5.
+- **Interactions:** 29% of parent-child split pairs involve a new column (Arm 1: 159 new×old and 17 new×new per fit). Interactions with them are used.
+- **SHAP:** mean |SHAP| share is seas 3.4%, sue 2.4%, ear 2.4%, io_gap 2.1%, str_lowturn 0.9%, against volatility_60 at 13.8%.
+- **Top gain columns are unchanged:** volatility_60, pct_from_high_252, volatility_20, market_cap, momentum_20.
+
+**Reading.** The tree spends about a tenth of its gain on the five columns, including interactions, and the book does not improve beyond what the same number of noise columns produce. The WO-46 state-dependence (net_issuance × hi52) is not something this model can harvest through these five columns either.
+
+This is batch-retrain trial 1 of the XGBoost line (2 arms). Together with Rounds 12–19 it supports keeping XGBoost certified as a dead end for adding features. q75's role as the live blend's second leg is unaffected. Arm 0 is the cached cell behind the blend's backtest record, reproduced exactly. The live q75 is retrained on the Oct-5 panel (FLAG 2).
+
+### Checks run / not run
+
+**Run:**
+- the Step 1 audit (both panels);
+- bit-exact cache replay on 82 dates;
+- Arm 0 bit-exact on 92,615 rows;
+- per-fit leakage assert (42.5k fits);
+- R1–R5 reconciliations;
+- hold-out asserts on every frame read;
+- input hashes and duplicate-copy identity.
+
+**Not run:**
+- a matched null for the blend context metric (top-5 and IC have the post-hoc descriptive one above);
+- a second Arm 2 retune (not allowed);
+- any 2020+ number.

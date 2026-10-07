@@ -67,11 +67,17 @@ def log(m):
     print(f"[{time.strftime('%H:%M:%S')}] {m}", flush=True)
 
 
+def _filt(path):
+    import pyarrow.parquet as pq
+    if "string" in str(pq.read_schema(path).field("date").type):
+        return [("date", ">=", START.date().isoformat()), ("date", "<=", END.date().isoformat())]
+    return [("date", ">=", START), ("date", "<=", END)]
+
+
 def load_U(tier):
     cols = list(dict.fromkeys(["ticker", "date", LABEL, "volatility_60", f"eligible_{tier}"]
                               + C.FACTOR_COLS + CSB._ORIGINAL_FACTOR_COLS))
-    filt = [("date", ">=", START), ("date", "<=", END)]
-    p = pd.read_parquet(R26 / "composite_panel_v2.parquet", columns=cols, filters=filt)
+    p = pd.read_parquet(R26 / "composite_panel_v2.parquet", columns=cols, filters=_filt(R26 / "composite_panel_v2.parquet"))
     p["date"] = pd.to_datetime(p["date"]); p["ticker"] = p["ticker"].astype(str)
     old_t = set(pd.read_parquet(R26 / "composite_panel.parquet", columns=["ticker"])["ticker"].astype(str).unique())
     tm = pd.read_csv(MAIN / "data" / "sharadar" / "tickers_master.csv", dtype=str,
@@ -81,7 +87,8 @@ def load_U(tier):
     assert p["date"].max() < HOLDOUT
     all_dates = sorted(p["date"].unique())
     p = p[p[f"eligible_{tier}"].astype(bool)].drop(columns=[f"eligible_{tier}"])
-    oc = pd.read_parquet(R26 / "outcome_cache_v2.parquet", columns=["ticker", "date", "gross_return_40"], filters=filt)
+    oc = pd.read_parquet(R26 / "outcome_cache_v2.parquet", columns=["ticker", "date", "gross_return_40"],
+                         filters=_filt(R26 / "outcome_cache_v2.parquet"))
     oc["date"] = pd.to_datetime(oc["date"]); oc["ticker"] = oc["ticker"].astype(str)
     assert oc["date"].max() < HOLDOUT
     spy = oc[oc["ticker"] == "SPY"].set_index("date")["gross_return_40"].to_dict()
