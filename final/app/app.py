@@ -242,6 +242,48 @@ def _theo_has_seas(meta) -> bool:
     return "seas" in ((meta or {}).get("factor_weights") or {})
 
 
+# WO-48b (Gabe, 2026-10-07): the live Theoretical model dropped four floor-weight
+# factors from icw9_seas -> icw5_seas (model_version below). Old metas still render.
+THEO_SLIM_VERSION = "ic_weighted_seas_slim_2026-10-07"
+THEO_DROPPED_2026_10_07 = ("pct_from_high_252", "volatility_60",
+                           "days_to_next_filing_seasonal", "short_interest_days_to_cover")
+
+
+def _theo_slim(meta):
+    """WO-48b: None for pre-2026-10-07 metas. Otherwise the meta's
+    backtest_summary.icw5_seas block (a dict; empty if the version says slim but
+    the block is missing or malformed, so callers then show no numbers)."""
+    meta = meta if isinstance(meta, dict) else {}
+    bs = meta.get("backtest_summary")
+    blk = bs.get("icw5_seas") if isinstance(bs, dict) else None
+    if isinstance(blk, dict):
+        return blk
+    return {} if meta.get("model_version") == THEO_SLIM_VERSION else None
+
+
+def _slim_era(blk, era):
+    """One era dict from the icw5_seas block, or {} (isinstance-guarded)."""
+    e = (blk or {}).get(era)
+    return e if isinstance(e, dict) else {}
+
+
+def _pct(v):
+    return f"{v:+.2f}%/yr" if isinstance(v, (int, float)) else "n/a"
+
+
+def _slim_numbers_txt(blk) -> str:
+    """'2007-19 +3.64%/yr vs SPY (...); 2020-26 -1.97%/yr ...' from the meta, or ''."""
+    a, b = _slim_era(blk, "in_era_2007_2019"), _slim_era(blk, "era_2020_2026")
+    if not a and not b:
+        return ""
+    return (f"2007-2019: {_pct(a.get('excess_cagr_vs_spy_pct'))} vs SPY "
+            f"({a.get('offsets_positive', '?')} offsets positive; in-sample weights). "
+            f"2020-2026: {_pct(b.get('excess_cagr_vs_spy_pct'))} vs SPY "
+            f"({b.get('offsets_positive', '?')} offsets positive), which is **IN-SAMPLE "
+            "for the factor selection** (the four were dropped after hold-out read #21, "
+            "WO-48b), so it is not a hold-out result. ")
+
+
 def render_stock_pit():
     """Today's Picks -- PRIMARY signal as of 2026-09-19: the composite+q75
     blend (final/src/current_signal_blend.py). Promoted over the prior
@@ -394,7 +436,15 @@ def render_stock_theoretical():
     what = (f"The {n_theo}-factor composite" if n_theo else "The factor composite")
     blend_leg = (f"its own frozen {n_blend}-factor equal-weight composite"
                  if n_blend else "its own frozen equal-weight composite")
-    if has_seas:
+    slim = _theo_slim(meta)
+    if slim is not None:
+        holdout_txt = (
+            "Since 2026-10-07 this is the 5-factor model (icw5_seas): icw9_seas minus "
+            f"{', '.join(THEO_DROPPED_2026_10_07)}, dropped by Gabe's decision after "
+            "WO-48b. " + _slim_numbers_txt(slim) +
+            "The PREVIOUS 8-factor version (icw8) fails leave-one-year-out on the "
+            "2020-2026 hold-out (see below)")
+    elif has_seas:
         holdout_txt = (
             "seas (Heston-Sadka return seasonality) was added 2026-09-27 by Gabe's "
             "decision; its weights are IN-SAMPLE and this model has **no hold-out "
@@ -462,7 +512,12 @@ def render_stock_theoretical():
             st.json(meta["seas"])
         if meta.get("picks_overlap_vs_icw8"):
             st.write("**Today's picks vs the previous icw8 model's (monitoring only)**")
+            if slim is not None:
+                st.caption("The keys named `n_icw9_seas` / `share_of_icw9_seas` describe the "
+                           "live 5-factor model (icw5_seas); the key names predate 2026-10-07.")
             st.json(meta["picks_overlap_vs_icw8"])
+        if slim is not None and isinstance(slim.get("doc"), str):
+            st.caption(f"Factor drop write-up: `{slim['doc']}`")
     with st.expander("Backtest summary"):
         st.json(meta["backtest_summary"])
     cols, fmt = _composite_picks_cols_fmt(df)
@@ -472,7 +527,18 @@ def render_stock_theoretical():
     st.divider()
     # The curve is always the 8-factor icw8 model (build_backtest_equity_curve.py
     # scores ICW.PRODUCTION_WEIGHTS). Once the live model is icw9_seas, say so.
-    if has_seas:
+    if slim is not None:
+        st.subheader("Full backtest history: PREVIOUS 8-factor model (icw8) vs SPY (2007–2026)")
+        curve_note = (
+            "**This curve is the PREVIOUS 8-factor model (icw8), not the live "
+            f"{meta.get('model_version', 'icw5_seas')} model.** The live {n_theo}-factor "
+            "model's own numbers are under `icw5_seas` in the backtest summary above: "
+            "2007-2019 with in-sample weights, and 2020-2026, which is in-sample for the "
+            "2026-10-07 factor selection (not a hold-out result). No curve is plotted "
+            "for it. "
+        )
+        loyo_ptr = "the failed icw8 leave-one-year-out result (`icw8_holdout_loyo_status` above)"
+    elif has_seas:
         st.subheader("Full backtest history: PREVIOUS 8-factor model (icw8) vs SPY (2007–2026)")
         curve_note = (
             "**This curve is the PREVIOUS 8-factor model (icw8), not the live "
@@ -565,16 +631,31 @@ def render_stock_rolling():
     picks if present, else the ledger's top-N ranking, else an empty state; nothing here feeds Today's Picks, the Theoretical
     tab or any live weight. No score, weight, t or rank-IC is computed here."""
     st.subheader("Rolling weights (candidate — unverified)")
+    theo_df, theo_meta = cm.get_signal()
+    theo_meta = theo_meta if isinstance(theo_meta, dict) else {}
+    # WO-48b (2026-10-07): once the live Theoretical model is icw5_seas, this tab's
+    # baseline (frozen icw9_seas, r252_forward.py SS.WEIGHTS) is the PREVIOUS model.
+    slim = _theo_slim(theo_meta) is not None
+    base_name = "icw9_seas (previous live model)" if slim else "live Theoretical"
+    base_col_lbl = "icw9_seas (previous live model)" if slim else "live Theoretical score"
     st.warning(
         "**Tracking only. Nothing on this tab is traded, and it changes no live "
-        "pick or weight.** This is the Theoretical model's nine factors "
-        "(icw9_seas) with the weights refit every 21 trading days on the trailing "
+        "pick or weight.** "
+        + ("This is the nine icw9_seas factors (the Theoretical model until "
+           "2026-10-07; the live model has since dropped four of them, "
+           f"{', '.join(THEO_DROPPED_2026_10_07)}) "
+           if slim else
+           "This is the Theoretical model's nine factors (icw9_seas) ")
+        + "with the weights refit every 21 trading days on the trailing "
         "1 year (`icw9_r252`).\n\n"
         "**The backtest was mixed.** 2010–2019: −1.1%/yr against the all-history "
         "control, ahead at 0 of 40 start dates. 2020–26: +2.6%/yr, ahead at 38 of "
         "40 (hold-out read #13, so not a clean test). About half "
-        "its edge over the live model comes from weighting short interest.\n\n"
-        "**The verdict comes from forward data.** First review after "
+        + ("its edge over icw9_seas (the previous live model) comes from weighting "
+           "short interest, a factor the live model dropped on 2026-10-07.\n\n"
+           if slim else
+           "its edge over the live model comes from weighting short interest.\n\n")
+        + "**The verdict comes from forward data.** First review after "
         f"{rm.FIRST_REVIEW} finished weekly records (about late May 2027), final "
         f"keep/drop at {rm.FINAL_REVIEW} (about late November 2027). "
         "Details: `final/models/2026-09-30-r252-forward.md`.",
@@ -585,8 +666,6 @@ def render_stock_rolling():
         for err in data["errors"]:
             st.error(err)
 
-    theo_df, theo_meta = cm.get_signal()
-    theo_meta = theo_meta if isinstance(theo_meta, dict) else {}
     live_weights = theo_meta.get("factor_weights")
     live_weights = live_weights if isinstance(live_weights, dict) else None
     live_picks = set(theo_df["ticker"].astype(str)) if theo_df is not None and "ticker" in theo_df else None
@@ -666,11 +745,17 @@ def render_stock_rolling():
             bits.append(f"latest weekly record {data['panel_date']}")
         st.caption(" · ".join(bits))
         theo_fw = set(live_weights or {})
+        if slim and theo_fw:
+            # The candidate keeps all nine icw9_seas factors; compare against those.
+            theo_fw |= set(THEO_DROPPED_2026_10_07)
         r_fw = pmeta.get("factor_weights")
         if theo_fw and isinstance(r_fw, dict) and set(r_fw) != theo_fw:
-            st.error("The picks file's factor set differs from the live Theoretical "
-                     f"model's ({sorted(set(r_fw) ^ theo_fw)}). This tab describes the "
-                     "candidate as the same factors with different weights; that is not "
+            st.error("The picks file's factor set differs from the "
+                     + ("icw9_seas factor set (live five + the four dropped 2026-10-07)"
+                        if slim else "live Theoretical model's")
+                     + f" ({sorted(set(r_fw) ^ theo_fw)}). This tab describes the "
+                     "candidate as " + ("the nine icw9_seas factors" if slim else "the same factors")
+                     + " with different weights; that is not "
                      "true of this file.")
 
     # ---- (a2) fallback: latest ranking (no picks file) -----------------------
@@ -707,8 +792,8 @@ def render_stock_rolling():
         fmt = {spec["score_col"]: "{:.3f}", spec["rank_col"]: "{:.1%}",
                spec["baseline_col"]: "{:.3f}", "seas": "{:.2%}"}
         st.dataframe(
-            top.rename(columns={spec["baseline_col"]: f"{spec['baseline_col']} (live Theoretical score)"})
-               .style.format({(f"{k} (live Theoretical score)" if k == spec["baseline_col"] else k): v
+            top.rename(columns={spec["baseline_col"]: f"{spec['baseline_col']} ({base_col_lbl})"})
+               .style.format({(f"{k} ({base_col_lbl})" if k == spec["baseline_col"] else k): v
                               for k, v in fmt.items() if k in top.columns}, na_rep="—"),
             width="stretch", height=480)
         if data["version"] is not None:
@@ -745,6 +830,8 @@ def render_stock_rolling():
                 "refit used. The weight rule uses the SIZE of t and keeps each factor's "
                 "fixed sign, so a factor that ran against its sign for a year still gets "
                 "a large weight in the fixed direction. "
+                + ("A blank live weight is a factor the live model dropped on 2026-10-07 "
+                   "(WO-48b); the candidate still weights it. " if slim else "")
                 + (f":red[**{n_opp} factor(s) are marked {rm.OPPOSITE}**: their trailing t "
                    "points against the weight's sign.]" if n_opp else
                    "" if w_src == "meta" else
@@ -753,16 +840,19 @@ def render_stock_rolling():
 
     # ---- (c) forward tracker ------------------------------------------------
     st.markdown("#### Forward tracker")
-    rows = [rm.tracker_row(s, loaded[s["key"]]) for s in rm.MODELS]
-    diff = "mean rank-IC difference vs live Theoretical"
+    rows = [rm.tracker_row(s, loaded[s["key"]], base_name) for s in rm.MODELS]
+    diff = rm.TRACKER_DIFF_PREFIX + base_name
     st.dataframe(
         pd.DataFrame(rows).style.format({diff: "{:+.4f}"}, na_rep="—"),
         width="stretch", hide_index=True)
     n_scored = max(r["matured and scored"] for r in rows)
     st.caption(
         "Each weekly record is scored once its 40-trading-day return is known: "
-        "rank-IC of the rolling-weights score minus rank-IC of the live Theoretical "
-        "score, on the same names. The mean is over counted records only (recorded "
+        "rank-IC of the rolling-weights score minus rank-IC of the "
+        + ("frozen icw9_seas score (the live Theoretical model until 2026-10-07; the "
+           "live model is now the 5-factor icw5_seas, so this compares against the "
+           "PREVIOUS live model)" if slim else "live Theoretical score")
+        + ", on the same names. The mean is over counted records only (recorded "
         "on time, full week). "
         + ("**No record has matured yet, so there is no difference to show.** The "
            "first can mature about two months after the first record. "
@@ -863,7 +953,15 @@ def render_stock_query():
                  "result**." if _blend_has_seas(_blend_meta()) else
                  "The blend shows **-0.36%** excess vs SPY on the 2020-2026 hold-out "
                  "(single grid).")
+        t_slim = _theo_slim(_theo_meta())
+        t_slim_b = _slim_era(t_slim, "era_2020_2026").get("excess_cagr_vs_spy_pct")
         t_txt = ("The leave-one-year-out **failure** is the PREVIOUS 8-factor theoretical "
+                 "model's (icw8). The live 5-factor model (icw5_seas, 2026-10-07) shows "
+                 + (f"**{_pct(t_slim_b)}** vs SPY on 2020-2026, " if t_slim_b is not None else
+                    "a 2020-2026 number that is ")
+                 + "IN-SAMPLE for its factor selection, not a hold-out result."
+                 if t_slim is not None else
+                 "The leave-one-year-out **failure** is the PREVIOUS 8-factor theoretical "
                  "model's (icw8); the live icw9_seas version has **no hold-out result**."
                  if _theo_has_seas(_theo_meta()) else
                  "The theoretical model **fails leave-one-year-out** on the hold-out.")

@@ -2,8 +2,9 @@
 Read-only loaders for the "Rolling weights (candidate)" tab (2026-10-01).
 
 Gabe, 2026-10-01: "ok I think it can be added to the live but as a separate
-tab until we verify on new data". The model is icw9_r252: the live Theoretical
-(icw9_seas) factors with weights refit every 21 trading days on the trailing
+tab until we verify on new data". The model is icw9_r252: the icw9_seas factors
+(the live Theoretical model until 2026-10-07; since then the live model is the
+5-factor icw5_seas, WO-48b) with weights refit every 21 trading days on the trailing
 1 year. It is TRACKED ONLY. Nothing here feeds Today's Picks, the Theoretical
 tab, or any live weight.
 
@@ -85,7 +86,7 @@ MODELS = [
         "score_col": "icw9_r252_score",
         "rank_col": "icw9_r252_rank_pct",
         "version_col": "r252_version",
-        "baseline_col": "icw9_seas_score",      # the live Theoretical score on the same rows
+        "baseline_col": "icw9_seas_score",      # frozen icw9_seas score (live Theoretical until 2026-10-07)
         "gain_col": "gain",                      # rank-IC(model) - rank-IC(icw9_seas), per record
         "rho_col": "rho_icw9_r252",
         "rho_baseline_col": "rho_icw9_seas",
@@ -357,11 +358,15 @@ def scores_table(spec, data: dict) -> pd.DataFrame | None:
     return df
 
 
-def tracker_row(spec, data: dict) -> dict:
+TRACKER_DIFF_PREFIX = "mean rank-IC difference vs "
+
+
+def tracker_row(spec, data: dict, baseline_label: str = "live Theoretical") -> dict:
     """Forward-tracker counts for one model. The paired difference is the
     recorder's own per-record `gain` column, averaged over counted records
     (on-time, complete-week), as r252_forward.status() does. No rank-IC is
-    computed here."""
+    computed here. baseline_label names the gain's baseline (icw9_seas) in
+    the column header; the app passes it so the header matches its caption."""
     dates = data["dates"]
     counted = [d for d in dates if d not in data["late"] and d not in data["incomplete"]]
     sc = data["scores"]
@@ -374,7 +379,7 @@ def tracker_row(spec, data: dict) -> dict:
         "weekly records": len(dates),
         "counted (on time, full week)": len(counted),
         "matured and scored": len(gains),
-        "mean rank-IC difference vs live Theoretical": (sum(gains) / len(gains)) if gains else None,
+        TRACKER_DIFF_PREFIX + baseline_label: (sum(gains) / len(gains)) if gains else None,
         "records with a positive difference": (sum(x > 0 for x in gains) if gains else None),
         "first record": dates[0] if dates else None,
         "latest record": dates[-1] if dates else None,
