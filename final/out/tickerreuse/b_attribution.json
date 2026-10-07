@@ -1,0 +1,59 @@
+{
+  "B_XGB": {
+    "differing_rows": 50336,
+    "explained_rows": 50336,
+    "explained_pct": 100.0,
+    "by_cause": [
+      {
+        "cause": "R-reuse: new listing under a recycled symbol became eligible after Sep-11, pulling in the old entity's rows",
+        "rows": 465,
+        "tickers": [
+          "ADRX"
+        ]
+      },
+      {
+        "cause": "U-dates: first PIT-eligible after the Sep-11 build (2026-09-11..10-05)",
+        "rows": 3775,
+        "tickers": [
+          "ALNT"
+        ]
+      },
+      {
+        "cause": "U-floor: $10 floor on split-adjusted close in the Sep-11 universe, closeunadj now",
+        "rows": 42321,
+        "tickers": [
+          "ABTC",
+          "ADAM",
+          "CPHI",
+          "FLNT",
+          "GRCE",
+          "GTE",
+          "HGLI",
+          "HKRSQ",
+          "MFA",
+          "NVTP",
+          "RADCQ",
+          "RBBN",
+          "UIS",
+          "VTNRQ"
+        ]
+      },
+      {
+        "cause": "U-master: symbol absent from the 2026-09-08 tickers_master, present in 2026-09-26",
+        "rows": 3775,
+        "tickers": [
+          "CLGX"
+        ]
+      }
+    ]
+  },
+  "B_v2": {
+    "differing_rows": 38945,
+    "by_cause": {
+      "V1-flags: *_v1 columns rewritten with the v2 eligibility rule (live eligible_cap* unchanged)": 38942,
+      "R-reuse: ADRX 2006 labels now exit in 2026": 3
+    },
+    "explained_pct": 100.0
+  },
+  "bar_95pct_both": true
+}

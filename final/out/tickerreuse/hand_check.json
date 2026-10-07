@@ -1,0 +1,208 @@
+{
+  "ADRX": {
+    "sep_rows": 472,
+    "sep_first": "2005-01-03",
+    "sep_last": "2026-10-05",
+    "sep_largest_gap_days": 7266,
+    "sep_largest_gap_at": "2005-01-03",
+    "tickers_entities": [
+      {
+        "src": "tickers_fresh_2026-10-07.csv",
+        "permaticker": "6401389",
+        "ticker": "ADRX",
+        "name": "ADARX PHARMACEUTICALS INC",
+        "category": "Domestic Common Stock",
+        "firstpricedate": "2026-09-25",
+        "lastpricedate": "2026-10-06"
+      },
+      {
+        "src": "tickers_fresh_2026-10-07.csv",
+        "permaticker": "170871",
+        "ticker": "ADRX1",
+        "name": "ANDRX CORP",
+        "category": "Domestic Common Stock Primary Class",
+        "firstpricedate": "1997-12-31",
+        "lastpricedate": "2006-11-03"
+      },
+      {
+        "src": "tickers_master.csv",
+        "permaticker": "170871",
+        "ticker": "ADRX",
+        "name": "ANDRX CORP",
+        "category": "Domestic Common Stock Primary Class",
+        "firstpricedate": "1996-06-14",
+        "lastpricedate": "2006-11-03"
+      },
+      {
+        "src": "tickers_master_through_2026-09-08.csv",
+        "permaticker": "170871",
+        "ticker": "ADRX",
+        "name": "ANDRX CORP",
+        "category": "Domestic Common Stock Primary Class",
+        "firstpricedate": "1996-06-14",
+        "lastpricedate": "2006-11-03"
+      }
+    ],
+    "panels": {
+      "xgb_sep11": {
+        "rows": 0,
+        "pre2020_rows": 0,
+        "first": null,
+        "last": null
+      },
+      "xgb_current": {
+        "rows": 472,
+        "pre2020_rows": 465,
+        "first": "2005-01-03",
+        "last": "2026-10-05",
+        "close_eq_sep": "472/472"
+      },
+      "v2_sep08": {
+        "rows": 465,
+        "pre2020_rows": 465,
+        "first": "2005-01-03",
+        "last": "2006-11-03",
+        "close_eq_sep": "465/465"
+      },
+      "v2_current": {
+        "rows": 472,
+        "pre2020_rows": 465,
+        "first": "2005-01-03",
+        "last": "2026-10-05",
+        "close_eq_sep": "472/472"
+      }
+    },
+    "xgb_pre2020_diff_rows": {
+      "current_only": 465
+    },
+    "v2_pre2020_diff_rows": {
+      "both": 3
+    }
+  },
+  "CLGX": {
+    "sep_rows": 4133,
+    "sep_first": "2005-01-03",
+    "sep_last": "2021-06-03",
+    "sep_largest_gap_days": 5,
+    "sep_largest_gap_at": "2005-01-03",
+    "tickers_entities": [
+      {
+        "src": "tickers_fresh_2026-10-07.csv",
+        "permaticker": "199728",
+        "ticker": "CLGX",
+        "name": "CORELOGIC INC",
+        "category": "Domestic Common Stock",
+        "firstpricedate": "1997-12-31",
+        "lastpricedate": "2021-06-03"
+      },
+      {
+        "src": "tickers_master.csv",
+        "permaticker": "199728",
+        "ticker": "CLGX",
+        "name": "CORELOGIC INC",
+        "category": "Domestic Common Stock",
+        "firstpricedate": "1997-12-31",
+        "lastpricedate": "2021-06-03"
+      }
+    ],
+    "panels": {
+      "xgb_sep11": {
+        "rows": 0,
+        "pre2020_rows": 0,
+        "first": null,
+        "last": null
+      },
+      "xgb_current": {
+        "rows": 4133,
+        "pre2020_rows": 3775,
+        "first": "2005-01-03",
+        "last": "2021-06-03",
+        "close_eq_sep": "4133/4133"
+      },
+      "v2_sep08": {
+        "rows": 0,
+        "pre2020_rows": 0,
+        "first": null,
+        "last": null
+      },
+      "v2_current": {
+        "rows": 0,
+        "pre2020_rows": 0,
+        "first": null,
+        "last": null
+      }
+    },
+    "xgb_pre2020_diff_rows": {
+      "current_only": 3775
+    },
+    "v2_pre2020_diff_rows": {}
+  },
+  "RSHCQ": {
+    "sep_rows": 2570,
+    "sep_first": "2005-01-03",
+    "sep_last": "2015-03-19",
+    "sep_largest_gap_days": 5,
+    "sep_largest_gap_at": "2005-01-03",
+    "tickers_entities": [
+      {
+        "src": "tickers_fresh_2026-10-07.csv",
+        "permaticker": "199304",
+        "ticker": "RSHCQ",
+        "name": "RADIOSHACK CORP",
+        "category": "Domestic Common Stock",
+        "firstpricedate": "1997-12-31",
+        "lastpricedate": "2015-03-19"
+      },
+      {
+        "src": "tickers_master.csv",
+        "permaticker": "199304",
+        "ticker": "RSHCQ",
+        "name": "RADIOSHACK CORP",
+        "category": "Domestic Common Stock",
+        "firstpricedate": "1986-01-01",
+        "lastpricedate": "2015-03-19"
+      },
+      {
+        "src": "tickers_master_through_2026-09-08.csv",
+        "permaticker": "199304",
+        "ticker": "RSHCQ",
+        "name": "RADIOSHACK CORP",
+        "category": "Domestic Common Stock",
+        "firstpricedate": "1986-01-01",
+        "lastpricedate": "2015-03-19"
+      }
+    ],
+    "panels": {
+      "xgb_sep11": {
+        "rows": 2570,
+        "pre2020_rows": 2570,
+        "first": "2005-01-03",
+        "last": "2015-03-19",
+        "close_eq_sep": "2570/2570"
+      },
+      "xgb_current": {
+        "rows": 2570,
+        "pre2020_rows": 2570,
+        "first": "2005-01-03",
+        "last": "2015-03-19",
+        "close_eq_sep": "2570/2570"
+      },
+      "v2_sep08": {
+        "rows": 2570,
+        "pre2020_rows": 2570,
+        "first": "2005-01-03",
+        "last": "2015-03-19",
+        "close_eq_sep": "2570/2570"
+      },
+      "v2_current": {
+        "rows": 2570,
+        "pre2020_rows": 2570,
+        "first": "2005-01-03",
+        "last": "2015-03-19",
+        "close_eq_sep": "2570/2570"
+      }
+    },
+    "xgb_pre2020_diff_rows": {},
+    "v2_pre2020_diff_rows": {}
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "columns_only_sep": [],
+  "columns_only_current": [],
+  "common_columns": [
+    "open",
+    "close",
+    "market_cap",
+    "volatility_60",
+    "pct_from_high_252",
+    "forward_return_40",
+    "forward_return_tradable_40",
+    "net_issuance_pct",
+    "short_interest_days_to_cover",
+    "days_to_next_filing_seasonal",
+    "gross_profitability",
+    "accruals",
+    "asset_growth",
+    "momentum_12_1",
+    "sector",
+    "eligible_cap2000",
+    "eligible_cap500",
+    "eligible_cap150",
+    "eligible_cap2000_v1",
+    "eligible_cap500_v1",
+    "eligible_cap150_v1"
+  ],
+  "rows_union": 15420963,
+  "rows_both": 15420963,
+  "sep_only_rows": 0,
+  "current_only_rows": 0,
+  "sep_only_tickers": [],
+  "current_only_tickers": [],
+  "both_rows_differing": 38945,
+  "differing_rows_total": 38945,
+  "differing_by_column": {
+    "forward_return_40": 3,
+    "forward_return_tradable_40": 3,
+    "eligible_cap500_v1": 12962,
+    "eligible_cap150_v1": 34531
+  },
+  "differing_both_tickers": 62
+}

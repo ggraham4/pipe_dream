@@ -1,0 +1,21 @@
+{
+  "sep_rows": 32666126,
+  "sep_symbols": 16360,
+  "symbols_without_any_tickers_entity": 0,
+  "D1_reuse_symbols": 4,
+  "D1_boundaries": 4,
+  "D1_live_master_only_symbols": 2,
+  "D1_boundaries_gap_le_20": 1,
+  "D2_gaps": 10,
+  "D2_by_class": {
+    "c_unresolved": 6,
+    "a_D1_boundary": 3,
+    "b_same_entity": 1
+  },
+  "reuse_symbols_in_price_panel": 1,
+  "reuse_symbols_in_v2_panel": 3,
+  "price_label_cross_2007_2019_rows": 0,
+  "v2_label_cross_2007_2019_rows": 0,
+  "ledger_rows_since_2026_09_08": 12,
+  "ledger_rows_after_boundary": 12
+}

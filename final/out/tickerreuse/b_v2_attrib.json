@@ -1,0 +1,17 @@
+{
+  "rows": 38945,
+  "cap500_v1_changed_rows": 12962,
+  "cap500_v1_changed_and_now_equals_v2_flag": 12962,
+  "cap500_v1_changed_and_was_not_equal_v2_flag": 12962,
+  "cap500_v2_flag_unchanged_on_these_rows": 12962,
+  "cap500_v1_direction_true_to_false": 0,
+  "cap150_v1_changed_rows": 34531,
+  "cap150_v1_changed_and_now_equals_v2_flag": 34531,
+  "cap150_v1_changed_and_was_not_equal_v2_flag": 34531,
+  "cap150_v2_flag_unchanged_on_these_rows": 34531,
+  "cap150_v1_direction_true_to_false": 653,
+  "rows_close_ne_closeunadj": 38896,
+  "rows_adj_close_gt_unadj (reverse split later)": 38245,
+  "rows_adj_close_lt_unadj (forward split later)": 651,
+  "tickers": 62
+}

@@ -1,0 +1,11 @@
+ticker,prev_date,next_date,gap_trading_days,class
+ADRX,2006-11-03,2026-09-25,5001,a_D1_boundary
+AXPWQ,2010-05-05,2010-10-12,110,c_unresolved
+AXPWQ,2010-10-13,2010-11-29,31,c_unresolved
+AXPWQ,2010-12-08,2011-01-11,22,c_unresolved
+AXPWQ,2011-04-26,2011-05-31,23,c_unresolved
+AXPWQ,2011-09-30,2011-11-15,31,c_unresolved
+AXPWQ,2013-02-14,2013-03-19,21,c_unresolved
+BURU,2026-07-17,2026-09-01,31,b_same_entity
+HYAC.U,2026-04-08,2026-09-18,112,a_D1_boundary
+RML,2006-08-01,2026-09-09,5056,a_D1_boundary

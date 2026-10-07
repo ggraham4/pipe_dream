@@ -1,0 +1,215 @@
+{
+  "per_ticker": {
+    "ABTC": {
+      "days_cap_ge_2000": 15,
+      "first_cap_day": "2025-11-14",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 15,
+      "pass_adj_floor_and_agree": 15,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 15.0
+    },
+    "ADAM": {
+      "days_cap_ge_2000": 8,
+      "first_cap_day": "2020-02-28",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 8,
+      "pass_adj_floor_and_agree": 8,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 4.0
+    },
+    "CPHI": {
+      "days_cap_ge_2000": 668,
+      "first_cap_day": "2005-05-05",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 668,
+      "pass_adj_floor_and_agree": 668,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 500.0
+    },
+    "CTEV": {
+      "days_cap_ge_2000": 470,
+      "first_cap_day": "2020-10-30",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 470,
+      "pass_adj_floor_and_agree": 470,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 40.0
+    },
+    "DOMA": {
+      "days_cap_ge_2000": 123,
+      "first_cap_day": "2021-05-25",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 123,
+      "pass_adj_floor_and_agree": 123,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 25.0
+    },
+    "EMBK": {
+      "days_cap_ge_2000": 116,
+      "first_cap_day": "2021-10-12",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 116,
+      "pass_adj_floor_and_agree": 116,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 20.0
+    },
+    "FLNT": {
+      "days_cap_ge_2000": 252,
+      "first_cap_day": "2008-01-02",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 252,
+      "pass_adj_floor_and_agree": 252,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 30.0
+    },
+    "GRCE": {
+      "days_cap_ge_2000": 161,
+      "first_cap_day": "2015-01-09",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 161,
+      "pass_adj_floor_and_agree": 161,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 480.0
+    },
+    "GTE": {
+      "days_cap_ge_2000": 126,
+      "first_cap_day": "2010-12-13",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 126,
+      "pass_adj_floor_and_agree": 126,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 10.0
+    },
+    "HGLI": {
+      "days_cap_ge_2000": 315,
+      "first_cap_day": "2005-01-03",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 315,
+      "pass_adj_floor_and_agree": 315,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 2400.0
+    },
+    "HIPO": {
+      "days_cap_ge_2000": 104,
+      "first_cap_day": "2021-07-01",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 104,
+      "pass_adj_floor_and_agree": 104,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 25.0
+    },
+    "HKRSQ": {
+      "days_cap_ge_2000": 218,
+      "first_cap_day": "2013-02-28",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 218,
+      "pass_adj_floor_and_agree": 218,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 171.5
+    },
+    "MFA": {
+      "days_cap_ge_2000": 2704,
+      "first_cap_day": "2009-11-05",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 2704,
+      "pass_adj_floor_and_agree": 2704,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 4.0
+    },
+    "NVTP": {
+      "days_cap_ge_2000": 8,
+      "first_cap_day": "2005-01-03",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 8,
+      "pass_adj_floor_and_agree": 8,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 400.0
+    },
+    "RADCQ": {
+      "days_cap_ge_2000": 1872,
+      "first_cap_day": "2005-03-07",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 1872,
+      "pass_adj_floor_and_agree": 1872,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 20.0
+    },
+    "RBBN": {
+      "days_cap_ge_2000": 76,
+      "first_cap_day": "2007-02-26",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 76,
+      "pass_adj_floor_and_agree": 76,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 5.0
+    },
+    "UIS": {
+      "days_cap_ge_2000": 636,
+      "first_cap_day": "2005-01-03",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 636,
+      "pass_adj_floor_and_agree": 636,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 10.0
+    },
+    "VIEWQ": {
+      "days_cap_ge_2000": 5,
+      "first_cap_day": "2021-06-08",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 5,
+      "pass_adj_floor_and_agree": 5,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 59.99989528795811
+    },
+    "VTNRQ": {
+      "days_cap_ge_2000": 453,
+      "first_cap_day": "2005-01-03",
+      "pass_unadj_floor": 0,
+      "pass_adj_floor": 453,
+      "pass_adj_floor_and_agree": 453,
+      "pass_unadj_floor_and_agree": 0,
+      "median_close_over_unadj": 10.0
+    }
+  },
+  "variants": {
+    "unadj_floor+agree (current rule)": {
+      "n": 4011,
+      "equals_sep11": false,
+      "missing_vs_sep11": [
+        "ABTC",
+        "ADAM",
+        "CPHI",
+        "CTEV",
+        "DOMA",
+        "EMBK",
+        "FLNT",
+        "GRCE",
+        "GTE",
+        "HGLI",
+        "HIPO",
+        "HKRSQ",
+        "MFA",
+        "NVTP",
+        "RADCQ",
+        "RBBN",
+        "UIS",
+        "VIEWQ",
+        "VTNRQ"
+      ],
+      "extra_vs_sep11": []
+    },
+    "adj_floor+agree": {
+      "n": 4030,
+      "equals_sep11": true,
+      "missing_vs_sep11": [],
+      "extra_vs_sep11": []
+    },
+    "either_floor+agree": {
+      "n": 4030,
+      "equals_sep11": true,
+      "missing_vs_sep11": [],
+      "extra_vs_sep11": []
+    }
+  }
+}

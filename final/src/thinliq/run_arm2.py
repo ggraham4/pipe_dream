@@ -37,6 +37,18 @@ NAMED = [("WAMUQ", "2008-08-20"), ("WAMUQ", "2008-09-17"), ("ATPAQ", "2012-07-18
 RESULT = T.OUT / "arm2_results.json"
 
 
+_TRADING_DAYS = None
+
+
+def trading_days():
+    """Sorted DatetimeIndex of market days (SPY), as run_wo_o1 passes to accepted_expiries. Cached."""
+    global _TRADING_DAYS
+    if _TRADING_DAYS is None:
+        _TRADING_DAYS = pd.DatetimeIndex(sorted(pd.read_csv(W.SPY_CSV, usecols=["date"],
+                                                            parse_dates=["date"])["date"].unique()))
+    return _TRADING_DAYS
+
+
 def hand_check():
     """Hand-computed contracts (doc section 6.3). Literal expected values, written before the code ran."""
     cases = []
@@ -74,7 +86,9 @@ def build_entries(dates, universe="thin"):
         ch = ch[(ch.call_put == "Put") & ch.sharadar_ticker.isin(elig.get(t, set()))]
         exp = W.target_expiry(t)
         ch["expiration"] = pd.to_datetime(ch.expiration)
-        ch = ch[(ch.expiration == exp) | (ch.expiration == exp + pd.Timedelta(days=1))]
+        # WO-47: WO-35 holiday-expiry fix (82fc8db), same rule run_wo_o1 uses: the 3rd Friday, the
+        # Saturday after, or the trading day before when that Friday is a market holiday.
+        ch = ch[ch.expiration.isin(W.accepted_expiries(exp, trading_days()))]
         for tk, g in ch.groupby("sharadar_ticker"):
             spot = float(g.spot.iloc[0])
             sp = bool(sizes_pop.get(tk, False))
