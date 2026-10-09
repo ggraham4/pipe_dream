@@ -1,0 +1,11 @@
+{
+ "dates": 133,
+ "name_dates": 392712,
+ "unlinked_share": 0.0016653425410988205,
+ "ok_share": 0.8743455764020452,
+ "no_data_share": 0.12398908105685591,
+ "link_score_counts_ok": {
+  "1.0": 343366
+ },
+ "identity_err_lt_5pct_share_of_ok": 0.9982263823442041
+}
