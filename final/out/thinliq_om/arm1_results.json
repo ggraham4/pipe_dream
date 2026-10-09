@@ -1,0 +1,100 @@
+{
+ "label_mode": "real",
+ "universe": "thin",
+ "window": [
+  "2008-01-02",
+  "2018-12-19"
+ ],
+ "holdout_read": "none (no date from 2019 on is read)",
+ "coverage": {
+  "dates_in_frame": 133,
+  "dates_used": 133,
+  "dates_dropped_lt_min_names": [],
+  "share_of_universe_with_signal_median": 0.750392464678179
+ },
+ "arm1": {
+  "n_dates": 133,
+  "median_names_per_date": 1344.0,
+  "M_pct_per_40d": 2.7394,
+  "nw39_t": 12.171836798830334,
+  "nw2_t_DESCRIPTIVE": 7.233434320454308,
+  "null_p80_pct": 0.1221,
+  "null_median_pct": 0.0029,
+  "sector_neutral": {
+   "M_pct": 1.9178,
+   "nw39_t": 10.0121862915354
+  },
+  "size_vol_residual": {
+   "M_pct": 2.5708,
+   "nw39_t": 10.937259230556235
+  },
+  "odd_years_pct": 2.8096,
+  "even_years_pct": 2.6817,
+  "chrono_first_half_pct": 2.6343,
+  "chrono_second_half_pct": 2.8429,
+  "offsets_pct": [
+   2.8102,
+   2.6675
+  ],
+  "loyo_pct": {
+   "2008": 2.5646,
+   "2009": 2.8636,
+   "2010": 2.775,
+   "2011": 2.7931,
+   "2012": 2.7464,
+   "2013": 2.7349,
+   "2014": 2.67,
+   "2015": 2.4863,
+   "2016": 2.9409,
+   "2017": 2.7843,
+   "2018": 2.7728
+  },
+  "loyo_min_pct": 2.4863,
+  "year_share": {
+   "2008": 0.15531706765646344,
+   "2009": 0.04896344258946041,
+   "2010": 0.07841737062896469,
+   "2011": 0.07239900246109846,
+   "2012": 0.08789450359080071,
+   "2013": 0.09171034409584781,
+   "2014": 0.11326611842513935,
+   "2015": 0.17429464724261826,
+   "2016": 0.02329252858930997,
+   "2017": 0.07531518147883708,
+   "2018": 0.07912979324145979
+  },
+  "max_year_share": 0.17429464724261826,
+  "oi_terciles_DESCRIPTIVE_pct": {
+   "t0_thinnest": 1.1828,
+   "t1_middle": 1.7647,
+   "t2_thickest": 4.4051
+  },
+  "criteria": {
+   "S1_M_gt_null_p80": true,
+   "S2_nw39_t_ge_3.75": true,
+   "S3_M_ge_1.0pct": true,
+   "S4_sector_neutral": true,
+   "S5_halves_all_positive": true,
+   "S6_loyo_and_year_share": true,
+   "S7_both_offsets_positive": true,
+   "S8_size_vol_residual": true
+  },
+  "kill": {
+   "K1_M_le_null_p80": false,
+   "K2_offset_sign_flip": false,
+   "K3_odd_even_sign_flip": false,
+   "K4_year_share_gt_45pct": false,
+   "K5_sector_neutral_le_0": false,
+   "K6_size_vol_residual_le_0": false
+  },
+  "verdict": "PASS"
+ },
+ "cap2000_same_dates_DESCRIPTIVE": {
+  "n_dates": 133,
+  "M_pct_per_40d": 1.1509,
+  "nw39_t": 6.083485737254245,
+  "null_p80_pct": 0.1027
+ },
+ "verdict": "PASS",
+ "runtime_s": 3.42118501663208
+}
