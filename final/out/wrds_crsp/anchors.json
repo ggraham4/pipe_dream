@@ -1,0 +1,173 @@
+[
+ {
+  "anchor": "AAPL 2008",
+  "sharadar_ticker": "AAPL",
+  "permaticker": 199059,
+  "date": "2008-06-30",
+  "crosswalk_permno": 14593,
+  "expected_permno": [
+   14593
+  ],
+  "quality": "A",
+  "crosswalk_valid_to": "2024-12-31",
+  "sharadar_lastpricedate": "2026-09-25",
+  "crsp_dlstdt": "2024-12-31",
+  "crsp_dlstcd": 100,
+  "crsp_dlret": null,
+  "ok": true
+ },
+ {
+  "anchor": "Lehman",
+  "sharadar_ticker": "LEHMQ",
+  "permaticker": 188897,
+  "date": "2008-06-30",
+  "crosswalk_permno": 80599,
+  "expected_permno": [
+   80599
+  ],
+  "quality": "A",
+  "crosswalk_valid_to": "2008-09-17",
+  "sharadar_lastpricedate": "2008-10-15",
+  "crsp_dlstdt": "2008-09-17",
+  "crsp_dlstcd": 574,
+  "crsp_dlret": -0.6,
+  "ok": true
+ },
+ {
+  "anchor": "Bear Stearns",
+  "sharadar_ticker": "BSC1",
+  "permaticker": 123481,
+  "date": "2008-03-14",
+  "crosswalk_permno": 68304,
+  "expected_permno": [
+   68304
+  ],
+  "quality": "A",
+  "crosswalk_valid_to": "2008-05-30",
+  "sharadar_lastpricedate": "2008-05-30",
+  "crsp_dlstdt": "2008-05-30",
+  "crsp_dlstcd": 231,
+  "crsp_dlret": -0.017267,
+  "ok": true
+ },
+ {
+  "anchor": "Washington Mutual",
+  "sharadar_ticker": "WAMUQ",
+  "permaticker": 197327,
+  "date": "2008-06-30",
+  "crosswalk_permno": 81593,
+  "expected_permno": [
+   81593
+  ],
+  "quality": "A",
+  "crosswalk_valid_to": "2008-10-30",
+  "sharadar_lastpricedate": "2008-10-30",
+  "crsp_dlstdt": "2024-12-31",
+  "crsp_dlstcd": 100,
+  "crsp_dlret": null,
+  "ok": true
+ },
+ {
+  "anchor": "old General Motors",
+  "sharadar_ticker": "MTLQQ",
+  "permaticker": 199683,
+  "date": "2009-03-02",
+  "crosswalk_permno": 12079,
+  "expected_permno": [
+   12079
+  ],
+  "quality": "A",
+  "crosswalk_valid_to": "2009-06-01",
+  "sharadar_lastpricedate": "2011-03-31",
+  "crsp_dlstdt": "2009-06-01",
+  "crsp_dlstcd": 574,
+  "crsp_dlret": -0.186667,
+  "ok": true
+ },
+ {
+  "anchor": "random dead HIH1",
+  "sharadar_ticker": "HIH1",
+  "permaticker": 180878,
+  "date": "2006-07-17",
+  "crosswalk_permno": 89953,
+  "expected_permno": [
+   89953
+  ],
+  "quality": "A",
+  "crosswalk_valid_to": "2007-07-17",
+  "sharadar_lastpricedate": "2007-07-17",
+  "crsp_dlstdt": "2007-07-17",
+  "crsp_dlstcd": 233,
+  "crsp_dlret": 0.001541,
+  "ok": true
+ },
+ {
+  "anchor": "random dead PLNR",
+  "sharadar_ticker": "PLNR",
+  "permaticker": 198814,
+  "date": "2014-11-27",
+  "crosswalk_permno": 80012,
+  "expected_permno": [
+   80012
+  ],
+  "quality": "A",
+  "crosswalk_valid_to": "2015-11-27",
+  "sharadar_lastpricedate": "2015-11-27",
+  "crsp_dlstdt": "2015-11-27",
+  "crsp_dlstcd": 233,
+  "crsp_dlret": 0.0,
+  "ok": true
+ },
+ {
+  "anchor": "random dead RSHCQ",
+  "sharadar_ticker": "RSHCQ",
+  "permaticker": 199304,
+  "date": "2014-03-19",
+  "crosswalk_permno": 15560,
+  "expected_permno": [
+   13208,
+   15560
+  ],
+  "quality": "A",
+  "crosswalk_valid_to": "2015-02-02",
+  "sharadar_lastpricedate": "2015-03-19",
+  "crsp_dlstdt": "2015-02-02",
+  "crsp_dlstcd": 574,
+  "crsp_dlret": -0.546211,
+  "ok": true
+ },
+ {
+  "anchor": "random dead BTUUQ",
+  "sharadar_ticker": "BTUUQ",
+  "permaticker": 196556,
+  "date": "2016-04-03",
+  "crosswalk_permno": 88991,
+  "expected_permno": [
+   88991
+  ],
+  "quality": "A",
+  "crosswalk_valid_to": "2016-04-13",
+  "sharadar_lastpricedate": "2017-04-03",
+  "crsp_dlstdt": "2016-04-13",
+  "crsp_dlstcd": 574,
+  "crsp_dlret": -0.266667,
+  "ok": true
+ },
+ {
+  "anchor": "random dead MAXY",
+  "sharadar_ticker": "MAXY",
+  "permaticker": 122572,
+  "date": "2012-08-28",
+  "crosswalk_permno": 87499,
+  "expected_permno": [
+   87499
+  ],
+  "quality": "A",
+  "crosswalk_valid_to": "2013-08-28",
+  "sharadar_lastpricedate": "2013-08-28",
+  "crsp_dlstdt": "2013-08-29",
+  "crsp_dlstcd": 470,
+  "crsp_dlret": null,
+  "ok": true
+ }
+]

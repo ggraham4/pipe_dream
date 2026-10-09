@@ -1,0 +1,472 @@
+{
+ "era": "2007-01-02..2019-12-31",
+ "basis_primary": "CRSP retx vs Sharadar close-to-close (split-adjusted)",
+ "primary": {
+  "n_total": 9756141,
+  "n_mapped": 9738576,
+  "n_sharadar_ret": 9738576,
+  "n_crsp_row": 9727968,
+  "n_crsp_retx": 9727780,
+  "n_prev_match": 9724467,
+  "n_eval": 9724467,
+  "lt1bp_retx": 9655505,
+  "lt10bp_retx": 9708390,
+  "n_eval_ret": 9724467,
+  "lt1bp_ret": 9577849,
+  "lt10bp_ret": 9633164,
+  "miss10_retx": 16077,
+  "miss10_in_rounding_bound": 1154,
+  "share_lt1bp_retx": 0.992908403103224,
+  "share_lt10bp_retx": 0.9983467474361319,
+  "share_lt1bp_ret": 0.9849227726311375,
+  "share_lt10bp_ret": 0.9906110021248465,
+  "retention_eval_over_total": 0.9967534294553554,
+  "retention_eval_over_mapped": 0.9985512255590551,
+  "miss10_share_in_rounding_bound": 0.07177956086334515
+ },
+ "secondary": {
+  "n_total": 13241135,
+  "n_mapped": 12818158,
+  "n_sharadar_ret": 12816034,
+  "n_crsp_row": 12693231,
+  "n_crsp_retx": 12692573,
+  "n_prev_match": 12688428,
+  "n_eval": 12688428,
+  "lt1bp_retx": 12307076,
+  "lt10bp_retx": 12475864,
+  "n_eval_ret": 12688428,
+  "lt1bp_ret": 12220282,
+  "lt10bp_ret": 12391421,
+  "miss10_retx": 212564,
+  "miss10_in_rounding_bound": 11722,
+  "share_lt1bp_retx": 0.9699448978234341,
+  "share_lt10bp_retx": 0.9832474125242308,
+  "share_lt1bp_ret": 0.9631044917463377,
+  "share_lt10bp_ret": 0.976592293387329,
+  "retention_eval_over_total": 0.9582583366154034,
+  "retention_eval_over_mapped": 0.9898792010521325,
+  "miss10_share_in_rounding_bound": 0.055145744340528026
+ },
+ "primary_10bp_share_by_year": {
+  "2007": 0.996433081076614,
+  "2008": 0.998501974484629,
+  "2009": 0.995747205251277,
+  "2010": 0.997584463312812,
+  "2011": 0.9973361969795395,
+  "2012": 0.9984122825254248,
+  "2013": 0.9991280665683498,
+  "2014": 0.9989165668822678,
+  "2015": 0.9993004229031944,
+  "2016": 0.9996641855176699,
+  "2017": 0.998905023173525,
+  "2018": 0.9996034339775701,
+  "2019": 0.998593092589933
+ },
+ "tickers_without_ohlc_csv": 0,
+ "pass_10bp_bar_99pct": true,
+ "worst20_primary": [
+  {
+   "ticker": "CY",
+   "date": "2008-09-30",
+   "permno": 10302,
+   "sharadar_ret": -0.73258,
+   "crsp_retx": 0.23763,
+   "sharadar_close_prev_close": [
+    19.52,
+    5.22
+   ],
+   "explanation": "CRSP adjustment-factor change on this date (cfacpr 4.62807->1); Sharadar's split adjustment differs"
+  },
+  {
+   "ticker": "SSP",
+   "date": "2008-07-01",
+   "permno": 84176,
+   "sharadar_ret": -0.92754,
+   "crsp_retx": 0.02937,
+   "sharadar_close_prev_close": [
+    124.62,
+    9.03
+   ],
+   "explanation": "CRSP adjustment-factor change on this date (cfacpr 4.73533->0.333333); Sharadar's split adjustment differs"
+  },
+  {
+   "ticker": "ABWTQ",
+   "date": "2007-10-29",
+   "permno": 66130,
+   "sharadar_ret": 0.9201,
+   "crsp_retx": -0.00155,
+   "sharadar_close_prev_close": [
+    19.15,
+    36.77
+   ],
+   "explanation": "CRSP adjustment-factor change on this date (cfacpr 0.52->1); Sharadar's split adjustment differs"
+  },
+  {
+   "ticker": "STRZA",
+   "date": "2013-01-14",
+   "permno": 13008,
+   "sharadar_ret": -0.8743,
+   "crsp_retx": 0.00935,
+   "sharadar_close_prev_close": [
+    124.03,
+    15.59
+   ],
+   "explanation": "CRSP adjustment-factor change on this date (cfacpr 8.03015->1); Sharadar's split adjustment differs"
+  },
+  {
+   "ticker": "GLBR",
+   "date": "2015-01-16",
+   "permno": 12446,
+   "sharadar_ret": 0.0,
+   "crsp_retx": -0.88242,
+   "sharadar_close_prev_close": [
+    126.3,
+    126.3
+   ],
+   "explanation": "CRSP price is a bid/ask midpoint (no trade) on this or the previous day"
+  },
+  {
+   "ticker": "ITT",
+   "date": "2011-11-01",
+   "permno": 12570,
+   "sharadar_ret": -0.79386,
+   "crsp_retx": 0.06162,
+   "sharadar_close_prev_close": [
+    91.2,
+    18.8
+   ],
+   "explanation": "CRSP adjustment-factor change on this date (cfacpr 2.575->1); Sharadar's split adjustment differs"
+  },
+  {
+   "ticker": "SBRA",
+   "date": "2010-11-16",
+   "permno": 90092,
+   "sharadar_ret": -0.77519,
+   "crsp_retx": 0.07585,
+   "sharadar_close_prev_close": [
+    84.96,
+    19.1
+   ],
+   "explanation": "CRSP adjustment-factor change on this date (cfacpr 0.531729->1); Sharadar's split adjustment differs"
+  },
+  {
+   "ticker": "DSHK",
+   "date": "2014-11-07",
+   "permno": 89548,
+   "sharadar_ret": -0.81895,
+   "crsp_retx": 0.00128,
+   "sharadar_close_prev_close": [
+    23.53,
+    4.26
+   ],
+   "explanation": "CRSP adjustment-factor change on this date (cfacpr 5.53052->1); Sharadar's split adjustment differs"
+  },
+  {
+   "ticker": "MTW",
+   "date": "2016-03-04",
+   "permno": 51263,
+   "sharadar_ret": -0.76151,
+   "crsp_retx": 0.05313,
+   "sharadar_close_prev_close": [
+    67.76,
+    16.16
+   ],
+   "explanation": "CRSP adjustment-factor change on this date (cfacpr 1.10396->0.25); Sharadar's split adjustment differs"
+  },
+  {
+   "ticker": "PENN",
+   "date": "2013-11-04",
+   "permno": 80563,
+   "sharadar_ret": -0.76683,
+   "crsp_retx": 0.02679,
+   "sharadar_close_prev_close": [
+    58.97,
+    13.75
+   ],
+   "explanation": "CRSP adjustment-factor change on this date (cfacpr 4.40364->1); Sharadar's split adjustment differs"
+  },
+  {
+   "ticker": "ZZ",
+   "date": "2009-05-21",
+   "permno": 91205,
+   "sharadar_ret": -0.30149,
+   "crsp_retx": 0.46567,
+   "sharadar_close_prev_close": [
+    3.35,
+    2.34
+   ],
+   "explanation": "CRSP adjustment-factor change on this date (cfacpr 2.09829->1); Sharadar's split adjustment differs"
+  },
+  {
+   "ticker": "DNDNQ",
+   "date": "2007-03-30",
+   "permno": 88335,
+   "sharadar_ret": 1.47701,
+   "crsp_retx": 0.71032,
+   "sharadar_close_prev_close": [
+    5.22,
+    12.93
+   ],
+   "explanation": "CRSP price is a bid/ask midpoint (no trade) on this or the previous day"
+  },
+  {
+   "ticker": "NC",
+   "date": "2017-10-02",
+   "permno": 28118,
+   "sharadar_ret": -0.61946,
+   "crsp_retx": 0.14161,
+   "sharadar_close_prev_close": [
+    85.8,
+    32.65
+   ],
+   "explanation": "CRSP adjustment-factor change on this date (cfacpr 3->1); Sharadar's split adjustment differs"
+  },
+  {
+   "ticker": "UNTD",
+   "date": "2013-11-01",
+   "permno": 87261,
+   "sharadar_ret": -0.78534,
+   "crsp_retx": -0.04039,
+   "sharadar_close_prev_close": [
+    60.515,
+    12.99
+   ],
+   "explanation": "CRSP adjustment-factor change on this date (cfacpr 0.638585->1); Sharadar's split adjustment differs"
+  },
+  {
+   "ticker": "MSGN",
+   "date": "2015-10-01",
+   "permno": 93233,
+   "sharadar_ret": -0.74009,
+   "crsp_retx": -0.00314,
+   "sharadar_close_prev_close": [
+    72.14,
+    18.75
+   ],
+   "explanation": "CRSP adjustment-factor change on this date (cfacpr 3.83538->1); Sharadar's split adjustment differs"
+  },
+  {
+   "ticker": "SPXC",
+   "date": "2015-09-28",
+   "permno": 55212,
+   "sharadar_ret": -0.7593,
+   "crsp_retx": -0.0716,
+   "sharadar_close_prev_close": [
+    49.44,
+    11.9
+   ],
+   "explanation": "CRSP adjustment-factor change on this date (cfacpr 3.85714->1); Sharadar's split adjustment differs"
+  },
+  {
+   "ticker": "MO",
+   "date": "2008-03-31",
+   "permno": 13901,
+   "sharadar_ret": -0.69931,
+   "crsp_retx": -0.01422,
+   "sharadar_close_prev_close": [
+    73.83,
+    22.2
+   ],
+   "explanation": "CRSP adjustment-factor change on this date (cfacpr 3.27838->1); Sharadar's split adjustment differs"
+  },
+  {
+   "ticker": "PAR1",
+   "date": "2008-03-17",
+   "permno": 92424,
+   "sharadar_ret": 0.6616,
+   "crsp_retx": -0.01934,
+   "sharadar_close_prev_close": [
+    7.24,
+    12.03
+   ],
+   "explanation": "price level disagrees (no split/factor/rounding/midpoint explanation)"
+  },
+  {
+   "ticker": "NI",
+   "date": "2015-07-02",
+   "permno": 38762,
+   "sharadar_ret": -0.62618,
+   "crsp_retx": 0.04136,
+   "sharadar_close_prev_close": [
+    45.45,
+    16.99
+   ],
+   "explanation": "CRSP adjustment-factor change on this date (cfacpr 2.78576->1); Sharadar's split adjustment differs"
+  },
+  {
+   "ticker": "SLM",
+   "date": "2014-05-01",
+   "permno": 66325,
+   "sharadar_ret": -0.64971,
+   "crsp_retx": 0.01048,
+   "sharadar_close_prev_close": [
+    25.75,
+    9.02
+   ],
+   "explanation": "CRSP adjustment-factor change on this date (cfacpr 2.8847->1); Sharadar's split adjustment differs"
+  }
+ ],
+ "primary_miss_classes_overlapping": {
+  "in_rounding_bound": 1154,
+  "cfacpr_change_on_date": 410,
+  "crsp_midpoint_price": 846,
+  "abs_diff_ge_1pct": 3437,
+  "abs_diff_ge_10pct": 303
+ },
+ "delisting_check": {
+  "n_delisted_grid_permnos": 2955,
+  "by_code_family": {
+   "2xx": 2270,
+   "3xx": 13,
+   "4xx": 23,
+   "5xx": 649
+  },
+  "sharadar_keeps_otc_tail": 655,
+  "sharadar_ends_on_or_before_dlstdt": 2300,
+  "no_sharadar_csv": 0,
+  "tail_truncated_at_2019_12_31": 91,
+  "dlret_and_dlretx_missing": 91,
+  "dlret_missing_5xx": 43,
+  "gap_tail_minus_dlret": {
+   "n": 2864,
+   "share_abs_le_1pp": 0.5893854748603352,
+   "share_abs_le_10pp": 0.7873603351955307,
+   "p05": -0.759947098245614,
+   "p25": -0.01644925,
+   "median": -0.000728,
+   "p75": 3.1165337376294806e-07,
+   "p95": 0.12585790127388502
+  },
+  "gap_alt_base_crsp_last_trade": {
+   "n": 2864,
+   "share_abs_le_1pp": 0.5893854748603352,
+   "share_abs_le_10pp": 0.7873603351955307,
+   "p05": -0.759947098245614,
+   "p25": -0.01644925,
+   "median": -0.000728,
+   "p75": 3.1165337376294806e-07,
+   "p95": 0.12585790127388502
+  },
+  "by_family": {
+   "2xx": {
+    "n": 2270,
+    "n_gap": 2237,
+    "keeps_tail": 96,
+    "median_gap_alt": -0.000499,
+    "share_abs_gap_alt_le_10pp": 0.9673670093875727
+   },
+   "3xx": {
+    "n": 13,
+    "n_gap": 13,
+    "keeps_tail": 12,
+    "median_gap_alt": -0.3054575211267606,
+    "share_abs_gap_alt_le_10pp": 0.15384615384615385
+   },
+   "4xx": {
+    "n": 23,
+    "n_gap": 8,
+    "keeps_tail": 2,
+    "median_gap_alt": -0.000929,
+    "share_abs_gap_alt_le_10pp": 0.75
+   },
+   "5xx": {
+    "n": 649,
+    "n_gap": 606,
+    "keeps_tail": 545,
+    "median_gap_alt": -0.32701808026091883,
+    "share_abs_gap_alt_le_10pp": 0.13696369636963696
+   }
+  },
+  "anchors": [
+   {
+    "ticker": "LEHMQ",
+    "permno": 80599,
+    "dlstdt": "2008-09-17",
+    "dlstcd": 574,
+    "crsp_last_trade": "2008-09-17",
+    "dlret": -0.6,
+    "sharadar_last": "2008-10-15",
+    "sharadar_tail_from_dlstdt": -0.3846,
+    "sharadar_tail_from_crsp_last_trade": -0.3846
+   },
+   {
+    "ticker": "BSC1",
+    "permno": 68304,
+    "dlstdt": "2008-05-30",
+    "dlstcd": 231,
+    "crsp_last_trade": "2008-05-30",
+    "dlret": -0.0173,
+    "sharadar_last": "2008-05-30",
+    "sharadar_tail_from_dlstdt": 0.0,
+    "sharadar_tail_from_crsp_last_trade": 0.0
+   },
+   {
+    "ticker": "MTLQQ",
+    "permno": 12079,
+    "dlstdt": "2009-06-01",
+    "dlstcd": 574,
+    "crsp_last_trade": "2009-06-01",
+    "dlret": -0.1867,
+    "sharadar_last": "2011-03-31",
+    "sharadar_tail_from_dlstdt": -0.9467,
+    "sharadar_tail_from_crsp_last_trade": -0.9467
+   },
+   {
+    "ticker": "HIH1",
+    "permno": 89953,
+    "dlstdt": "2007-07-17",
+    "dlstcd": 233,
+    "crsp_last_trade": "2007-07-17",
+    "dlret": 0.0015,
+    "sharadar_last": "2007-07-17",
+    "sharadar_tail_from_dlstdt": 0.0,
+    "sharadar_tail_from_crsp_last_trade": 0.0
+   },
+   {
+    "ticker": "PLNR",
+    "permno": 80012,
+    "dlstdt": "2015-11-27",
+    "dlstcd": 233,
+    "crsp_last_trade": "2015-11-27",
+    "dlret": 0.0,
+    "sharadar_last": "2015-11-27",
+    "sharadar_tail_from_dlstdt": 0.0,
+    "sharadar_tail_from_crsp_last_trade": 0.0
+   },
+   {
+    "ticker": "RSHCQ",
+    "permno": 15560,
+    "dlstdt": "2015-02-02",
+    "dlstcd": 574,
+    "crsp_last_trade": "2015-02-02",
+    "dlret": -0.5462,
+    "sharadar_last": "2015-03-19",
+    "sharadar_tail_from_dlstdt": -0.375,
+    "sharadar_tail_from_crsp_last_trade": -0.375
+   },
+   {
+    "ticker": "BTUUQ",
+    "permno": 88991,
+    "dlstdt": "2016-04-13",
+    "dlstcd": 574,
+    "crsp_last_trade": "2016-04-13",
+    "dlret": -0.2667,
+    "sharadar_last": "2017-04-03",
+    "sharadar_tail_from_dlstdt": -0.815,
+    "sharadar_tail_from_crsp_last_trade": -0.815
+   },
+   {
+    "ticker": "MAXY",
+    "permno": 87499,
+    "dlstdt": "2013-08-29",
+    "dlstcd": 470,
+    "crsp_last_trade": "2013-08-29",
+    "dlret": null,
+    "sharadar_last": "2013-08-28",
+    "sharadar_tail_from_dlstdt": 0.0,
+    "sharadar_tail_from_crsp_last_trade": 0.0
+   }
+  ],
+  "wamu": "WAMUQ (permno 81593) has no CRSP delisting in 2007-2019 (dsedelist: code 100, dlstdt 2024-12-31). CRSP's last priced day is 2008-09-26 (0.1604), then rows with no price; Sharadar continues OTC (0.16 through 2008-10-15, 0.06 by 2008-10-30, last price 2008-10-30)."
+ }
+}
