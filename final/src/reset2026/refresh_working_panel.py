@@ -249,6 +249,14 @@ def detect_changes(grid, old_end, through):
     return sorted(split), sorted(revised), sorted(stale), detail, after
 
 
+# WO-57: spin-off correction (opt-in via --spinfix; default OFF). (ticker, exdt, m) from spinfix.adjust.load_events().
+# Return / price-ratio quantities (price features, momentum_12_1, beta, labels) use spin-adjusted prices; the
+# stored OHLC, closes_full, market_cap and the universe flags stay RAW. Turning it on rewrites historical rows,
+# which the old-row compare below reports as failures: adoption needs a full rebuild (Gabe's call), so --spinfix
+# is refused without --no-swap.
+SPINFIX_EVENTS = None
+
+
 def step_prices(work, tickers, full_tickers, buf_start, through):
     import build_features_sharadar as BF
     from features import FEATURE_COLS, LABEL_COL, TRADABLE_LABEL_COL
@@ -268,7 +276,7 @@ def step_prices(work, tickers, full_tickers, buf_start, through):
     closes = []
     n = 0
     for i, (tk, g) in enumerate(px.groupby("ticker", sort=False), 1):
-        f = BF.features_for(g[["ticker", "date"] + BF.PRICE_COLS], spy)[keep]
+        f = BF.features_for(g[["ticker", "date"] + BF.PRICE_COLS], spy, SPINFIX_EVENTS)[keep]
         f["ticker"] = f["ticker"].astype(str)
         for c in keep[2:]:
             f[c] = pd.to_numeric(f[c], errors="coerce").astype("float64")
@@ -318,6 +326,7 @@ def step_addons(work):
 def step_quality(work):
     import quality_factors as Q
     Q.PRICE_PANEL, Q.OUT = work / "closes_full.parquet", work / "quality.parquet"
+    Q.SPINFIX_EVENTS = SPINFIX_EVENTS
     Q.main()
 
 
@@ -345,15 +354,17 @@ def step_panel(work):
 def step_beta(work):
     import build_beta_feature as BB
     BB.PANEL_PATH, BB.OUT = work / "closes_full.parquet", work / "beta.parquet"
+    BB.SPINFIX_EVENTS = SPINFIX_EVENTS
     BB.main()
     return pd.read_parquet(BB.OUT)
 
 
 def step_outcome(px):
-    from build_outcome_cache import vectorized_outcomes
+    from build_outcome_cache import vectorized_outcomes, spin_adjust_ohlc
     frames = []
     for tk, g in px.groupby("ticker", sort=False):
         g = g.sort_values("date").reset_index(drop=True)
+        g = spin_adjust_ohlc(tk, g, SPINFIX_EVENTS)
         gross, trunc = vectorized_outcomes(g)
         frames.append(pd.DataFrame({"ticker": tk, "date": g["date"].to_numpy(),
                                     "gross_return_40": gross, "truncated": trunc}))
@@ -783,7 +794,17 @@ def main():
                     help="WO-16: skip the append-only SF1 top-up (sf1_topup.py) that otherwise runs first")
     ap.add_argument("--run-date", default=None,
                     help="WO-16: date the 7-day fundamentals window counts back from (default: today)")
+    ap.add_argument("--spinfix", action="store_true",
+                    help="WO-57: spin-off correction (CRSP event table); test runs only (needs --no-swap)")
     a = ap.parse_args()
+    if a.spinfix:
+        if not a.no_swap:
+            raise SystemExit("--spinfix rewrites historical rows; adopting it needs a full rebuild (Gabe's call). "
+                             "Use it with --no-swap only.")
+        global SPINFIX_EVENTS
+        sys.path.insert(0, str(HERE.parent / "spinfix"))
+        import adjust as SA  # noqa: E402
+        SPINFIX_EVENTS = SA.load_events()
     import subprocess
     if a.record_weekly and not (a.check or a.no_swap):
         ins = HERE.parent.parent / "scripts" / "edgar_form4_refresh.py"

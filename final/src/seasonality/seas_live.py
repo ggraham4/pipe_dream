@@ -73,8 +73,11 @@ def month_end(ym, t, sep_dir=SEP_DIR):
     return d.set_index("ticker")["closeadj"], f
 
 
-def seas_asof(tickers, t, sep_dir=SEP_DIR):
-    """Returns (frame [ticker, seas, seas_nyears, target_ym] aligned to `tickers`, info)."""
+def seas_asof(tickers, t, sep_dir=SEP_DIR, spin_events_adj=None):
+    """Returns (frame [ticker, seas, seas_nyears, target_ym] aligned to `tickers`, info).
+    WO-57 (opt-in): `spin_events_adj` = (ticker, exdt, m) with m the closeadj-series factor
+    (1 + r_closeadj) / (1 + r_CRSP); a monthly return whose calendar month contains exdt is divided by m,
+    which equals build_seas with pre-exdt month-ends x m (spinfix.adjust.adjust_month_ends)."""
     t = pd.Timestamp(t)
     tym = target_ym(t)
     last_used = tym - 12
@@ -89,6 +92,12 @@ def seas_asof(tickers, t, sep_dir=SEP_DIR):
         prev, f0 = month_end(ym - 1, t, sep_dir)
         files += [f0, f1]
         r = (cur / prev.reindex(cur.index) - 1.0).reindex(tick).to_numpy(np.float64)
+        if spin_events_adj is not None and len(spin_events_adj):
+            ex = pd.to_datetime(spin_events_adj["exdt"])
+            e = spin_events_adj[(ex.dt.year * 12 + ex.dt.month - 1) == ym]
+            if len(e):
+                div = e.groupby(e["ticker"].astype(str))["m"].prod().reindex(tick).fillna(1.0).to_numpy(np.float64)
+                r = (1.0 + r) / div - 1.0
         f = np.isfinite(r)
         S += np.where(f, r, 0.0); N += f
     with np.errstate(invalid="ignore", divide="ignore"):

@@ -1,0 +1,107 @@
+{
+ "model": "icw5_seas",
+ "era": [
+  "2007-01-02",
+  "2019-12-31"
+ ],
+ "tier": "cap150",
+ "cost_bps": 15.0,
+ "units": "fractions per year (0.01 = 1%/yr), 40-offset mean, net 15bp, excess vs SPY",
+ "U_mean40": 0.036442521084825354,
+ "U_reconcile_diff_vs_REF_V5": 0.0,
+ "wo54_fixed_mean40": 0.037354318239403016,
+ "arms": {
+  "L": {
+   "mean40": 0.03735431824695819,
+   "delta": 0.0009117971621328332,
+   "offsets_positive": 40,
+   "offsets_zero": 0,
+   "delta_min40": 0.000537856458052953,
+   "delta_max40": 0.0013973191287453557,
+   "delta_loyo_min": 0.0007831225867062752,
+   "delta_loyo_max": 0.0009890234246358056,
+   "pick_overlap_mean": 1.0,
+   "pick_dates_identical": 3272,
+   "pick_dates": 3272,
+   "pick_date_sets_equal": true,
+   "patch": {
+    "patched_rows": 647817,
+    "changed_momentum_12_1": 0,
+    "changed_seas": 0,
+    "changed_volatility_60": 0,
+    "changed_pct_from_high_252": 0,
+    "changed_gross_return_40": 9112
+   }
+  },
+  "F": {
+   "mean40": 0.03641788148405826,
+   "delta": -2.4639600767103337e-05,
+   "offsets_positive": 17,
+   "offsets_zero": 0,
+   "delta_min40": -0.0009603051496620482,
+   "delta_max40": 0.0006457685020395329,
+   "delta_loyo_min": -0.0001368024588304869,
+   "delta_loyo_max": 5.692697943532115e-05,
+   "pick_overlap_mean": 0.9963029179853033,
+   "pick_dates_identical": 976,
+   "pick_dates": 3272,
+   "pick_date_sets_equal": true,
+   "patch": {
+    "patched_rows": 647817,
+    "changed_momentum_12_1": 49262,
+    "changed_seas": 170437,
+    "changed_volatility_60": 538581,
+    "changed_pct_from_high_252": 274255,
+    "changed_gross_return_40": 0
+   }
+  },
+  "B": {
+   "mean40": 0.03732047593444787,
+   "delta": 0.0008779548496225132,
+   "offsets_positive": 39,
+   "offsets_zero": 0,
+   "delta_min40": -2.6556911002464934e-05,
+   "delta_max40": 0.0018385774445064049,
+   "delta_loyo_min": 0.0007022918244925779,
+   "delta_loyo_max": 0.0009731666089917406,
+   "pick_overlap_mean": 0.9963029179853033,
+   "pick_dates_identical": 976,
+   "pick_dates": 3272,
+   "pick_date_sets_equal": true,
+   "patch": {
+    "patched_rows": 647817,
+    "changed_momentum_12_1": 49262,
+    "changed_seas": 170437,
+    "changed_volatility_60": 538581,
+    "changed_pct_from_high_252": 274255,
+    "changed_gross_return_40": 9112
+   }
+  },
+  "B1": {
+   "mean40": 0.03732781887516155,
+   "delta": 0.0008852977903361968,
+   "offsets_positive": 40,
+   "offsets_zero": 0,
+   "delta_min40": 2.819079406114755e-05,
+   "delta_max40": 0.0017941198374721926,
+   "delta_loyo_min": 0.000710233587015871,
+   "delta_loyo_max": 0.00098120421111074,
+   "pick_overlap_mean": 0.9962763241444816,
+   "pick_dates_identical": 970,
+   "pick_dates": 3272,
+   "pick_date_sets_equal": true,
+   "patch": {
+    "patched_rows": 647817,
+    "changed_momentum_12_1": 49904,
+    "changed_seas": 170437,
+    "changed_volatility_60": 543511,
+    "changed_pct_from_high_252": 278497,
+    "changed_gross_return_40": 9229
+   }
+  }
+ },
+ "L_minus_wo54_fixed": 7.555171765982749e-12,
+ "primary_delta_B": 0.0008779548496225132,
+ "bar_delta_ge_m0p10pp": true,
+ "reweight_needed_abs_gt_0p25pp": false
+}
