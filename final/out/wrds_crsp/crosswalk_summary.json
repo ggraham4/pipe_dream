@@ -1,0 +1,88 @@
+{
+ "crosswalk": "/Users/ggraham/pipe_dream/final/data/wrds/link/permno_sharadar.parquet",
+ "rows": 9052,
+ "tickers": 8831,
+ "grid_tickers": 9266,
+ "method_counts": {
+  "cusip8": 9027,
+  "ticker_date": 25
+ },
+ "quality_counts_incap2000": {
+  "A": 2851,
+  "B": 14,
+  "C": 9
+ },
+ "coverage_2007_2019": {
+  "eligible_cap150": {
+   "name_dates": 9758582,
+   "mapped_share": 0.9981929751679086,
+   "min_year_share": 0.9955987617913904,
+   "by_year": {
+    "2007": 0.9956,
+    "2008": 0.9988,
+    "2009": 0.9985,
+    "2010": 0.9981,
+    "2011": 0.9982,
+    "2012": 0.9985,
+    "2013": 0.9977,
+    "2014": 0.9978,
+    "2015": 0.9987,
+    "2016": 0.9988,
+    "2017": 0.9986,
+    "2018": 0.9989,
+    "2019": 0.9986
+   },
+   "unmapped_names": 313
+  },
+  "eligible_cap2000": {
+   "name_dates": 3802861,
+   "mapped_share": 0.9994882800081307,
+   "min_year_share": 0.9984065344901978,
+   "by_year": {
+    "2007": 0.9998,
+    "2008": 0.9995,
+    "2009": 0.9999,
+    "2010": 0.9984,
+    "2011": 0.9993,
+    "2012": 0.9993,
+    "2013": 0.9991,
+    "2014": 0.9991,
+    "2015": 0.9997,
+    "2016": 0.9997,
+    "2017": 0.9997,
+    "2018": 0.9997,
+    "2019": 1.0
+   },
+   "unmapped_names": 91
+  }
+ },
+ "unmapped_cap150_top": {
+  "FNMA": 2364,
+  "FMCC": 2167,
+  "ROSEQ": 1613,
+  "OCAT": 876,
+  "GORO": 435,
+  "MTLQQ": 364,
+  "SABA1": 322,
+  "CVP": 313,
+  "BWEN": 299,
+  "RIBT": 281,
+  "IWSY": 271,
+  "CPNLQ": 246,
+  "UPLMQ": 215,
+  "DPHIQ": 214,
+  "AOGSQ": 204,
+  "XOHO": 195,
+  "PPC": 181,
+  "CAMH": 177,
+  "PBSOQ": 172,
+  "EQU": 165,
+  "WLDA": 156,
+  "GTE": 150,
+  "AAMCF": 148,
+  "VIVS": 148,
+  "LFVN": 147
+ },
+ "permno_dates_with_2plus_tickers_cap2000": 0,
+ "ambiguous_intervals": 46
+}
