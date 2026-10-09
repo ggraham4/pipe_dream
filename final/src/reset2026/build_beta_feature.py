@@ -42,6 +42,8 @@ SPY_CSV = MAIN_ROOT / "scripts" / "td_data_local" / "SPY.csv"
 OUT = MAIN_ROOT / "out" / "reset2026" / "beta_feature.parquet"
 
 BETA_WINDOW = 252
+# WO-57: spin-off correction (opt-in; default OFF): stock returns from spin-adjusted close.
+SPINFIX_EVENTS = None
 MIN_PERIODS = 126  # half-window burn-in, standard convention
 
 
@@ -64,7 +66,13 @@ def main():
     spy = spy[["date", "market_return"]].dropna()
 
     log("computing per-ticker daily returns ...")
-    panel["stock_return"] = panel.groupby("ticker")["close"].pct_change()
+    if SPINFIX_EVENTS is not None and len(SPINFIX_EVENTS):
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "spinfix"))
+        import adjust as SA  # noqa: E402
+        adj = SA.apply_spin_factors(panel[["ticker", "date", "close"]], SPINFIX_EVENTS, cols=("close",))
+        panel["stock_return"] = adj.groupby("ticker")["close"].pct_change()
+    else:
+        panel["stock_return"] = panel.groupby("ticker")["close"].pct_change()
 
     log("merging market return onto panel ...")
     panel = panel.merge(spy, on="date", how="left")

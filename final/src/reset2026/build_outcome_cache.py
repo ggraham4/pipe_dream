@@ -59,6 +59,20 @@ OUT = OUT_DIR / "outcome_cache.parquet"
 
 HORIZON = 40
 ENTRY_LAG = 1
+# WO-57: spin-off correction (opt-in; default OFF): a (ticker, exdt, m) frame from spinfix.adjust.load_events().
+# Labels are then computed from spin-adjusted OHLC (pre-exdt prices x m).
+SPINFIX_EVENTS = None
+
+
+def spin_adjust_ohlc(ticker, g, spin_events):
+    """One ticker's OHLC frame (sorted by date) with pre-exdt open/high/low/close x m. Unchanged if no event."""
+    if spin_events is None or not len(spin_events):
+        return g
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "spinfix"))
+    import adjust as SA  # noqa: E402
+    x = g.assign(ticker=str(ticker)) if "ticker" not in g.columns else g
+    x = SA.apply_spin_factors(x, spin_events)
+    return x if "ticker" in g.columns else x.drop(columns="ticker")
 
 
 def vectorized_outcomes(g: pd.DataFrame):
@@ -122,13 +136,23 @@ def verify_sample(price_by_ticker, cache_df, n_samples=500, seed=0):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--verify-samples", type=int, default=500)
+    ap.add_argument("--spinfix", action="store_true", help="WO-57 spin-off correction (default off)")
     args = ap.parse_args()
+    global SPINFIX_EVENTS
+    if args.spinfix:
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "spinfix"))
+        import adjust as SA  # noqa: E402
+        SPINFIX_EVENTS = SA.load_events()
 
     t0 = time.time()
     print(f"loading OHLC panel from {OHLC_DIR} ...", flush=True)
     from execution import load_ohlc_panel
     price_by_ticker = load_ohlc_panel([OHLC_DIR])
     print(f"  {len(price_by_ticker):,} tickers ({time.time()-t0:.0f}s)", flush=True)
+    if SPINFIX_EVENTS is not None and len(SPINFIX_EVENTS):
+        price_by_ticker = {t: spin_adjust_ohlc(t, g.sort_values("date").reset_index(drop=True), SPINFIX_EVENTS)
+                           for t, g in price_by_ticker.items()}
+        print("  WO-57 spin-off correction applied", flush=True)
 
     frames = []
     for i, (ticker, g) in enumerate(price_by_ticker.items(), 1):

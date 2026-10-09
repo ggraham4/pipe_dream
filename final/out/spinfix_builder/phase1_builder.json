@@ -1,0 +1,105 @@
+{
+ "prereg_sha256": "a4c44e9b813a7e656f42da8cbba56da64cc22c9e02f009336a1ca33de1d85d56",
+ "events": {
+  "candidates_ok": 274,
+  "close_applied": 242,
+  "closeadj_finite": 274,
+  "closeadj_applied": 97,
+  "closeadj_abs_log_m_median_on_close_applied": 0.011178332762804284,
+  "v1_events": [
+   {
+    "ticker": "SWY",
+    "sharadar_drop": "2014-04-14",
+    "crsp_exdt": "2014-04-15",
+    "m": 0.89503
+   },
+   {
+    "ticker": "TWX",
+    "sharadar_drop": "2014-06-06",
+    "crsp_exdt": "2014-06-09",
+    "m": 0.95864
+   },
+   {
+    "ticker": "NEBLQ",
+    "sharadar_drop": "2014-08-01",
+    "crsp_exdt": "2014-08-04",
+    "m": 0.86873
+   }
+  ]
+ },
+ "affected_tickers": 266,
+ "patch_rows_2007_2019": 712883,
+ "C1_builder": {
+  "tickers": 266,
+  "price_cols_equal": true,
+  "random_no_event_tickers": 50,
+  "market_cap_rows": 815796,
+  "market_cap_equal": true
+ },
+ "C2_recompute_eq_stored": {
+  "momentum_12_1": {
+   "rows": 712883,
+   "nan_pattern_mismatch": 0,
+   "max_abs_diff": 0.0,
+   "n_diff_gt_0": 0,
+   "exact": true
+  },
+  "volatility_60": {
+   "rows": 712883,
+   "nan_pattern_mismatch": 0,
+   "max_abs_diff": 0.0,
+   "n_diff_gt_0": 0,
+   "exact": true
+  },
+  "pct_from_high_252": {
+   "rows": 712883,
+   "nan_pattern_mismatch": 0,
+   "max_abs_diff": 0.0,
+   "n_diff_gt_0": 0,
+   "exact": true
+  },
+  "seas": {
+   "rows": 712883,
+   "nan_pattern_mismatch": 0,
+   "max_abs_diff": 0.0,
+   "n_diff_gt_0": 0,
+   "exact": true
+  },
+  "gross_return_40": {
+   "rows": 712883,
+   "nan_pattern_mismatch": 0,
+   "max_abs_diff": 0.0,
+   "n_diff_gt_0": 0,
+   "exact": true
+  }
+ },
+ "C3_labels_vs_wo54": {
+  "rows": 9418,
+  "max_abs_diff": 4.1115555804438486e-07,
+  "share_le_1e6": 1.0,
+  "nan_mismatch": 0
+ },
+ "changed_rows": {
+  "mom": {
+   "rows_changed": 52384,
+   "rows_changed_cap150": 49262
+  },
+  "vol": {
+   "rows_changed": 566822,
+   "rows_changed_cap150": 538581
+  },
+  "pfh": {
+   "rows_changed": 285116,
+   "rows_changed_cap150": 274255
+  },
+  "seas": {
+   "rows_changed": 183438,
+   "rows_changed_cap150": 170437
+  },
+  "lab": {
+   "rows_changed": 9418,
+   "rows_changed_cap150": 9112
+  }
+ },
+ "runtime_s": 173.9
+}
