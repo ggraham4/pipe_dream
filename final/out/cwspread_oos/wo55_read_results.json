@@ -1,0 +1,191 @@
+{
+ "wo": "WO-55",
+ "holdout_read": "#22 (unfitted, fixed rule; 2019-01..2025-08 entry dates)",
+ "label": "outcome_cache_v2.gross_return_40",
+ "calendar_end": "2026-09-08",
+ "window": [
+  "2019-01-16",
+  "2025-08-20"
+ ],
+ "n_entry_dates": 80,
+ "thin": {
+  "n_dates": 80,
+  "median_names_per_date": 1321.5,
+  "M_pct_per_40d": 2.3635,
+  "nw39_t": 5.905042153628516,
+  "nw2_t_DESCRIPTIVE": 4.035524033455195,
+  "null_p80_pct": 0.1623,
+  "null_median_pct": 0.0089,
+  "sector_neutral": {
+   "M_pct": 1.9217,
+   "nw39_t": 4.0301341846839795
+  },
+  "size_vol_residual": {
+   "M_pct": 2.4518,
+   "nw39_t": 9.549297730780259
+  },
+  "odd_years_pct": 2.9147,
+  "even_years_pct": 1.6899,
+  "chrono_first_half_pct": 2.1251,
+  "chrono_second_half_pct": 2.602,
+  "offsets_pct": [
+   2.8304,
+   1.8967
+  ],
+  "loyo_pct": {
+   "2019": 2.3148,
+   "2020": 2.9172,
+   "2021": 1.9512,
+   "2022": 1.9375,
+   "2023": 2.3266,
+   "2024": 2.5926,
+   "2025": 2.4971
+  },
+  "loyo_min_pct": 1.9375,
+  "year_share": {
+   "2019": 0.16754210503153863,
+   "2020": -0.049099182506783974,
+   "2021": 0.2982903849483258,
+   "2022": 0.3032130675760698,
+   "2023": 0.16329625894897595,
+   "2024": 0.06763694611776286,
+   "2025": 0.04912041988411086
+  },
+  "max_year_share": 0.3032130675760698,
+  "oi_terciles_DESCRIPTIVE_pct": {
+   "t0_thinnest": 0.4437,
+   "t1_middle": 1.8123,
+   "t2_thickest": 4.4606
+  },
+  "criteria": {
+   "S1_M_gt_null_p80": true,
+   "S2_nw39_t_ge_3.75": true,
+   "S3_M_ge_1.0pct": true,
+   "S4_sector_neutral": true,
+   "S5_halves_all_positive": true,
+   "S6_loyo_and_year_share": true,
+   "S7_both_offsets_positive": true,
+   "S8_size_vol_residual": true
+  },
+  "kill": {
+   "K1_M_le_null_p80": false,
+   "K2_offset_sign_flip": false,
+   "K3_odd_even_sign_flip": false,
+   "K4_year_share_gt_45pct": false,
+   "K5_sector_neutral_le_0": false,
+   "K6_size_vol_residual_le_0": false
+  },
+  "verdict": "PASS",
+  "wo55_verdict": "PASS",
+  "coverage": {
+   "dates_in_frame": 80,
+   "dates_used": 80,
+   "dates_dropped_lt_min_names": [],
+   "share_of_universe_with_signal_median": 0.7880583468818763
+  },
+  "loyo_ex2020_pct": 2.9172,
+  "median_spread_atm_pct_DESCRIPTIVE": {
+   "pool": 40.476190476190474,
+   "bottom_decile": 46.79615753458056
+  }
+ },
+ "cap2000": {
+  "n_dates": 80,
+  "median_names_per_date": 1476.0,
+  "M_pct_per_40d": 1.4481,
+  "nw39_t": 3.252407589417549,
+  "nw2_t_DESCRIPTIVE": 3.8222347152480127,
+  "null_p80_pct": 0.1116,
+  "null_median_pct": 0.0062,
+  "sector_neutral": {
+   "M_pct": 0.7964,
+   "nw39_t": 4.4535998075365955
+  },
+  "size_vol_residual": {
+   "M_pct": 1.2806,
+   "nw39_t": 2.8641777879447394
+  },
+  "odd_years_pct": 1.4177,
+  "even_years_pct": 1.4853,
+  "chrono_first_half_pct": 2.0339,
+  "chrono_second_half_pct": 0.8623,
+  "offsets_pct": [
+   1.5839,
+   1.3123
+  ],
+  "loyo_pct": {
+   "2019": 1.2974,
+   "2020": 1.2323,
+   "2021": 1.4072,
+   "2022": 1.4412,
+   "2023": 1.5938,
+   "2024": 1.6511,
+   "2025": 1.51
+  },
+  "loyo_min_pct": 1.2323,
+  "year_share": {
+   "2019": 0.2384560012595341,
+   "2020": 0.27665276097509167,
+   "2021": 0.1739892205832691,
+   "2022": 0.1540493887332149,
+   "2023": 0.06445884300195531,
+   "2024": 0.03084595110716388,
+   "2025": 0.061547834339770985
+  },
+  "max_year_share": 0.27665276097509167,
+  "oi_terciles_DESCRIPTIVE_pct": {
+   "t0_thinnest": 1.1088,
+   "t1_middle": 1.6689,
+   "t2_thickest": 1.6381
+  },
+  "criteria": {
+   "S1_M_gt_null_p80": true,
+   "S2_nw39_t_ge_3.75": false,
+   "S3_M_ge_1.0pct": true,
+   "S4_sector_neutral": true,
+   "S5_halves_all_positive": true,
+   "S6_loyo_and_year_share": true,
+   "S7_both_offsets_positive": true,
+   "S8_size_vol_residual": false
+  },
+  "kill": {
+   "K1_M_le_null_p80": false,
+   "K2_offset_sign_flip": false,
+   "K3_odd_even_sign_flip": false,
+   "K4_year_share_gt_45pct": false,
+   "K5_sector_neutral_le_0": false,
+   "K6_size_vol_residual_le_0": false
+  },
+  "verdict": "MIDDLE",
+  "wo55_verdict": "PASS",
+  "coverage": {
+   "dates_in_frame": 80,
+   "dates_used": 80,
+   "dates_dropped_lt_min_names": [],
+   "share_of_universe_with_signal_median": 0.9817619688412115
+  },
+  "loyo_ex2020_pct": 1.2323,
+  "median_spread_atm_pct_DESCRIPTIVE": {
+   "pool": 14.559386973180077,
+   "bottom_decile": 21.621621621621617
+  }
+ },
+ "thin_null_labels": {
+  "seeds": 100,
+  "M_pct": {
+   "mean": -0.03808,
+   "sd": 0.26488662857909606
+  },
+  "nw39_t": {
+   "mean": -0.1918969535143294,
+   "sd": 1.8551979131027578
+  },
+  "wo55_verdict_rates": {
+   "KILL": 0.78,
+   "MIDDLE": 0.21,
+   "PASS": 0.01
+  }
+ },
+ "verdict": "PASS",
+ "runtime_s": 20.97135019302368
+}

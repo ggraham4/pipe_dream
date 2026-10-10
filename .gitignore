@@ -13,6 +13,10 @@ __pycache__/
 *.egg-info/
 .ipynb_checkpoints/
 
+# --- WRDS (CRSP, Compustat, OptionMetrics, I/B/E/S): licensed data, never commit
+#     any file under here, whatever the format (COO 2026-10-08).
+final/data/wrds/
+
 # --- Generated data dumps. Every parquet/tar.gz/zip in this repo is a
 # reproducible data export or archive, not source -- see AGENTS.md. ---
 *.parquet

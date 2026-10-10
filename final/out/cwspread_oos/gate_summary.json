@@ -1,0 +1,65 @@
+{
+ "n_dates": 80,
+ "n_thin_complete": 80,
+ "need": 72,
+ "share_of_dates_passing": 1.0,
+ "gate_pass": true,
+ "phase2_allowed": true,
+ "verdict_if_fail": null,
+ "terminal_share_min": 0.9994725738396625,
+ "terminal_share_median": 1.0,
+ "failing_dates": [],
+ "frozen_chain_gate_DESCRIPTIVE": {
+  "n_dates_ge_99pct_terminal": 61,
+  "of": 80,
+  "terminal_share_min": 0.0,
+  "terminal_share_median": 0.9974302944681188
+ },
+ "named_dead": {
+  "BBBYQ": {
+   "must_date_state": "present",
+   "share": 1.0,
+   "thin_dates_complete": 32,
+   "with_kept_chain": 32,
+   "pass": true
+  },
+  "RADCQ": {
+   "must_date_state": "present",
+   "share": 1.0,
+   "thin_dates_complete": 50,
+   "with_kept_chain": 50,
+   "pass": true
+  }
+ },
+ "txg": {
+  "state": "present",
+  "cap2000_dates": 58,
+  "cap2000_with_chain": 58,
+  "thin_attempted": 11,
+  "thin_with_chain": 11,
+  "pass": true
+ },
+ "pool_integrity": {
+  "thin_name_dates_with_chain": 111808,
+  "share_in_panel": 1.0,
+  "share_in_outcome_cache": 1.0,
+  "pass": true
+ },
+ "dead_vs_listed": {
+  "chain_share_later_delisted": 0.8304269741034702,
+  "chain_share_still_listed": 0.8548342012361144,
+  "n_later_delisted": 34522,
+  "n_still_listed": 96593,
+  "excluded_blank_check_name_dates": 2418,
+  "rule": "amendment 1: siccode 6770 excluded; delisted share >= listed share - 0.05",
+  "pass": true,
+  "unamended_DESCRIPTIVE": {
+   "chain_share_later_delisted": 0.7953179803692324,
+   "chain_share_still_listed": 0.8534324162308535,
+   "n_later_delisted": 36779,
+   "n_still_listed": 96754,
+   "rule": "delisted share >= listed share - 0.05",
+   "pass": false
+  }
+ }
+}

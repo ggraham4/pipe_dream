@@ -1,0 +1,59 @@
+{
+ "crosswalk": "/Users/ggraham/pipe_dream/final/data/wrds/link/permno_sharadar.parquet",
+ "link_rate": {
+  "cap2000": {
+   "name_dates": 152258,
+   "linked_to_permno": 0.9993629234588659,
+   "ok": 0.9844408832376624,
+   "no_data": 0.014922040221203484
+  },
+  "thin": {
+   "name_dates": 240454,
+   "linked_to_permno": 0.9976835486205262,
+   "ok": 0.8046320709990269,
+   "no_data": 0.19305147762149932
+  }
+ },
+ "named": {
+  "ATPAQ@2012-06-20": {
+   "note": "dead name: ATP Oil & Gas, bankrupt 2012",
+   "status": "ok",
+   "permno": 88906,
+   "secid": 114698,
+   "om_ticker_today": "ZZZZ",
+   "om_cusip": "00208J10",
+   "om_close": 4.42,
+   "sharadar_closeunadj": 4.42
+  },
+  "CB1@2008-01-02": {
+   "note": "reused ticker: Chubb Corp (Sharadar CB1) vs today's CB",
+   "status": "ok",
+   "permno": 59192,
+   "secid": 103015,
+   "om_ticker_today": "ZZZZ",
+   "om_cusip": "17123210",
+   "om_close": 53.38,
+   "sharadar_closeunadj": 53.38
+  },
+  "CB@2008-01-02": {
+   "note": "reused ticker: Sharadar CB traded as ACE in 2008",
+   "status": "ok",
+   "permno": 79057,
+   "secid": 112254,
+   "om_ticker_today": "CB",
+   "om_cusip": "H1467J10",
+   "om_close": 61.04,
+   "sharadar_closeunadj": 61.04
+  },
+  "AAPL@2015-06-17": {
+   "note": "large cap",
+   "status": "ok",
+   "permno": 14593,
+   "secid": 101594,
+   "om_ticker_today": "AAPL",
+   "om_cusip": "03783310",
+   "om_close": 127.3,
+   "sharadar_closeunadj": 127.3
+  }
+ }
+}

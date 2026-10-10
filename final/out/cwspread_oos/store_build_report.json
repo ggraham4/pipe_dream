@@ -1,0 +1,17 @@
+{
+ "dates": 80,
+ "name_dates": 254463,
+ "l1_rows_extended": 3928,
+ "unlinked_share": 3.9298444174595125e-06,
+ "unlinked_share_frozen_chain": 0.09785705583915932,
+ "ok_share": 0.9090083823581424,
+ "no_data_share": 0.0909876877974401,
+ "l2_name_dates": 1192,
+ "l2_ok_name_dates": 97,
+ "link_score_counts_ok": {
+  "1.0": 231212,
+  "NaN": 97
+ },
+ "identity_err_lt_5pct_share_of_ok": 0.9999308284589012,
+ "identity_err_lt_5pct_share_of_l2_ok": 0.9896907216494846
+}

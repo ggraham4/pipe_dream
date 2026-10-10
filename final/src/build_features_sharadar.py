@@ -213,9 +213,30 @@ def segment_reused_symbols(px, entities=None, return_report=False):
     return (px, report) if return_report else px
 
 
-def features_for(g, spy):
-    """Exactly features.build_features()'s per-ticker block."""
+# WO-57: spin-off correction (opt-in; default OFF). A (ticker, exdt, m) frame from spinfix.adjust.load_events().
+SPINFIX_EVENTS = None
+
+
+def _spinfix():
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent / "spinfix"))
+    import adjust as SA  # noqa: E402
+    return SA
+
+
+def features_for(g, spy, spin_events=None):
+    """Exactly features.build_features()'s per-ticker block.
+    WO-57: with `spin_events`, every return / price-ratio column (features AND labels) is computed from
+    spin-adjusted open/high/low/close, while the returned open/high/low/close/volume stay RAW (market_cap and the
+    eligibility filters downstream are level quantities)."""
     g = g.sort_values("date").reset_index(drop=True).copy()
+    if spin_events is not None and len(spin_events):
+        raw = g[PRICE_COLS].copy()
+        g = _spinfix().apply_spin_factors(g, spin_events)
+        if not g[PRICE_COLS].equals(raw):
+            f = features_for(g, spy)
+            f[PRICE_COLS] = raw.to_numpy()       # same row order: features_for sorts by date, g already sorted
+            return f
     g["daily_return"] = g["close"].pct_change()
     for w in MOMENTUM_WINDOWS:
         g[f"momentum_{w}"] = g["close"].pct_change(w)
@@ -267,7 +288,7 @@ def build():
     n = 0
     groups = px.groupby("ticker", sort=False)
     for i, (tk, g) in enumerate(groups, 1):
-        f = features_for(g, spy)[keep]
+        f = features_for(g, spy, SPINFIX_EVENTS)[keep]
         f["ticker"] = f["ticker"].astype(str)
         for c in PRICE_COLS + FEATURE_COLS + [LABEL_COL, TRADABLE_LABEL_COL]:
             f[c] = pd.to_numeric(f[c], errors="coerce").astype("float64")
@@ -336,7 +357,11 @@ def verify():
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--verify", action="store_true")
+    ap.add_argument("--spinfix", action="store_true",
+                    help="WO-57: spin-off correction from the WO-54 CRSP event table (default off)")
     a = ap.parse_args()
+    if a.spinfix:
+        SPINFIX_EVENTS = _spinfix().load_events()
     if a.verify:
         verify()
     else:

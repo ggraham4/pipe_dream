@@ -1,0 +1,11 @@
+{
+ "note": "COO post-hoc DESCRIPTIVE on the exact Arm 1 thin pool (run_arm1.load_frame); not judged.",
+ "n_dates": 133,
+ "M_rederived_pct": 2.7394,
+ "truncated_share_bottom_decile": 0.0058,
+ "truncated_share_rest": 0.0042,
+ "M_drop_truncated_pct": 2.6953,
+ "M_resid_r21_pct": 2.7013,
+ "M_resid_r5_r21_pct": 2.4818,
+ "spearman_signal_r21_median": -0.0759
+}

@@ -39,6 +39,9 @@ FIRST_YM, LAST_YM = "1998-01", "2019-12"
 TARGET_DAYS = 28
 N_YEARS, MIN_YEARS = 10, 5
 COL = "seas"
+# WO-57: spin-off correction (opt-in; default OFF): (ticker, exdt, m) with m the closeadj-series factor
+# (1 + r_closeadj) / (1 + r_CRSP). Month-end closeadj dated before exdt is multiplied by m, after the splice.
+SPINFIX_EVENTS_ADJ = None
 
 
 def log(m):
@@ -180,6 +183,12 @@ def main():
     meta["composite_panel_v2_mtime"] = time.ctime(PANEL_V2.stat().st_mtime)
     me, splice = splice_month_ends(load_month_ends(pre), load_month_ends([ovl]), load_month_ends(main_f))
     meta["splice"] = splice
+    if SPINFIX_EVENTS_ADJ is not None and len(SPINFIX_EVENTS_ADJ):
+        import sys
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "spinfix"))
+        import adjust as SA  # noqa: E402
+        me = SA.adjust_month_ends(me, SPINFIX_EVENTS_ADJ)
+        meta["spinfix_events_adj"] = int(len(SPINFIX_EVENTS_ADJ))
     log(f"month-ends {len(me):,} rows, {me['ticker'].nunique():,} tickers, max date {me['date'].max().date()}")
     meta["month_end_rows"] = int(len(me)); meta["sep_max_date"] = str(me["date"].max().date())
     R = monthly_returns(me)

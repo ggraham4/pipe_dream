@@ -1,0 +1,39 @@
+{
+ "dates": [
+  "2008-01-02",
+  "2008-01-16",
+  "2008-02-20",
+  "2008-03-19",
+  "2008-04-16",
+  "2008-05-21",
+  "2008-06-18",
+  "2008-07-16",
+  "2008-08-20"
+ ],
+ "thin": {
+  "matched_contracts": 557881,
+  "median_mid_ratio_om_over_av": 1.0,
+  "iqr": [
+   1.0,
+   1.0
+  ],
+  "share_identical_bid_ask": 0.9884903769800369
+ },
+ "cap2000": {
+  "matched_contracts": 747177,
+  "median_mid_ratio_om_over_av": 1.0,
+  "iqr": [
+   1.0,
+   1.0
+  ],
+  "share_identical_bid_ask": 0.9766387348646974
+ },
+ "thin_kept_chain_share": {
+  "om": 0.6429370703895135,
+  "av": 0.6241807427932008,
+  "av_prereg_published_with_chain": 0.634
+ },
+ "check1_richness_in_0.90_1.10": true,
+ "check2_om_chain_share_ge_0.60": true,
+ "pass": true
+}

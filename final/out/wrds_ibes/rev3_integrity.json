@@ -1,0 +1,333 @@
+{
+ "work_order": "WO-53",
+ "factor": "rev3",
+ "built": "2026-10-08 16:09",
+ "inputs": {
+  "permno_sharadar_sha256": "4db64e336fb1ec147cafa85a50a340c5bc1ba8a1a83bc787c42bb7365f72108c",
+  "panel_v2_sha256": "52f634ac3eeed20c4ebcd0c1f46f10e1ea17f778c834e7c11900bd03386838ba",
+  "xwalk_mtime": "2026-10-08 16:01"
+ },
+ "ibes": {
+  "rows_raw": 1453744,
+  "rows_us_usd_ann": 1388274,
+  "dup_ticker_month_fpi_dropped": 0
+ },
+ "ibes_funnel": {
+  "fy1_rows": 699630,
+  "s0_month_exists": 664431,
+  "same_E_matched": 661480,
+  "matched_via_fpi2_rollover": 160341,
+  "numest_ge2_both": 538242
+ },
+ "link_ibes_permno": {
+  "rows_linked": 652122,
+  "ibes_ticker_multi_permno_dropped_extra": 0,
+  "permno_multi_ibes_ticker_rows_dropped": 0,
+  "unlinked_rows": 47508
+ },
+ "splits": {
+  "rows_with_split_in_window": 5075,
+  "share": 0.007782286136643143,
+  "k_quantiles": [
+   0.0001,
+   0.0667,
+   1.05,
+   3.0,
+   10.0
+  ]
+ },
+ "price": {
+  "permno_to_sharadar_at_s0_ambiguous_dropped": 2,
+  "rows_with_sharadar_ticker_s0": 530682,
+  "rows_with_P0": 530672,
+  "sep_vs_crsp_split_ratio_agree_2pct": 0.9993757574942713,
+  "agree_on_split_rows": 0.9403437815975733,
+  "sep_split_but_crsp_none": 89
+ },
+ "basis_change_excluded_ibes_rows": 4339,
+ "panel_map": {
+  "panel_rows_2007_2019": 13241135,
+  "cap150_rows": 9756141,
+  "sharadar_to_permno_ambiguous_rows": 0,
+  "cap150_rows_with_permno": 9738576
+ },
+ "split_lead_rows_excluded_cap150": 7978,
+ "coverage_cap150": {
+  "rows": 9756141,
+  "tickers": 6508,
+  "dates": 3272,
+  "finite_rev3": 0.8616976732911097,
+  "finite_old_grid": 0.9118256164277531,
+  "finite_added": 0.7480609135831986,
+  "with_permno": 0.998199595516301,
+  "by_year": {
+   "2007": 0.8184,
+   "2008": 0.8499,
+   "2009": 0.8709,
+   "2010": 0.8608,
+   "2011": 0.8609,
+   "2012": 0.882,
+   "2013": 0.8652,
+   "2014": 0.8511,
+   "2015": 0.8696,
+   "2016": 0.8803,
+   "2017": 0.8625,
+   "2018": 0.8594,
+   "2019": 0.8782
+  },
+  "rollover_matched_via_fpi2_share": 0.25379191049578176,
+  "basis_change_excluded_share_of_cap150": 0.009010324881528465,
+  "finite_rev3_kadj_before_exclusion": 0.8697103701145771,
+  "rev3_quantiles_1_5_25_50_75_95_99": [
+   -0.0916,
+   -0.02928,
+   -0.00416,
+   0.0,
+   0.00195,
+   0.01366,
+   0.04688
+  ],
+  "share_exact_zero": 0.06793001035822718,
+  "staleness_days_median": 18.0
+ },
+ "hand_check": [
+  {
+   "ticker": "AAPL",
+   "date": "2012-06-15",
+   "permno": 14593,
+   "ibes": "AAPL",
+   "s1": "2012-06-14",
+   "s0": "2012-03-15",
+   "E": "2012-09-30",
+   "fpi0": "1",
+   "F1": 46.92,
+   "F0": 43.13,
+   "n1": 48,
+   "n0": 52,
+   "k": 1.0,
+   "P0": 585.56,
+   "P0_date": "2012-03-15",
+   "rev3_recomputed": 0.0064724366418471195,
+   "rev3_kadj_built": 0.0064724366418471195,
+   "rev3_final": 0.0064724366418471195,
+   "match": true
+  },
+  {
+   "ticker": "MSFT",
+   "date": "2015-06-15",
+   "permno": 10107,
+   "ibes": "MSFT",
+   "s1": "2015-05-14",
+   "s0": "2015-02-19",
+   "E": "2015-06-30",
+   "fpi0": "1",
+   "F1": 2.42,
+   "F0": 2.45,
+   "n1": 26,
+   "n0": 29,
+   "k": 1.0,
+   "P0": 43.5,
+   "P0_date": "2015-02-19",
+   "rev3_recomputed": -0.0006896551724137988,
+   "rev3_kadj_built": -0.0006896551724137988,
+   "rev3_final": -0.0006896551724137988,
+   "match": true
+  },
+  {
+   "ticker": "LEHMQ",
+   "date": "2008-06-16",
+   "permno": 80599,
+   "ibes": "LEHM",
+   "s1": "2008-05-15",
+   "s0": "2008-02-14",
+   "E": "2008-11-30",
+   "fpi0": "1",
+   "F1": 4.49,
+   "F0": 6.43,
+   "n1": 16,
+   "n0": 16,
+   "k": 1.0,
+   "P0": 54.39,
+   "P0_date": "2008-02-14",
+   "rev3_recomputed": -0.03566832138260709,
+   "rev3_kadj_built": -0.03566832138260709,
+   "rev3_final": -0.03566832138260709,
+   "match": true
+  },
+  {
+   "ticker": "WAMUQ",
+   "date": "2008-06-16",
+   "permno": 81593,
+   "ibes": "WAMU",
+   "s1": "2008-05-15",
+   "s0": "2008-02-14",
+   "E": "2008-12-31",
+   "fpi0": "1",
+   "F1": -3.03,
+   "F0": -0.95,
+   "n1": 12,
+   "n0": 17,
+   "k": 1.0,
+   "P0": 16.86,
+   "P0_date": "2008-02-14",
+   "rev3_recomputed": -0.12336892052194544,
+   "rev3_kadj_built": -0.12336892052194544,
+   "rev3_final": -0.12336892052194544,
+   "match": true
+  },
+  {
+   "ticker": "AAPL",
+   "date": "2014-07-01",
+   "permno": 14593,
+   "ibes": "AAPL",
+   "s1": "2014-06-19",
+   "s0": "2014-03-20",
+   "E": "2014-09-30",
+   "fpi0": "1",
+   "F1": 6.31,
+   "F0": 42.79,
+   "n1": 49,
+   "n0": 50,
+   "k": 7.0,
+   "P0": 528.7,
+   "P0_date": "2014-03-20",
+   "rev3_recomputed": 0.002610175903158682,
+   "rev3_kadj_built": 0.002610175903158682,
+   "rev3_final": NaN,
+   "match": true
+  }
+ ],
+ "brute_force_100": {
+  "n": 100,
+  "mismatches": 0,
+  "pit_s1_lt_t": true,
+  "E_matches_build_and_s0_matched_on_E": true
+ },
+ "split_examples": [
+  {
+   "sh_ticker_s0": "AAPL",
+   "s0": "2014-03-20",
+   "s1": "2014-06-19",
+   "F0": "42.79",
+   "F1": "6.31",
+   "k": "7.0",
+   "sep_k": "7.000052960491473",
+   "P0": "528.7",
+   "rev3_kadj": "0.002610175903158682",
+   "rev3": NaN,
+   "naive": "-0.06899943257045582"
+  },
+  {
+   "sh_ticker_s0": "MWE",
+   "s0": "2007-01-18",
+   "s1": "2007-04-19",
+   "F0": "3.02",
+   "F1": "1.44",
+   "k": "2.0",
+   "sep_k": "2.0",
+   "P0": "58.45",
+   "rev3_kadj": "-0.0023952095808383255",
+   "rev3": NaN,
+   "naive": "-0.027031650983746793"
+  },
+  {
+   "sh_ticker_s0": "BASXQ",
+   "s0": "2016-12-15",
+   "s1": "2017-03-16",
+   "F0": "-5.71",
+   "F1": "-6.03",
+   "k": "0.0017500000000000293",
+   "sep_k": "0.0017504127157943637",
+   "P0": "0.422",
+   "rev3_kadj": "13.505799763033176",
+   "rev3": NaN,
+   "naive": "-0.75829383886256"
+  }
+ ],
+ "split_distribution": {
+  "split_rows_rev3_kadj_q01_50_99": [
+   -0.3474,
+   0.0004,
+   0.6369
+  ],
+  "split_rows_naive_q01_50_99": [
+   -38.5179,
+   -0.0202,
+   1.1363
+  ],
+  "nonsplit_rows_rev3_q01_50_99": [
+   -0.1473,
+   -0.0,
+   0.0736
+  ]
+ },
+ "split_sep_crsp_disagree": {
+  "n": 163,
+  "examples": [
+   {
+    "sh_ticker_s0": "HWM",
+    "s0": "2016-08-18",
+    "s1": "2016-11-17",
+    "k": "0.44443888890000005",
+    "sep_k": "0.3333333333333333",
+    "rev3_kadj": "0.01233318447770336"
+   },
+   {
+    "sh_ticker_s0": "HWM",
+    "s0": "2016-09-15",
+    "s1": "2016-12-15",
+    "k": "0.44443888890000005",
+    "sep_k": "0.33333333333333337",
+    "rev3_kadj": "0.010324293090707504"
+   },
+   {
+    "sh_ticker_s0": "HWM",
+    "s0": "2016-10-20",
+    "s1": "2017-01-19",
+    "k": "1.3333300000000001",
+    "sep_k": "1.0",
+    "rev3_kadj": "0.013363165979767708"
+   },
+   {
+    "sh_ticker_s0": "AIV",
+    "s0": "2018-12-20",
+    "s1": "2019-03-14",
+    "k": "0.99906",
+    "sep_k": "0.9697586674376674",
+    "rev3_kadj": "0.006625086245024325"
+   },
+   {
+    "sh_ticker_s0": "AIV",
+    "s0": "2019-01-17",
+    "s1": "2019-04-18",
+    "k": "0.99906",
+    "sep_k": "0.9697572613947006",
+    "rev3_kadj": "0.0059753451592220565"
+   },
+   {
+    "sh_ticker_s0": "AIV",
+    "s0": "2019-02-14",
+    "s1": "2019-05-16",
+    "k": "0.99906",
+    "sep_k": "0.9697551290888665",
+    "rev3_kadj": "0.017180303520841763"
+   }
+  ]
+ },
+ "split_lead_check": {
+  "lead_rows": 0,
+  "lead_share": 0.0,
+  "abs_rev3_q50_90_99_lead": [
+   NaN,
+   NaN,
+   NaN
+  ],
+  "abs_rev3_q50_90_99_clean": [
+   0.00282,
+   0.02154,
+   0.11272
+  ],
+  "lead_rows_F1_over_F0_near_1_over_k": 0,
+  "lead_rows_with_ratio_defined": 0
+ }
+}

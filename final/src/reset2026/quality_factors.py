@@ -54,6 +54,19 @@ OUT = OUT_DIR / "quality_factors.parquet"
 
 MOM_SKIP = 21     # trading days -- the "1" in 12-1
 MOM_SPAN = 252    # trading days -- the "12"
+# WO-57: spin-off correction (opt-in; default OFF): a (ticker, exdt, m) frame from spinfix.adjust.load_events().
+# momentum_12_1 is then computed from spin-adjusted close; the stored close is never changed.
+SPINFIX_EVENTS = None
+
+
+def momentum_12_1(panel, spin_events=None):
+    """panel: ticker, date, close sorted by (ticker, date). Returns the skip-month 12-1 momentum (float64)."""
+    close = panel[["ticker", "date", "close"]]
+    if spin_events is not None and len(spin_events):
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "spinfix"))
+        import adjust as SA  # noqa: E402
+        close = SA.apply_spin_factors(close, spin_events, cols=("close",))
+    return close.groupby("ticker")["close"].transform(lambda s: s.shift(MOM_SKIP) / s.shift(MOM_SPAN) - 1.0)
 
 
 def log(msg):
@@ -107,10 +120,7 @@ def main():
     log(f"  {len(panel):,} rows, {panel['ticker'].nunique():,} tickers ({time.time()-t0:.0f}s)")
 
     log("momentum_12_1 (skip-month, per-ticker) ...")
-    panel["momentum_12_1"] = (
-        panel.groupby("ticker")["close"]
-             .transform(lambda s: s.shift(MOM_SKIP) / s.shift(MOM_SPAN) - 1.0)
-    )
+    panel["momentum_12_1"] = momentum_12_1(panel, SPINFIX_EVENTS)
     log(f"  coverage {panel['momentum_12_1'].notna().mean():.1%} ({time.time()-t0:.0f}s)")
 
     log("loading SF1 facts (assets/gp/netinc/ncfo, ARQ+ARY, filed-date keyed) ...")

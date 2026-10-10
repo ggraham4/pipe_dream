@@ -1,0 +1,25 @@
+[16:34:35] [A] cap150: 9,756,141 rows, 6,508 tickers, 3272 dates 2007-01-03..2019-12-31
+[16:35:02] [A] loaded 9,756,141 rows, 3272 dates 2007-01-03..2019-12-31
+[16:35:07] factor merged: finite 86.1698%
+[16:35:13] [A] base reconcile OK +0.0348652 (ref 0.0348652); fast picker == picks_w on 3272 dates
+[16:35:15] icw5_seas reconcile OK +0.036442521 (ref 0.036442521084825354)
+[16:35:58] IC t +1.755 mean +0.01289; resid t +3.506; gates {'g1_pooled_t': False, 'g2_halves': True, 'g3_sector_both_sides': True, 'g4_offsets': True, 'g5_loyo': True, 'g6_resid_mom': True}
+[16:36:23] book: w_rev 0.08284; icw6-icw5 -0.2996 pp/yr, 1/40 > 0
+      117.06 real       113.68 user         5.49 sys
+          6932217856  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             1661765  page reclaims
+                 312  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                1647  voluntary context switches
+               10886  involuntary context switches
+        638386612909  instructions retired
+        440398777409  cycles elapsed
+          4533303168  peak memory footprint

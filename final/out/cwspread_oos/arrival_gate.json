@@ -1,0 +1,577 @@
+{
+ "store": "/Users/ggraham/pipe_dream/final/data/wrds/optionm/oos2019/av_shaped",
+ "window": [
+  "2019-01-01",
+  "2025-08-29"
+ ],
+ "window_dates_on_disk": 80,
+ "window_dates_expected": 80,
+ "log_pass_labels": [
+  "monthly"
+ ],
+ "thin_complete_dates": [
+  "2019-01-16",
+  "2019-02-13",
+  "2019-03-20",
+  "2019-04-17",
+  "2019-05-22",
+  "2019-06-19",
+  "2019-07-17",
+  "2019-08-21",
+  "2019-09-18",
+  "2019-10-16",
+  "2019-11-20",
+  "2019-12-18",
+  "2020-01-22",
+  "2020-02-19",
+  "2020-03-18",
+  "2020-04-15",
+  "2020-05-20",
+  "2020-06-17",
+  "2020-07-22",
+  "2020-08-19",
+  "2020-09-16",
+  "2020-10-21",
+  "2020-11-18",
+  "2020-12-16",
+  "2021-01-20",
+  "2021-02-17",
+  "2021-03-17",
+  "2021-04-21",
+  "2021-05-19",
+  "2021-06-16",
+  "2021-07-21",
+  "2021-08-18",
+  "2021-09-15",
+  "2021-10-20",
+  "2021-11-17",
+  "2021-12-22",
+  "2022-01-19",
+  "2022-02-16",
+  "2022-03-16",
+  "2022-04-20",
+  "2022-05-18",
+  "2022-06-15",
+  "2022-07-20",
+  "2022-08-17",
+  "2022-09-21",
+  "2022-10-19",
+  "2022-11-16",
+  "2022-12-21",
+  "2023-01-18",
+  "2023-02-15",
+  "2023-03-22",
+  "2023-04-19",
+  "2023-05-17",
+  "2023-06-21",
+  "2023-07-19",
+  "2023-08-16",
+  "2023-09-20",
+  "2023-10-18",
+  "2023-11-15",
+  "2023-12-20",
+  "2024-01-17",
+  "2024-02-14",
+  "2024-03-20",
+  "2024-04-17",
+  "2024-05-22",
+  "2024-06-20",
+  "2024-07-17",
+  "2024-08-21",
+  "2024-09-18",
+  "2024-10-16",
+  "2024-11-20",
+  "2024-12-18",
+  "2025-01-22",
+  "2025-02-19",
+  "2025-03-19",
+  "2025-04-16",
+  "2025-05-21",
+  "2025-06-18",
+  "2025-07-16",
+  "2025-08-20"
+ ],
+ "n_thin_complete": 80,
+ "rule": "thin slice >= 99% terminal (ok/no_data) on >= 72 of 80 dates",
+ "gate_pass": true,
+ "named_dead": {
+  "BBBYQ": {
+   "name": "Bed Bath & Beyond (bankrupt 2023)",
+   "thin_dates_in_window": 32,
+   "first_thin": "2019-03-20",
+   "last_thin": "2023-04-19",
+   "must_date": "2022-08-17",
+   "must_date_is_thin": true,
+   "must_date_state": "present",
+   "thin_dates_complete": 32,
+   "with_kept_chain": 32,
+   "share": 1.0,
+   "early9_present": 0,
+   "early9_thin": 0,
+   "pass": true
+  },
+  "RADCQ": {
+   "name": "Rite Aid (bankrupt 2023)",
+   "thin_dates_in_window": 50,
+   "first_thin": "2019-01-16",
+   "last_thin": "2023-02-15",
+   "must_date": "2022-06-15",
+   "must_date_is_thin": true,
+   "must_date_state": "present",
+   "thin_dates_complete": 50,
+   "with_kept_chain": 50,
+   "share": 1.0,
+   "early9_present": 0,
+   "early9_thin": 0,
+   "pass": true
+  }
+ },
+ "txg": {
+  "cap2000_dates": 58,
+  "cap2000_with_chain": 58,
+  "thin_dates": [
+   "2024-10-16",
+   "2024-11-20",
+   "2024-12-18",
+   "2025-01-22",
+   "2025-02-19",
+   "2025-03-19",
+   "2025-04-16",
+   "2025-05-21",
+   "2025-06-18",
+   "2025-07-16",
+   "2025-08-20"
+  ],
+  "thin_attempted": 11,
+  "thin_with_chain": 11,
+  "dates_failing_identity_filter": [],
+  "state": "present",
+  "pass": true
+ },
+ "pool_integrity": {
+  "thin_name_dates_with_chain": 111808,
+  "share_in_panel": 1.0,
+  "share_in_outcome_cache": 1.0,
+  "pass": true
+ },
+ "dead_vs_listed_chain_share": {
+  "chain_share_later_delisted": 0.8304269741034702,
+  "chain_share_still_listed": 0.8548342012361144,
+  "n_later_delisted": 34522,
+  "n_still_listed": 96593,
+  "excluded_blank_check_name_dates": 2418,
+  "rule": "amendment 1: siccode 6770 excluded; delisted share >= listed share - 0.05",
+  "pass": true,
+  "unamended_DESCRIPTIVE": {
+   "chain_share_later_delisted": 0.7953179803692324,
+   "chain_share_still_listed": 0.8534324162308535,
+   "n_later_delisted": 36779,
+   "n_still_listed": 96754,
+   "rule": "delisted share >= listed share - 0.05",
+   "pass": false
+  }
+ },
+ "per_date": {
+  "2019-01-16": {
+   "thin_names": 1660,
+   "terminal_share": 1.0,
+   "ok_share": 0.8180722891566266
+  },
+  "2019-02-13": {
+   "thin_names": 1600,
+   "terminal_share": 1.0,
+   "ok_share": 0.82
+  },
+  "2019-03-20": {
+   "thin_names": 1623,
+   "terminal_share": 1.0,
+   "ok_share": 0.8083795440542206
+  },
+  "2019-04-17": {
+   "thin_names": 1582,
+   "terminal_share": 1.0,
+   "ok_share": 0.8135271807838179
+  },
+  "2019-05-22": {
+   "thin_names": 1616,
+   "terminal_share": 1.0,
+   "ok_share": 0.8125
+  },
+  "2019-06-19": {
+   "thin_names": 1591,
+   "terminal_share": 1.0,
+   "ok_share": 0.8038969201759899
+  },
+  "2019-07-17": {
+   "thin_names": 1583,
+   "terminal_share": 1.0,
+   "ok_share": 0.8079595704358813
+  },
+  "2019-08-21": {
+   "thin_names": 1582,
+   "terminal_share": 1.0,
+   "ok_share": 0.8242730720606827
+  },
+  "2019-09-18": {
+   "thin_names": 1603,
+   "terminal_share": 1.0,
+   "ok_share": 0.8140985651902682
+  },
+  "2019-10-16": {
+   "thin_names": 1574,
+   "terminal_share": 1.0,
+   "ok_share": 0.8176620076238882
+  },
+  "2019-11-20": {
+   "thin_names": 1532,
+   "terminal_share": 1.0,
+   "ok_share": 0.8113577023498695
+  },
+  "2019-12-18": {
+   "thin_names": 1559,
+   "terminal_share": 1.0,
+   "ok_share": 0.7998717126363053
+  },
+  "2020-01-22": {
+   "thin_names": 1568,
+   "terminal_share": 1.0,
+   "ok_share": 0.7914540816326531
+  },
+  "2020-02-19": {
+   "thin_names": 1530,
+   "terminal_share": 1.0,
+   "ok_share": 0.8052287581699347
+  },
+  "2020-03-18": {
+   "thin_names": 1710,
+   "terminal_share": 1.0,
+   "ok_share": 0.8444444444444444
+  },
+  "2020-04-15": {
+   "thin_names": 1683,
+   "terminal_share": 1.0,
+   "ok_share": 0.8383838383838383
+  },
+  "2020-05-20": {
+   "thin_names": 1669,
+   "terminal_share": 1.0,
+   "ok_share": 0.8220491312162972
+  },
+  "2020-06-17": {
+   "thin_names": 1684,
+   "terminal_share": 1.0,
+   "ok_share": 0.8087885985748219
+  },
+  "2020-07-22": {
+   "thin_names": 1677,
+   "terminal_share": 1.0,
+   "ok_share": 0.802623732856291
+  },
+  "2020-08-19": {
+   "thin_names": 1683,
+   "terminal_share": 1.0,
+   "ok_share": 0.8009506833036245
+  },
+  "2020-09-16": {
+   "thin_names": 1700,
+   "terminal_share": 1.0,
+   "ok_share": 0.7994117647058824
+  },
+  "2020-10-21": {
+   "thin_names": 1680,
+   "terminal_share": 1.0,
+   "ok_share": 0.8023809523809524
+  },
+  "2020-11-18": {
+   "thin_names": 1669,
+   "terminal_share": 1.0,
+   "ok_share": 0.7855002995805872
+  },
+  "2020-12-16": {
+   "thin_names": 1749,
+   "terminal_share": 1.0,
+   "ok_share": 0.7427101200686106
+  },
+  "2021-01-20": {
+   "thin_names": 1831,
+   "terminal_share": 1.0,
+   "ok_share": 0.70999453850355
+  },
+  "2021-02-17": {
+   "thin_names": 1954,
+   "terminal_share": 1.0,
+   "ok_share": 0.6949846468781986
+  },
+  "2021-03-17": {
+   "thin_names": 2053,
+   "terminal_share": 1.0,
+   "ok_share": 0.6721870433511934
+  },
+  "2021-04-21": {
+   "thin_names": 1988,
+   "terminal_share": 1.0,
+   "ok_share": 0.7178068410462777
+  },
+  "2021-05-19": {
+   "thin_names": 1893,
+   "terminal_share": 1.0,
+   "ok_share": 0.7533016376122557
+  },
+  "2021-06-16": {
+   "thin_names": 1855,
+   "terminal_share": 1.0,
+   "ok_share": 0.7520215633423181
+  },
+  "2021-07-21": {
+   "thin_names": 1903,
+   "terminal_share": 1.0,
+   "ok_share": 0.7624802942722018
+  },
+  "2021-08-18": {
+   "thin_names": 1896,
+   "terminal_share": 0.9994725738396625,
+   "ok_share": 0.7943037974683544
+  },
+  "2021-09-15": {
+   "thin_names": 1859,
+   "terminal_share": 1.0,
+   "ok_share": 0.8020441097364174
+  },
+  "2021-10-20": {
+   "thin_names": 1846,
+   "terminal_share": 1.0,
+   "ok_share": 0.8028169014084507
+  },
+  "2021-11-17": {
+   "thin_names": 1927,
+   "terminal_share": 1.0,
+   "ok_share": 0.7768552153606643
+  },
+  "2021-12-22": {
+   "thin_names": 1955,
+   "terminal_share": 1.0,
+   "ok_share": 0.7861892583120205
+  },
+  "2022-01-19": {
+   "thin_names": 1884,
+   "terminal_share": 1.0,
+   "ok_share": 0.8184713375796179
+  },
+  "2022-02-16": {
+   "thin_names": 1868,
+   "terminal_share": 1.0,
+   "ok_share": 0.8185224839400428
+  },
+  "2022-03-16": {
+   "thin_names": 1860,
+   "terminal_share": 1.0,
+   "ok_share": 0.828494623655914
+  },
+  "2022-04-20": {
+   "thin_names": 1798,
+   "terminal_share": 1.0,
+   "ok_share": 0.8370411568409344
+  },
+  "2022-05-18": {
+   "thin_names": 1852,
+   "terminal_share": 1.0,
+   "ok_share": 0.8488120950323974
+  },
+  "2022-06-15": {
+   "thin_names": 1851,
+   "terminal_share": 1.0,
+   "ok_share": 0.8676391139924365
+  },
+  "2022-07-20": {
+   "thin_names": 1811,
+   "terminal_share": 1.0,
+   "ok_share": 0.871893981225842
+  },
+  "2022-08-17": {
+   "thin_names": 1771,
+   "terminal_share": 1.0,
+   "ok_share": 0.8769057029926595
+  },
+  "2022-09-21": {
+   "thin_names": 1803,
+   "terminal_share": 1.0,
+   "ok_share": 0.8868552412645591
+  },
+  "2022-10-19": {
+   "thin_names": 1765,
+   "terminal_share": 1.0,
+   "ok_share": 0.8793201133144476
+  },
+  "2022-11-16": {
+   "thin_names": 1758,
+   "terminal_share": 1.0,
+   "ok_share": 0.856655290102389
+  },
+  "2022-12-21": {
+   "thin_names": 1707,
+   "terminal_share": 1.0,
+   "ok_share": 0.8828353837141183
+  },
+  "2023-01-18": {
+   "thin_names": 1707,
+   "terminal_share": 1.0,
+   "ok_share": 0.8863503222026948
+  },
+  "2023-02-15": {
+   "thin_names": 1680,
+   "terminal_share": 1.0,
+   "ok_share": 0.8666666666666667
+  },
+  "2023-03-22": {
+   "thin_names": 1699,
+   "terminal_share": 1.0,
+   "ok_share": 0.8793407886992348
+  },
+  "2023-04-19": {
+   "thin_names": 1636,
+   "terminal_share": 1.0,
+   "ok_share": 0.9003667481662592
+  },
+  "2023-05-17": {
+   "thin_names": 1655,
+   "terminal_share": 1.0,
+   "ok_share": 0.9075528700906345
+  },
+  "2023-06-21": {
+   "thin_names": 1661,
+   "terminal_share": 1.0,
+   "ok_share": 0.9000602046959663
+  },
+  "2023-07-19": {
+   "thin_names": 1621,
+   "terminal_share": 1.0,
+   "ok_share": 0.905613818630475
+  },
+  "2023-08-16": {
+   "thin_names": 1613,
+   "terminal_share": 1.0,
+   "ok_share": 0.9088654680719157
+  },
+  "2023-09-20": {
+   "thin_names": 1584,
+   "terminal_share": 1.0,
+   "ok_share": 0.9172979797979798
+  },
+  "2023-10-18": {
+   "thin_names": 1556,
+   "terminal_share": 1.0,
+   "ok_share": 0.9280205655526992
+  },
+  "2023-11-15": {
+   "thin_names": 1520,
+   "terminal_share": 1.0,
+   "ok_share": 0.9197368421052632
+  },
+  "2023-12-20": {
+   "thin_names": 1537,
+   "terminal_share": 1.0,
+   "ok_share": 0.904359141184125
+  },
+  "2024-01-17": {
+   "thin_names": 1572,
+   "terminal_share": 1.0,
+   "ok_share": 0.9064885496183206
+  },
+  "2024-02-14": {
+   "thin_names": 1540,
+   "terminal_share": 1.0,
+   "ok_share": 0.9045454545454545
+  },
+  "2024-03-20": {
+   "thin_names": 1520,
+   "terminal_share": 1.0,
+   "ok_share": 0.9052631578947369
+  },
+  "2024-04-17": {
+   "thin_names": 1537,
+   "terminal_share": 1.0,
+   "ok_share": 0.9147690305790501
+  },
+  "2024-05-22": {
+   "thin_names": 1506,
+   "terminal_share": 1.0,
+   "ok_share": 0.898406374501992
+  },
+  "2024-06-20": {
+   "thin_names": 1511,
+   "terminal_share": 1.0,
+   "ok_share": 0.9033752481800132
+  },
+  "2024-07-17": {
+   "thin_names": 1506,
+   "terminal_share": 1.0,
+   "ok_share": 0.8818061088977424
+  },
+  "2024-08-21": {
+   "thin_names": 1498,
+   "terminal_share": 1.0,
+   "ok_share": 0.8898531375166889
+  },
+  "2024-09-18": {
+   "thin_names": 1472,
+   "terminal_share": 1.0,
+   "ok_share": 0.891983695652174
+  },
+  "2024-10-16": {
+   "thin_names": 1456,
+   "terminal_share": 1.0,
+   "ok_share": 0.8935439560439561
+  },
+  "2024-11-20": {
+   "thin_names": 1477,
+   "terminal_share": 1.0,
+   "ok_share": 0.8761002031144212
+  },
+  "2024-12-18": {
+   "thin_names": 1516,
+   "terminal_share": 1.0,
+   "ok_share": 0.8707124010554089
+  },
+  "2025-01-22": {
+   "thin_names": 1480,
+   "terminal_share": 1.0,
+   "ok_share": 0.8756756756756757
+  },
+  "2025-02-19": {
+   "thin_names": 1492,
+   "terminal_share": 1.0,
+   "ok_share": 0.8693029490616622
+  },
+  "2025-03-19": {
+   "thin_names": 1500,
+   "terminal_share": 1.0,
+   "ok_share": 0.8846666666666667
+  },
+  "2025-04-16": {
+   "thin_names": 1531,
+   "terminal_share": 1.0,
+   "ok_share": 0.8948399738732854
+  },
+  "2025-05-21": {
+   "thin_names": 1533,
+   "terminal_share": 1.0,
+   "ok_share": 0.8734507501630789
+  },
+  "2025-06-18": {
+   "thin_names": 1539,
+   "terminal_share": 1.0,
+   "ok_share": 0.8674463937621832
+  },
+  "2025-07-16": {
+   "thin_names": 1547,
+   "terminal_share": 1.0,
+   "ok_share": 0.8558500323206205
+  },
+  "2025-08-20": {
+   "thin_names": 1536,
+   "terminal_share": 1.0,
+   "ok_share": 0.8704427083333334
+  }
+ },
+ "phase2_allowed": true
+}

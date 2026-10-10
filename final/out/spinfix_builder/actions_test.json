@@ -1,0 +1,152 @@
+{
+ "actions_rows_2007_2019": {
+  "spinoff": 289,
+  "spunofffrom": 289,
+  "spinoffdividend": 270
+ },
+ "parent_ticker_dates": 275,
+ "recall_applied_242": {
+  "exact": {
+   "n": 242,
+   "hit": 200,
+   "recall": 0.8264462809917356,
+   "ticker_absent": 27,
+   "no_row_near_date": 15
+  },
+  "pm1": {
+   "n": 242,
+   "hit": 202,
+   "recall": 0.8347107438016529,
+   "ticker_absent": 27,
+   "no_row_near_date": 13
+  },
+  "misses_pm1_by_year": {
+   "2007": 5,
+   "2008": 4,
+   "2009": 4,
+   "2010": 2,
+   "2011": 2,
+   "2012": 4,
+   "2013": 2,
+   "2014": 4,
+   "2015": 4,
+   "2016": 3,
+   "2017": 3,
+   "2018": 2,
+   "2019": 1
+  },
+  "misses_pm1_sample": [
+   "PDE 2009-08-25",
+   "AMPE 2016-01-05",
+   "FWONA 2014-07-24",
+   "FWONA 2016-04-18",
+   "XTIA 2018-09-04",
+   "DELL 2018-12-24",
+   "JEF 2019-09-27",
+   "GCO 2008-06-06",
+   "PPL 2015-06-02",
+   "TDW 2017-08-01",
+   "AIG 2011-01-20",
+   "CKXE 2008-01-04",
+   "PDLI 2008-12-19",
+   "TWX 2009-03-27",
+   "CKH 2017-12-07",
+   "CPWR 2014-10-16",
+   "NVLNF 2016-04-06",
+   "RIG 2007-11-27",
+   "COR 2007-08-01",
+   "SVC 2007-02-01",
+   "WLTGQ 2009-04-20",
+   "GERN 2014-07-22",
+   "QADB 2010-12-16",
+   "GDEN 2008-10-31",
+   "GAMI 2010-12-13"
+  ],
+  "misses_pm1_abs_log_m_median": 0.09433320994416085
+ },
+ "recall_candidates_274": {
+  "exact": {
+   "n": 274,
+   "hit": 210,
+   "recall": 0.7664233576642335,
+   "ticker_absent": 45,
+   "no_row_near_date": 19
+  },
+  "pm1": {
+   "n": 274,
+   "hit": 212,
+   "recall": 0.7737226277372263,
+   "ticker_absent": 45,
+   "no_row_near_date": 17
+  }
+ },
+ "posthoc_not_judged_recall_242_pm1_with_spunofffrom": 0.8347107438016529,
+ "precision_pm1": {
+  "actions_parent_rows_on_grid": 242,
+  "matched": 213,
+  "precision": 0.8801652892561983,
+  "matched_exact": 211,
+  "unmatched_sample": [
+   "DD 2019-06-03",
+   "TFCF 2019-03-19",
+   "GE 2019-02-26",
+   "LQ2 2018-05-31",
+   "DBRG 2018-02-01",
+   "LBTYA 2018-01-02",
+   "LEN 2017-12-06",
+   "GE 2017-07-05",
+   "YHOO 2017-06-19",
+   "HWM 2016-11-01",
+   "HTZGQ 2016-07-01",
+   "MTCH 2015-11-19",
+   "NRF 2015-11-02",
+   "PZG1 2015-04-20",
+   "SSP 2015-04-01",
+   "NXDT 2015-04-01",
+   "ATLS1 2015-02-26",
+   "SMA1 2014-12-05",
+   "QVCAQ 2014-10-15",
+   "GE 2014-07-31"
+  ]
+ },
+ "known_misses": [
+  {
+   "ticker": "SWY",
+   "wo54_date": "2014-04-15",
+   "actions_rows": [],
+   "within_pm1_of_drop": false
+  },
+  {
+   "ticker": "TWX",
+   "wo54_date": "2014-06-09",
+   "actions_rows": [
+    "spinoff 2014-06-09 0.125",
+    "spinoffdividend 2014-06-09 2.935"
+   ],
+   "within_pm1_of_drop": true
+  },
+  {
+   "ticker": "NEBLQ",
+   "wo54_date": "2014-08-04",
+   "actions_rows": [
+    "spinoff 2014-08-04 0.33333",
+    "spinoffdividend 2014-08-04 3.92663"
+   ],
+   "within_pm1_of_drop": true
+  }
+ ],
+ "descriptive_m_from_actions": {
+  "spinoffdividend_value": {
+   "n": 201,
+   "median_abs_log_diff": 0.00813007069863314,
+   "share_within_2pct": 0.6716417910447762
+  },
+  "ratio_x_spinco_close": {
+   "n": 186,
+   "median_abs_log_diff": 4.178386540931722e-07,
+   "share_within_2pct": 0.7258064516129032
+  },
+  "note": "not judged; m_A = close_ex/(close_ex + D), m_B = close_ex/(close_ex + ratio x spinco close_ex)"
+ },
+ "runtime_s": 5.2
+}

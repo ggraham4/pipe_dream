@@ -73,7 +73,11 @@ months <= old_end, stored panel open/close vs SEP on disk)
                 re-pulled one are still on the OLD split basis on disk, so a
                 full recompute would splice two bases. Such tickers are NOT
                 extended and are listed as BLOCKED: they need their SEP
-                history re-pulled (see the WO-14 doc).
+                history re-pulled (see the WO-14 doc). A blocked ticker
+                ELIGIBLE after old_end fails the refresh, unless its only SEP
+                rows after old_end are zero-volume flat placeholders (a
+                delisting, e.g. QRVO 2026-10-05): then it stays blocked and is
+                listed under nontrading_blocked (2026-10-10).
     revised     (any other open/close change, or a row added/removed): the
                 ticker's full history is recomputed and replaces its stored rows,
                 exactly as a full v2 rebuild would.
@@ -249,6 +253,14 @@ def detect_changes(grid, old_end, through):
     return sorted(split), sorted(revised), sorted(stale), detail, after
 
 
+# WO-57: spin-off correction (opt-in via --spinfix; default OFF). (ticker, exdt, m) from spinfix.adjust.load_events().
+# Return / price-ratio quantities (price features, momentum_12_1, beta, labels) use spin-adjusted prices; the
+# stored OHLC, closes_full, market_cap and the universe flags stay RAW. Turning it on rewrites historical rows,
+# which the old-row compare below reports as failures: adoption needs a full rebuild (Gabe's call), so --spinfix
+# is refused without --no-swap.
+SPINFIX_EVENTS = None
+
+
 def step_prices(work, tickers, full_tickers, buf_start, through):
     import build_features_sharadar as BF
     from features import FEATURE_COLS, LABEL_COL, TRADABLE_LABEL_COL
@@ -268,7 +280,7 @@ def step_prices(work, tickers, full_tickers, buf_start, through):
     closes = []
     n = 0
     for i, (tk, g) in enumerate(px.groupby("ticker", sort=False), 1):
-        f = BF.features_for(g[["ticker", "date"] + BF.PRICE_COLS], spy)[keep]
+        f = BF.features_for(g[["ticker", "date"] + BF.PRICE_COLS], spy, SPINFIX_EVENTS)[keep]
         f["ticker"] = f["ticker"].astype(str)
         for c in keep[2:]:
             f[c] = pd.to_numeric(f[c], errors="coerce").astype("float64")
@@ -318,6 +330,7 @@ def step_addons(work):
 def step_quality(work):
     import quality_factors as Q
     Q.PRICE_PANEL, Q.OUT = work / "closes_full.parquet", work / "quality.parquet"
+    Q.SPINFIX_EVENTS = SPINFIX_EVENTS
     Q.main()
 
 
@@ -345,15 +358,17 @@ def step_panel(work):
 def step_beta(work):
     import build_beta_feature as BB
     BB.PANEL_PATH, BB.OUT = work / "closes_full.parquet", work / "beta.parquet"
+    BB.SPINFIX_EVENTS = SPINFIX_EVENTS
     BB.main()
     return pd.read_parquet(BB.OUT)
 
 
 def step_outcome(px):
-    from build_outcome_cache import vectorized_outcomes
+    from build_outcome_cache import vectorized_outcomes, spin_adjust_ohlc
     frames = []
     for tk, g in px.groupby("ticker", sort=False):
         g = g.sort_values("date").reset_index(drop=True)
+        g = spin_adjust_ohlc(tk, g, SPINFIX_EVENTS)
         gross, trunc = vectorized_outcomes(g)
         frames.append(pd.DataFrame({"ticker": tk, "date": g["date"].to_numpy(),
                                     "gross_return_40": gross, "truncated": trunc}))
@@ -652,12 +667,34 @@ def run(args):
     blocked = set(split)
     # COO 2026-09-25: a blocked (split-like, stale-basis) ticker that is now
     # eligible at any tier must stop the refresh, not silently drop out.
+    # 2026-10-10 (QRVO): only dates the ticker actually TRADED count. Sharadar
+    # prints zero-volume, open==high==low==close placeholder rows around a
+    # delisting (QRVO 2026-10-05/06 at ~$2,077 vs $114, after SWKS bought it),
+    # which read as a split and as an eligible date. A ticker whose only rows
+    # after old_end are such placeholders stays BLOCKED (never extended with
+    # junk) and is listed under nontrading_blocked in the report.
+    nontrading = {}
     if blocked:
         u = pd.read_parquet(work / "universe.parquet",
                             columns=["ticker", "date", "eligible_cap2000", "eligible_cap500", "eligible_cap150"],
                             filters=[("date", ">", old_end.date().isoformat())])
         u = u[u["ticker"].astype(str).isin(blocked)]
-        hit = u[u[["eligible_cap2000", "eligible_cap500", "eligible_cap150"]].any(axis=1)]
+        hit = u[u[["eligible_cap2000", "eligible_cap500", "eligible_cap150"]].any(axis=1)].copy()
+        hit["date"] = pd.to_datetime(hit["date"])
+        sp = read_sep(sorted(blocked), start=old_end + pd.Timedelta(days=1), end=through)
+        flat = ((sp["volume"].fillna(0) <= 0) & (sp["open"] == sp["high"])
+                & (sp["low"] == sp["close"]) & (sp["open"] == sp["close"]))
+        traded = sp.loc[~flat, ["ticker", "date"]]
+        real = hit.merge(traded, on=["ticker", "date"], how="inner")
+        for t in sorted(set(hit["ticker"]) - set(real["ticker"])):
+            g = sp[sp["ticker"] == t]
+            nontrading[t] = {"eligible_dates": [d.date().isoformat() for d in sorted(hit.loc[hit["ticker"] == t, "date"])],
+                             "placeholder_rows": [{"date": r.date.date().isoformat(), "close": float(r.close),
+                                                   "volume": float(r.volume)} for r in g.itertuples()]}
+        if nontrading:
+            log(f"BLOCKED split-like but NOT TRADING after {old_end.date()} (zero-volume placeholder rows only, "
+                f"e.g. delisted): {sorted(nontrading)}; kept blocked, not extended")
+        hit = real
         if len(hit):
             raise RefreshError(f"split-like tickers with stale-basis history are ELIGIBLE after "
                                f"{old_end.date()}: {sorted(hit['ticker'].unique())}. Re-pull their SEP "
@@ -670,7 +707,8 @@ def run(args):
                                  filters=[("date", ">=", (old_end - pd.Timedelta(days=150)).date().isoformat())])
                    .column("date").unique().to_pylist())
     buf_start = pd.Timestamp(dates[-BUFFER_DATES])
-    report.update({"split_like_blocked": sorted(blocked), "revised_recomputed": sorted(revised),
+    report.update({"split_like_blocked": sorted(blocked), "nontrading_blocked": nontrading,
+                   "revised_recomputed": sorted(revised),
                    "stale_kept": sorted(stale), "new_tickers": sorted(new_tickers),
                    "change_detail": detail, "buffer_start": buf_start.date().isoformat(),
                    "tickers_extended": len(affected)})
@@ -783,7 +821,17 @@ def main():
                     help="WO-16: skip the append-only SF1 top-up (sf1_topup.py) that otherwise runs first")
     ap.add_argument("--run-date", default=None,
                     help="WO-16: date the 7-day fundamentals window counts back from (default: today)")
+    ap.add_argument("--spinfix", action="store_true",
+                    help="WO-57: spin-off correction (CRSP event table); test runs only (needs --no-swap)")
     a = ap.parse_args()
+    if a.spinfix:
+        if not a.no_swap:
+            raise SystemExit("--spinfix rewrites historical rows; adopting it needs a full rebuild (Gabe's call). "
+                             "Use it with --no-swap only.")
+        global SPINFIX_EVENTS
+        sys.path.insert(0, str(HERE.parent / "spinfix"))
+        import adjust as SA  # noqa: E402
+        SPINFIX_EVENTS = SA.load_events()
     import subprocess
     if a.record_weekly and not (a.check or a.no_swap):
         ins = HERE.parent.parent / "scripts" / "edgar_form4_refresh.py"
