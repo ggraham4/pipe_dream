@@ -61,6 +61,45 @@ def read_log_parquet():
 T.read_log = read_log_parquet
 P.OUT.mkdir(parents=True, exist_ok=True)
 
+# ---- Amendment 1 (final/models/2026-10-09-cwspread-outofera-amendment.md; Gabe chose (b)):
+# the dead-vs-listed presence check leaves out blank checks (Sharadar siccode 6770); same formula, same 5-point bar.
+AMEND_DOC = "final/models/2026-10-09-cwspread-outofera-amendment.md"
+AMEND_SHA256 = "12a5e57271d80cfae4a231bdcb2839f306c850ce8be691985a20acb35186f453"
+BLANK_CHECK_SIC = 6770
+_orig_arrival_gate = T.arrival_gate
+
+
+def arrival_gate_amended(write=True):
+    rep = _orig_arrival_gate(write=False)
+    complete = set(rep["thin_complete_dates"])
+    L = T.read_log()
+    u = T.universe_on(T.monthly_dates())
+    thin = u[u.thin].assign(ds=lambda x: x.date.dt.strftime("%Y-%m-%d"))
+    m = thin.merge(L[["date", "ticker", "status"]].rename(columns={"date": "ds"}), on=["ds", "ticker"], how="left")
+    tmf = sorted((T.DATA / "sharadar").glob("tickers_master*.csv"))[-1]
+    tm = pd.read_csv(tmf, usecols=["ticker", "isdelisted", "lastpricedate", "siccode"], low_memory=False)
+    tm = tm.sort_values("lastpricedate").drop_duplicates("ticker", keep="last")
+    mc = m[m.ds.isin(complete)].merge(tm[["ticker", "isdelisted", "siccode"]], on="ticker", how="left")
+    blank = pd.to_numeric(mc.siccode, errors="coerce") == BLANK_CHECK_SIC
+    unamended = rep["dead_vs_listed_chain_share"]
+    mc = mc[~blank]
+    okd = float((mc.status[mc.isdelisted == "Y"] == "ok").mean())
+    oka = float((mc.status[mc.isdelisted == "N"] == "ok").mean())
+    rep["dead_vs_listed_chain_share"] = {
+        "chain_share_later_delisted": okd, "chain_share_still_listed": oka,
+        "n_later_delisted": int((mc.isdelisted == "Y").sum()), "n_still_listed": int((mc.isdelisted == "N").sum()),
+        "excluded_blank_check_name_dates": int(blank.sum()),
+        "rule": f"amendment 1: siccode {BLANK_CHECK_SIC} excluded; delisted share >= listed share - {T.DEAD_GAP_MAX}",
+        "pass": bool(okd >= oka - T.DEAD_GAP_MAX), "unamended_DESCRIPTIVE": unamended}
+    rep["phase2_allowed"] = bool(rep["gate_pass"] and all(v["pass"] for v in rep["named_dead"].values()) and rep["txg"]["pass"]
+                                 and rep["pool_integrity"]["pass"] and rep["dead_vs_listed_chain_share"]["pass"])
+    if write:
+        T.ARRIVAL.write_text(json.dumps(rep, indent=1, default=str))
+    return rep
+
+
+T.arrival_gate = arrival_gate_amended
+
 
 def frozen_chain_gate():
     """The gate under the WO-52 chain with the WO-51 crosswalk unmodified (status_frozen), for the record."""
@@ -98,6 +137,9 @@ def guard():
     got = hashlib.sha256(doc.read_bytes()).hexdigest()
     if got != PREREG_SHA256:
         raise SystemExit(f"read refused: {P.PREREG_DOC} sha256 {got} != frozen {PREREG_SHA256}")
+    ga = hashlib.sha256((Path(__file__).resolve().parents[3] / AMEND_DOC).read_bytes()).hexdigest()
+    if ga != AMEND_SHA256:
+        raise SystemExit(f"read refused: {AMEND_DOC} sha256 {ga} != frozen {AMEND_SHA256}")
     # WO-37 guard, unchanged: WO-37 doc tracked, gate + presence checks recomputed, chain fresh, no earlier result
     return T.phase2_guard(RESULT)
 

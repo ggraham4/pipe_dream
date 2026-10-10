@@ -155,12 +155,21 @@
   "pass": true
  },
  "dead_vs_listed_chain_share": {
-  "chain_share_later_delisted": 0.7953179803692324,
-  "chain_share_still_listed": 0.8534324162308535,
-  "n_later_delisted": 36779,
-  "n_still_listed": 96754,
-  "rule": "delisted share >= listed share - 0.05",
-  "pass": false
+  "chain_share_later_delisted": 0.8304269741034702,
+  "chain_share_still_listed": 0.8548342012361144,
+  "n_later_delisted": 34522,
+  "n_still_listed": 96593,
+  "excluded_blank_check_name_dates": 2418,
+  "rule": "amendment 1: siccode 6770 excluded; delisted share >= listed share - 0.05",
+  "pass": true,
+  "unamended_DESCRIPTIVE": {
+   "chain_share_later_delisted": 0.7953179803692324,
+   "chain_share_still_listed": 0.8534324162308535,
+   "n_later_delisted": 36779,
+   "n_still_listed": 96754,
+   "rule": "delisted share >= listed share - 0.05",
+   "pass": false
+  }
  },
  "per_date": {
   "2019-01-16": {
@@ -564,5 +573,5 @@
    "ok_share": 0.8704427083333334
   }
  },
- "phase2_allowed": false
+ "phase2_allowed": true
 }
