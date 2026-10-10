@@ -195,3 +195,44 @@ From `build_opp.py` → `final/out/oppinsider/opp_integrity.json`:
 ## 2. Results
 
 (appended after the run, below this line)
+
+Run 2026-10-10 on branch `wo49-opp-insiders` (merged with integration b78ae87),
+one clean pass and no bug-fix iterations. Before any compute, the sha256 of
+this doc's frozen state (commit 4787c8f) was checked against the frozen copy:
+`c2759af1...a479a`, a match. §1 above was not edited. Era 2007-01-03..2019-12-31
+only; every loader's hold-out assert passed. Outputs:
+`final/out/oppinsider/opp_report.json`, `parts/real.json`,
+`parts/null/000-099.json`, `parts/null_recheck.json` and `logs/*.log`.
+
+**Reconciles.** The icw9_seas base is +0.0348652 (matches WO-48b). icw5_seas is
++0.036442521 against the reference 0.036442521084825354 (within 1e-10). The
+fast picker equals `picks_w` on all 3,272 dates.
+
+**Verdict: KILL.** Gates 1-6 all fail and gate 7 passes. Under §1.3 the insider
+family is now CLOSED at k = 5 for the composite.
+
+| gate | number | bar | result |
+|---|---|---|---|
+| 1 pooled IC NW t (lag 39) | **−0.818** (mean IC −0.00216, 2,766 dates, effectively 2009-19) | ≥ +2.58 | FAIL |
+| 2 odd / even mean IC | odd −0.00819 (t −2.33), even +0.00507 (t +1.38) | both > 0 | FAIL |
+| 3 both-sides sector-demeaned t | **−3.44** (factor-only, not gated: +2.52) | ≥ +1.0 | FAIL |
+| 4 grid-offset sign flips | 2 of 40 (offset means −0.00410..+0.00045) | 0 | FAIL |
+| 5 LOYO | summed IC −5.99 (< 0); max year share 87.7% (2017); min LOYO t −1.56 | sum > 0, share ≤ 45%, min t > 0 | FAIL |
+| 6 book icw6 − icw5_seas | **−0.0094 pp/yr**, 18/40 offsets > 0; null p80 −0.0142 pp/yr (100 draws, p50 −0.0210, p95 −0.0094; real beats 95%) | > null p80 AND ≥ 26/40 | FAIL (offset count) |
+| 7 Gate A | PIT brute force 0/3,000 mismatches; placebo (seed 49000) t +0.357 (< 2.58, fails as required); hand checks JPM/GE/KO all opportunistic and step up the day after filing | all three | PASS |
+
+Book details: w_opp = +0.01096. This is the floor `max(0.1, |−0.818| − 1) = 0.1`
+times k = 0.10965. The icw5_seas sd40 is 0.236 pp/yr (reported only, not the
+bar). The null draw 0 rerun was bit-identical.
+
+**Registered secondary (report only, cannot PASS).** Added-tickers slice:
+2,983,634 rows, 3,273 tickers, fire rate 7.7%. Pooled t is
+**+4.01**; odd and even means are both positive (+0.0072 / +0.0238); 0 offset
+flips; max year share 23.1%; min LOYO t +3.24. The both-sides sector-demeaned t
+is **−1.77**, which fails gate 3. So the raw added-ticker IC is a sector/size
+composition effect, not a within-sector stock-selection signal. Per §1.3 this
+selects nothing and reopens nothing.
+
+**Trial count.** Insider family k = 5, all five failed. Family closed for the
+composite. It reopens only with a new data source (PIT 10b5-1 plan data) or a
+short-book use with borrow data.
