@@ -9,7 +9,8 @@ number or ACTIONS recall. Trial count 0. No hold-out read, no 2020+ outcome, no 
 - C1 identical: raw O/H/L/C/V from the hooked `features_for` == hook off on 266 tickers (216 with events + 50
   random cap150 tickers), and `market_cap` from `compute_fundamentals` identical on all 815,796 rows. The
   eligibility flags come from `downcap_universe` (raw SEP/DAILY `marketcap`, `closeunadj x volume`), which never
-  sees the adjusted prices; the fixed panel carries `market_cap`/`eligible_*` unchanged.
+  sees the adjusted prices. The pre-reg's 20-sampled-date panel comparison was not run separately: the patch panel
+  copies `market_cap`/`eligible_*` from the stored panel, so they are identical by construction.
 - Δ(B) = **+0.088pp/yr** (bar ≥ −0.10pp): PASS. |Δ| < 0.25pp: **keep the icw5_seas weights** (no re-derivation).
 - Sharadar ACTIONS recall (±1 trading day, 242 applied CRSP events) = **83.5%** < 90%: the forward source is not
   good enough on its own. Gap named below.
@@ -55,23 +56,35 @@ number or ACTIONS recall. Trial count 0. No hold-out read, no 2020+ outcome, no 
   Misses are spread across years (1-5 a year); examples PDE 2009, FWONA 2014/2016, DELL 2018, JEF 2019, AIG 2011,
   RIG 2007, PPL 2015.
 - Precision (±1 day) 88.0%: 213 of 242 ACTIONS parent rows on grid tickers match a CRSP 3xxx record. Unmatched ones
-  include DD 2019-06-03, GE 2019-02-26, LEN 2017-12-06, HWM 2016-11-01: mostly real spins whose CRSP record was
-  unmapped or carried another code, so true precision is likely higher.
+  include DD 2019-06-03, GE 2019-02-26, LEN 2017-12-06, HWM 2016-11-01. Whether these are real spins with an
+  unmapped CRSP record was not checked.
 - The 3 WO-54 early-drop misses: TWX 2014-06-09 and NEBLQ 2014-08-04 are in ACTIONS (on the CRSP ex-date, 1 trading
   day after Sharadar's drop); SWY 2014-04-15 is absent. The CRSP ±1 variant (V1) catches all 3 (Sharadar drops
   2014-04-14, 2014-06-06, 2014-08-01) and adds +0.001pp.
 - m from ACTIONS (descriptive): `ratio × spinco close` on exdt reproduces CRSP m almost exactly where both legs exist
-  (median |Δ ln m| 4e-7; 186 events), so ACTIONS + Sharadar prices can supply m going forward; the
-  `spinoffdividend` value is looser (median 0.8%).
+  (median |Δ ln m| 4e-7; 186 events), but only 72.6% land within 2%, so it needs a guard; the
+  `spinoffdividend` value is looser (median 0.8%, 67.2% within 2%).
 
 ## Forward source gap (for Gabe / COO)
 
-ACTIONS alone misses about 1 in 6 material spins. Options: (a) ACTIONS + a price-gap detector (a one-day close
+ACTIONS alone misses 40 of the 242 CRSP events that move Sharadar `close` by >= 2% (median |ln m| of the misses
+9.4%). Post-hoc classification (not judged): all 40 are CRSP distcd 37xx/38xx (spin-offs and similar distributions
+of another issue: 3763 x15, 3753 x12, 385x/386x x10, 3265/3285 x2, e.g. RIG 2007 3265, DELL 2018 3285 Class V); 14
+have an ACTIONS spin row for some other symbol on the same day (possible symbol mismatch, not verified); 26 have no
+ACTIONS spin row that day at all. So ACTIONS under-covers these distributions, and a price-gap detector is needed
+whatever the cause. Options: (a) ACTIONS + a price-gap detector (a one-day close
 drop with a `spunofffrom`/listed child, or any |ln| gap ≥ 2% vs `closeadj`) to flag candidates; (b) CRSP once a
 year to backfill (≈1-year lag); (c) accept the gap: the whole correction is worth +0.09pp/yr, so a 17% miss costs
 about 0.015pp/yr.
 
 ## Live adoption (not done; Gabe's call)
+
+**Deploy coupling:** `refresh_working_panel.py` now imports `spin_adjust_ohlc` from `build_outcome_cache.py` and
+calls `features_for` with a third argument, even with the flag off. These three files (plus
+`build_features_sharadar.py`, `quality_factors.py`, `build_beta_feature.py`, `spinfix/adjust.py`) must go to live
+together. Deploying `refresh_working_panel.py` alone, as WO-47 deployed `build_features_sharadar.py` alone, would
+break the live refresh with ImportError/TypeError. The `--spinfix` refresh path was not run end to end here, only
+the functions it calls.
 
 The hook rewrites historical rows, so `refresh_working_panel`'s old-row compare would fail on them. Adoption needs
 a full rebuild of the working panel/outcome cache/seas with `--spinfix` (or a carve-out in the compare), plus a
