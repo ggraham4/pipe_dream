@@ -1,0 +1,155 @@
+{
+ "stage": 1,
+ "label_mode": "real",
+ "window": [
+  "2008-01-02",
+  "2018-12-19"
+ ],
+ "holdout_read": "none (2008-2018 in era)",
+ "load_info": {
+  "stage": 1,
+  "dates": 133,
+  "thin_name_dates": 240454,
+  "thin_with_kept_chain_share": 0.8028063579728347,
+  "thin_with_signal_share": 0.7432481888427724,
+  "book_pool_name_dates": 240372,
+  "book_pool_share_of_thin": 0.9996589784324652,
+  "col_c_blank_check_rows_dropped": 483,
+  "seas_coverage_in_book_pool": 0.7494466909623417,
+  "bottom_flags_in_pool": 17867,
+  "bottom_flags_in_book_pool": 17861
+ },
+ "n_dates_book": [
+  133,
+  133
+ ],
+ "cost_bps": 15.0,
+ "units": "fractions per year (x100 for %/yr)",
+ "base": {
+  "net_minus_spy_ann": -0.004425486478855692,
+  "per_offset": [
+   -0.009372274229327694,
+   0.0005213012716163095
+  ],
+  "gross_minus_spy_ann": -4.9792896817904986e-05,
+  "turnover_f_new": 0.4632145059882784
+ },
+ "variant": {
+  "net_minus_spy_ann": -0.007780435309587441,
+  "per_offset": [
+   -0.014041246597008712,
+   -0.0015196240221661706
+  ],
+  "gross_minus_spy_ann": -0.003219417375030944,
+  "turnover_f_new": 0.483145973244567
+ },
+ "delta": {
+  "delta": -0.00335494883073175,
+  "delta_per_offset": [
+   -0.00466897236768102,
+   -0.00204092529378248
+  ],
+  "delta_gross": -0.003169624478213039,
+  "loyo": {
+   "2008": -0.005010888713094474,
+   "2009": -0.0017059093381293841,
+   "2010": -0.0029016056739329717,
+   "2011": -0.003892705055301232,
+   "2012": -0.0016385650386326618,
+   "2013": -0.002903321291838058,
+   "2014": -0.0018607589214093365,
+   "2015": -0.004684741524305087,
+   "2016": -0.003685478275859624,
+   "2017": -0.0038272109290207685,
+   "2018": -0.004810198731064323
+  },
+  "loyo_min": -0.005010888713094474,
+  "loyo_min_year_dropped": 2008,
+  "year_share": {},
+  "max_year_share": null,
+  "delta_by_year_DESCRIPTIVE": {
+   "2008": 0.011829571349774226,
+   "2009": -0.01990224718144539,
+   "2010": -0.007902429710106997,
+   "2011": 0.0020502619756781913,
+   "2012": -0.02067974052604544,
+   "2013": -0.007899665096241404,
+   "2014": -0.018291225331030433,
+   "2015": 0.009932258129511384,
+   "2016": -0.00010158530702906455,
+   "2017": 0.0013449978102729769,
+   "2018": 0.011340488105491434
+  },
+  "halves_DESCRIPTIVE": {
+   "odd_years": -0.002894878872444848,
+   "even_years": -0.003763369712787599
+  },
+  "n_dates_per_offset": [
+   67,
+   66
+  ]
+ },
+ "null": {
+  "n_draws": 3,
+  "seed": 20261010,
+  "p50": 0.0006289505744578139,
+  "p80": 0.002472843353145667,
+  "draws": [
+   0.0006289505744578139,
+   0.003702105205604235,
+   0.0003143967157316902
+  ]
+ },
+ "criteria": {
+  "delta_gt_0": false,
+  "delta_gt_null_p80": false,
+  "both_offsets_gt_0": false,
+  "loyo_min_gt_0": false,
+  "max_year_share_le_0.45": false
+ },
+ "kill": {
+  "delta_le_0": true,
+  "delta_le_null_p50": true,
+  "offsets_opposite_sign": false
+ },
+ "verdict": "KILL",
+ "DESCRIPTIVE": {
+  "stress_50bp": {
+   "base": -0.014623296290609808,
+   "variant": -0.01840966167589267,
+   "delta": -0.003786365385282861,
+   "delta_per_offset": [
+    -0.005091027912363699,
+    -0.0024817028582020226
+   ]
+  },
+  "ew_thin_pool": {
+   "gross_minus_spy_ann": -6.391058093715581e-18,
+   "per_offset": [
+    -1.3093896809649673e-17,
+    3.1178062221851104e-19
+   ]
+  },
+  "base_minus_ew_pool_gross": -4.9792896817898596e-05,
+  "variant_minus_ew_pool_gross": -0.0032194173750309373,
+  "capacity_base": {
+   "median_names_held": 175.0,
+   "mean_position_usd": 565.0437590279548,
+   "median_dv20_usd_of_held": 3874204.0,
+   "mean_position_over_dv20": 0.0003106029443400293,
+   "p95_position_over_dv20": 0.0012071937907374636,
+   "share_dv20_missing": 0.0
+  },
+  "capacity_variant": {
+   "median_names_held": 160.0,
+   "mean_position_usd": 609.588413236777,
+   "median_dv20_usd_of_held": 3850276.75,
+   "mean_position_over_dv20": 0.00033831543505496856,
+   "p95_position_over_dv20": 0.001324561112206087,
+   "share_dv20_missing": 0.0
+  },
+  "base_weight_in_bottom_decile": 0.05396940006146459,
+  "median_names_removed": 134.0
+ },
+ "runtime_s": 80.33320999145508
+}

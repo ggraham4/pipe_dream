@@ -1,0 +1,7 @@
+[17:42:48]   null 20/100
+[17:42:51]   null 40/100
+[17:42:54]   null 60/100
+[17:42:57]   null 80/100
+[17:43:00]   null 100/100
+[17:44:20] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a60e155e0b0001fc0/final/out/cwbook/stage1_result.json
+[17:44:20] stage 1: delta +0.504%/yr offsets [0.585, 0.423] null p50 -0.153 p80 +0.038 LOYO min +0.385 -> PASS

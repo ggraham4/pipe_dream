@@ -1,0 +1,16 @@
+{
+ "wo52_thin_M_pct": {
+  "got": 2.7394,
+  "ref": 2.7394,
+  "n_dates": 133,
+  "abs_err_fraction": 0.0,
+  "pass": true
+ },
+ "wo36_base_excess_ann": {
+  "got": 0.053650011496056194,
+  "ref": 0.053650011496056194,
+  "abs_err": 0.0,
+  "pass": true
+ },
+ "pass": true
+}
