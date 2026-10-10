@@ -1,0 +1,158 @@
+{
+ "prereg": "final/models/2026-10-10-short-book-prereg.md (sha256 33fd448c...; commit c8f32d1)",
+ "tiers": {
+  "cap2000": {
+   "M": 0.04503114090782431,
+   "null": {
+    "n": 200,
+    "p50": -0.021194488837100674,
+    "p80": -0.020139267019431254,
+    "p95": -0.019179235789950056,
+    "mean": -0.02119699809343996,
+    "sd": 0.0012151031185880083,
+    "max": -0.018327216840232162
+   },
+   "B3": 0.015031140907824314,
+   "offsets_pos": 40,
+   "loyo_min": 0.03741342585813275,
+   "loyo_min_year": 2008,
+   "max_year_share": 0.23447244835882985,
+   "max_share_year": 2008,
+   "S6a": 0.02082744017916241,
+   "S6b_H2": 0.06055409885302102,
+   "S6c": 0.031897370154002305,
+   "S7_5": 0.047226198636309544,
+   "S7_20": 0.039245764885028234,
+   "H3": 0.05083655104334901,
+   "no_fee": 0.04885205139573393,
+   "cap2x": 0.04571709373211367
+  },
+  "cap150": {
+   "M": 0.06760303710024768,
+   "null": {
+    "n": 200,
+    "p50": -0.01428481584879306,
+    "p80": -0.013510092932315362,
+    "p95": -0.012807992541020222,
+    "mean": -0.014248146209705324,
+    "sd": 0.0008796090766681082,
+    "max": -0.01168827696071251
+   },
+   "B3": 0.03760303710024768,
+   "offsets_pos": 40,
+   "loyo_min": 0.05630680739339109,
+   "loyo_min_year": 2009,
+   "max_year_share": 0.23189742999965246,
+   "max_share_year": 2009,
+   "S6a": 0.062397489512062046,
+   "S6b_H2": 0.08093724416506624,
+   "S6c": 0.03293835242922698,
+   "S7_5": 0.06812206009822377,
+   "S7_20": 0.05517666793451104,
+   "H3": 0.07283153283990326,
+   "no_fee": 0.07144623317428092,
+   "cap2x": 0.07184613859476938
+  }
+ },
+ "gate_A": {
+  "A1": {
+   "si_available_eq_settlement_plus_8bd": true,
+   "si_attach": "merge_asof(direction=backward) on available <= date, 45d staleness (build_si.attach)",
+   "seas": "seas_live.seas_asof asserts last used month ends < t; A5 shows ext == seas_live exactly",
+   "panel_factors": "composite_panel_v2 PIT columns (live scorer reads the same columns)",
+   "pass": true
+  },
+  "A2": {
+   "book_trunc_share": 0.00584882293452455,
+   "universe_trunc_share": 0.006697780803209241,
+   "book_label_nan": 0,
+   "dropped_nan_labels": 0,
+   "book_later_delisted_by_2019_share": 0.19735112947449826,
+   "universe_later_delisted_by_2019_share": 0.19297293594576487,
+   "pass": true
+  },
+  "A3": {
+   "null_p50": -0.021194488837100674,
+   "pass": true
+  },
+  "A4": {
+   "n_checked": 40,
+   "n_ok": 40,
+   "pass": true
+  },
+  "A5": {
+   "max_abs_score_diff": 0.0,
+   "min_overlap": 1.0,
+   "pass": true
+  }
+ },
+ "success": {
+  "S1": {
+   "value": 0.04503114090782431,
+   "pass": true
+  },
+  "S2": {
+   "value": 0.015031140907824314,
+   "pass": true
+  },
+  "S3": {
+   "value": [
+    0.04503114090782431,
+    -0.019179235789950056
+   ],
+   "pass": true
+  },
+  "S4": {
+   "value": 40,
+   "pass": true
+  },
+  "S5": {
+   "value": [
+    0.03741342585813275,
+    0.23447244835882985
+   ],
+   "pass": true
+  },
+  "S6": {
+   "value": [
+    0.02082744017916241,
+    0.06055409885302102,
+    0.031897370154002305
+   ],
+   "pass": true
+  },
+  "S7": {
+   "value": [
+    0.047226198636309544,
+    0.039245764885028234
+   ],
+   "pass": true
+  },
+  "S8": {
+   "value": null,
+   "pass": true
+  }
+ },
+ "kill": {
+  "K1": {
+   "value": 0.04503114090782431,
+   "fires": false
+  },
+  "K2": {
+   "value": 0.031897370154002305,
+   "fires": false
+  },
+  "K3": {
+   "value": [
+    0.04503114090782431,
+    -0.020139267019431254
+   ],
+   "fires": false
+  },
+  "K4": {
+   "value": 0.03741342585813275,
+   "fires": false
+  }
+ },
+ "verdict": "PROMOTE-CANDIDATE"
+}
