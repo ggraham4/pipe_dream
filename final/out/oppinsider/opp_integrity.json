@@ -1,0 +1,314 @@
+{
+ "work_order": "WO-49",
+ "prereg": "final/models/2026-10-08-opportunistic-insiders.md",
+ "note": "factor build + integrity only; no label or return read",
+ "events_rows": 1456667,
+ "od_P_events": 326004,
+ "invalid_trans_date_events": 978,
+ "class_by_filing_year": {
+  "2006": {
+   "unclassifiable": 18121,
+   "invalid": 669
+  },
+  "2007": {
+   "unclassifiable": 24300,
+   "invalid": 106
+  },
+  "2008": {
+   "unclassifiable": 29790,
+   "invalid": 56
+  },
+  "2009": {
+   "unclassifiable": 15325,
+   "opportunistic": 4055,
+   "routine": 1124,
+   "invalid": 36
+  },
+  "2010": {
+   "unclassifiable": 10098,
+   "opportunistic": 4964,
+   "routine": 1117,
+   "invalid": 28
+  },
+  "2011": {
+   "unclassifiable": 10943,
+   "opportunistic": 6514,
+   "routine": 1200,
+   "invalid": 21
+  },
+  "2012": {
+   "unclassifiable": 8813,
+   "opportunistic": 6023,
+   "routine": 1258,
+   "invalid": 16
+  },
+  "2013": {
+   "unclassifiable": 8305,
+   "opportunistic": 4281,
+   "routine": 1098,
+   "invalid": 6
+  },
+  "2014": {
+   "unclassifiable": 8894,
+   "opportunistic": 4712,
+   "routine": 1164,
+   "invalid": 9
+  },
+  "2015": {
+   "unclassifiable": 10220,
+   "opportunistic": 5699,
+   "routine": 1293,
+   "invalid": 8
+  },
+  "2016": {
+   "unclassifiable": 8695,
+   "opportunistic": 4912,
+   "routine": 1234,
+   "invalid": 3
+  },
+  "2017": {
+   "unclassifiable": 7149,
+   "opportunistic": 4338,
+   "routine": 1133
+  },
+  "2018": {
+   "unclassifiable": 8240,
+   "opportunistic": 4865,
+   "routine": 1060,
+   "invalid": 3
+  },
+  "2019": {
+   "unclassifiable": 7739,
+   "opportunistic": 4826,
+   "routine": 990
+  }
+ },
+ "pit_brute_force": {
+  "rows_checked": 3000,
+  "mismatches": 0,
+  "rule": "count distinct owners with opportunistic filing f, t-90d <= f < t"
+ },
+ "pit_history_rule": "history = same (issuer, owner) valid events with filing_date < event filing_date",
+ "cap150_fire": {
+  "added": {
+   "rows": 2988770,
+   "nonnull": 1.0,
+   "opp_fire": 0.07714812447930085,
+   "ins_fire": 0.24157797354764668
+  },
+  "old": {
+   "rows": 6769812,
+   "nonnull": 1.0,
+   "opp_fire": 0.0561220902441604,
+   "ins_fire": 0.19660501650562823
+  }
+ },
+ "cap150_opp_fire_by_year": {
+  "2007": 0.0,
+  "2008": 0.0,
+  "2009": 0.040986035058956094,
+  "2010": 0.059583339143530464,
+  "2011": 0.08972048202801423,
+  "2012": 0.07863129305456266,
+  "2013": 0.06673651505720235,
+  "2014": 0.06864354068778429,
+  "2015": 0.08642580710224766,
+  "2016": 0.07895667644194095,
+  "2017": 0.07093012950180384,
+  "2018": 0.08047948073432083,
+  "2019": 0.09427371987502635
+ },
+ "hand_check_candidates": [
+  {
+   "ticker": "EBTBQ",
+   "owner_cik": "1409017",
+   "filing_date": "2013-05-10",
+   "value": "714286000000.0"
+  },
+  {
+   "ticker": "JAXB",
+   "owner_cik": "1091449",
+   "filing_date": "2013-01-03",
+   "value": "533425900000.0"
+  },
+  {
+   "ticker": "TORM",
+   "owner_cik": "1268229",
+   "filing_date": "2012-05-03",
+   "value": "97279392065.0"
+  },
+  {
+   "ticker": "TORM",
+   "owner_cik": "1268223",
+   "filing_date": "2012-05-03",
+   "value": "23585000000.0"
+  },
+  {
+   "ticker": "TORM",
+   "owner_cik": "1268224",
+   "filing_date": "2012-05-03",
+   "value": "23585000000.0"
+  },
+  {
+   "ticker": "ECCB",
+   "owner_cik": "1617694",
+   "filing_date": "2018-05-24",
+   "value": "2475000000.0"
+  },
+  {
+   "ticker": "FMI",
+   "owner_cik": "889131",
+   "filing_date": "2018-08-02",
+   "value": "2222280699.0"
+  },
+  {
+   "ticker": "FMI",
+   "owner_cik": "904566",
+   "filing_date": "2018-08-02",
+   "value": "2222280699.0"
+  },
+  {
+   "ticker": "FMI",
+   "owner_cik": "1053942",
+   "filing_date": "2018-08-02",
+   "value": "2222280699.0"
+  },
+  {
+   "ticker": "CIVBP",
+   "owner_cik": "1193469",
+   "filing_date": "2013-12-20",
+   "value": "2025000000.0"
+  },
+  {
+   "ticker": "CIVBP",
+   "owner_cik": "1490056",
+   "filing_date": "2013-12-20",
+   "value": "1100000000.0"
+  },
+  {
+   "ticker": "TORM",
+   "owner_cik": "1184548",
+   "filing_date": "2012-05-03",
+   "value": "974267340.0"
+  },
+  {
+   "ticker": "TORM",
+   "owner_cik": "1184548",
+   "filing_date": "2012-11-06",
+   "value": "943400000.0"
+  },
+  {
+   "ticker": "IBAL",
+   "owner_cik": "1319171",
+   "filing_date": "2015-11-10",
+   "value": "864900000.0"
+  },
+  {
+   "ticker": "BOCH",
+   "owner_cik": "1245358",
+   "filing_date": "2011-08-03",
+   "value": "802915000.0"
+  }
+ ],
+ "hand_check": [
+  {
+   "ticker": "JPM",
+   "issuer_cik": 19617,
+   "owner_cik": 1195345,
+   "owner": [
+    {
+     "RPTOWNERNAME": "DIMON JAMES",
+     "RPTOWNER_TITLE": "Chairman & CEO"
+    }
+   ],
+   "accession": "0001225208-16-026145",
+   "filing_date": "2016-02-11",
+   "trans_date": "2016-02-11",
+   "value_usd": 26590400.0,
+   "class": "opportunistic",
+   "prior_purchase_months": [
+    "2007-09",
+    "2008-10",
+    "2009-01",
+    "2012-07",
+    "2015-10"
+   ],
+   "factor_on_and_before_filing_date": {
+    "2016-02-09": 1.0,
+    "2016-02-10": 1.0,
+    "2016-02-11": 1.0
+   },
+   "factor_after_filing_date": {
+    "2016-02-12": 2.0,
+    "2016-02-16": 2.0
+   },
+   "steps_up_day_after": true
+  },
+  {
+   "ticker": "GE",
+   "issuer_cik": 40545,
+   "owner_cik": 1466308,
+   "owner": [
+    {
+     "RPTOWNERNAME": "Beattie William G",
+     "RPTOWNER_TITLE": ""
+    }
+   ],
+   "accession": "0001231205-15-000023",
+   "filing_date": "2015-02-19",
+   "trans_date": "2015-02-18",
+   "value_usd": 10096000.0,
+   "class": "opportunistic",
+   "prior_purchase_months": [
+    "2011-05",
+    "2013-04",
+    "2013-11",
+    "2014-01",
+    "2014-07"
+   ],
+   "factor_on_and_before_filing_date": {
+    "2015-02-17": 0.0,
+    "2015-02-18": 0.0,
+    "2015-02-19": 0.0
+   },
+   "factor_after_filing_date": {
+    "2015-02-20": 1.0,
+    "2015-02-23": 1.0
+   },
+   "steps_up_day_after": true
+  },
+  {
+   "ticker": "KO",
+   "issuer_cik": 21344,
+   "owner_cik": 927067,
+   "owner": [
+    {
+     "RPTOWNERNAME": "DILLER BARRY",
+     "RPTOWNER_TITLE": ""
+    }
+   ],
+   "accession": "0001127602-12-015140",
+   "filing_date": "2012-05-01",
+   "trans_date": "2012-04-27",
+   "value_usd": 20322720.0,
+   "class": "opportunistic",
+   "prior_purchase_months": [
+    "2009-03",
+    "2009-10",
+    "2010-11",
+    "2011-02",
+    "2011-11"
+   ],
+   "factor_on_and_before_filing_date": {
+    "2012-04-27": 0.0,
+    "2012-04-30": 0.0,
+    "2012-05-01": 0.0
+   },
+   "factor_after_filing_date": {
+    "2012-05-02": 1.0,
+    "2012-05-03": 1.0
+   },
+   "steps_up_day_after": true
+  }
+ ]
+}
