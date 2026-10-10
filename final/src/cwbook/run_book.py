@@ -23,7 +23,7 @@ import cb_core as B
 K, RX, T = B.K, B.RX, B.T
 REPO = B.FINAL.parent
 DOC = "final/models/2026-10-10-cwspread-downcap-book.md"
-DOC_SHA = "SET_AFTER_FREEZE"
+DOC_SHA = "0f4d5fb63e9d53ba719cbb37eb0b901cc71b6ba8e8d1066d667d6ac0e57c92a3"
 RESULTS_DOC = "final/models/2026-10-10-cwspread-downcap-book-results.md"
 OUT = B.OUT
 N_DRAWS = 100
