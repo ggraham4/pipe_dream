@@ -1,0 +1,134 @@
+{
+ "verdict": "KILL",
+ "gates": {
+  "g1_pooled_t": false,
+  "g2_halves": false,
+  "g3_sector_both_sides": false,
+  "g4_offsets": false,
+  "g5_loyo": false,
+  "g6_book": false,
+  "g7_gateA": true
+ }
+}
+{
+ "g1_pooled_ic": {
+  "mean": -0.002163964625294196,
+  "t": -0.8184358375278901,
+  "n": 2766,
+  "n_dates": 2766
+ },
+ "bar": 2.58,
+ "g2_odd": {
+  "mean": -0.008192207301040687,
+  "t": -2.3325219714347103,
+  "n": 1509
+ },
+ "g2_even": {
+  "mean": 0.0050728040284062454,
+  "t": 1.3807326004521976,
+  "n": 1257
+ },
+ "g3_sector_both_sides": {
+  "mean": -0.006585329125685333,
+  "t": -3.441739015549617,
+  "n": 2766
+ },
+ "g3_factor_only_not_gated": {
+  "mean": 0.016474803731013104,
+  "t": 2.520579883965797,
+  "n": 2766
+ },
+ "g4_offset_flips": 2,
+ "g4_offset_min_max": [
+  -0.004103262753834193,
+  0.0004529723835371046
+ ],
+ "g5_max_year_share": 0.8772414318172104,
+ "g5_max_year": 2017,
+ "g5_loyo_min_t": -1.5592168814187803,
+ "g5_total_sum_ic": -5.985526153563747,
+ "g6_paired_inc": -9.446430860713187e-05,
+ "g6_offsets_pos": 18,
+ "g6_null_p80": -0.00014245204196319252,
+ "g6_null": {
+  "n": 100,
+  "p50": -0.00021036682879443746,
+  "p95": -9.377034775469116e-05,
+  "mean": -0.00021138324244729913,
+  "sd": 7.460903762402059e-05,
+  "pct_below_real": 0.95
+ },
+ "g6_base_sd40_not_bar": 0.002364000977594327,
+ "g6_w_opp": 0.01096456424653388,
+ "g7_placebo_t": 0.35740942921482194,
+ "g7_pit_brute_force": {
+  "rows_checked": 3000,
+  "mismatches": 0,
+  "rule": "count distinct owners with opportunistic filing f, t-90d <= f < t"
+ },
+ "g7_hand_check": [
+  {
+   "ticker": "JPM",
+   "owner": [
+    {
+     "RPTOWNERNAME": "DIMON JAMES",
+     "RPTOWNER_TITLE": "Chairman & CEO"
+    }
+   ],
+   "filing_date": "2016-02-11",
+   "class": "opportunistic",
+   "steps_up_day_after": true,
+   "factor_on_and_before_filing_date": {
+    "2016-02-09": 1.0,
+    "2016-02-10": 1.0,
+    "2016-02-11": 1.0
+   },
+   "factor_after_filing_date": {
+    "2016-02-12": 2.0,
+    "2016-02-16": 2.0
+   }
+  },
+  {
+   "ticker": "GE",
+   "owner": [
+    {
+     "RPTOWNERNAME": "Beattie William G",
+     "RPTOWNER_TITLE": ""
+    }
+   ],
+   "filing_date": "2015-02-19",
+   "class": "opportunistic",
+   "steps_up_day_after": true,
+   "factor_on_and_before_filing_date": {
+    "2015-02-17": 0.0,
+    "2015-02-18": 0.0,
+    "2015-02-19": 0.0
+   },
+   "factor_after_filing_date": {
+    "2015-02-20": 1.0,
+    "2015-02-23": 1.0
+   }
+  },
+  {
+   "ticker": "KO",
+   "owner": [
+    {
+     "RPTOWNERNAME": "DILLER BARRY",
+     "RPTOWNER_TITLE": ""
+    }
+   ],
+   "filing_date": "2012-05-01",
+   "class": "opportunistic",
+   "steps_up_day_after": true,
+   "factor_on_and_before_filing_date": {
+    "2012-04-27": 0.0,
+    "2012-04-30": 0.0,
+    "2012-05-01": 0.0
+   },
+   "factor_after_filing_date": {
+    "2012-05-02": 1.0,
+    "2012-05-03": 1.0
+   }
+  }
+ ]
+}

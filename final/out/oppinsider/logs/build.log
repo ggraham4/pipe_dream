@@ -1,0 +1,4 @@
+[19:40:11] classified 326,004 O/D P events; invalid 978
+[19:40:21] features: 13,253,466 rows (12s)
+[19:40:28] fire: {'added': {'rows': 2988770, 'nonnull': 1.0, 'opp_fire': 0.07714812447930085, 'ins_fire': 0.24157797354764668}, 'old': {'rows': 6769812, 'nonnull': 1.0, 'opp_fire': 0.0561220902441604, 'ins_fire': 0.19660501650562823}}
+[19:40:28] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-a247a7a914a6d6c91/final/out/oppinsider/opp_integrity.json (18s)

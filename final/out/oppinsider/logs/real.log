@@ -1,0 +1,9 @@
+[17:49:32] [A] cap150: 9,756,141 rows, 6,508 tickers, 3272 dates 2007-01-03..2019-12-31
+[17:50:02] [A] loaded 9,756,141 rows, 3272 dates 2007-01-03..2019-12-31
+[17:50:03] factor merged: non-null 100.0000%, fire 6.2572%
+[17:50:09] [A] base reconcile OK +0.0348652 (ref 0.0348652); fast picker == picks_w on 3272 dates
+[17:50:11] icw5_seas reconcile OK +0.036442521 (ref 0.036442521084825354)
+[17:50:25] IC t -0.818 mean -0.00216 n_dates 2766; gates {'g1_pooled_t': False, 'g2_halves': False, 'g3_sector_both_sides': False, 'g4_offsets': False, 'g5_loyo': False}
+[17:50:46] placebo t +0.357
+[17:50:51] secondary added: t +4.006; gates {'g1_pooled_t': True, 'g2_halves': True, 'g3_sector_both_sides': False, 'g4_offsets': True, 'g5_loyo': True}
+[17:50:54] book: w_opp 0.01096; icw6-icw5 -0.0094 pp/yr, 18/40 offsets > 0 (base sd40 0.2364)
