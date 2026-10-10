@@ -1,0 +1,4 @@
+[12:37:10] [A] cap2000: 3,802,861 rows, 2,789 tickers, 3272 dates 2007-01-03..2019-12-31
+[12:37:11] factor merged: finite 98.1686%
+[12:37:37] cap2000 IC t -1.658 mean -0.00882; resid t -2.172; gates {'g1_pooled_t': False, 'g2_halves': True, 'g3_sector_both_sides': True, 'g4_offsets': True, 'g5_loyo': False, 'g6_resid_mom': True}
+[12:48:28] D-NWT null t sd 1.127

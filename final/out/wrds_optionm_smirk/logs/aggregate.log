@@ -1,0 +1,13 @@
+{
+ "verdict": "KILL",
+ "gates": {
+  "g1_pooled_t": false,
+  "g2_halves": true,
+  "g3_sector_both_sides": true,
+  "g4_offsets": true,
+  "g5_loyo": false,
+  "g6_resid_mom": true,
+  "g7_book": true,
+  "gate_A_integrity": true
+ }
+}
