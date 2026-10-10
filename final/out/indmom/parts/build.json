@@ -1,0 +1,30 @@
+{
+ "work_order": "WO-50",
+ "prereg_sha256": "c686ad7e9f29b1d26491de2ef6d9865c25ca5804c3412085c79100fb3f28cc16",
+ "tickers_master_sha256": "dc115f04c13406e7cb8b38c5a62394a134f8654b6f16ce112b23e524c3e4250f",
+ "cache": "out/indmom/cache/indmom_factor.parquet",
+ "cache_sha256": "d4c4dc1b19735673547708f761fa5f1648b5eeb078df421ec4bc6c2bd2fb7787",
+ "descriptive": {
+  "cap2000_rows": 3802861,
+  "cap2000_tickers": 2789,
+  "tickers_in_master": 2789,
+  "industry_missing_row_share": 9.624332837829203e-05,
+  "sector_missing_row_share": 9.624332837829203e-05,
+  "panel_vs_master_sector_agree": 1.0,
+  "rows_in_industry_group_lt5_all_rows": 0.10506063724127702,
+  "finite_mom_share": 0.9731147154734291,
+  "level_share_finite_mom": {
+   "industry": 0.8896411952591727,
+   "sector": 0.11025990239473385,
+   "nan": 9.890234609335732e-05
+  },
+  "factor_finite_share": 0.9730184721450508,
+  "label_change_share_between_snapshots": 0.0,
+  "n_common_tickers_snapshots": 20964,
+  "median_group_n_industry": 15.0,
+  "n_dates": 3272,
+  "date_min": "2007-01-03",
+  "date_max": "2019-12-31"
+ },
+ "runtime_s": 11.483365774154663
+}
