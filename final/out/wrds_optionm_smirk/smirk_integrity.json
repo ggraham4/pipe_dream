@@ -1,0 +1,84 @@
+{
+ "hand_check": [
+  {
+   "ticker": "AAPL",
+   "date": "2012-06-15",
+   "build": 0.03290599999999999,
+   "recompute": 0.03290599999999999,
+   "match": true,
+   "s": "2012-06-14",
+   "permno": 14593,
+   "secid": 101594,
+   "iv_put20": 0.304513,
+   "iv_call50": 0.271607
+  },
+  {
+   "ticker": "MSFT",
+   "date": "2015-06-15",
+   "build": 0.006605,
+   "recompute": 0.006605,
+   "match": true,
+   "s": "2015-06-12",
+   "permno": 10107,
+   "secid": 107525,
+   "iv_put20": 0.213651,
+   "iv_call50": 0.207046
+  },
+  {
+   "ticker": "LEHMQ",
+   "date": "2008-06-16",
+   "build": 0.3523869999999999,
+   "recompute": 0.3523869999999999,
+   "match": true,
+   "s": "2008-06-13",
+   "permno": 80599,
+   "secid": 106893,
+   "iv_put20": 1.322191,
+   "iv_call50": 0.969804
+  },
+  {
+   "ticker": "WAMUQ",
+   "date": "2008-06-16",
+   "build": 0.38541000000000003,
+   "recompute": 0.38541000000000003,
+   "match": true,
+   "s": "2008-06-13",
+   "permno": 81593,
+   "secid": 111884,
+   "iv_put20": 1.562264,
+   "iv_call50": 1.176854
+  },
+  {
+   "ticker": "AAPL",
+   "date": "2007-01-03",
+   "build": 0.007832000000000006,
+   "recompute": 0.007832000000000006,
+   "match": true,
+   "s": "2006-12-29",
+   "permno": 14593,
+   "secid": 101594,
+   "iv_put20": 0.470237,
+   "iv_call50": 0.462405
+  },
+  {
+   "ticker": "XOM",
+   "date": "2019-12-31",
+   "build": 0.04312000000000002,
+   "recompute": 0.04312000000000002,
+   "match": true,
+   "s": "2019-12-30",
+   "permno": 11850,
+   "secid": 104533,
+   "iv_put20": 0.230164,
+   "iv_call50": 0.187044
+  }
+ ],
+ "brute_force_100": {
+  "seed": 56,
+  "mismatches": 0
+ },
+ "brute_force_100_nan_rows": {
+  "seed": 56,
+  "mismatches": 0
+ }
+}

@@ -1,0 +1,7 @@
+[12:47:47] [A] cap150: 9,756,141 rows, 6,508 tickers, 3272 dates 2007-01-03..2019-12-31
+[12:49:16] [A] loaded 9,756,141 rows, 3272 dates 2007-01-03..2019-12-31
+[12:49:19] factor merged: finite 85.7467%
+[12:49:51] [A] base reconcile OK +0.0348652 (ref 0.0348652); fast picker == picks_w on 3272 dates
+[12:49:56] icw5_seas reconcile OK +0.036442521 (ref 0.036442521084825354)
+[12:52:11] cap150 IC t -2.991 (descriptive; sets the book weight)
+[12:52:16] book: w_smirk -0.21826; icw6-icw5 +0.1703 pp/yr, 29/40 > 0
