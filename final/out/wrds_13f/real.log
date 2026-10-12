@@ -1,0 +1,7 @@
+[18:00:41] [A] cap150: 9,756,141 rows, 6,508 tickers, 3272 dates 2007-01-03..2019-12-31
+[18:01:39] [A] loaded 9,756,141 rows, 3272 dates 2007-01-03..2019-12-31
+[18:01:45] factor merged: finite 84.7124%
+[18:01:58] [A] base reconcile OK +0.0348652 (ref 0.0348652); fast picker == picks_w on 3272 dates
+[18:02:01] icw5_seas reconcile OK +0.036442521 (ref 0.036442521084825354)
+[18:03:14] IC t +1.072 mean +0.00743; resid t +1.550; gates {'g1_pooled_t': False, 'g2_halves': True, 'g3_sector_both_sides': True, 'g4_offsets': True, 'g5_loyo': True, 'g6_resid_mom': True}
+[18:04:11] book: w_dbreadth 0.01096; icw6-icw5 -0.0165 pp/yr, 19/40 > 0

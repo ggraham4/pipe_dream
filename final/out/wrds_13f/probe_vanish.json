@@ -1,0 +1,394 @@
+[
+ {
+  "q": "2006-03-31",
+  "vanish_ge10": 7,
+  "vanish_still_listed": 2,
+  "n": 6672,
+  "med_abs": 0.0012381345439537762
+ },
+ {
+  "q": "2006-06-30",
+  "vanish_ge10": 6,
+  "vanish_still_listed": 2,
+  "n": 6718,
+  "med_abs": 0.0012214983713355048
+ },
+ {
+  "q": "2006-09-30",
+  "vanish_ge10": 3,
+  "vanish_still_listed": 3,
+  "n": 6784,
+  "med_abs": 0.0012205044751830757
+ },
+ {
+  "q": "2006-12-31",
+  "vanish_ge10": 0,
+  "vanish_still_listed": 0,
+  "n": 6744,
+  "med_abs": 0.001218026796589525
+ },
+ {
+  "q": "2007-03-31",
+  "vanish_ge10": 2,
+  "vanish_still_listed": 0,
+  "n": 6798,
+  "med_abs": 0.0011329305135951663
+ },
+ {
+  "q": "2007-06-30",
+  "vanish_ge10": 7,
+  "vanish_still_listed": 7,
+  "n": 6829,
+  "med_abs": 0.0014875418371141688
+ },
+ {
+  "q": "2007-09-30",
+  "vanish_ge10": 2,
+  "vanish_still_listed": 2,
+  "n": 6868,
+  "med_abs": 0.0014776505356483192
+ },
+ {
+  "q": "2007-12-31",
+  "vanish_ge10": 6,
+  "vanish_still_listed": 4,
+  "n": 6852,
+  "med_abs": 0.0011185682326621924
+ },
+ {
+  "q": "2008-03-31",
+  "vanish_ge10": 14,
+  "vanish_still_listed": 14,
+  "n": 6930,
+  "med_abs": 0.001029512697323267
+ },
+ {
+  "q": "2008-06-30",
+  "vanish_ge10": 8,
+  "vanish_still_listed": 5,
+  "n": 6896,
+  "med_abs": 0.0013783597518952446
+ },
+ {
+  "q": "2008-09-30",
+  "vanish_ge10": 7,
+  "vanish_still_listed": 7,
+  "n": 6850,
+  "med_abs": 0.0010270455323519343
+ },
+ {
+  "q": "2008-12-31",
+  "vanish_ge10": 7,
+  "vanish_still_listed": 6,
+  "n": 6760,
+  "med_abs": 0.0013879250520471894
+ },
+ {
+  "q": "2009-03-31",
+  "vanish_ge10": 25,
+  "vanish_still_listed": 25,
+  "n": 6687,
+  "med_abs": 0.0010541110330288123
+ },
+ {
+  "q": "2009-06-30",
+  "vanish_ge10": 19,
+  "vanish_still_listed": 17,
+  "n": 6546,
+  "med_abs": 0.0010779734099892202
+ },
+ {
+  "q": "2009-09-30",
+  "vanish_ge10": 18,
+  "vanish_still_listed": 18,
+  "n": 6513,
+  "med_abs": 0.0010699001426533524
+ },
+ {
+  "q": "2009-12-31",
+  "vanish_ge10": 14,
+  "vanish_still_listed": 12,
+  "n": 6438,
+  "med_abs": 0.0010932944606413995
+ },
+ {
+  "q": "2010-03-31",
+  "vanish_ge10": 14,
+  "vanish_still_listed": 14,
+  "n": 6440,
+  "med_abs": 0.0010787486515641855
+ },
+ {
+  "q": "2010-06-30",
+  "vanish_ge10": 34,
+  "vanish_still_listed": 34,
+  "n": 6431,
+  "med_abs": 0.0010830324909747292
+ },
+ {
+  "q": "2010-09-30",
+  "vanish_ge10": 12,
+  "vanish_still_listed": 12,
+  "n": 6427,
+  "med_abs": 0.0010822510822510823
+ },
+ {
+  "q": "2010-12-31",
+  "vanish_ge10": 20,
+  "vanish_still_listed": 20,
+  "n": 6403,
+  "med_abs": 0.0010944910616563297
+ },
+ {
+  "q": "2011-03-31",
+  "vanish_ge10": 229,
+  "vanish_still_listed": 229,
+  "n": 6504,
+  "med_abs": 0.0016874789065136687
+ },
+ {
+  "q": "2011-06-30",
+  "vanish_ge10": 9,
+  "vanish_still_listed": 9,
+  "n": 6205,
+  "med_abs": 0.000970873786407767
+ },
+ {
+  "q": "2011-09-30",
+  "vanish_ge10": 6,
+  "vanish_still_listed": 6,
+  "n": 6247,
+  "med_abs": 0.0009765625
+ },
+ {
+  "q": "2011-12-31",
+  "vanish_ge10": 6,
+  "vanish_still_listed": 6,
+  "n": 6230,
+  "med_abs": 0.0009784735812133072
+ },
+ {
+  "q": "2012-03-31",
+  "vanish_ge10": 30,
+  "vanish_still_listed": 30,
+  "n": 6208,
+  "med_abs": 0.0009179926560587516
+ },
+ {
+  "q": "2012-06-30",
+  "vanish_ge10": 27,
+  "vanish_still_listed": 27,
+  "n": 6232,
+  "med_abs": 0.0009293680297397769
+ },
+ {
+  "q": "2012-09-30",
+  "vanish_ge10": 9,
+  "vanish_still_listed": 7,
+  "n": 6160,
+  "med_abs": 0.0009357454772301934
+ },
+ {
+  "q": "2012-12-31",
+  "vanish_ge10": 18,
+  "vanish_still_listed": 18,
+  "n": 6090,
+  "med_abs": 0.0009410288582183187
+ },
+ {
+  "q": "2013-03-31",
+  "vanish_ge10": 6,
+  "vanish_still_listed": 6,
+  "n": 6117,
+  "med_abs": 0.0008849557522123894
+ },
+ {
+  "q": "2013-06-30",
+  "vanish_ge10": 6,
+  "vanish_still_listed": 6,
+  "n": 6104,
+  "med_abs": 0.0008928571428571428
+ },
+ {
+  "q": "2013-09-30",
+  "vanish_ge10": 6,
+  "vanish_still_listed": 6,
+  "n": 6185,
+  "med_abs": 0.0011951000896325067
+ },
+ {
+  "q": "2013-12-31",
+  "vanish_ge10": 3,
+  "vanish_still_listed": 3,
+  "n": 6162,
+  "med_abs": 0.0010475905417539658
+ },
+ {
+  "q": "2014-03-31",
+  "vanish_ge10": 7,
+  "vanish_still_listed": 7,
+  "n": 6258,
+  "med_abs": 0.0010822510822510823
+ },
+ {
+  "q": "2014-06-30",
+  "vanish_ge10": 3,
+  "vanish_still_listed": 3,
+  "n": 6339,
+  "med_abs": 0.0008158825129181398
+ },
+ {
+  "q": "2014-09-30",
+  "vanish_ge10": 4,
+  "vanish_still_listed": 4,
+  "n": 6421,
+  "med_abs": 0.0008130081300813008
+ },
+ {
+  "q": "2014-12-31",
+  "vanish_ge10": 5,
+  "vanish_still_listed": 5,
+  "n": 6465,
+  "med_abs": 0.0010905125408942203
+ },
+ {
+  "q": "2015-03-31",
+  "vanish_ge10": 5,
+  "vanish_still_listed": 5,
+  "n": 6507,
+  "med_abs": 0.0009950248756218905
+ },
+ {
+  "q": "2015-06-30",
+  "vanish_ge10": 302,
+  "vanish_still_listed": 301,
+  "n": 6520,
+  "med_abs": 0.0010007505629221916
+ },
+ {
+  "q": "2015-09-30",
+  "vanish_ge10": 12,
+  "vanish_still_listed": 12,
+  "n": 6179,
+  "med_abs": 0.0010175527855507504
+ },
+ {
+  "q": "2015-12-31",
+  "vanish_ge10": 2,
+  "vanish_still_listed": 2,
+  "n": 6258,
+  "med_abs": 0.0010248526774276198
+ },
+ {
+  "q": "2016-03-31",
+  "vanish_ge10": 1,
+  "vanish_still_listed": 1,
+  "n": 6299,
+  "med_abs": 0.0009696969696969697
+ },
+ {
+  "q": "2016-06-30",
+  "vanish_ge10": 0,
+  "vanish_still_listed": 0,
+  "n": 6335,
+  "med_abs": 0.0009932952570151478
+ },
+ {
+  "q": "2016-09-30",
+  "vanish_ge10": 1,
+  "vanish_still_listed": 1,
+  "n": 6323,
+  "med_abs": 0.000988875154511743
+ },
+ {
+  "q": "2016-12-31",
+  "vanish_ge10": 3,
+  "vanish_still_listed": 3,
+  "n": 6375,
+  "med_abs": 0.0010005002501250625
+ },
+ {
+  "q": "2017-03-31",
+  "vanish_ge10": 2,
+  "vanish_still_listed": 2,
+  "n": 6457,
+  "med_abs": 0.0009526077637532746
+ },
+ {
+  "q": "2017-06-30",
+  "vanish_ge10": 2,
+  "vanish_still_listed": 2,
+  "n": 6489,
+  "med_abs": 0.0009601536245799327
+ },
+ {
+  "q": "2017-09-30",
+  "vanish_ge10": 18,
+  "vanish_still_listed": 17,
+  "n": 6495,
+  "med_abs": 0.0009652509652509653
+ },
+ {
+  "q": "2017-12-31",
+  "vanish_ge10": 914,
+  "vanish_still_listed": 914,
+  "n": 7021,
+  "med_abs": 0.001709819247679531
+ },
+ {
+  "q": "2018-03-31",
+  "vanish_ge10": 39,
+  "vanish_still_listed": 39,
+  "n": 6073,
+  "med_abs": 0.0008403361344537816
+ },
+ {
+  "q": "2018-06-30",
+  "vanish_ge10": 2,
+  "vanish_still_listed": 2,
+  "n": 6251,
+  "med_abs": 0.0010636034886194426
+ },
+ {
+  "q": "2018-09-30",
+  "vanish_ge10": 0,
+  "vanish_still_listed": 0,
+  "n": 6384,
+  "med_abs": 0.000855431993156544
+ },
+ {
+  "q": "2018-12-31",
+  "vanish_ge10": 0,
+  "vanish_still_listed": 0,
+  "n": 6451,
+  "med_abs": 0.001073652566029633
+ },
+ {
+  "q": "2019-03-31",
+  "vanish_ge10": 0,
+  "vanish_still_listed": 0,
+  "n": 6590,
+  "med_abs": 0.0007908264136022143
+ },
+ {
+  "q": "2019-06-30",
+  "vanish_ge10": 0,
+  "vanish_still_listed": 0,
+  "n": 6674,
+  "med_abs": 0.0007952286282306163
+ },
+ {
+  "q": "2019-09-30",
+  "vanish_ge10": 0,
+  "vanish_still_listed": 0,
+  "n": 6812,
+  "med_abs": 0.0008074283407347598
+ },
+ {
+  "q": "2019-12-31",
+  "vanish_ge10": 44,
+  "vanish_still_listed": 44,
+  "n": 6872,
+  "med_abs": 0.000814663951120163
+ }
+]
