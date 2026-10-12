@@ -1,0 +1,484 @@
+{
+ "gross_level_sum_of_contribs": 0.16956194798311422,
+ "top10": [
+  {
+   "ticker": "PZZA",
+   "name": "PAPA JOHNS INTERNATIONAL INC",
+   "isdelisted": "N",
+   "n_pick_rows": 75,
+   "contrib_S_pp": 0.1582579429383337,
+   "contrib_C_pp": 0.1582317918208025,
+   "ratio_C_over_S": 0.9998347563664378,
+   "n_fallback_rows": 0,
+   "n_spinfix_rows": 0,
+   "permnos_used": [
+    79299
+   ],
+   "crosswalk_permnos_for_ticker": 1,
+   "ticker_reuse_suffix": false,
+   "max_abs_label_gap_S_C": 0.0007826702744380132,
+   "entry_price_min_max": [
+    16.42,
+    87.54
+   ],
+   "top_rows": [
+    {
+     "date": "2009-01-21",
+     "wn": 0.005830389939608909,
+     "r_S": 0.44996893405914307,
+     "r_C": 0.44997277046338024,
+     "fallback": false
+    },
+    {
+     "date": "2011-09-21",
+     "wn": 0.009519269766983604,
+     "r_S": 0.26139602065086365,
+     "r_C": 0.261397292880607,
+     "fallback": false
+    },
+    {
+     "date": "2012-03-21",
+     "wn": 0.009043477645366739,
+     "r_S": 0.25209856033325195,
+     "r_C": 0.2520980213370678,
+     "fallback": false
+    }
+   ],
+   "real": true
+  },
+  {
+   "ticker": "TPL",
+   "name": "TEXAS PACIFIC LAND CORP",
+   "isdelisted": "N",
+   "n_pick_rows": 60,
+   "contrib_S_pp": 0.15581592549247764,
+   "contrib_C_pp": 0.15582699110899653,
+   "ratio_C_over_S": 1.000071017237063,
+   "n_fallback_rows": 0,
+   "n_spinfix_rows": 0,
+   "permnos_used": [
+    14752
+   ],
+   "crosswalk_permnos_for_ticker": 2,
+   "ticker_reuse_suffix": false,
+   "max_abs_label_gap_S_C": 0.0003389893625281859,
+   "entry_price_min_max": [
+    27.0,
+    194.58
+   ],
+   "top_rows": [
+    {
+     "date": "2016-08-17",
+     "wn": 0.008900985057268523,
+     "r_S": 0.5253020524978638,
+     "r_C": 0.525304466823757,
+     "fallback": false
+    },
+    {
+     "date": "2014-01-22",
+     "wn": 0.012145818214030876,
+     "r_S": 0.31699466705322266,
+     "r_C": 0.316956419157457,
+     "fallback": false
+    },
+    {
+     "date": "2013-02-13",
+     "wn": 0.007532733567448156,
+     "r_S": 0.3755088150501251,
+     "r_C": 0.3756097573055337,
+     "fallback": false
+    }
+   ],
+   "real": true
+  },
+  {
+   "ticker": "CROX",
+   "name": "CROCS INC",
+   "isdelisted": "N",
+   "n_pick_rows": 70,
+   "contrib_S_pp": 0.13957683098717047,
+   "contrib_C_pp": 0.13957682269185973,
+   "ratio_C_over_S": 0.9999999405681393,
+   "n_fallback_rows": 0,
+   "n_spinfix_rows": 0,
+   "permnos_used": [
+    91090
+   ],
+   "crosswalk_permnos_for_ticker": 1,
+   "ticker_reuse_suffix": false,
+   "max_abs_label_gap_S_C": 5.998606646295812e-06,
+   "entry_price_min_max": [
+    1.88,
+    25.65
+   ],
+   "top_rows": [
+    {
+     "date": "2009-04-15",
+     "wn": 0.003416364345348723,
+     "r_S": 1.1573604345321655,
+     "r_C": 1.1573567571777903,
+     "fallback": false
+    },
+    {
+     "date": "2015-03-18",
+     "wn": 0.007480103156360525,
+     "r_S": 0.29357022047042847,
+     "r_C": 0.2935694378930307,
+     "fallback": false
+    },
+    {
+     "date": "2009-07-22",
+     "wn": 0.0020065983995548944,
+     "r_S": 1.0906250476837158,
+     "r_C": 1.090627449338652,
+     "fallback": false
+    }
+   ],
+   "real": true
+  },
+  {
+   "ticker": "USNA",
+   "name": "USANA HEALTH SCIENCES INC",
+   "isdelisted": "N",
+   "n_pick_rows": 92,
+   "contrib_S_pp": 0.134358923486129,
+   "contrib_C_pp": 0.1346863347747677,
+   "ratio_C_over_S": 1.0024368406663553,
+   "n_fallback_rows": 0,
+   "n_spinfix_rows": 0,
+   "permnos_used": [
+    84010
+   ],
+   "crosswalk_permnos_for_ticker": 1,
+   "ticker_reuse_suffix": false,
+   "max_abs_label_gap_S_C": 0.011004931560033793,
+   "entry_price_min_max": [
+    20.06,
+    146.9
+   ],
+   "top_rows": [
+    {
+     "date": "2018-03-21",
+     "wn": 0.00994239062696867,
+     "r_S": 0.4248484969139099,
+     "r_C": 0.42484811102879716,
+     "fallback": false
+    },
+    {
+     "date": "2018-02-14",
+     "wn": 0.009462507667249423,
+     "r_S": 0.2703947424888611,
+     "r_C": 0.27039654928978085,
+     "fallback": false
+    },
+    {
+     "date": "2011-12-21",
+     "wn": 0.007252910465400057,
+     "r_S": 0.25254181027412415,
+     "r_C": 0.25254143485142433,
+     "fallback": false
+    }
+   ],
+   "real": true
+  },
+  {
+   "ticker": "SAM",
+   "name": "BOSTON BEER CO INC",
+   "isdelisted": "N",
+   "n_pick_rows": 63,
+   "contrib_S_pp": 0.13435037103185832,
+   "contrib_C_pp": 0.1343502761457619,
+   "ratio_C_over_S": 0.9999992937414637,
+   "n_fallback_rows": 0,
+   "n_spinfix_rows": 0,
+   "permnos_used": [
+    82634
+   ],
+   "crosswalk_permnos_for_ticker": 1,
+   "ticker_reuse_suffix": false,
+   "max_abs_label_gap_S_C": 4.00148919998955e-06,
+   "entry_price_min_max": [
+    23.94,
+    160.65
+   ],
+   "top_rows": [
+    {
+     "date": "2009-06-17",
+     "wn": 0.008454543382439953,
+     "r_S": 0.41966512799263,
+     "r_C": 0.4196685374208118,
+     "fallback": false
+    },
+    {
+     "date": "2011-09-21",
+     "wn": 0.010042406422072974,
+     "r_S": 0.3200382590293884,
+     "r_C": 0.32003928581406016,
+     "fallback": false
+    },
+    {
+     "date": "2010-10-20",
+     "wn": 0.008895597292901106,
+     "r_S": 0.3656684458255768,
+     "r_C": 0.36566713609488977,
+     "fallback": false
+    }
+   ],
+   "real": true
+  },
+  {
+   "ticker": "SAIA",
+   "name": "SAIA INC",
+   "isdelisted": "N",
+   "n_pick_rows": 86,
+   "contrib_S_pp": 0.13318046399256656,
+   "contrib_C_pp": 0.13317992303025172,
+   "ratio_C_over_S": 0.9999959381256185,
+   "n_fallback_rows": 0,
+   "n_spinfix_rows": 0,
+   "permnos_used": [
+    89506
+   ],
+   "crosswalk_permnos_for_ticker": 1,
+   "ticker_reuse_suffix": false,
+   "max_abs_label_gap_S_C": 8.394704372860495e-05,
+   "entry_price_min_max": [
+    11.5,
+    77.45
+   ],
+   "top_rows": [
+    {
+     "date": "2013-01-16",
+     "wn": 0.0074498674346385255,
+     "r_S": 0.5012197494506836,
+     "r_C": 0.501258385064115,
+     "fallback": false
+    },
+    {
+     "date": "2008-06-18",
+     "wn": 0.004901657293696942,
+     "r_S": 0.5883862972259521,
+     "r_C": 0.5884283902920942,
+     "fallback": false
+    },
+    {
+     "date": "2012-12-19",
+     "wn": 0.007073328519568307,
+     "r_S": 0.31726908683776855,
+     "r_C": 0.3172686345614657,
+     "fallback": false
+    }
+   ],
+   "real": true
+  },
+  {
+   "ticker": "CYBX",
+   "name": "CYBERONICS INC",
+   "isdelisted": "Y",
+   "n_pick_rows": 46,
+   "contrib_S_pp": 0.1315863164614895,
+   "contrib_C_pp": 0.131585868956555,
+   "ratio_C_over_S": 0.9999965991529628,
+   "n_fallback_rows": 0,
+   "n_spinfix_rows": 0,
+   "permnos_used": [
+    78881
+   ],
+   "crosswalk_permnos_for_ticker": 1,
+   "ticker_reuse_suffix": false,
+   "max_abs_label_gap_S_C": 5.083934238481191e-06,
+   "entry_price_min_max": [
+    10.1,
+    72.51
+   ],
+   "top_rows": [
+    {
+     "date": "2008-05-21",
+     "wn": 0.005866894945788875,
+     "r_S": 0.5368357300758362,
+     "r_C": 0.5368323898602598,
+     "fallback": false
+    },
+    {
+     "date": "2008-10-22",
+     "wn": 0.006584727489885694,
+     "r_S": 0.4092980921268463,
+     "r_C": 0.4092984916713871,
+     "fallback": false
+    },
+    {
+     "date": "2009-10-21",
+     "wn": 0.005996610180235756,
+     "r_S": 0.39407894015312195,
+     "r_C": 0.3940789259015425,
+     "fallback": false
+    }
+   ],
+   "real": true
+  },
+  {
+   "ticker": "PETS",
+   "name": "PETMED EXPRESS INC",
+   "isdelisted": "N",
+   "n_pick_rows": 76,
+   "contrib_S_pp": 0.11992900961908155,
+   "contrib_C_pp": 0.11992944784171415,
+   "ratio_C_over_S": 1.0000036540169388,
+   "n_fallback_rows": 0,
+   "n_spinfix_rows": 0,
+   "permnos_used": [
+    90012
+   ],
+   "crosswalk_permnos_for_ticker": 1,
+   "ticker_reuse_suffix": false,
+   "max_abs_label_gap_S_C": 9.548108621193485e-06,
+   "entry_price_min_max": [
+    9.11,
+    46.48
+   ],
+   "top_rows": [
+    {
+     "date": "2017-04-19",
+     "wn": 0.008956756308738099,
+     "r_S": 0.7233852744102478,
+     "r_C": 0.7233856195005008,
+     "fallback": false
+    },
+    {
+     "date": "2014-11-19",
+     "wn": 0.009363569753926895,
+     "r_S": 0.18669690191745758,
+     "r_C": 0.18669623268367364,
+     "fallback": false
+    },
+    {
+     "date": "2009-06-17",
+     "wn": 0.007179930276593124,
+     "r_S": 0.24418604373931885,
+     "r_C": 0.24418507815863943,
+     "fallback": false
+    }
+   ],
+   "real": true
+  },
+  {
+   "ticker": "SFLY",
+   "name": "SHUTTERFLY INC",
+   "isdelisted": "Y",
+   "n_pick_rows": 55,
+   "contrib_S_pp": 0.11881203550997221,
+   "contrib_C_pp": 0.11880504980249201,
+   "ratio_C_over_S": 0.9999412037050773,
+   "n_fallback_rows": 0,
+   "n_spinfix_rows": 0,
+   "permnos_used": [
+    91486
+   ],
+   "crosswalk_permnos_for_ticker": 1,
+   "ticker_reuse_suffix": false,
+   "max_abs_label_gap_S_C": 0.00011669481216025623,
+   "entry_price_min_max": [
+    6.09,
+    57.1
+   ],
+   "top_rows": [
+    {
+     "date": "2018-01-17",
+     "wn": 0.006286476300186784,
+     "r_S": 0.63787442445755,
+     "r_C": 0.637880154829467,
+     "fallback": false
+    },
+    {
+     "date": "2017-12-20",
+     "wn": 0.006058855993552636,
+     "r_S": 0.5771896839141846,
+     "r_C": 0.5771946593456345,
+     "fallback": false
+    },
+    {
+     "date": "2010-10-20",
+     "wn": 0.006261231008484505,
+     "r_S": 0.4229494631290436,
+     "r_C": 0.42284879307878964,
+     "fallback": false
+    }
+   ],
+   "real": true
+  },
+  {
+   "ticker": "ASPS",
+   "name": "ALTISOURCE PORTFOLIO SOLUTIONS SA",
+   "isdelisted": "N",
+   "n_pick_rows": 47,
+   "contrib_S_pp": 0.11840205622137047,
+   "contrib_C_pp": 0.11840302613411816,
+   "ratio_C_over_S": 1.0000081916883763,
+   "n_fallback_rows": 0,
+   "n_spinfix_rows": 0,
+   "permnos_used": [
+    92981
+   ],
+   "crosswalk_permnos_for_ticker": 1,
+   "ticker_reuse_suffix": false,
+   "max_abs_label_gap_S_C": 4.356271163796777e-06,
+   "entry_price_min_max": [
+    16.88,
+    88.75
+   ],
+   "top_rows": [
+    {
+     "date": "2011-10-19",
+     "wn": 0.012145795297367654,
+     "r_S": 0.36659255623817444,
+     "r_C": 0.3665953807495119,
+     "fallback": false
+    },
+    {
+     "date": "2011-09-21",
+     "wn": 0.011701704012331494,
+     "r_S": 0.26120856404304504,
+     "r_C": 0.2612104468910541,
+     "fallback": false
+    },
+    {
+     "date": "2009-12-16",
+     "wn": 0.005655991697702224,
+     "r_S": 0.4960674047470093,
+     "r_C": 0.4960717389236817,
+     "fallback": false
+    }
+   ],
+   "real": true
+  }
+ ],
+ "top10_share_of_gross": 0.07927898279832915,
+ "delisting_path": {
+  "n_rows": 276,
+  "weight_share": 0.028042407314749468,
+  "mean_r_S": 0.02076856412769184,
+  "mean_r_C_nonfallback": 0.02518856008894821,
+  "mean_r_S_nonfallback": 0.021429243642106646,
+  "n_nonfallback": 272,
+  "abs_gap_nonfallback": 0.0037593164468415624,
+  "delist_applied_rows": 272
+ },
+ "later_delisted_names_DESCRIPTIVE": {
+  "share_rows": 0.5492987675308117,
+  "weight_share": 0.5305371118378951,
+  "mean_r_S": 0.02307640605666204,
+  "mean_r_S_others": 0.03207577166692503
+ },
+ "price_lt_5_at_entry": {
+  "share_rows": 0.07666808329791755,
+  "weight_share": 0.05208209594926649,
+  "mean_r_S": 0.0618345342534429
+ },
+ "spinfix": {
+  "rows_hit": 3,
+  "book_fixed_net": 0.08066447624873987,
+  "delta_fixed_minus_S": 7.781307328041942e-05
+ },
+ "seas_nan_pick_share": 0.2699957501062473,
+ "pass": true
+}

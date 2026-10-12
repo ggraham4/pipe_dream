@@ -1,0 +1,15 @@
+[18:14:02] column c: 13,241,135 rows, 6,870 tickers, 2007-01-03..2019-12-31
+[18:14:30] A cap150 icw8 2007-2019 40-off: +0.028542
+[18:14:50] A cap2000 icw8 2007-2019 40-off: +0.028368
+[18:14:53] E slow thin icw5_seas: +0.08058666 (WO-58 +0.08058666); D thin icw8 +0.064361
+[18:14:59] fast vs slow mismatched dates: {'thin_icw5_seas': 0, 'thin_icw8': 0, 'cap150_icw8_vs_wo6_sets': 0}
+[18:15:01] 133 grid: cap150_icw8 +0.0589, cap150_icw5_seas +0.0655, cap2000_icw8 +0.0438, cap2000_icw5_seas +0.0474, thin_icw8 +0.0644, thin_icw5_seas +0.0806
+[18:15:01] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-aee05a494212565e6/final/out/thinaudit/check1_reconcile.json
+[18:15:07] 40-off thin icw8: +0.0572 sd 0.0051
+[18:15:10] 40-off thin icw5_seas: +0.0702 sd 0.0066
+[18:15:15] 40-off cap150 icw8: +0.0545 sd 0.0030
+[18:15:19] 40-off cap150 icw5_seas: +0.0618 sd 0.0035
+[18:15:22] 40-off cap2000 icw8: +0.0463 sd 0.0036
+[18:15:24] 40-off cap2000 icw5_seas: +0.0451 sd 0.0067
+[18:15:30] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-aee05a494212565e6/final/out/thinaudit/check2_offsets40.json
+[18:15:30] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-aee05a494212565e6/final/out/thinaudit/check1_reconcile.json
