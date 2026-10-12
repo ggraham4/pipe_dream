@@ -120,7 +120,7 @@ def main():
                       "max_abs_label_gap_S_C": float(r.max_abs_gap),
                       "entry_price_min_max": [float(rows.closeunadj.min()), float(rows.closeunadj.max())],
                       "top_rows": [{"date": str(pd.Timestamp(x.date).date()), "wn": float(x.wn), "r_S": float(x.r_S),
-                                    "r_C": float(x.r_C), "fallback": bool(x.fallback)} for x in best.itertuples()],
+                                    "abs_gap_S_C": float(abs(x.r_S - x.r_C)), "fallback": bool(x.fallback)} for x in best.itertuples()],
                       "real": real})
     tot_S = float(pr.cS.sum())
     trunc = pr[pr.truncated.fillna(False).astype(bool)]

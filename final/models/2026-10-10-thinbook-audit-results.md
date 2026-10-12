@@ -26,7 +26,14 @@ All four Part-1 checks pass. The thin icw5_seas book on the daily 40-offset grid
   just thin.
 - **Universe: +0.55pp.** Thin rather than cap150.
 - **Model: +1.6pp.** icw5_seas rather than icw8.
-- **Monthly dates: about +1pp.** Sampling on the 133 monthly dates flatters the level against the full daily grid.
+- **Monthly dates: +0.44pp.** cap150 icw8 moved from the daily grid to the 133 monthly dates (step C).
+
+These steps telescope: 2.60 + 0.44 + 0.55 + 1.62 = 5.21 = 8.06 − 2.85. The step sizes depend on the order the
+variables are changed in. On the 40-offset grid:
+- thin vs cap150 is +0.84 under icw5_seas and +0.27 under icw8;
+- the model step for thin is +1.30.
+
+Separately, the thin icw5_seas book on the 133 dates sits 1.04pp above the same book on the daily 40-offset grid.
 
 **The spread-based costs barely move it:**
 - base +7.82 %/yr net vs SPY, against +8.06 at flat 15bp;
@@ -60,9 +67,9 @@ marked otherwise.
 | D | thin | icw8 | 133 monthly | 2 | +6.44 | +0.55 |
 | E | thin | icw5_seas | 133 monthly | 2 | **+8.06** (= WO-58) | +1.62 |
 
-**The biggest piece is the window (A→B).** cap2000 icw8 also moves, from +2.84 to +4.63. Taking the averages
-roughly, the two dropped years (2007 entries, and 2019 entries whose 40-day exits run into early 2020) cost about
-−11 %/yr each against SPY. So the down-cap and cap2000 books both look much better on 2008-2018 than on 2007-2019.
+**The biggest piece is the window (A→B).** cap2000 icw8 also moves, from +2.84 to +4.63. Inferred from offset
+means, not measured by year: the two dropped years cost roughly −11 %/yr each against SPY. They are 2007 entries,
+and 2019 entries whose 40-day exits run into early 2020. So the down-cap and cap2000 books both look much better on 2008-2018 than on 2007-2019.
 This is a fact about the window, not about the thin book. WO-58 inherited it from WO-52's option-store dates.
 
 **Tiers on identical dates:**
@@ -127,8 +134,12 @@ TPL has 2 permnos in the crosswalk, but every one of its picks maps to one of th
   dlret applied on all 272. The gap is 0.38pp against a 2pp bar: PASS. These are mostly acquisitions, not failures.
 - **Names that later delisted** (descriptive). They make up 54.9% of pick rows and 53.1% of weight. Their mean label
   is +2.31%, against +3.21% for the others. No survivorship tilt shows in the picks.
-- **Price < $5 at entry.** 7.7% of pick rows and 5.2% of weight. Their mean label is +6.2%, so this tail adds to the
-  level and should be watched. It is small.
+- **Price < $5 at entry.** 7.7% of pick rows and 5.2% of weight. Their mean label is +6.2% per 40 days.
+  - These rows give 2.03pp of the 16.96pp annualised gross (12%), against 0.88pp if they had earned the book
+    average.
+  - So sub-$5 names add about **+1.1pp/yr** to the level.
+  - They are also the names where closing quotes most understate the cost of an open fill.
+  - This is not an artefact (the CRSP labels agree), but D-THINBOOK should weigh it.
 - **WO-54 spin-off fix.** It touches 3 pick rows. The fixed book is +8.066, a Δ of +0.008pp against a bar of
   ≥ −0.25: PASS.
 
@@ -192,7 +203,7 @@ is outside this WO's era rule. WO-54's cap150 icw5_seas figure there is +3.64.
 **Out of era it trails SPY.** On 2019-2025 the same book was −4.7 (WO-58 Stage 2, hold-out read #23).
 
 **Read the thin book's in-era premium over cap2000 as about +2.5pp under icw5_seas on 2008-2018.** Do not read it as
-+8.
++8. That premium depends on the window: WO-6 found no cap gradient on 2007-2019 under icw8.
 
 ## Checks run
 
@@ -204,3 +215,10 @@ is outside this WO's era rule. WO-54's cap150 icw5_seas figure there is +3.64.
   formula to 1e-12.
 - Read caps: every CRSP, quote and outcome read is asserted at or before 2019-03-31. Entry dates are at or before
   2018-12-31, apart from WO-6's own step A.
+
+## Licence note (post-landing correction)
+
+The first landed commit, a1ff29d (integration 3470422), had 30 per-row CRSP `r_C` values in `check3_names.json`
+`top_rows`. Those were the 3 largest rows for each of the top-10 names. The follow-up commit replaces them with
+|S−C| gaps, and `run_names.py` no longer writes them. They remain in repo history. Whether to rewrite that history
+is for the integrator and COO to decide.
