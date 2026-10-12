@@ -1,0 +1,4 @@
+[09:32:45] base: flat15 +8.059 spread +7.819 x1.5 +7.475 (weighted +7.861); median entry hs 6.1bp
+[09:32:45] variant: flat15 +8.563 spread +8.322 x1.5 +7.967 (weighted +8.367); median entry hs 6.0bp
+[09:32:45] delta: {'flat15': 0.005038860771793913, 'spread': 0.005027787092028807, 'spread_x1.5': 0.004923450080558375, 'spread_weighted_exact_turnover': 0.005057414258995363, 'spread_x1.5_weighted_exact_turnover': 0.004967863713453646, 'flat15_weighted_exact_turnover': 0.005055149489693475}
+[09:32:45] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-aee05a494212565e6/final/out/thinaudit/part2_costs.json

@@ -1,0 +1,5 @@
+[09:31:18] CRSP label re-implementation vs WO-51: {'n': 20000, 'fallback_flags_equal': True, 'max_abs_diff_r_C': 8.857359290459499e-13, 'max_abs_diff_r_C_ret': 6.985523270941485e-13, 'nan_mismatch': 0, 'pass': True}
+[09:31:21] check4: within10bp 0.9872 S-C -0.193pp -> PASS
+[09:31:21] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-aee05a494212565e6/final/out/thinaudit/check4_labels.json
+[09:31:21] check3: top10 real [True, True, True, True, True, True, True, True, True, True] delist gap 0.0038 spin delta +0.008pp -> PASS
+[09:31:21] wrote /Users/ggraham/pipe_dream/.claude/worktrees/agent-aee05a494212565e6/final/out/thinaudit/check3_names.json

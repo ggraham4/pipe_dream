@@ -1,0 +1,29 @@
+{
+ "label_definition": "outcome_cache_v2.gross_return_40 = close[t+40]/open[t+1] - 1 with the delisting floor (cb_core.attach_labels reads exactly this column)",
+ "crsp_impl_validation": {
+  "n": 20000,
+  "fallback_flags_equal": true,
+  "max_abs_diff_r_C": 8.857359290459499e-13,
+  "max_abs_diff_r_C_ret": 6.985523270941485e-13,
+  "nan_mismatch": 0,
+  "pass": true
+ },
+ "pick_rows": 23530,
+ "mapped_share_count": 0.9977475563110922,
+ "mapped_share_weight": 0.9982985709430874,
+ "fallback_share_count": 0.003357416064598385,
+ "fallback_weight_share_by_reason": {
+  "entry_leg_nan": 0.0007532814653200832,
+  "nan_retx_in_window": 0.00019169634222819225,
+  "unmapped": 0.001701429056912634
+ },
+ "within_10bp_share_nonfallback": 0.9871647264508976,
+ "book_S_net": 0.08058666317545946,
+ "book_C_retx_net": 0.08251219567869891,
+ "book_C_ret_net_not_judged": 0.09725703883163835,
+ "delta_S_minus_C_retx": -0.0019255325032394577,
+ "delta_S_minus_C_ret_not_judged": -0.01667037565617889,
+ "gross_S": 0.08507561601708899,
+ "gross_C": 0.08700263886808007,
+ "pass": true
+}

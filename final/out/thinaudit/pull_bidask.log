@@ -1,0 +1,14 @@
+[18:12:33] thin name-dates mapped share 0.9977; permnos 5207
+[18:12:36] smoke query rows 7
+[18:12:44] dsf_bidask_2008.parquet: 865,737 rows, 3519 permnos, quote share 0.986
+[18:12:53] dsf_bidask_2009.parquet: 841,277 rows, 3462 permnos, quote share 0.983
+[18:13:02] dsf_bidask_2010.parquet: 836,309 rows, 3476 permnos, quote share 0.985
+[18:13:09] dsf_bidask_2011.parquet: 822,032 rows, 3428 permnos, quote share 0.989
+[18:13:14] dsf_bidask_2012.parquet: 806,412 rows, 3378 permnos, quote share 0.989
+[18:13:20] dsf_bidask_2013.parquet: 812,767 rows, 3439 permnos, quote share 0.990
+[18:13:26] dsf_bidask_2014.parquet: 841,134 rows, 3538 permnos, quote share 0.994
+[18:13:33] dsf_bidask_2015.parquet: 856,428 rows, 3594 permnos, quote share 0.996
+[18:13:38] dsf_bidask_2016.parquet: 834,341 rows, 3506 permnos, quote share 0.995
+[18:13:44] dsf_bidask_2017.parquet: 810,768 rows, 3424 permnos, quote share 0.995
+[18:13:50] dsf_bidask_2018.parquet: 802,355 rows, 3355 permnos, quote share 0.996
+[18:13:52] dsf_bidask_2019.parquet: 191,404 rows, 3165 permnos, quote share 0.995
