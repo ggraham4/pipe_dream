@@ -1,0 +1,97 @@
+{
+ "work_order": "WO-59",
+ "factor": "dbreadth",
+ "sign": 1,
+ "prereg": "final/models/2026-10-10-13f-breadth.md",
+ "era": "2007-01-02..2019-12-31",
+ "reconcile": {
+  "icw9_seas": {
+   "got": 0.034865200579044096,
+   "ref": 0.0348652,
+   "picks_w_mean40": 0.03486520057904396,
+   "n_pick_dates": 3272
+  },
+  "icw5_seas": 0.036442521084825354,
+  "icw5_ref": 0.036442521084825354
+ },
+ "verdict": "KILL",
+ "gates": {
+  "g1_pooled_t": false,
+  "g2_halves": true,
+  "g3_sector_both_sides": true,
+  "g4_offsets": true,
+  "g5_loyo": true,
+  "g6_resid_mom": true,
+  "g7_book": false,
+  "gate_A_integrity": true
+ },
+ "gate_numbers": {
+  "g1_pooled_ic": {
+   "mean": 0.007427365742734838,
+   "t": 1.0718856222281639,
+   "n": 2895,
+   "n_dates": 2895
+  },
+  "bar": 2.0,
+  "g2_odd": {
+   "mean": 0.006502102543005711,
+   "t": 0.5853264066073494,
+   "n": 1549
+  },
+  "g2_even": {
+   "mean": 0.0084921745810561,
+   "t": 1.1467578003774648,
+   "n": 1346
+  },
+  "g3_sector_both_sides": {
+   "mean": 0.010262333707407733,
+   "t": 1.649753804370683,
+   "n": 2895
+  },
+  "g3_factor_only_not_gated": {
+   "mean": 0.009422798148901766,
+   "t": 1.5941679488667846,
+   "n": 2895
+  },
+  "g4_offset_flips": 0,
+  "g4_offset_min_max": [
+   0.0036382024985854113,
+   0.010705364391875452
+  ],
+  "g5_max_year_share": 0.3773009507773935,
+  "g5_max_year": 2007,
+  "g5_loyo_min_t": 0.6930398350431005,
+  "g6_resid_on_mom": {
+   "mean": 0.006470001440528077,
+   "t": 1.5503143210831758,
+   "n": 2895,
+   "n_dates": 2895
+  },
+  "spearman_mom_median": 0.3427100488332908,
+  "spearman_median_descriptive": {
+   "momentum_12_1": 0.3427100488332908,
+   "gross_profitability": -0.017405872207655892,
+   "accruals": -0.002678511441848533,
+   "net_issuance_pct": 0.10199930307141535,
+   "seas": 0.0072128116827947465,
+   "short_interest_days_to_cover": null
+  },
+  "g7_paired_inc": -0.00016514698461964297,
+  "g7_offsets_pos": 19,
+  "g7_null_p80": -0.00020587491426767103,
+  "g7_null": {
+   "n": 100,
+   "p50": -0.000330092897944463,
+   "p95": -0.00010894608411234744,
+   "pct_below_real": 0.88
+  },
+  "g7_base_sd40_not_bar": 0.002364000977594327,
+  "g7_w_dbreadth": 0.01096456424653388,
+  "gA_placebo_t": 0.3067343299003325
+ },
+ "null_recheck": {
+  "draw0": -0.00033022634362390584,
+  "rerun": -0.00033022634362390584,
+  "identical": true
+ }
+}
